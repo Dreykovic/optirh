@@ -1,0 +1,41 @@
+"use strict";
+let AppModelCreateManager = (function () {
+    let addModelForm;
+
+    let modelAddBtn;
+
+    const handleModelAdd = () => {
+        const addModelUrl = addModelForm.getAttribute("data-model-add-url");
+
+        modelAddBtn.addEventListener("click", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(addModelForm);
+            AppModules.submitFromBtn(
+                modelAddBtn,
+                formData,
+                addModelUrl,
+                addModelCallback
+            );
+        });
+    };
+
+    let addModelCallback = () => {
+        location.reload();
+    };
+    return {
+        init: () => {
+            addModelForm = document.querySelector("#modelAddForm");
+
+            if (!addModelForm) {
+                return;
+            }
+
+            modelAddBtn = addModelForm.querySelector("#modelAddBtn");
+
+            handleModelAdd();
+        },
+    };
+})();
+document.addEventListener("DOMContentLoaded", (e) => {
+    AppModelCreateManager.init();
+});

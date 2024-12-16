@@ -1,0 +1,9 @@
+@extends('pages.admin.base')
+@section('plugins-style')
+@endsection
+@section('admin-content')
+@endsection
+@push('plugins-js')
+@endpush
+@push('js')
+@endpush

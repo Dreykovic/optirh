@@ -1,0 +1,27 @@
+@extends('base')
+@section('content')
+    @auth
+
+        <!-- sidebar -->
+        @include('partials.sidebar.index')
+
+        <!-- main body area -->
+        <div class="main px-lg-4 px-md-4">
+
+            <!-- Body: Header -->
+            @include('partials.header.index')
+
+            <!-- Body: Body -->
+            <div class="body d-flex py-3">
+                <div class="container-xxl">
+                    @yield('admin-content')
+                </div>
+            </div>
+
+
+        </div>
+    @endauth
+@endsection
+@push('plugins-js')
+    <script src="{{ asset('assets/js/template.js') }}"></script>
+@endpush

@@ -1,0 +1,8 @@
+.swal2-confirm.btn.btn-primary {
+    border: 0;
+    border-radius: 0.25em;
+    background: initial;
+    background-color: #7066e0 !important;
+    color: #fff !important;
+    font-size: 1em;
+  }
