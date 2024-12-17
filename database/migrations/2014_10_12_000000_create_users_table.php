@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('username')->nullable()->unique();
 
             $table->string('profile_picture')->default('assets/images/profile_av.png');
-            $table->enum('profile', ['CLIENT', 'EMPLOYEE', 'MAIN'])->default('EMPLOYEE');
+            $table->enum('profile', ['CLIENT', 'EMPLOYEE', 'MAIN', 'ASSISTANT'])->default('EMPLOYEE');
             $table->enum('status', ['ACTIF', 'INACTIF', 'DELETED'])->default('ACTIF');
 
             $table->string('email');

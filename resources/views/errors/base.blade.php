@@ -25,7 +25,7 @@
                             </div>
                             <!-- Image block -->
                             <div class="">
-                                <img src="../assets/images/login-img.svg" alt="login-img">
+                                <img src={{ asset('assets/images/login-img.svg') }} alt="login-img">
                             </div>
                         </div>
                     </div>
