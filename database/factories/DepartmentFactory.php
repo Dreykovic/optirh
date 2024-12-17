@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Department;
+use App\Models\Employee;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,6 +11,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class DepartmentFactory extends Factory
 {
+    protected $model = Department::class;
+
     /**
      * Define the model's default state.
      *
@@ -17,7 +21,12 @@ class DepartmentFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->unique()->company,
+            'description' => $this->faker->sentence,
+            'status' => $this->faker->randomElement(['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED']),
+            'director_id' => Employee::factory(), // Crée un employé pour servir de directeur
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }

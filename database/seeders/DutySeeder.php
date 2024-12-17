@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Duty;
 
 class DutySeeder extends Seeder
 {
@@ -12,6 +12,7 @@ class DutySeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        // Crée 30 enregistrements pour les "duties"
+        Duty::factory()->count(30)->create();
     }
 }
