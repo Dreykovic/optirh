@@ -30,7 +30,7 @@ class Employee extends Model
         'bank_name',
         'code_bank',
         'code_guichet',
-        'account_no',
+        'rib',
         'cle_rib',
         'iban',
         'swift',

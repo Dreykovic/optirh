@@ -18,7 +18,7 @@ return new class extends Migration {
             ->nullable()
             ->constrained('employees')
             ->onDelete('set null');
-            $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'DELETED'])->default('ACTIVATED');
+            $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
 
             $table->timestamps();
         });

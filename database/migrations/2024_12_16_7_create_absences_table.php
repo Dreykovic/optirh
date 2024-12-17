@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->date('end_date');
             $table->string('address')->nullable();
             $table->date('date_of_application');
-            $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'DELETED'])->default('ACTIVATED');
+            $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
 
             $table->date('date_of_approval');
 

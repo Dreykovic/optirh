@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->integer('self_mark')->nullable();
             $table->integer('chief_mark')->nullable();
             $table->integer('mark')->nullable();
-            $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'DELETED'])->default('ACTIVATED');
+            $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
 
             $table->foreignIdFor(Evaluation::class)->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();

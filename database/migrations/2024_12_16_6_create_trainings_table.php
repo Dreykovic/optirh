@@ -24,7 +24,7 @@ return new class extends Migration {
             $table->string('implementation_period')->nullable();
             $table->string('second_implementation_period')->nullable();
             $table->string('superior_observation')->nullable();
-            $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'DELETED'])->default('ACTIVATED');
+            $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
 
             $table->foreignIdFor(Duty::class)->nullable();
             $table->timestamps();
