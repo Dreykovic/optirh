@@ -1,8 +1,0 @@
-
-- EDITION D'ARTICLE 
-- l'image insérer pour l'article n'est pas pris en compte
-- le filtre par discipline ne marche pas 
-- et aussi pour le volume c'est un peu dure vu que ce sont les seeders 
-  avec un essai c'est bizzare quoi quand on va dans volume o ne retrouve 
-  pas les numéros genres les décennies ne sont pas bien ordonnée pour retrouver 2024 ....
-  je ne sais si ce sont les seeders mais il sera un peu bizarre e faire un test et aller chercher le numéron dans 1970 
