@@ -17,7 +17,7 @@ class Absence extends Model
         'address',
         'date_of_application',
         'date_of_approval',
-
+        'level',
         'reasons',
         'proof',
         'comment',

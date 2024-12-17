@@ -15,6 +15,7 @@ return new class extends Migration {
         Schema::create('absences', function (Blueprint $table) {
             $table->id();
             $table->string('day_requested');
+            $table->string('level');
             $table->date('start_date');
             $table->date('end_date');
             $table->string('address')->nullable();
