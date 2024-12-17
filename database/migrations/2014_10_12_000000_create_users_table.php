@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Employee;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,13 +16,15 @@ return new class extends Migration {
 
             $table->string('username')->nullable()->unique();
 
-            $table->string('profile_picture')->default('assets/images/profile_av.png');
-            $table->enum('profile', ['CLIENT', 'EMPLOYEE', 'MAIN', 'ASSISTANT'])->default('EMPLOYEE');
-            $table->enum('status', ['ACTIF', 'INACTIF', 'DELETED'])->default('ACTIF');
+            $table->string('picture')->default('assets/images/profile_av.png');
+            $table->enum('profile', ['EMPLOYEE', 'ADMIN'])->default('EMPLOYEE');
+            $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'DELETED'])->default('ACTIVATED');
 
             $table->string('email');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->default(Hash::make('secret'));
+            $table->foreignIdFor(Employee::class);
+
             $table->rememberToken();
             $table->timestamps();
         });

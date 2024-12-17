@@ -4,8 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -31,7 +30,8 @@ class User extends Authenticatable
         'username',
         'status',
         'profile',
-        'profile_picture',
+        'picture',
+        'employee_id',
     ];
 
     /**
@@ -60,33 +60,8 @@ class User extends Authenticatable
      */
     protected $dateFormat = 'Y-m-d H:i:sO';
 
-    public function created_accounts(): HasMany
+    public function employee(): BelongsTo
     {
-        return $this->hasMany(Account::class, 'employee_id');
-    }
-
-    public function client(): HasOne
-    {
-        return $this->hasOne(Client::class, 'user_id', 'id');
-    }
-
-    public function created_transactions(): HasMany
-    {
-        return $this->hasMany(Transaction::class, 'employee_id');
-    }
-
-    public function contributions(): HasMany
-    {
-        return $this->hasMany(Transaction::class, 'assistant_id');
-    }
-
-    public function approved_loans(): HasMany
-    {
-        return $this->hasMany(Loan::class, 'approver_id');
-    }
-
-    public function created_loans(): HasMany
-    {
-        return $this->hasMany(Loan::class, 'creator_id');
+        return $this->belongsTo(Employee::class, 'employee_id');
     }
 }
