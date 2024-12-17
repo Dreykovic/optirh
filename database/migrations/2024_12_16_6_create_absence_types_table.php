@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('label');
             $table->string('description');
-
+            $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'DELETED'])->default('ACTIVATED');
             $table->timestamps();
         });
     }

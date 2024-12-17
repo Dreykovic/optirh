@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->string('salary')->nullable();
             $table->string('file')->nullable();
             $table->string('total_labor')->nullable();
-            $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'DELETED'])->default('ACTIF');
+            $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'DELETED'])->default('ACTIVATED');
 
             $table->foreignId('duty_id')->nullable()->constrained('duties')->onDelete('cascade');
             $table->timestamps();

@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->string('path')->nullable();
             $table->binary('data')->nullable();
             $table->date('upload_date')->nullable();
-            $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'DELETED'])->default('ACTIF');
+            $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'DELETED'])->default('ACTIVATED');
 
             $table->foreignIdFor(Employee::class)->constrained()->onDelete('cascade');
             $table->timestamps();

@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('description');
             $table->string('duration')->nullable();
             $table->date('start_date');
-            $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'DELETED'])->default('ACTIF');
+            $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'DELETED'])->default('ACTIVATED');
 
             $table->foreignIdFor(Duty::class)->nullable()->constrained()->onDelete('cascade');
 

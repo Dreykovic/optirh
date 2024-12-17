@@ -34,7 +34,7 @@ return new class extends Migration {
             $table->string('religion')->nullable();
             $table->string('marital_status')->nullable();
             $table->string('emergency_contact')->nullable();
-            $table->string('status')->default('ACTIVATED');
+            $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'DELETED'])->default('ACTIVATED');
             $table->timestamps();
         });
     }
