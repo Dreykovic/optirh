@@ -2,16 +2,17 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Employee;
 use Illuminate\Database\Seeder;
 
 class EmployeeSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Exécute le seeder pour remplir la table employees avec des données fictives.
      */
     public function run(): void
     {
-        //
+        // Crée 50 employés fictifs
+        Employee::factory()->count(5)->create();
     }
 }

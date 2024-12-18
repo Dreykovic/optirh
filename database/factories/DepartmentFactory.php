@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Employee;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -10,14 +11,24 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class DepartmentFactory extends Factory
 {
     /**
-     * Define the model's default state.
+     * Définition du modèle associé à la factory.
+     *
+     * @var string
+     */
+    protected $model = \App\Models\Department::class;
+
+    /**
+     * Définit le modèle de données pour chaque département.
      *
      * @return array<string, mixed>
      */
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->unique()->word().' Department',
+            'description' => $this->faker->unique()->sentence(),
+            'director_id' => Employee::inRandomOrder()->value('id'), // Associer un directeur aléatoire existant
+            'status' => $this->faker->randomElement(['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED']),
         ];
     }
 }

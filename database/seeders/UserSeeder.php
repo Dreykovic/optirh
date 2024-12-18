@@ -2,62 +2,80 @@
 
 namespace Database\Seeders;
 
+use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Exécute le seeder pour remplir la table users avec des données réalistes.
      */
     public function run(): void
     {
-        $accountant = User::create([
-            'username' => 'Accountant',
-            'email' => 'accountant@micro.com',
-            'profile' => 'EMPLOYEE',
-            'password' => Hash::make('accountant'),
-        ]);
-        $cashier = User::create([
-            'username' => 'Cashier',
-            'profile' => 'EMPLOYEE',
+        // Liste des profils possibles pour les utilisateurs
+        $profiles = ['EMPLOYEE', 'ADMIN'];
 
-            'email' => 'cashier@micro.com',
-            'password' => Hash::make('cashier'),
-        ]);
+        // Liste des statuts possibles pour les utilisateurs
+        $statuses = ['ACTIVATED', 'DEACTIVATED', 'DELETED'];
 
-        $admin = User::create([
-            'username' => 'Admin',
-            'profile' => 'EMPLOYEE',
-            'email' => 'admin@micro.com',
-            'password' => Hash::make('admin'),
-        ]);
+        // Ensemble de données prédéfinies pour les utilisateurs
+        $usersData = [
+            [
+                'username' => 'admin.master',
+                'picture' => 'assets/images/profile_av.png',
+                'profile' => 'ADMIN',
+                'status' => 'ACTIVATED',
+                'email' => 'admin@example.com',
+                'password' => Hash::make('Admin1234!'),
+            ],
+            [
+                'username' => 'employee.johndoe',
+                'picture' => 'assets/images/profile_av.png',
+                'profile' => 'EMPLOYEE',
+                'status' => 'ACTIVATED',
+                'email' => 'john.doe@example.com',
+                'password' => Hash::make('JohnDoe2024!'),
+            ],
+            [
+                'username' => 'employee.janedoe',
+                'picture' => 'assets/images/profile_av.png',
+                'profile' => 'EMPLOYEE',
+                'status' => 'ACTIVATED',
+                'email' => 'jane.doe@example.com',
+                'password' => Hash::make('JaneDoe2024!'),
+            ],
+            [
+                'username' => 'manager.robert',
+                'picture' => 'assets/images/profile_av.png',
+                'profile' => 'ADMIN',
+                'status' => 'DEACTIVATED',
+                'email' => 'robert.manager@example.com',
+                'password' => Hash::make('Manager2024!'),
+            ],
+            [
+                'username' => 'employee.alice',
+                'picture' => 'assets/images/profile_av.png',
+                'profile' => 'EMPLOYEE',
+                'status' => 'ACTIVATED',
+                'email' => 'alice.smith@example.com',
+                'password' => Hash::make('AliceSmith2024!'),
+            ],
+        ];
 
-        $boss = User::create([
-            'profile' => 'EMPLOYEE',
-            'username' => 'Boss',
+        // Insérer les utilisateurs prédéfinis
+        foreach ($usersData as $userData) {
+            // Créer un employé lié à l'utilisateur
+            $employee = Employee::factory()->create();
 
-            'email' => 'boss@micro.com',
-            'password' => Hash::make('boss'),
-        ]);
-        $assistant = User::create([
-            'profile' => 'ASSISTANT',
-            'username' => 'assistant',
+            // Insérer l'utilisateur en associant l'employee_id
+            User::create(array_merge($userData, ['employee_id' => $employee->id]));
+        }
 
-            'email' => 'assistant@micro.com',
-            'password' => Hash::make('assistant'),
-        ]);
-
-        $admin_role = Role::where('name', 'admin')->first();
-        $boss_role = Role::where('name', 'boss')->first();
-        $cashier_role = Role::where('name', 'cashier')->first();
-        $accountant_role = Role::where('name', 'accountant')->first();
-        $client_role = Role::where('name', 'client')->first();
-        $admin->assignRole([$admin_role->id]);
-        $boss->assignRole([$boss_role->id]);
-        $cashier->assignRole([$cashier_role->id]);
-        $accountant->assignRole([$accountant_role->id]);
+        // Générer 20 utilisateurs supplémentaires de manière aléatoire
+        User::factory()
+            ->count(20)
+            ->create();
     }
 }
