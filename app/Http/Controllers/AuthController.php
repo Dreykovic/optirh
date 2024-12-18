@@ -27,9 +27,9 @@ class AuthController extends Controller
 
             if (Auth::attempt($attributes, $request->input('remember'))) {
                 $user = User::where('email', '=', $request->input('email'))->first();
-                if (!$user->hasRole(['admin', 'boss', 'cashier', 'accountant'])) {
-                    return response()->json(['ok' => false, 'message' => "Vous n'avez pas le droit de vous connecter"]);
-                }
+                // if (!$user->hasRole(['admin', 'boss', 'cashier', 'accountant'])) {
+                //     return response()->json(['ok' => false, 'message' => "Vous n'avez pas le droit de vous connecter"]);
+                // }
                 session()->regenerate();
 
                 return response()->json(['ok' => true, 'message' => 'Vous êtes connecté.']);
