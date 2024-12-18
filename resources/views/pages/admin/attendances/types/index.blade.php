@@ -30,13 +30,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($absenceTypes as $index => $absenceType)
-                                <tr>
+
+                            @forelse ($absenceTypes as $index => $absenceType)
+                                <tr class="parent">
                                     <td>
                                         <span class="fw-bold">{{ $index + 1 }}</span>
                                     </td>
                                     <td>
-                                        <span class="fw-bold ms-1">{{ $absenceType->label }}</span>
+                                        <span class="fw-bold ms-1 model-value">{{ $absenceType->label }}</span>
                                         <!-- Libellé du type d'absence -->
                                     </td>
                                     <td>
@@ -47,13 +48,33 @@
                                             <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
                                                 data-bs-target="#absenceTypeUpdate{{ $absenceType->id }}"><i
                                                     class="icofont-edit text-success"></i></button>
-                                            <button type="button" class="btn btn-outline-secondary deleterow"><i
-                                                    class="icofont-ui-delete text-danger"></i></button>
+
+                                            <buttontype="button" class="btn btn-outline-secondary modelDeleteBtn"
+                                            data-model-action="delete"
+                                            data-model-delete-url={{ route('absenceTypes.destroy', $absenceType->id) }}
+                                            data-model-parent-selector="tr.parent">
+                                            <span class="normal-status">
+                                                <i class="icofont-ui-delete text-danger"></i>
+                                            </span>
+                                            <span class="indicateur d-none">
+                                                <span class="spinner-grow spinner-grow-sm" role="status"
+                                                    aria-hidden="true"></span>
+
+                                            </span>
+                                            </button>
+
                                         </div>
                                     </td>
                                 </tr>
                                 @include('pages.admin.attendances.types.edit')
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="4">
+
+                                        <x-no-data color="warning" text="Aucun Type Absence Enregistré" />
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                     {{-- 
@@ -75,4 +96,5 @@
     <script src="{{ asset('app-js/attendances/types/table.js') }}"></script>
     <script src="{{ asset('app-js/crud/post.js') }}"></script>
     <script src="{{ asset('app-js/crud/put.js') }}"></script>
+    <script src="{{ asset('app-js/crud/delete.js') }}"></script>
 @endpush

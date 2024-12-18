@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AbsenceType;
+use DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 
@@ -125,8 +126,17 @@ class AbsenceTypeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(AbsenceType $absenceType)
+    public function destroy($id)
     {
-        //
+
+        try {
+            DB::table('absence_types')->where('id', $id)->delete();
+
+            return response()->json(['ok' => true, 'message' => 'Le type d\absence a été retiré avec succès.']);
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()]);
+            // return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
+        }
+
     }
 }
