@@ -7,15 +7,34 @@
     <div class="row align-items-center">
         <div class="border-0 mb-4">
             <div
-                class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-                <h3 class="fw-bold mb-0">Demandes Absences</h3>
-                <div class="col-auto d-flex w-sm-100">
-                    <button type="button" class="btn btn-dark btn-set-task w-sm-100" data-bs-toggle="modal"
-                        data-bs-target="#absenceAdd"><i class="icofont-plus-circle me-2 fs-6"></i>Soumettre</button>
+                class="card-header p-0 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+                <h3 class="fw-bold py-3 mb-0">Demandes Absences</h3>
+                <div class="d-flex py-2 project-tab flex-wrap w-sm-100">
+                    <button type="button" class="btn btn-dark w-sm-100" data-bs-toggle="modal"
+                        data-bs-target="#createAbsence"><i class="icofont-plus-circle me-2 fs-6"></i>Créer</button>
+                    <ul class="nav nav-tabs tab-body-header rounded ms-3 prtab-set w-sm-100" role="tablist">
+                        <li class="nav-item"><a class="nav-link {{ $stage === 'ALL' ? 'active' : '' }}"
+                                href="{{ route('absences.requests', 'ALL') }}" role="tab">Toutes</a></li>
+
+                        <li class="nav-item"><a
+                                class="nav-link {{ $stage === 'PENDING' || $stage === 'PENDING' ? 'active' : '' }}"
+                                href="{{ route('absences.requests', 'PENDING') }}" role="tab">Nouvelles</a></li>
+                        <li class="nav-item"><a
+                                class="nav-link {{ $stage === 'IN_PROGRESS' || $stage === 'IN_PROGRESS' ? 'active' : '' }}"
+                                href="{{ route('absences.requests', 'IN_PROGRESS') }}" role="tab">En
+                                Cours De Traitement</a></li>
+
+                        <li class="nav-item"><a class="nav-link {{ $stage === 'APPROVED' ? 'active' : '' }}"
+                                href="{{ route('absences.requests', 'APPROVED') }}" role="tab">Accordées</a></li>
+                        <li class="nav-item"><a class="nav-link {{ $stage === 'REJECTED' ? 'active' : '' }}"
+                                href="{{ route('absences.requests', 'REJECTED') }}" role="tab">Rejetées</a></li>
+
+                    </ul>
                 </div>
             </div>
         </div>
     </div> <!-- Row end  -->
+
     <div class="row clearfix g-3">
         <div class="col-sm-12">
             <div class="card mb-3">
@@ -76,7 +95,39 @@
                                     </tr>
 
                                 @empty
-                                    <x-no-data color="warning" text="Aucune Demande trouvée" />
+                                    <tr>
+                                        @switch($stage)
+                                            @case('APPROVED')
+                                                <td colspan="7"> <x-no-data color="warning" text="Aucune Demande Approuvée" />
+                                                </td>
+                                            @break
+
+                                            @case('IN_PROGRESS')
+                                                <td colspan="7"> <x-no-data color="warning"
+                                                        text="Aucune Demande En Cours De Traitement" />
+                                                </td>
+                                            @break
+
+                                            @case('REJECTED')
+                                                <td colspan="7"> <x-no-data color="warning" text="Aucune Demande Rejetée" /></td>
+                                            @break
+
+                                            @case('CANCELLED')
+                                                <td colspan="7"> <x-no-data color="warning" text="Aucune Demande Annulée" /></td>
+                                            @break
+
+                                            @case('COMPLETED')
+                                                <td colspan="7"> <x-no-data color="warning" text="Aucune Demande Complétée" />
+                                                </td>
+                                            @break
+
+                                            @default
+                                                <td colspan="7"> <x-no-data color="warning" text="Aucune Demande En Attente" />
+                                                </td>
+                                        @endswitch
+
+
+                                    </tr>
                                 @endforelse
                             </tbody>
                         </table>
