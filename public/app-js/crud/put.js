@@ -1,15 +1,24 @@
 "use strict";
 let AppAdminModelUpdateManager = (function () {
-    let modelUpdateForms;
+    let modelUpdateFormContainers;
 
     const handleModelUpdate = () => {
-        modelUpdateForms.forEach((modelUpdateForm) => {
+        modelUpdateFormContainers.forEach((modelUpdateFormContainer) => {
+            const updateModelFormId = modelUpdateFormContainer.id;
+            console.log(updateModelFormId);
+
+            const modelUpdateBtn = document.querySelector(
+                `#${updateModelFormId} button.modelUpdateBtn`
+            );
+            const modelUpdateForm = document.querySelector(
+                `#${updateModelFormId} form`
+            );
             const updateModelUrl = modelUpdateForm.getAttribute(
                 "data-model-update-url"
             );
-
-            const modelUpdateBtn =
-                modelUpdateForm.querySelector(".modelUpdateBtn");
+            // console.log(modelUpdateBtn);
+            // console.log(modelUpdateForm);
+            // console.log(updateModelUrl);
 
             modelUpdateBtn.addEventListener("click", (e) => {
                 e.preventDefault();
@@ -29,10 +38,12 @@ let AppAdminModelUpdateManager = (function () {
     };
     return {
         init: () => {
-            modelUpdateForms = document.querySelectorAll(".modelUpdateForm");
-            // console.log(modelUpdateForms);
+            modelUpdateFormContainers = document.querySelectorAll(
+                ".modelUpdateFormContainer"
+            );
+            // console.log(modelUpdateFormContainers);
 
-            if (!modelUpdateForms) {
+            if (!modelUpdateFormContainers) {
                 return;
             }
 

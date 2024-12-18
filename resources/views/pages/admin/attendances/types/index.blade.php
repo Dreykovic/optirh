@@ -11,7 +11,7 @@
                 <h3 class="fw-bold mb-0">Types Absences</h3>
                 <div class="col-auto d-flex w-sm-100">
                     <button type="button" class="btn btn-dark btn-set-task w-sm-100" data-bs-toggle="modal"
-                        data-bs-target="#depadd"><i class="icofont-plus-circle me-2 fs-6"></i>Add Departments</button>
+                        data-bs-target="#absenceTypeAdd"><i class="icofont-plus-circle me-2 fs-6"></i>Ajouter</button>
                 </div>
             </div>
         </div>
@@ -30,10 +30,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($absenceTypes as $absenceType)
+                            @foreach ($absenceTypes as $index => $absenceType)
                                 <tr>
                                     <td>
-                                        <span class="fw-bold">{{ $absenceType->id }}</span>
+                                        <span class="fw-bold">{{ $index + 1 }}</span>
                                     </td>
                                     <td>
                                         <span class="fw-bold ms-1">{{ $absenceType->label }}</span>
@@ -45,12 +45,14 @@
                                     <td>
                                         <div class="btn-group" role="group" aria-label="Basic outlined example">
                                             <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
-                                                data-bs-target="#depedit"><i class="icofont-edit text-success"></i></button>
+                                                data-bs-target="#absenceTypeUpdate{{ $absenceType->id }}"><i
+                                                    class="icofont-edit text-success"></i></button>
                                             <button type="button" class="btn btn-outline-secondary deleterow"><i
                                                     class="icofont-ui-delete text-danger"></i></button>
                                         </div>
                                     </td>
                                 </tr>
+                                @include('pages.admin.attendances.types.edit')
                             @endforeach
                         </tbody>
                     </table>
@@ -64,10 +66,13 @@
             </div>
         </div>
     </div><!-- Row End -->
+    @include('pages.admin.attendances.types.create')
 @endsection
 @push('plugins-js')
     <script src={{ asset('assets/bundles/dataTables.bundle.js') }}></script>
 @endpush
 @push('js')
     <script src="{{ asset('app-js/attendances/types/table.js') }}"></script>
+    <script src="{{ asset('app-js/crud/post.js') }}"></script>
+    <script src="{{ asset('app-js/crud/put.js') }}"></script>
 @endpush

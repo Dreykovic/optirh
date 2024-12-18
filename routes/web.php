@@ -69,6 +69,8 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::prefix('/absence-types')->group(function () {
             Route::get('/list', [AbsenceTypeController::class,  'index'])->name('absenceTypes.index');
+            Route::post('/save', [AbsenceTypeController::class,  'store'])->name('absenceTypes.save');
+            Route::post('/update/{absenceTypeId}', [AbsenceTypeController::class,  'update'])->name('absenceTypes.update');
         });
     });
 

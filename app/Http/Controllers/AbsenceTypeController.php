@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AbsenceType;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 
 class AbsenceTypeController extends Controller
@@ -39,7 +40,35 @@ class AbsenceTypeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            // Valider les fichiers et l'image
+            $request->validate([
+                'libelle' => 'required|string',
+                'description' => 'sometimes',
+
+            ]);
+
+
+            AbsenceType::create([
+                'label' => $request->input('libelle'),
+                'description' => $request->input('description'),
+
+            ]);
+
+            // Redirection avec message de succès
+            return response()->json(['message' => 'Type Absence créé avec succès.', 'ok' => true]);
+        } catch (ValidationException $e) {
+            // Gestion des erreurs de validation
+            // return response()->json(['ok' => false, 'errors' => $e->errors(), 'message' => 'Données invalides. Veuillez vérifier votre saisie.']);
+            return response()->json(['ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
+            ], 422);
+        } catch (\Throwable $th) {
+            // return response()->json(['ok' => false,  'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
+
+            return response()->json(['ok' => false,  'message' => $th->getMessage()], 500);
+        }
     }
 
     /**
@@ -61,9 +90,36 @@ class AbsenceTypeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, AbsenceType $absenceType)
+    public function update(Request $request, $absenceTypeId)
     {
-        //
+        try {
+            // Valider les fichiers et l'image
+            $request->validate([
+                'libelle' => 'required|string',
+                'description' => 'sometimes',
+
+            ]);
+            $absenceType = AbsenceType::find($absenceTypeId);
+            $absenceType->label = $request->input('libelle');
+            $absenceType->description = $request->input('description');
+
+            $absenceType->save();
+
+
+            // Redirection avec message de succès
+            return response()->json(['message' => 'Type Absence mis à jour avec succès.', 'ok' => true]);
+        } catch (ValidationException $e) {
+            // Gestion des erreurs de validation
+            // return response()->json(['ok' => false, 'errors' => $e->errors(), 'message' => 'Données invalides. Veuillez vérifier votre saisie.']);
+            return response()->json(['ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
+            ], 422);
+        } catch (\Throwable $th) {
+            // return response()->json(['ok' => false,  'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
+
+            return response()->json(['ok' => false,  'message' => $th->getMessage()], 500);
+        }
     }
 
     /**
