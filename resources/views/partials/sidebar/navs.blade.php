@@ -14,7 +14,8 @@
         <ul class="sub-menu collapse {{ Str::startsWith(request()->path(), 'attendances') ? 'show' : '' }}"
             id="attendances-navs">
 
-            <li><a class="ms-link {{ Request::is('attendances/list') ? 'active' : '' }}" href="#">
+            <li><a class="ms-link {{ Request::is('attendances/absences/requests') ? 'active' : '' }}"
+                    href="{{ route('absences.requests') }}">
                     <span>Demandes d'absences</span></a>
             </li>
 

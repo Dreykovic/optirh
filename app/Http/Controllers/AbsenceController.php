@@ -10,9 +10,16 @@ class AbsenceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function absencesRequests()
     {
-        //
+        try {
+            $absences = Absence::all();
+
+            return view("pages.admin.attendances.absences.requests", compact('absences'));
+        } catch (\Throwable $th) {
+            dd($th->getMessage());
+            abort(500);
+        }
     }
 
     /**

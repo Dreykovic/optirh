@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -19,9 +20,13 @@ Route::group(['middleware' => 'guest'], function () {
     /*
      * Auth
      */
-    Route::get('/login', [AuthController::class,  'login']
+    Route::get(
+        '/login',
+        [AuthController::class,  'login']
     )->name('login');
-    Route::post('/login', [AuthController::class, 'logUser']
+    Route::post(
+        '/login',
+        [AuthController::class, 'logUser']
     );
 
     Route::get('/login/forgot-password', [AuthController::class, 'forgotPasswordFormGet'])->name('forgot-password');
@@ -43,4 +48,22 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/help', function () {
         return view('pages.admin.help');
     })->name('help');
+
+
+    /*
+     * Attendances
+     */
+
+    Route::prefix('/attendances')->group(function () {
+        /*
+        * Absences
+        */
+
+        Route::prefix('/absences')->group(function () {
+            Route::get('/requests', [AbsenceController::class,  'absencesRequests'])->name('absences.requests');
+        });
+    });
+
+
+
 });
