@@ -6,7 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -14,21 +14,23 @@ return new class extends Migration {
     {
         Schema::create('absences', function (Blueprint $table) {
             $table->id();
-            $table->string('day_requested');
-            $table->string('level');
+            $table->unsignedInteger('requested_days'); // Nombre total de jours demandés
+            $table->enum('level', ["ZERO",'ONE', 'TWO', 'THREE'])->default('ZERO'); // Priorité de l'absence
             $table->date('start_date');
             $table->date('end_date');
             $table->string('address')->nullable();
-            $table->date('date_of_application');
+            $table->date('date_of_application')->default(now());
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
 
-            $table->date('date_of_approval');
+            $table->date('date_of_approval')->nullable();
+            $table->enum('stage', ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'IN_PROGRESS', 'COMPLETED'])->default('PENDING');
 
-            $table->string('reasons')->nullable();
+            $table->text('reasons')->nullable();
             $table->string('proof')->nullable();
-            $table->string('comment')->nullable();
+            $table->text('comment')->nullable();
             $table->foreignIdFor(Duty::class)->nullable()->constrained()->onDelete('cascade');
-            $table->foreignIdFor(AbsenceType::class)->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('absence_type_id')->nullable()->constrained()->onDelete('set null'); // Clé étrangère vers le type d'absence
+
             $table->timestamps();
         });
     }
