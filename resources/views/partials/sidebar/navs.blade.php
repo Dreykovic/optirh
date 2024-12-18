@@ -5,30 +5,24 @@
 
 
     <!-- Accounte -->
-    {{-- <li class="collapsed">
-        <a class="m-link {{ Str::startsWith(request()->path(), 'accounts') ? 'active' : '' }}" data-bs-toggle="collapse"
-            data-bs-target="#accounts-navs" href="#">
-            <i class="icofont-home fs-5"></i> <span>Comptes</span> <span
+    <li class="collapsed">
+        <a class="m-link {{ Str::startsWith(request()->path(), 'attendances') ? 'active' : '' }}"
+            data-bs-toggle="collapse" data-bs-target="#attendances-navs" href="#">
+            <i class="icofont-home fs-5"></i> <span>Attendances</span> <span
                 class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
         <!-- Menu: Sub menu ul -->
-        <ul class="sub-menu collapse {{ Str::startsWith(request()->path(), 'accounts') ? 'show' : '' }}"
-            id="accounts-navs">
+        <ul class="sub-menu collapse {{ Str::startsWith(request()->path(), 'attendances') ? 'show' : '' }}"
+            id="attendances-navs">
 
-            <li><a class="ms-link {{ Request::is('accounts/list') ? 'active' : '' }}"
-                    href="{{ route('accounts.index') }}">
-                    <span>Liste Comptes</span></a>
-            </li>
-            <li><a class="ms-link {{ Request::is('resuest') ? 'active' : '' }}" href="#">
-                    <span>Calcul d'intérets </span></a>
+            <li><a class="ms-link {{ Request::is('attendances/list') ? 'active' : '' }}" href="#">
+                    <span>Demandes d'absences</span></a>
             </li>
 
-            <li><a class="ms-link {{ Request::is('accounts/types/list') ? 'active' : '' }}"
-                    href="{{ route('accounts.types.index') }}">
-                    <span>Types Comptes</span></a>
-            </li>
+
+
         </ul>
 
-    </li> --}}
+    </li>
 
 
     <!-- Help -->
