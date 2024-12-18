@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Employee;
 use Illuminate\Database\Seeder;
-use App\Models\Employee;
 
 class EmployeeSeeder extends Seeder
 {

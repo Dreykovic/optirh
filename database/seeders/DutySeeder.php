@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Duty;
-use App\Models\Duty;
 use Illuminate\Database\Seeder;
 
 class DutySeeder extends Seeder

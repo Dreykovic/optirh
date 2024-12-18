@@ -3,14 +3,11 @@
 namespace Database\Factories;
 
 use App\Models\Employee;
-use App\Models\Employee;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 class EmployeeFactory extends Factory
 {
-    protected $model = Employee::class;
-
     /**
      * Le nom du modèle associé à la factory.
      *

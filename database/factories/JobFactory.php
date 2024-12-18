@@ -3,8 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Department;
-use App\Models\Department;
-use App\Models\Job;
 use App\Models\Job;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -13,8 +11,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class JobFactory extends Factory
 {
-    protected $model = Job::class;
-
     /**
      * Définit le modèle associé à cette factory.
      *
