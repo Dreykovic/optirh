@@ -61,7 +61,7 @@ Route::group(['middleware' => 'auth'], function () {
         */
 
         Route::prefix('/absences')->group(function () {
-            Route::get('/requests/{stage?}', [AbsenceController::class,  'absencesRequests'])->name('absences.requests');
+            Route::get('/requests/{stage?}', [AbsenceController::class,  'index'])->name('absences.requests');
         });
         /*
         * Absences Types

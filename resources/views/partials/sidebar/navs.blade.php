@@ -16,7 +16,7 @@
 
             <li><a class="ms-link {{ Str::startsWith(request()->path(), 'attendances/absences/requests') ? 'active' : '' }}"
                     href="{{ route('absences.requests') }}">
-                    <span>Demandes d'absences</span></a>
+                    <span>Demandes Absences</span></a>
             </li>
             <li><a class="ms-link {{ Request::is('attendances/absence-types/list') ? 'active' : '' }}"
                     href="{{ route('absenceTypes.index') }}">

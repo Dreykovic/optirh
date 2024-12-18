@@ -35,4 +35,6 @@ class Absence extends Model
     {
         return $this->belongsTo(AbsenceType::class, 'absence_type_id');
     }
+
+
 }

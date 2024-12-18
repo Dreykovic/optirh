@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Absence;
+use App\Models\AbsenceType;
 use Illuminate\Http\Request;
 
 class AbsenceController extends Controller
@@ -10,23 +11,63 @@ class AbsenceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function absencesRequests($stage = 'PENDING')
+    public function index(Request $request, $stage = 'PENDING')
     {
         try {
-            $query = Absence::with(["absence_type", "duty","duty.employee"]);
-            if ($stage != "ALL") {
-                $query->where('stage', '=', $stage);
-            }
-            $absences = $query->get();
+            // Liste des stages valides
+            $validStages = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'IN_PROGRESS', 'COMPLETED'];
 
-            return view("pages.admin.attendances.absences.requests", compact('absences', 'stage'));
+            // Vérification de la validité du stage
+            if ($stage !== 'ALL' && !in_array($stage, $validStages)) {
+                return redirect()->route('absences.index')->with('error', 'Stage invalide');
+            }
+
+            // Récupérer les filtres de recherche
+            $type = $request->input('type');
+            $search = $request->input('search');
+
+            // Récupérer les types d'absences (éviter de faire la requête à chaque appel)
+            $absence_types = AbsenceType::all();
+
+            // Construire la requête principale avec les relations nécessaires
+            $query = Absence::with(['absence_type', 'duty', 'duty.employee']);
+
+            // Appliquer le filtre de recherche (groupe de conditions OR)
+            $query->when($search, function ($q) use ($search) {
+                $q->whereHas('duty.employee', function ($query) use ($search) {
+                    $query->where('first_name', 'ILIKE', '%' . $search . '%')
+                          ->orWhere('last_name', 'ILIKE', '%' . $search . '%');
+                });
+            });
+
+
+            // Filtrer par type d'absence, si précisé
+            $query->when($type, function ($q) use ($type) {
+                $q->where('absence_type_id', $type);
+            });
+
+            // Filtrer par stage si le stage n'est pas "ALL"
+            $query->when($stage !== 'ALL', function ($q) use ($stage) {
+                $q->where('stage', $stage);
+            });
+
+            // Appliquer la pagination seulement si on filtre par stage (sauf ALL)
+            $absences = ($stage !== 'ALL')
+                ? $query->paginate(2)
+                : $query->get();
+
+            // Retourner la vue avec les données nécessaires
+            return view('pages.admin.attendances.absences.index', compact('absences', 'stage', 'absence_types'));
+
         } catch (\Throwable $th) {
-            dd($th->getMessage());
-            // Gestion des erreurs avec un message d'erreur plus propre
-            return back()->with('error', 'Une erreur s\'est produite lors du chargement des types d\'absence.');
-            // abort(500);
+            dd('Erreur lors du chargement des absences : ' . $th->getMessage());
+            // Log propre de l'erreur et affichage d'un message utilisateur
+            \Log::error('Erreur lors du chargement des absences : ' . $th->getMessage());
+            return back()->with('error', 'Une erreur s\'est produite lors du chargement des absences. Veuillez réessayer.');
         }
     }
+
+
     /**
      * ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'IN_PROGRESS', 'COMPLETED']
      */

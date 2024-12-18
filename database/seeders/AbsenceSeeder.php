@@ -19,7 +19,7 @@ class AbsenceSeeder extends Seeder
 
         // Crée 50 absences
         Absence::factory()
-            ->count(6)
+            ->count(60)
             ->create();
     }
 }

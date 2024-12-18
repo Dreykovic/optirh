@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\AbsenceType;
+
 use App\Models\Duty;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

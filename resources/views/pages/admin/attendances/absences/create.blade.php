@@ -56,6 +56,7 @@
                                 @forelse ($absences as $absence)
                                     @php
                                         $employee = $absence->duty->employee;
+                                        $absence_type = $absence->absence_type;
                                     @endphp
                                     <tr>
                                         <td>
@@ -68,7 +69,7 @@
                                                 class="fw-bold ms-1">{{ $employee->last_name . ' ' . $employee->first_name }}</span>
                                         </td>
                                         <td>
-                                            {{ $absence->absence_type->label }}
+                                            {{ !$absence_type ? 'Pas Définis' : $absence_type->label }}
                                         </td>
                                         <td>
                                             @formatDateOnly($absence->start_date)
