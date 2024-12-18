@@ -29,7 +29,7 @@ class EmployeeFactory extends Factory
             'address1' => $this->faker->streetAddress(),
             'address2' => $this->faker->optional()->secondaryAddress(),
             'city' => $this->faker->city(),
-            'state' => $this->faker->stateAbbr(),
+            'state' => $this->faker->streetName(),
             'country' => $this->faker->countryCode(),
             'bank_name' => $this->faker->optional()->company(),
             'code_bank' => $this->faker->optional()->numerify('#####'),
