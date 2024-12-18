@@ -28,7 +28,7 @@ return new class extends Migration {
             $table->string('proof')->nullable();
             $table->string('comment')->nullable();
             $table->foreignIdFor(Duty::class)->nullable()->constrained()->onDelete('cascade');
-            $table->foreignIdFor(AbsenceType::class)->nullable()->constrained()->onDelete('set_null');
+            $table->foreignIdFor(AbsenceType::class)->nullable()->constrained()->onDelete('set null');
             $table->timestamps();
         });
     }

@@ -18,14 +18,14 @@ return new class extends Migration {
             $table->string('first_name', 50)->comment('Prénom de l\'employé');
             $table->string('last_name', 50)->comment('Nom de famille de l\'employé');
             $table->string('email', 100)->unique()->comment('Email de l\'employé');
-            $table->string('phone_number', 15)->unique()->comment('Numéro de téléphone de l\'employé');
+            $table->string('phone_number', 20)->unique()->comment('Numéro de téléphone de l\'employé');
 
             // Adresse de l'employé
             $table->string('address1', 100)->nullable()->comment('Adresse principale');
             $table->string('address2', 100)->nullable()->comment('Complément d\'adresse');
             $table->string('city', 50)->nullable()->comment('Ville');
-            $table->string('state', 2)->nullable()->comment('Code de la région ou de l\'Etat (ISO)');
-            $table->string('country', 2)->nullable()->comment('Code du pays (ISO 3166-1 alpha-2)');
+            $table->string('state', 50)->nullable()->comment('Code de la région ou de l\'Etat (ISO)');
+            $table->string('country', 50)->nullable()->comment('Code du pays (ISO 3166-1 alpha-2)');
 
             // Informations bancaires
             $table->string('bank_name', 50)->nullable()->comment('Nom de la banque');
@@ -41,7 +41,7 @@ return new class extends Migration {
             $table->string('nationality', 50)->nullable()->comment('Nationalité');
             $table->enum('religion', ['Christian', 'Muslim', 'Jewish', 'Hindu', 'Buddhist', 'None', 'Other'])->nullable()->comment('Religion');
             $table->enum('marital_status', ['Single', 'Married', 'Divorced', 'Widowed'])->nullable()->comment('Statut matrimonial');
-            $table->string('emergency_contact', 15)->nullable()->comment('Contact d\'urgence');
+            $table->string('emergency_contact', 20)->nullable()->comment('Contact d\'urgence');
 
             // Statut de l'employé
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED')->comment('Statut de l\'employé');

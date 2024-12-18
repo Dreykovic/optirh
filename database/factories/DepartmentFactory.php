@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class DepartmentFactory extends Factory
 {
+    protected $model = Department::class;
+
     /**
      * Définition du modèle associé à la factory.
      *

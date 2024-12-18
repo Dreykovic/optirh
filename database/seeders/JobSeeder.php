@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Department;
 use App\Models\Job;
+use App\Models\Job;
 use Illuminate\Database\Seeder;
 
 class JobSeeder extends Seeder

@@ -2,8 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Models\Duty;
 use App\Models\Employee;
+use App\Models\Employee;
+use App\Models\Job;
 use App\Models\Job;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -13,14 +14,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class DutyFactory extends Factory
 {
     /**
-     * Le modèle associé à la factory.
-     *
-     * @var string
-     */
-    protected $model = Duty::class;
-
-    /**
-     * Définit les champs du modèle Duty.
+     * Define the model's default state.
      *
      * @return array<string, mixed>
      */

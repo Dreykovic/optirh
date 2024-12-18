@@ -16,6 +16,7 @@ class Duty extends Model
         'type',
         'job_id',
         'employee_id',
+        'evolution',
         'status',
     ];
 
