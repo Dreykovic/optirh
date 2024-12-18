@@ -1,7 +1,9 @@
 {
     "cSpell.words": [
+        "clearfix",
         "datatables",
         "enctype",
+        "endpush",
         "endsection",
         "iban",
         "icofont",
@@ -10,6 +12,8 @@
         "Sokodé",
         "stylesheet",
         "tablist",
-        "Tchamba"
+        "tbody",
+        "Tchamba",
+        "thead"
     ]
 }

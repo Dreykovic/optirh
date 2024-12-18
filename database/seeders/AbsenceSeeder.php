@@ -12,7 +12,7 @@ class AbsenceSeeder extends Seeder
     public function run(): void
     {
         // Crée 5 types d'absence (Congés, Maladie, Formation, etc.)
-        $absenceTypes = AbsenceType::factory()->count(5)->create();
+        // $absenceTypes = AbsenceType::factory()->count(5)->create();
 
         // Crée 10 postes (duties)
         $duties = Duty::factory()->count(10)->create();

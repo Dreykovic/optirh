@@ -31,7 +31,8 @@ class AbsenceFactory extends Factory
             'proof' => $this->faker->optional()->imageUrl(),
             'comment' => $this->faker->optional()->sentence(),
             'duty_id' => Duty::factory(),
-            'absence_type_id' => AbsenceType::factory(),
-        ];
+            // Utiliser un type d'absence existant dans la base de données
+            'absence_type_id' => AbsenceType::inRandomOrder()->first()->id,
+            ];
     }
 }

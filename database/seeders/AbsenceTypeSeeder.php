@@ -59,6 +59,6 @@ class AbsenceTypeSeeder extends Seeder
         }
 
         // Générer des types d'absence aléatoires (optionnel)
-        AbsenceType::factory()->count(5)->create();
+        // AbsenceType::factory()->count(5)->create();
     }
 }

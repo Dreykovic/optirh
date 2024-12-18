@@ -18,6 +18,10 @@
                     href="{{ route('absences.requests') }}">
                     <span>Demandes d'absences</span></a>
             </li>
+            <li><a class="ms-link {{ Request::is('attendances/absence-types/list') ? 'active' : '' }}"
+                    href="{{ route('absenceTypes.index') }}">
+                    <span>Types d'absences</span></a>
+            </li>
 
 
 

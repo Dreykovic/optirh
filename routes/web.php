@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AbsenceController;
+use App\Http\Controllers\AbsenceTypeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -61,6 +62,13 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::prefix('/absences')->group(function () {
             Route::get('/requests', [AbsenceController::class,  'absencesRequests'])->name('absences.requests');
+        });
+        /*
+        * Absences Types
+        */
+
+        Route::prefix('/absence-types')->group(function () {
+            Route::get('/list', [AbsenceTypeController::class,  'index'])->name('absenceTypes.index');
         });
     });
 

@@ -10,9 +10,20 @@ class AbsenceTypeController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+
     public function index()
     {
-        //
+        try {
+
+            $absenceTypes = AbsenceType::all();
+            return view("pages.admin.attendances.types.index", compact('absenceTypes'));
+        } catch (\Throwable $th) {
+            dd($th->getMessage());
+            // Gestion des erreurs avec un message d'erreur plus propre
+            return back()->with('error', 'Une erreur s\'est produite lors du chargement des types d\'absence.');
+            // abort(500);
+        }
     }
 
     /**
