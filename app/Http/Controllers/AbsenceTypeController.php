@@ -43,11 +43,13 @@ class AbsenceTypeController extends Controller
             $request->validate([
                 'libelle' => 'required|string',
                 'description' => 'sometimes',
+                'type' => 'sometimes',
             ]);
 
             AbsenceType::create([
                 'label' => $request->input('libelle'),
                 'description' => $request->input('description'),
+                'type' => $request->input('type') ?? 'NORMAL',
             ]);
 
             // Redirection avec message de succès
@@ -90,10 +92,12 @@ class AbsenceTypeController extends Controller
             $request->validate([
                 'libelle' => 'required|string',
                 'description' => 'sometimes',
+                'type' => 'sometimes',
             ]);
             $absenceType = AbsenceType::find($absenceTypeId);
             $absenceType->label = $request->input('libelle');
             $absenceType->description = $request->input('description');
+            $absenceType->type = $request->input('type') ?? $absenceType->type;
 
             $absenceType->save();
 

@@ -18,6 +18,20 @@
                            <label for="description" class="form-label">Description</label>
                            <textarea name="description" class="form-control" id="description" cols="30" rows="3"></textarea>
                        </div>
+                       <div class="form-group">
+                           <label class="form-label">Qualification</label>
+                           <br>
+                           <label class="fancy-radio">
+                               <input type="radio" name="type" value="EXCEPTIONAL" required=""
+                                   data-parsley-errors-container="#error-radio" data-parsley-multiple="type">
+                               <span><i></i>Exceptionnelle</span>
+                           </label>
+                           <label class="fancy-radio">
+                               <input type="radio" name="type" value="NORMAL" data-parsley-multiple="type" checked>
+                               <span><i></i>Normal</span>
+                           </label>
+                           <p id="error-radio"></p>
+                       </div>
 
                    </div>
                    <div class="modal-footer">

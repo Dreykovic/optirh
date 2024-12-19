@@ -14,13 +14,27 @@
                        <div class="mb-3">
                            <label for="libelle" class="form-label required">Libellé</label>
                            <input type="text" class="form-control" id="libelle" name="libelle"
-                               value={{ $absenceType->label }}>
+                               value="{{ $absenceType->label }}">
                        </div>
                        <div class="mb-3">
                            <label for="description" class="form-label">Description</label>
                            <textarea name="description" class="form-control" id="description" cols="30" rows="3">  {{ $absenceType->description }}</textarea>
                        </div>
+                       <div class="form-group">
+                           <label class="form-label required">Qualification</label>
+                           <br>
+                           <label class="fancy-radio">
+                               <input type="radio" name="type" value="EXCEPTIONAL"
+                                   {{ $absenceType->type === 'EXCEPTIONAL' ? 'checked' : '' }}>
+                               <span><i></i>Exceptionnelle</span>
+                           </label>
+                           <label class="fancy-radio">
+                               <input type="radio" name="type" value="NORMAL"
+                                   {{ $absenceType->type === 'NORMAL' ? 'checked' : '' }}>
+                               <span><i></i>Normal</span>
+                           </label>
 
+                       </div>
                    </div>
                    <div class="modal-footer">
                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
