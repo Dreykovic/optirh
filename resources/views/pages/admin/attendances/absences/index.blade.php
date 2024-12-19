@@ -10,8 +10,8 @@
                 class="card-header p-0 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
                 <h3 class="fw-bold py-3 mb-0">Demandes Absences</h3>
                 <div class="d-flex py-2 project-tab flex-wrap w-sm-100">
-                    <button type="button" class="btn btn-dark w-sm-100" data-bs-toggle="modal"
-                        data-bs-target="#createAbsence"><i class="icofont-plus-circle me-2 fs-6"></i>Créer</button>
+                    <a role="button" href="{{ route('absences.create') }}" class="btn btn-dark w-sm-100"><i
+                            class="icofont-plus-circle me-2 fs-6"></i>Créer</a>
                     <ul class="nav nav-tabs tab-body-header rounded ms-3 prtab-set w-sm-100" role="tablist">
                         <li class="nav-item"><a class="nav-link {{ $stage === 'ALL' ? 'active' : '' }}"
                                 href="{{ route('absences.requests', 'ALL') }}" role="tab">Toutes</a></li>

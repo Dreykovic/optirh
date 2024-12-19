@@ -25,6 +25,10 @@
                     href="{{ route('absenceTypes.index') }}">
                     <span>Types d'absences</span></a>
             </li>
+            <li><a class="ms-link {{ Request::is('attendances/holidays/list') ? 'active' : '' }}"
+                    href="{{ route('holidays.index') }}">
+                    <span>Jours Fériés</span></a>
+            </li>
 
 
 

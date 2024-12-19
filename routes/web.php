@@ -3,6 +3,7 @@
 use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AbsenceTypeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -73,6 +74,14 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/save', [AbsenceTypeController::class,  'store'])->name('absenceTypes.save');
             Route::post('/update/{absenceTypeId}', [AbsenceTypeController::class,  'update'])->name('absenceTypes.update');
             Route::delete('/delete/{absenceTypeId}', [AbsenceTypeController::class,  'destroy'])->name('absenceTypes.destroy');
+        });
+
+        /*
+        * Holidays
+        */
+
+        Route::prefix('/holidays')->group(function () {
+            Route::get('/list/{stage?}', [HolidayController::class,  'index'])->name('holidays.index');
         });
     });
 });

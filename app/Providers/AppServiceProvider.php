@@ -23,16 +23,16 @@ class AppServiceProvider extends ServiceProvider
         Paginator::defaultView('pagination::bootstrap-4');
         Blade::directive('formatDate', function ($expression) {
             return "<?php echo Carbon\Carbon::parse($expression)->locale(app()->getLocale())->isoFormat('DD MMM YYYY HH:mm '); ?>";
-});
-Blade::directive('formatDateOnly', function ($expression) {
-return "<?php echo Carbon\Carbon::parse($expression)->locale(app()->getLocale())->isoFormat('DD MMM YYYY'); ?>";
-});
-Blade::directive('tempsEcoule', function ($expression) {
-return "<?php echo Carbon\Carbon::parse($expression)->locale(app()->getLocale())->diffForHumans([
+        });
+        Blade::directive('formatDateOnly', function ($expression) {
+            return "<?php echo Carbon\Carbon::parse($expression)->locale(app()->getLocale())->isoFormat('DD MMM YYYY'); ?>";
+        });
+        Blade::directive('tempsEcoule', function ($expression) {
+            return "<?php echo Carbon\Carbon::parse($expression)->locale(app()->getLocale())->diffForHumans([
                 'parts' => true,
                 'join' => true,
                 'short' => true,
             ]); ?>";
-});
-}
+        });
+    }
 }
