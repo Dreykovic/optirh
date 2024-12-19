@@ -13,7 +13,10 @@
         <!-- Menu: Sub menu ul -->
         <ul class="sub-menu collapse {{ Str::startsWith(request()->path(), 'attendances') ? 'show' : '' }}"
             id="attendances-navs">
-
+            <li><a class="ms-link {{ Str::startsWith(request()->path(), 'attendances/absences/request/create') ? 'active' : '' }}"
+                    href="{{ route('absences.create') }}">
+                    <span>Faire Une Demande</span></a>
+            </li>
             <li><a class="ms-link {{ Str::startsWith(request()->path(), 'attendances/absences/requests') ? 'active' : '' }}"
                     href="{{ route('absences.requests') }}">
                     <span>Demandes Absences</span></a>

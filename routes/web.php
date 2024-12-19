@@ -50,7 +50,6 @@ Route::group(['middleware' => 'auth'], function () {
         return view('pages.admin.help');
     })->name('help');
 
-
     /*
      * Attendances
      */
@@ -62,6 +61,8 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::prefix('/absences')->group(function () {
             Route::get('/requests/{stage?}', [AbsenceController::class,  'index'])->name('absences.requests');
+            Route::get('/request/create', [AbsenceController::class,  'create'])->name('absences.create');
+            Route::post('/request/save', [AbsenceController::class,  'store'])->name('absences.save');
         });
         /*
         * Absences Types
@@ -74,7 +75,4 @@ Route::group(['middleware' => 'auth'], function () {
             Route::delete('/delete/{absenceTypeId}', [AbsenceTypeController::class,  'destroy'])->name('absenceTypes.destroy');
         });
     });
-
-
-
 });

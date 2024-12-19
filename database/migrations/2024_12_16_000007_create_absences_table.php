@@ -1,12 +1,11 @@
 <?php
 
-
 use App\Models\Duty;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class () extends Migration {
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -15,11 +14,11 @@ return new class () extends Migration {
         Schema::create('absences', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('requested_days'); // Nombre total de jours demandés
-            $table->enum('level', ["ZERO",'ONE', 'TWO', 'THREE'])->default('ZERO'); // Priorité de l'absence
+            $table->enum('level', ['ZERO', 'ONE', 'TWO', 'THREE'])->default('ZERO'); // Priorité de l'absence
             $table->date('start_date');
             $table->date('end_date');
             $table->string('address')->nullable();
-            $table->date('date_of_application')->default(now());
+            $table->dateTime('date_of_application')->default(now());
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
 
             $table->date('date_of_approval')->nullable();
