@@ -49,18 +49,18 @@
                                                 data-bs-target="#absenceTypeUpdate{{ $absenceType->id }}"><i
                                                     class="icofont-edit text-success"></i></button>
 
-                                            <buttontype="button" class="btn btn-outline-secondary modelDeleteBtn"
-                                            data-model-action="delete"
-                                            data-model-delete-url={{ route('absenceTypes.destroy', $absenceType->id) }}
-                                            data-model-parent-selector="tr.parent">
-                                            <span class="normal-status">
-                                                <i class="icofont-ui-delete text-danger"></i>
-                                            </span>
-                                            <span class="indicateur d-none">
-                                                <span class="spinner-grow spinner-grow-sm" role="status"
-                                                    aria-hidden="true"></span>
+                                            <button type="button" class="btn btn-outline-secondary modelDeleteBtn"
+                                                data-model-action="delete"
+                                                data-model-delete-url={{ route('absenceTypes.destroy', $absenceType->id) }}
+                                                data-model-parent-selector="tr.parent">
+                                                <span class="normal-status">
+                                                    <i class="icofont-ui-delete text-danger"></i>
+                                                </span>
+                                                <span class="indicateur d-none">
+                                                    <span class="spinner-grow spinner-grow-sm" role="status"
+                                                        aria-hidden="true"></span>
 
-                                            </span>
+                                                </span>
                                             </button>
 
                                         </div>

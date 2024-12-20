@@ -12,8 +12,8 @@ return new class extends Migration {
     {
         Schema::create('holidays', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->date('date');
+            $table->string('name')->unique();
+            $table->date('date')->unique();
             $table->string('country')->default('Togo');
             $table->boolean('is_public_holiday')->default(true);
             $table->boolean('is_religious')->default(false);

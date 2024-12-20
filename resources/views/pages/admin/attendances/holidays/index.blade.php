@@ -11,7 +11,7 @@
                 <h3 class="fw-bold mb-0">Jours Fériés</h3>
                 <div class="col-auto d-flex w-sm-100">
                     <button type="button" class="btn btn-dark btn-set-task w-sm-100" data-bs-toggle="modal"
-                        data-bs-target="#addholiday"><i class="icofont-plus-circle me-2 fs-6"></i>Ajouter</button>
+                        data-bs-target="#addHolidayModal"><i class="icofont-plus-circle me-2 fs-6"></i>Ajouter</button>
                 </div>
             </div>
         </div>
@@ -42,20 +42,35 @@
                                                 : '');
                                 @endphp
 
-                                <tr>
+                                <tr class="parent">
                                     <td class="{{ $tdClass }}">{{ $index }}</td>
                                     <td class="{{ $tdClass }}">@dayOfWeek($holiday->date)</td>
                                     <td class="{{ $tdClass }}">@formatDateOnly($holiday->date)</td>
-                                    <td class="{{ $tdClass }}">{{ $holiday->name }}</td>
+                                    <td class="{{ $tdClass }} model-value">{{ $holiday->name }}</td>
 
                                     <td>
                                         <div class="btn-group" role="group" aria-label="Basic outlined example">
                                             <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
-                                                data-bs-target="#editholiday"><i
-                                                    class="icofont-edit text-success"></i></button>
-                                            <button type="button" class="btn btn-outline-secondary deleterow"><i
-                                                    class="icofont-ui-delete text-danger"></i></button>
+                                                data-bs-target="#updateHolidayModal{{ $holiday->id }}"><i
+                                                    class="icofont-edit text-success"></i>
+                                            </button>
+
+                                            <button type="button" class="btn btn-outline-secondary modelDeleteBtn"
+                                                data-model-action="delete"
+                                                data-model-delete-url={{ route('holidays.destroy', $holiday->id) }}
+                                                data-model-parent-selector="tr.parent">
+                                                <span class="normal-status">
+                                                    <i class="icofont-ui-delete text-danger"></i>
+                                                </span>
+                                                <span class="indicateur d-none">
+                                                    <span class="spinner-grow spinner-grow-sm" role="status"
+                                                        aria-hidden="true"></span>
+
+                                                </span>
+                                            </button>
+
                                         </div>
+                                        @include('pages.admin.attendances.holidays.edit')
                                     </td>
                                 </tr>
 
@@ -74,6 +89,7 @@
             </div>
         </div>
     </div><!-- Row End -->
+    @include('pages.admin.attendances.holidays.create')
 @endsection
 @push('plugins-js')
     <script src={{ asset('assets/bundles/dataTables.bundle.js') }}></script>
