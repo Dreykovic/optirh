@@ -41,29 +41,48 @@
                                     <td>
                                         @formatDateOnly($absence->end_date)
                                     </td>
-                                    <td class="text-white">
-                                        @switch($stage)
+                                    <td class="fw-bolder text-uppercase">
+                                        @switch($absence->stage)
                                             @case('APPROVED')
-                                                <span class=" badge bg-info">
-                                                    {{ $absence->stage }}
+                                                <span class=" text-success">
+
+                                                    Approuvé
+
                                                 </span>
                                             @break
 
                                             @case('REJECTED')
-                                                <span class=" badge bg-info">
-                                                    {{ $absence->stage }}
+                                                <span class=" text-danger">
+
+                                                    Rejeté
                                                 </span>
                                             @break
 
                                             @case('CANCELLED')
-                                                <span class=" badge bg-info">
-                                                    {{ $absence->stage }}
+                                                <span class=" color-lavender-purple">
+
+                                                    Annulé
+                                                </span>
+                                            @break
+
+                                            @case('IN_PROGRESS')
+                                                <span class=" text-warning">
+
+                                                    En cours de Traitement
+                                                </span>
+                                            @break
+
+                                            @case('COMPLETED')
+                                                <span class=" ">
+
+                                                    Complété
                                                 </span>
                                             @break
 
                                             @default
-                                                <span class=" badge bg-info">
-                                                    {{ $absence->stage }}
+                                                <span class="color-light-orange">
+
+                                                    En attente
                                                 </span>
                                         @endswitch
 
