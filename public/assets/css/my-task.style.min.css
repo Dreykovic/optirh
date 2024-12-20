@@ -16232,82 +16232,99 @@
     width: auto;
   }
   :root {
-    --dark-color: #323a45;
-    --color-fff: #ffffff;
-    --color-100: #f0f0f0;
-    --color-200: #eeeeee;
-    --color-300: #e0e0e0;
-    --color-400: #bdbdbd;
-    --color-500: #555555;
-    --color-600: #757575;
-    --color-700: #616161;
-    --color-800: #424242;
-    --color-900: #212121;
-    --color-000: #000000;
-    --border-color: #f0f0f0;
-    --card-color: #ffffff;
-    --body-color: #b9e1c2ff;
-    --white-color: #dddddd;
-    --sidebar-color: #fcfcfc;
-    --text-color: #212529;
-    --hc-font-color: #555555;
-    --hc-bg-color: #f0f0f0;
+    --dark-color: #2c2f33; /* Gris anthracite */
+    --color-fff: #ffffff; /* Blanc pur */
+    --color-100: #f5f9f6; /* Vert ultra clair (presque blanc) */
+    --color-200: #eaf2ec; /* Vert très clair */
+    --color-300: #d6e6d9; /* Vert clair doux */
+    --color-400: #b5d4b8; /* Vert léger */
+    --color-500: #82b690; /* Vert naturel */
+    --color-600: #629d72; /* Vert apaisé */
+    --color-700: #4a7f58; /* Vert intense */
+    --color-800: #3c6847; /* Vert soutenu */
+    --color-900: #2c5135; /* Vert foncé */
+    --color-000: #000000; /* Noir pur */
+    
+    --border-color: #b5d4b8; /* Vert léger pour les bordures des champs */
+    --card-color: #ffffff; /* Blanc pur pour les cartes */
+    --body-color: #f5f9f6; /* Fond vert ultra clair */
+    --white-color: #f8f8f8; /* Blanc cassé */
+    --sidebar-color: #eaf2ec; /* Fond de la barre latérale (vert ultra clair) */
+    --text-color: #2c2f33; /* Texte principal (gris anthracite) */
+    --hc-font-color: #4a7f58; /* Texte secondaire (vert intense) */
+    --hc-bg-color: #eaf2ec; /* Fond secondaire (vert très clair) */
+    
+    --primary-color: #629d72; /* Vert principal pour les boutons et champs */
+    --secondary-color: #ffb84d; /* Orange doux pour les accents */
+    --success-color: #82b690; /* Vert succès (apaisé) */
+    --error-color: #f44336; /* Rouge pour les erreurs */
+    --info-color: #2196f3; /* Bleu pour les informations */
+    --warning-color: #ff9800; /* Orange pour les avertissements */
   }
+  
   [data-theme='dark'] {
-    --dark-color: #323a45;
-    --color-fff: #000000;
-    --color-100: #212121;
-    --color-200: #262727;
-    --color-300: #616161;
-    --color-400: #757575;
-    --color-500: #8f8f8f;
-    --color-600: #bdbdbd;
-    --color-700: #e0e0e0;
-    --color-800: #eeeeee;
-    --color-900: #f0f0f0;
-    --color-000: #ffffff;
-    --border-color: #89ca5dff;
-    --card-color: #666666;
-    --body-color: #555555;
-    --white-color: #dddddd;
-    --sidebar-color: #fcfcfc;
-    --text-color: #b9e1c2ff;
-    --hc-font-color: #555555;
-    --hc-bg-color: #f0f0f0;
+    --dark-color: #181a1b; /* Gris très sombre (presque noir) */
+    --color-fff: #ffffff; /* Blanc pur */
+    --color-100: #2c2f33; /* Gris foncé */
+    --color-200: #324136; /* Vert-gris foncé */
+    --color-300: #3c5543; /* Vert foncé doux */
+    --color-400: #4a7f58; /* Vert intense (pour les accents) */
+    --color-500: #629d72; /* Vert principal (pour les champs) */
+    --color-600: #82b690; /* Vert plus clair (pour les succès) */
+    --color-700: #b5d4b8; /* Vert léger (pour les hovers) */
+    --color-800: #eaf2ec; /* Vert très clair (pour les cartes) */
+    --color-900: #f5f9f6; /* Vert ultra clair (pour les fonds) */
+    --color-000: #000000; /* Noir pur */
+    
+    --border-color: #4a7f58; /* Vert intense pour les bordures des champs */
+    --card-color: #324136; /* Fond des cartes (vert foncé) */
+    --body-color: #181a1b; /* Fond principal du thème sombre */
+    --white-color: #e0e0e0; /* Blanc cassé (gris très clair) */
+    --sidebar-color: #2c2f33; /* Fond de la barre latérale (gris anthracite) */
+    --text-color: #f0f0f0; /* Texte principal (blanc cassé) */
+    --hc-font-color: #b5d4b8; /* Texte secondaire (vert léger) */
+    --hc-bg-color: #3c5543; /* Fond secondaire (vert foncé doux) */
+    
+    --primary-color: #629d72; /* Vert principal pour les champs et boutons */
+    --secondary-color: #ffb84d; /* Orange doux */
+    --success-color: #82b690; /* Vert succès */
+    --error-color: #f44336; /* Rouge erreur */
+    --info-color: #2196f3; /* Bleu info */
+    --warning-color: #ff9800; /* Orange avertissement */
   }
+  
   [data-theme='dark'] [class='theme-indigo'] {
-    --secondary-color: #fdf509ff;
-    --body-color: #324936;
-    --border-color: #89ca5dff;
-    --card-color: #324936;
+    --secondary-color: #ffb84d; /* Orange doux */
+    --body-color: #324136; /* Fond principal */
+    --border-color: #629d72; /* Bordure vert principal */
+    --card-color: #324136; /* Fond des cartes */
     --primary-gradient: linear-gradient(
       45deg,
-      #000000ff,
-      #fdf509ff,
-      #89ca5dff,
-      #25ae49ff,
-      #b9e1c2ff
+      #181a1b,
+      #4a7f58,
+      #82b690,
+      #f5f9f6
     );
   }
+  
   [class='theme-indigo'] {
-    --primary-color: #25ae49ff;
-    --secondary-color: #fdf509ff;
-    --chart-color1: #484c7f;
-    --chart-color2: #f19828;
-    --chart-color3: #f5558d;
-    --chart-color4: #a7daff;
-    --chart-color5: #9cbf3b;
-    --chart-color6: #a0c1b8;
-    --chart-color7: #64868e;
+    --primary-color: #629d72; /* Vert principal équilibré */
+    --secondary-color: #ffb84d; /* Orange doux */
+    --chart-color1: #4a7f58; /* Vert intense */
+    --chart-color2: #ffb84d; /* Orange doux */
+    --chart-color3: #2196f3; /* Bleu info */
+    --chart-color4: #f44336; /* Rouge erreur */
+    --chart-color5: #ff9800; /* Orange avertissement */
+    --chart-color6: #82b690; /* Vert succès */
+    --chart-color7: #555555; /* Gris moyen */
     --primary-gradient: linear-gradient(
       45deg,
-      #000000ff,
-      #fdf509ff,
-      #89ca5dff,
-      #25ae49ff,
-      #b9e1c2ff
+      #4a7f58,
+      #82b690,
+      #f5f9f6
     );
   }
+  
   .secondary-color {
     color: var(--secondary-color);
   }
