@@ -6,13 +6,15 @@
             <div class="card-body  ">
 
                 @include('pages.admin.attendances.absences.request.body')
-                <w>
+
             </div>
         </div>
-        <div class="card">
 
-            @include('pages.admin.attendances.absences.request.footer')
-        </div>
+    </div>
+    <div class="card">
+
+        @include('pages.admin.attendances.absences.request.footer')
     </div>
     <!-- Add Comment-->
     @include('pages.admin.attendances.absences.request.comment')
+</div>
