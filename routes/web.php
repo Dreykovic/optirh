@@ -67,6 +67,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/request/approve/{absenceId}', [AbsenceController::class,  'approve'])->name('absences.approve');
             Route::post('/request/reject/{absenceId}', [AbsenceController::class,  'reject'])->name('absences.reject');
             Route::post('/request/comment/{absenceId}', [AbsenceController::class,  'comment'])->name('absences.comment');
+            Route::post('/request/cancel/{absenceId}', [AbsenceController::class,  'cancel'])->name('absences.cancel');
         });
         /*
         * Absences Types

@@ -430,6 +430,49 @@ class AbsenceController extends Controller
         }
     }
 
+    public function cancel($id)
+    {
+        try {
+            // Rechercher l'absence par ID
+            $absence = Absence::findOrFail($id);
+            if ($absence->level != 'ONE') {
+                return response()->json([
+                    'ok' => false,
+                    'message' => "Vous ne pouvez plus annulé cette demande de {$absence->absence_type->label}.",
+                ], 403);
+            }
+            $absence->stage = 'CANCELED';
+
+            $absence->save();
+
+            return response()->json([
+                'message' => "Demande De {$absence->absence_type->label} rejeté",
+
+                'ok' => true,
+            ]);
+        } catch (ValidationException $e) {
+            // Gestion des erreurs de validation
+            return response()->json([
+                'ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (ModelNotFoundException $e) {
+            // Gestion des cas où le modèle n'est pas trouvé
+            return response()->json([
+                'ok' => false,
+                'message' => 'Données introuvables. Veuillez vérifier les entrées.',
+            ], 404);
+        } catch (\Throwable $th) {
+            // Gestion générale des erreurs
+            return response()->json([
+                'ok' => false,
+                'message' => 'Une erreur s’est produite. Veuillez réessayer.',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
+    }
+
     /**
      * Remove the specified resource from storage.
      */

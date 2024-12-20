@@ -6,11 +6,12 @@
                     <table id="absencesTable" class="table table-hover  align-middle mb-0" style="width:100%">
                         <thead>
                             <tr>
-                                <th>Matricule</th>
                                 <th>Employée</th>
                                 <th>Type Absence</th>
                                 <th>De</th>
                                 <th>A</th>
+                                <th>Nbr Jrs</th>
+
                                 <th>Statut</th>
                                 <th>Actions</th>
                             </tr>
@@ -22,14 +23,16 @@
                                     $absence_type = $absence->absence_type;
                                 @endphp
                                 <tr>
-                                    <td>
-                                        <a href="#" class="fw-bold text-primary">{{ $employee->matricule }}</a>
-                                    </td>
+
                                     <td>
                                         <img class="avatar rounded-circle"
                                             src={{ asset('assets/images/xs/avatar1.jpg') }} alt="">
-                                        <span
-                                            class="fw-bold ms-1">{{ $employee->last_name . ' ' . $employee->first_name }}</span>
+                                        <a href="#" class="fw-bold">
+                                            <span>{{ $employee->last_name . ' ' . $employee->first_name }}
+                                            </span>
+                                        </a>
+
+
                                     </td>
                                     <td>
                                         {{ !$absence_type ? 'Pas Définis' : $absence_type->label }}
@@ -40,6 +43,9 @@
                                     </td>
                                     <td>
                                         @formatDateOnly($absence->end_date)
+                                    </td>
+                                    <td>
+                                        {{ $absence->requested_days }} Jours
                                     </td>
                                     <td class="fw-bolder text-uppercase">
                                         @switch($absence->stage)
@@ -88,17 +94,14 @@
 
                                     </td>
                                     <td>
-                                        <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                            <button type="button" class="btn btn-outline-secondary"
-                                                data-bs-toggle="modal" data-bs-target="#leaveapprove"><i
-                                                    class="icofont-check-circled text-success"></i></button>
-                                            <button type="button" class="btn btn-outline-secondary deleterow"
-                                                data-bs-toggle="modal" data-bs-target="#leavereject"><i
-                                                    class="icofont-close-circled text-danger"></i></button>
-                                        </div>
+                                        @include('pages.admin.attendances.absences.actions')
+
+
+                                        {{-- @include('pages.admin.attendances.absences.request.comment') --}}
+
                                     </td>
                                 </tr>
-
+                                @include('pages.admin.attendances.absences.details')
                                 @empty
                                     <tr>
                                         @switch($stage)

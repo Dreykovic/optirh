@@ -8,7 +8,7 @@ let AppAdminModelUpdateManager = (function () {
             console.log(updateModelFormId);
 
             const modelUpdateBtn = document.querySelector(
-                `#${updateModelFormId} button.modelUpdateBtn`
+                `#${updateModelFormId} .modelUpdateBtn`
             );
             const modelUpdateForm = document.querySelector(
                 `#${updateModelFormId} form`

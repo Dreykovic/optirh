@@ -1,4 +1,3 @@
-<div class="card-body  ">
     <div class="row mb-4">
         <div class="col-sm-6">
             <h6 class="mb-3">Supérieur Hiérarchique:</h6>
@@ -51,7 +50,3 @@
         </span>
         <p class="ml-1">{{ $absence->comment ? ' ' . $absence->comment : ' Aucun' }}</p>
     </div>
-
-
-
-</div>
