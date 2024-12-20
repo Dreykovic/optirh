@@ -20,7 +20,7 @@
         <div class="col-sm-12">
             <div class="card mb-3">
                 <div class="card-body">
-                    <table id="myProjectTable" class="table table-hover align-middle mb-0" style="width:100%">
+                    <table id="holidaysTable" class="table table-hover align-middle mb-0" style="width:100%">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -32,11 +32,22 @@
                         </thead>
                         <tbody>
                             @forelse ($holidays as $index => $holiday)
+                                @php
+                                    $tdClass =
+                                        Carbon\Carbon::parse($holiday->date)->isPast() &&
+                                        !Carbon\Carbon::parse($holiday->date)->isToday()
+                                            ? 'text-danger'
+                                            : (Carbon\Carbon::parse($holiday->date)->isToday()
+                                                ? 'text-success'
+                                                : '');
+                                @endphp
+
                                 <tr>
-                                    <td class="text-danger">{{ $index }}</td>
-                                    <td class="text-danger">Tuesday</td>
-                                    <td class="text-danger">January 26, 2021</td>
-                                    <td class="text-danger">Republic Day</td>
+                                    <td class="{{ $tdClass }}">{{ $index }}</td>
+                                    <td class="{{ $tdClass }}">@dayOfWeek($holiday->date)</td>
+                                    <td class="{{ $tdClass }}">@formatDateOnly($holiday->date)</td>
+                                    <td class="{{ $tdClass }}">{{ $holiday->name }}</td>
+
                                     <td>
                                         <div class="btn-group" role="group" aria-label="Basic outlined example">
                                             <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"

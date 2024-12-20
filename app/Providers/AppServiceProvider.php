@@ -34,5 +34,9 @@ class AppServiceProvider extends ServiceProvider
                 'short' => true,
             ]); ?>";
         });
+
+        Blade::directive('dayOfWeek', function ($expression) {
+            return "<?php echo Carbon\Carbon::parse($expression)->locale(app()->getLocale())->isoFormat('dddd'); ?>";
+        });
     }
 }

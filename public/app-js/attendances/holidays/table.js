@@ -3,7 +3,7 @@
 let AppAbsenceTypeListManager = (function () {
     return {
         init: () => {
-            AppModules.initDataTable("#absenceTypesTable");
+            AppModules.initDataTable("#holidaysTable");
         },
     };
 })();
