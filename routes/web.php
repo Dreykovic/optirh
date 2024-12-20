@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\EmployeeController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\JobController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,8 +42,29 @@ Route::group(['middleware' => 'auth'], function () {
 
     /*
       * Help
-      */
+    */
     Route::get('/help', function () {
         return view('pages.admin.help');
     })->name('help');
+
+
+
+    //Personnel
+    Route::get('/membres', [EmployeeController::class, 'index'])->name('membres');
+    Route::get('/membres/{employee}', [EmployeeController::class, 'show'])->name('membres.show');
+
+    Route::get('/directions', [DepartmentController::class, 'index'])->name('directions');
+    Route::get('/directions/{department}', [DepartmentController::class, 'show'])->name('directions.show');
+    Route::post('/directions/create', [DepartmentController::class, 'store'])->name('directions.store');
+    Route::put('/directions/{id}', [DepartmentController::class, 'update'])->name('directions.update');
+    Route::delete('/directions/{id}', [DepartmentController::class, 'destroy'])->name('directions.destroy');
+
+
+    Route::post('/jobs/create', [JobController::class, 'store'])->name('jobs.store');
+    Route::put('/jobs/{id}', [JobController::class, 'update'])->name('jobs.update');
+    Route::delete('/jobs/{id}', [JobController::class, 'destroy'])->name('jobs.destroy');
+
+
+
 });
+

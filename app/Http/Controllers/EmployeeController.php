@@ -13,6 +13,10 @@ class EmployeeController extends Controller
     public function index()
     {
         //
+        // $employees = Employee::all();
+        $employees = Employee::orderBy('created_at', 'desc')->get();
+        $nbre_employees = $employees->count();
+        return view('pages.personnel.membres',compact('employees', 'nbre_employees'));
     }
 
     /**
@@ -37,6 +41,8 @@ class EmployeeController extends Controller
     public function show(Employee $employee)
     {
         //
+        return view('pages.personnel.detail_membre', compact('employee'));
+
     }
 
     /**

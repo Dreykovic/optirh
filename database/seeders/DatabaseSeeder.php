@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             JobSeeder::class,
             DutySeeder::class,
+            FileSeeder::class,
         ]);
     }
 }

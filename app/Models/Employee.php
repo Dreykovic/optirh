@@ -57,8 +57,11 @@ class Employee extends Model
         return $this->hasMany(File::class, 'employee_id');
     }
 
-    public function department(): BelongsTo
-    {
-        return $this->belongsTo(Department::class, 'director_id');
-    }
+    // public function department(): BelongsTo
+    // {
+    //     return $this->belongsTo(Department::class,'director_id');
+    // }
+   
+   
+
 }
