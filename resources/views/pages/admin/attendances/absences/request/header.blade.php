@@ -21,9 +21,50 @@
                 </h6>
                 </p>
                 <span class="float-end "> <strong>Status:</strong>
-                    <span class="text-warning"> {{ $absence->stage }}
+                    @switch($absence->stage)
+                        @case('APPROVED')
+                            <span class=" text-success">
 
-                    </span>
+                                Approuvé
+
+                            </span>
+                        @break
+
+                        @case('REJECTED')
+                            <span class=" text-danger">
+
+                                Rejeté
+                            </span>
+                        @break
+
+                        @case('CANCELLED')
+                            <span class=" color-lavender-purple">
+
+                                Annulé
+                            </span>
+                        @break
+
+                        @case('IN_PROGRESS')
+                            <span class=" text-warning">
+
+                                En cours de Traitement
+                            </span>
+                        @break
+
+                        @case('COMPLETED')
+                            <span class=" ">
+
+                                Complété
+                            </span>
+                        @break
+
+                        @default
+                            <span class="color-light-orange">
+
+                                En attente
+                            </span>
+                    @endswitch
+
                 </span>
             </div>
         </div>

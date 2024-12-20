@@ -97,7 +97,6 @@
                                         @include('pages.admin.attendances.absences.actions')
 
 
-                                        {{-- @include('pages.admin.attendances.absences.request.comment') --}}
 
                                     </td>
                                 </tr>
