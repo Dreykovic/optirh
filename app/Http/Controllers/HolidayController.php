@@ -16,7 +16,7 @@ class HolidayController extends Controller
     public function index()
     {
         try {
-            $holidays = Holiday::all();
+            $holidays = Holiday::orderBy('date', 'asc')->get();
 
             return view('pages.admin.attendances.holidays.index', compact('holidays'));
         } catch (\Throwable $th) {

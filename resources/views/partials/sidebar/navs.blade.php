@@ -4,11 +4,11 @@
     </li>
 
 
-    <!-- Accounte -->
+    <!-- Attendances -->
     <li class="collapsed">
         <a class="m-link {{ Str::startsWith(request()->path(), 'attendances') ? 'active' : '' }}"
             data-bs-toggle="collapse" data-bs-target="#attendances-navs" href="#">
-            <i class="icofont-home fs-5"></i> <span>Attendances</span> <span
+            <i class="icofont-calendar fs-5"></i> <span>Attendances</span> <span
                 class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
         <!-- Menu: Sub menu ul -->
         <ul class="sub-menu collapse {{ Str::startsWith(request()->path(), 'attendances') ? 'show' : '' }}"
@@ -39,7 +39,7 @@
 
     <!-- Help -->
     <li><a class="ms-link {{ Request::is('help') ? 'active' : '' }}" href="{{ route('help') }}"><i
-                class="icofont-home fs-5"></i>
+                class="icofont-info fs-5"></i>
             <span>Aide</span></a>
     </li>
 

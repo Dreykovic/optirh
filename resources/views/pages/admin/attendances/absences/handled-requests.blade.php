@@ -25,12 +25,15 @@
                                 <tr>
 
                                     <td>
-                                        <img class="avatar rounded-circle"
-                                            src={{ asset('assets/images/xs/avatar1.jpg') }} alt="">
+                                        <i
+                                            class="icofont icofont-{{ $employee->gender === 'FEMALE' ? 'business-man-alt-2' : 'businesswoman' }} fs-3  avatar rounded-circle    "></i>
+
                                         <a href="#" class="fw-bold">
                                             <span>{{ $employee->last_name . ' ' . $employee->first_name }}
                                             </span>
                                         </a>
+
+
 
 
                                     </td>

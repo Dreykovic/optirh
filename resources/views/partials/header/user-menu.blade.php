@@ -3,17 +3,16 @@
         <p class="mb-0 text-end line-height-sm "><span class="font-weight-bold">{{ auth()->user()->username }}</span></p>
         <small>{{ auth()->user()->getRoleNames()->first() }}</small>
     </div>
-    <a class="nav-link dropdown-toggle pulse p-0" href="#" role="button" data-bs-toggle="dropdown"
-        data-bs-display="static">
-        <img class="avatar lg rounded-circle img-thumbnail" src="{{ asset(asset(auth()->user()->profile_picture)) }}"
-            alt="profile">
+    <a class=" dropdown-toggle pulse p-0" href="#" role="button" data-bs-toggle="dropdown" data-bs-display="static">
+
+        <i class="icofont icofont-business-man-alt-2 avatar lg rounded-circle img-thumbnail fs-3    "></i>
+
     </a>
     <div class="dropdown-menu rounded-lg shadow border-0 dropdown-animation dropdown-menu-end p-0 m-0">
         <div class="card border-0 w280">
             <div class="card-body pb-0">
                 <div class="d-flex py-1">
-                    <img class="avatar rounded-circle" src="{{ asset(auth()->user()->profile_picture) }}"
-                        alt="profile">
+
                     <div class="flex-fill ms-3">
                         <p class="mb-0"><span class="font-weight-bold">{{ auth()->user()->username }}</span>
                         </p>
