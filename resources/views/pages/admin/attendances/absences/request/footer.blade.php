@@ -26,15 +26,32 @@
             </form>
         </div>
 
+        <div class="modelUpdateFormContainer" id="absenceRejectForm{{ $absence->id }}">
 
-        <a class=" btn btn-outline-primary btn-sm border lift" href="#"><i
-                class="icofont-check-circled text-success"></i> <span
-                class="d-none d-sm-none d-md-inline">Approuver</span></a>
+            <form data-model-update-url="{{ route('absences.reject', $absence->id) }}">
 
-        <a class=" btn btn-outline-primary btn-sm border lift" href="#"><i
-                class="icofont-close-circled text-danger"></i> <span
-                class="d-none d-sm-none d-md-inline">Rejeter</span></a>
-        <a class="btn btn-outline-primary btn-sm border lift" href="#"><i class="bi bi-chat-left-text-fill"></i>
-            <span class="d-none d-sm-none d-md-inline">Annuler</span></a>
+
+
+
+                <button type="submit" class="btn btn-outline-primary btn-sm border lift modelUpdateBtn "
+                    atl="update client status">
+                    <span class="normal-status">
+                        <i class="icofont-close-circled text-danger"></i>
+                        <span class="d-none d-sm-none d-md-inline">Rejeter</span>
+                    </span>
+                    <span class="indicateur d-none">
+                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                        Un Instant...
+                    </span>
+                </button>
+
+            </form>
+        </div>
+
+
+
+        <button class="btn btn-outline-primary btn-sm border lift" data-bs-toggle="modal"
+            data-bs-target="#absenceCommentAdd{{ $absence->id }}"><i class="bi bi-chat-left-text-fill"></i>
+            <span class="d-none d-sm-none d-md-inline">Commenter</span></button>
     </div>
 </div>
