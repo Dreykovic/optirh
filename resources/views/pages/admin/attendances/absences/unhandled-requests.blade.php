@@ -44,7 +44,7 @@
                     $absence_type = $absence->absence_type;
                 @endphp
 
-                @include('pages.admin.attendances.absences.request')
+                @include('pages.admin.attendances.absences.request.card')
 
             @empty
                 @switch($stage)

@@ -64,6 +64,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/requests/{stage?}', [AbsenceController::class,  'index'])->name('absences.requests');
             Route::get('/request/create', [AbsenceController::class,  'create'])->name('absences.create');
             Route::post('/request/save', [AbsenceController::class,  'store'])->name('absences.save');
+            Route::post('/request/approve/{absenceId}', [AbsenceController::class,  'approve'])->name('absences.approve');
+            Route::post('/request/reject/{absenceId}', [AbsenceController::class,  'reject'])->name('absences.reject');
         });
         /*
         * Absences Types

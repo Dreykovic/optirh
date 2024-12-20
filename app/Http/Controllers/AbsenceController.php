@@ -55,9 +55,9 @@ class AbsenceController extends Controller
             $query->when($stage !== 'ALL', function ($q) use ($stage) {
                 $q->where('stage', $stage);
             });
-
+            // $limit = in_array($stage, ['PENDING', 'IN_PROGRESS']) ? 2 : 10;
             // Appliquer la pagination seulement si on filtre par stage (sauf ALL)
-            $absences = ($stage !== 'ALL')
+            $absences = (in_array($stage, ['PENDING', 'IN_PROGRESS']))
                 ? $query->paginate(2)
                 : $query->get();
 
@@ -217,6 +217,175 @@ class AbsenceController extends Controller
      */
     public function update(Request $request, Absence $absence)
     {
+    }
+
+    /**
+     * Met à jour le stage et le level d'une absence.
+     *
+     * @param int $id L'ID de l'absence à mettre à jour
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateStageAndLevel(Request $request, $id)
+    {
+        try {
+            // Valider les entrées
+            $validatedData = $request->validate([
+                'stage' => 'required|in:PENDING,APPROVED,REJECTED,CANCELLED,IN_PROGRESS,COMPLETED',
+                'level' => 'required|in:ZERO,ONE,TWO,THREE',
+            ]);
+
+            // Rechercher l'absence par ID
+            $absence = Absence::find($id);
+
+            if (!$absence) {
+                return response()->json([
+                    'message' => 'Absence not found.',
+                ], 404);
+            }
+
+            // Mettre à jour les champs stage et level
+            $absence->stage = $validatedData['stage'];
+            $absence->level = $validatedData['level'];
+
+            // Sauvegarder les modifications
+            $absence->save();
+
+            return response()->json([
+                'message' => 'Stage and level updated successfully.',
+                'ok' => true,
+            ]);
+        } catch (ValidationException $e) {
+            // Gestion des erreurs de validation
+            return response()->json([
+                'ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (ModelNotFoundException $e) {
+            // Gestion des cas où le modèle n'est pas trouvé
+            return response()->json([
+                'ok' => false,
+                'message' => 'Données introuvables. Veuillez vérifier les entrées.',
+            ], 404);
+        } catch (\Throwable $th) {
+            // Gestion générale des erreurs
+            return response()->json([
+                'ok' => false,
+                'message' => 'Une erreur s’est produite. Veuillez réessayer.',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function approve($id)
+    {
+        try {
+            // Rechercher l'absence par ID
+            $absence = Absence::findOrFail($id);
+
+            switch ($absence->stage) {
+                case 'ZERO':
+                    $absence->stage = 'IN_PROGRESS';
+                    $absence->level = 'ONE';
+                    break;
+                case 'ONE':
+                    $absence->stage = 'IN_PROGRESS';
+                    $absence->level = 'TWO';
+                    break;
+                case 'TWO':
+                    $absence->stage = 'APPROVED';
+                    $absence->level = 'THREE';
+                    break;
+
+                default:
+                    $absence->stage = 'APPROVED';
+                    $absence->level = 'THREE';
+                    break;
+            }
+            $absence->save();
+
+            return response()->json([
+                'message' => "Demande De {$absence->absence_type->label} acceptée",
+                'ok' => true,
+            ]);
+        } catch (ValidationException $e) {
+            // Gestion des erreurs de validation
+            return response()->json([
+                'ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (ModelNotFoundException $e) {
+            // Gestion des cas où le modèle n'est pas trouvé
+            return response()->json([
+                'ok' => false,
+                'message' => 'Données introuvables. Veuillez vérifier les entrées.',
+            ], 404);
+        } catch (\Throwable $th) {
+            // Gestion générale des erreurs
+            return response()->json([
+                'ok' => false,
+                'message' => 'Une erreur s’est produite. Veuillez réessayer.',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function reject($id)
+    {
+        try {
+            // Rechercher l'absence par ID
+            $absence = Absence::findOrFail($id);
+            if (!in_array($absence->level, ['THREE', 'FOUR'])) {
+                // Sauvegarder les modifications
+            }
+
+            switch ($absence->stage) {
+                case 'ZERO':
+                    $absence->level = 'ONE';
+                    break;
+                case 'ONE':
+                    $absence->level = 'TWO';
+                    break;
+                case 'TWO':
+                    $absence->level = 'THREE';
+                    break;
+
+                default:
+                    $absence->level = 'THREE';
+                    break;
+            }
+            $absence->stage = 'REJECTED';
+
+            $absence->save();
+
+            return response()->json([
+                'message' => "Demande De {$absence->absence_type->label} rejeté",
+
+                'ok' => true,
+            ]);
+        } catch (ValidationException $e) {
+            // Gestion des erreurs de validation
+            return response()->json([
+                'ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (ModelNotFoundException $e) {
+            // Gestion des cas où le modèle n'est pas trouvé
+            return response()->json([
+                'ok' => false,
+                'message' => 'Données introuvables. Veuillez vérifier les entrées.',
+            ], 404);
+        } catch (\Throwable $th) {
+            // Gestion générale des erreurs
+            return response()->json([
+                'ok' => false,
+                'message' => 'Une erreur s’est produite. Veuillez réessayer.',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
     }
 
     /**

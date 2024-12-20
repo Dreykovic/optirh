@@ -14,7 +14,7 @@ return new class extends Migration {
         Schema::create('absences', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('requested_days'); // Nombre total de jours demandés
-            $table->enum('level', ['ZERO', 'ONE', 'TWO', 'THREE'])->default('ZERO'); // Priorité de l'absence
+            $table->enum('level', ['ZERO', 'ONE', 'TWO', 'THREE', 'FOUR'])->default('ZERO'); // Priorité de l'absence
             $table->date('start_date');
             $table->date('end_date');
             $table->string('address')->nullable();

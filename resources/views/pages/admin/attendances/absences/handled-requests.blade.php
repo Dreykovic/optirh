@@ -41,10 +41,32 @@
                                     <td>
                                         @formatDateOnly($absence->end_date)
                                     </td>
-                                    <td class="text-muted">
-                                        <span class=" badge bg-warning">
-                                            {{ $absence->stage }}
-                                        </span>
+                                    <td class="text-white">
+                                        @switch($stage)
+                                            @case('APPROVED')
+                                                <span class=" badge bg-info">
+                                                    {{ $absence->stage }}
+                                                </span>
+                                            @break
+
+                                            @case('REJECTED')
+                                                <span class=" badge bg-info">
+                                                    {{ $absence->stage }}
+                                                </span>
+                                            @break
+
+                                            @case('CANCELLED')
+                                                <span class=" badge bg-info">
+                                                    {{ $absence->stage }}
+                                                </span>
+                                            @break
+
+                                            @default
+                                                <span class=" badge bg-info">
+                                                    {{ $absence->stage }}
+                                                </span>
+                                        @endswitch
+
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group" aria-label="Basic outlined example">
@@ -58,34 +80,34 @@
                                     </td>
                                 </tr>
 
-                            @empty
-                                <tr>
-                                    @switch($stage)
-                                        @case('APPROVED')
-                                            <td colspan="7"> <x-no-data color="warning" text="Aucune Demande Approuvée" />
-                                            </td>
-                                        @break
+                                @empty
+                                    <tr>
+                                        @switch($stage)
+                                            @case('APPROVED')
+                                                <td colspan="7"> <x-no-data color="warning" text="Aucune Demande Approuvée" />
+                                                </td>
+                                            @break
 
-                                        @case('REJECTED')
-                                            <td colspan="7"> <x-no-data color="warning" text="Aucune Demande Rejetée" /></td>
-                                        @break
+                                            @case('REJECTED')
+                                                <td colspan="7"> <x-no-data color="warning" text="Aucune Demande Rejetée" /></td>
+                                            @break
 
-                                        @case('CANCELLED')
-                                            <td colspan="7"> <x-no-data color="warning" text="Aucune Demande Annulée" /></td>
-                                        @break
+                                            @case('CANCELLED')
+                                                <td colspan="7"> <x-no-data color="warning" text="Aucune Demande Annulée" /></td>
+                                            @break
 
-                                        @default
-                                            <td colspan="7"> <x-no-data color="warning" text="Aucune Demande Complétée" />
-                                            </td>
-                                    @endswitch
+                                            @default
+                                                <td colspan="7"> <x-no-data color="warning" text="Aucune Demande Complétée" />
+                                                </td>
+                                        @endswitch
 
 
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div><!-- Row End -->
+    </div><!-- Row End -->

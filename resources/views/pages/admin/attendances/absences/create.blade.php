@@ -6,12 +6,6 @@
 @endsection
 
 @section('admin-content')
-    <div class="row align-items-center">
-        <div class="border-0 mb-4">
-
-        </div>
-    </div> <!-- Row end  -->
-
     <div class="row justify-content-center">
         <div class="col-lg-8 col-md-12">
             <div class="card p-xl-5 p-lg-4 p-0">
