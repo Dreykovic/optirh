@@ -86,6 +86,9 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::prefix('/holidays')->group(function () {
             Route::get('/list/{stage?}', [HolidayController::class,  'index'])->name('holidays.index');
+            Route::post('/save', [HolidayController::class,  'store'])->name('holidays.save');
+            Route::post('/update/{holidayId}', [HolidayController::class,  'update'])->name('holidays.update');
+            Route::delete('/delete/{holidayId}', [HolidayController::class,  'destroy'])->name('holidays.destroy');
         });
     });
 });
