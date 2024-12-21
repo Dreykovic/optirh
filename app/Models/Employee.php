@@ -40,6 +40,8 @@ class Employee extends Model
         'marital_status',
         'emergency_contact',
         'status',
+        'phone_number', 
+        'gender',
     ];
 
     public function users(): HasMany

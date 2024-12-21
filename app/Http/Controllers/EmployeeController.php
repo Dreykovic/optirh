@@ -122,7 +122,7 @@ class EmployeeController extends Controller
                 'email' => $validatedData['email'],
                 'phone_number' => $validatedData['phone_number'],
                 'address1' => $validatedData['address1'],
-                'gender' => $validatedData['gender'],
+                'gender' => $validatedData['gender']
             ]);
     
             // Création du devoir (Duty)
@@ -131,7 +131,7 @@ class EmployeeController extends Controller
                 'duration' => $validatedData['duration'],
                 'begin_date' => $validatedData['begin_date'],
                 'type' => $validatedData['type'],
-                'employee_id' => $emp->id,
+                'employee_id' => $emp->id
             ]);
     
             // Mise à jour du directeur de la direction si applicable
