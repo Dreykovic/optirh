@@ -11,7 +11,7 @@
                         <div class="card border-0 mb-4 no-bg">
                             <div class="card-header py-3 px-0 d-sm-flex align-items-center  justify-content-between border-bottom">
                                 <h3 class=" fw-bold flex-fill mb-0 mt-sm-0">Nos Employés(Total : {{$nbre_employees}})</h3>
-                                <button type="button" class="btn btn-dark me-1 mt-1 w-sm-100" data-bs-toggle="modal" data-bs-target="#createemp"><i class="icofont-plus-circle me-2 fs-6"></i>Ajouter</button>
+                                <button type="button" class="btn btn-dark me-1 mt-1 w-sm-100" data-bs-toggle="modal" data-bs-target="#addEmpModal"><i class="icofont-plus-circle me-2 fs-6"></i>Ajouter</button>
                                 <div class="dropdown">
                                     <button class="btn btn-primary dropdown-toggle mt-1  w-sm-100" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
                                         Direction
@@ -244,16 +244,17 @@
        </div>
 
         <!-- Create Employee-->
-        <div class="modal fade" id="createemp" tabindex="-1"  aria-hidden="true">
+        <div class="modal fade" id="addEmpModal" tabindex="-1"  aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
                 <div class="modal-content">
                    
                     <div class="modal-body">
-                    <div class="modal-header">
-                        <h5 class="modal-title  fw-bold" id="createprojectlLabel"> Nouveau Employe</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                        <form action="" method="post">
+                        <div class="modal-header">
+                            <h5 class="modal-title  fw-bold" id="createprojectlLabel"> Nouveau Employe</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form id="modelAddForm" data-model-add-url="{{ route('membres.store') }}">
+                            @csrf
                             <fieldset class="border p-3 shadow-sm  border-dark mb-2">
                             <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span class='mb-4'>Identité & Adresse</span></legende>
                                 <div class="row g-3 mb-3 mt-2">
@@ -342,9 +343,18 @@
 
                             </fieldset>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Done</button>
-                                <button type="button" class="btn btn-primary">Enregistrer</button>
-                            </div> 
+                                <button type="button" class="btn btn-lg btn-block lift text-uppercase btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                <button type="submit" class="btn btn-lg btn-block lift text-uppercase btn-primary" atl="Ajouter Emp" id="modelAddBtn"
+                                    data-bs-dismiss="modal">
+                                    <span class="normal-status">
+                                        Enregister
+                                    </span>
+                                    <span class="indicateur d-none">
+                                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                        Un Instant...
+                                    </span>
+                                </button>
+                            </div>
                         </form>
                     </div>    
                     
@@ -356,6 +366,8 @@
 <script src="{{asset('assets/bundles/dataTables.bundle.js')}}"></script>
 @endpush
 @push('js')
+<script src="{{ asset('app-js/crud/post.js') }}"></script>
+
 <script>
 let AppDepartmentListManager = (function () {
     return {

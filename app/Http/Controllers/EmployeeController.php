@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+use App\Models\Duty;
+use App\Models\Job;
 use App\Models\Department;
 use Illuminate\Http\Request;
 
@@ -82,8 +84,74 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            // Validation des données d'entrée
+            $validatedData = $request->validate([
+                'first_name' => 'required|max:255|string',
+                'last_name' => 'required|max:255|string',
+                'email' => 'required|email|max:255',
+                'phone_number' => 'required|string|max:255',
+                'address1' => 'required|string|max:255',
+                'gender' => 'required|string|max:255',
+                'duration' => 'required|string|max:255',
+                'begin_date' => 'required|date',
+                'type' => 'required|string|max:255',
+                'job_id' => 'required|exists:jobs,id',
+                'department_id' => 'required|exists:departments,id',
+            ]);
+    
+            // Récupération de la direction et du poste
+            $dept = Department::find($validatedData['department_id']);
+            $job = Job::find($validatedData['job_id']);
+    
+            if (!$dept || !$job) {
+                return response()->json(['ok' => false, 'message' => 'Direction ou poste introuvable.'], 404);
+            }
+    
+            // Vérification des conditions spécifiques à la direction
+            if ($dept->name === 'DG' && $dept->director_id !== null && $job->title === 'DG') {
+                return response()->json(['ok' => false, 'message' => 'La direction générale a déjà un directeur.'], 400);
+            } elseif ($dept->director_id !== null && str_starts_with($job->title, 'Directeur.rice')) {
+                return response()->json(['ok' => false, 'message' => 'Cette direction a déjà un directeur.'], 400);
+            }
+    
+            // Création de l'employé
+            $emp = Employee::create([
+                'first_name' => $validatedData['first_name'],
+                'last_name' => $validatedData['last_name'],
+                'email' => $validatedData['email'],
+                'phone_number' => $validatedData['phone_number'],
+                'address1' => $validatedData['address1'],
+                'gender' => $validatedData['gender'],
+            ]);
+    
+            // Création du devoir (Duty)
+            Duty::create([
+                'job_id' => $validatedData['job_id'],
+                'duration' => $validatedData['duration'],
+                'begin_date' => $validatedData['begin_date'],
+                'type' => $validatedData['type'],
+                'employee_id' => $emp->id,
+            ]);
+    
+            // Mise à jour du directeur de la direction si applicable
+            if ($dept->name === 'DG' || str_starts_with($job->title, 'Directeur.rice')) {
+                $dept->update(['director_id' => $emp->id]);
+            }
+    
+            return response()->json(['message' => 'Employé créé avec succès.', 'ok' => true]);
+    
+        } catch (ValidationException $e) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
+            ], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+        }
     }
+    
 
     /**
      * Display the specified resource.

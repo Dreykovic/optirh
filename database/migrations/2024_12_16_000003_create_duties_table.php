@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('duties', function (Blueprint $table) {
             $table->id();
             $table->string('duration')->nullable();
-            $table->date('begin_date');
+            $table->date('begin_date')->nullable();
 
             $table->string('type')->nullable();
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');

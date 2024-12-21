@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
 
             // Identité de l'employé
-            $table->string('matricule', 20)->unique()->comment('Identifiant unique de l\'employé');
+            $table->string('matricule', 20)->nullable()->unique()->comment('Identifiant unique de l\'employé');
             $table->string('first_name', 50)->comment('Prénom de l\'employé');
             $table->string('last_name', 50)->comment('Nom de famille de l\'employé');
             $table->string('email', 100)->unique()->comment('Email de l\'employé');
