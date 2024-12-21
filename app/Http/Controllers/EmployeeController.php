@@ -16,7 +16,7 @@ class EmployeeController extends Controller
         // $employees = Employee::all();
         $employees = Employee::orderBy('created_at', 'desc')->get();
         $nbre_employees = $employees->count();
-        return view('pages.personnel.membres',compact('employees', 'nbre_employees'));
+        return view('pages.admin.personnel.membres.index',compact('employees', 'nbre_employees'));
     }
 
     /**
@@ -41,7 +41,7 @@ class EmployeeController extends Controller
     public function show(Employee $employee)
     {
         //
-        return view('pages.personnel.detail_membre', compact('employee'));
+        return view('pages.admin.personnel.membres.show', compact('employee'));
 
     }
 

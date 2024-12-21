@@ -160,12 +160,7 @@
                                         type="button" 
                                         class="btn btn-outline-secondary" 
                                         data-bs-toggle="modal" 
-                                        data-bs-target="#update-job"
-                                        data-job-id="{{ $job->id }}"
-                                        data-job-title="{{ $job->title }}"
-                                        data-job-description="{{ $job->description }}"
-                                        data-job-n-plus-one="{{ $job->n_plus_one_job_id }}"
-                                    >
+                                        data-bs-target="#updateJobModal{{ $job->id }}"                                    >
                                         <i class="icofont-edit text-success"></i>
                                     </button>
 
@@ -178,10 +173,7 @@
                                         </button>
                                     </form>
 
-                                    <!--  -->
-                                    <!-- <button type="button" class="btn btn-outline-secondary deleterow">
-                                        <i class="icofont-ui-delete text-danger"></i>
-                                    </button> -->
+                                   @include('pages.admin.personnel.jobs.edit')
                                 </div>
                             </td>
                         </tr>
@@ -219,7 +211,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('jobs.store') }}" method="POST">
+                <form id="modelAddForm" data-model-add-url="{{ route('jobs.store') }}">
                     @csrf
                     <div class="mb-3">
                         <label for="title" class="form-label">Titre</label>
@@ -244,79 +236,19 @@
                     </div>
                     <input type="text" class="form-control" name='department_id' value='{{$department->id}}' hidden>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        <button type="button" class="btn btn-lg btn-block lift text-uppercase btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="submit" data-bs-dismiss="modal" class="btn btn-lg btn-block lift text-uppercase btn-primary" atl="uu"
+                            id="modelAddBtn">
+                            <span class="normal-status">
+                                Enregistrer
+                            </span>
+                            <span class="indicateur d-none">
+                                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                Un Instant...
+                            </span>
+                        </button>
                     </div>
                 </form>
-            </div>
-            <!--  -->
-        </div>
-    </div>
-</div>
-<!-- Modal update-->
-<div class="modal fade" id="update-job" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="add-job">Modifier Poste</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- <form action="" method="">
-                   
-                    <div class="mb-3">
-                        <label for="title" class="form-label">Titre</label>
-                        <input type="text" class="form-control" id="title" name='title'>
-                    </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <input type="text" class="form-control" id="description" name='description'>
-                    </div>
-                    <div class="mb-3">
-                        <label for="n" class="form-label">N+1</label>
-                        <select class="form-select" aria-label="Default select example" name='n_plus_one_job_id'>
-                            @if($department->jobs)
-                                @foreach ($department->jobs as $job)
-
-                                <option value="{{$job->id}}">{{$job->title}}</option>
-                                @endforeach
-                            @else
-                                <option value="1">N/A</option>
-                            @endif
-                        </select>
-                    </div>
-                    <input type="text" class="form-control" name='department_id' value='{{$department->id}}' hidden>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="submit" class="btn btn-primary">Modifier</button>
-                    </div>
-                </form> -->
-                <form action="" method="POST">
-                    @csrf
-                    <input type="hidden" name="_method" value="PUT">
-                    <div class="mb-3">
-                        <label for="title" class="form-label">Titre</label>
-                        <input type="text" class="form-control" id="title" name="title">
-                    </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <input type="text" class="form-control" id="description" name="description">
-                    </div>
-                    <div class="mb-3">
-                        <label for="n" class="form-label">N+1</label>
-                        <select class="form-select" aria-label="Default select example" name="n_plus_one_job_id">
-                            @foreach ($department->jobs as $jobOption)
-                                <option value="{{ $jobOption->id }}">{{ $jobOption->title }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <input type="hidden" name="department_id" value="{{ $department->id }}">
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="submit" class="btn btn-primary">Modifier</button>
-                    </div>
-                </form>
-
             </div>
             <!--  -->
         </div>
@@ -329,6 +261,8 @@
 
 @endpush
 @push('js')
+<script src={{ asset('app-js/crud/post.js') }}></script>
+<script src={{ asset('app-js/crud/put.js') }}></script>
 <script>
     // Assurez-vous que le DOM est complètement chargé
     document.addEventListener('DOMContentLoaded', function () {
@@ -381,8 +315,12 @@ document.addEventListener("DOMContentLoaded", (e) => {
         modalNPlusOneField.value = jobNPlusOne;
 
         // Met à jour l'action du formulaire avec l'ID du job
-        modalForm.action = `/jobs/${jobId}`;
-        modalForm.method = 'POST';
+        // modalForm.action = `/jobs/${jobId}`;
+        // modalForm.method = 'POST';
+        // modalForm.data-model-update-url = `/jobs/${jobId}`;
+        const updateUrl = `/jobs/${jobId}`;
+        modalForm.setAttribute('data-model-update-url', updateUrl);
+
 
         // Ajoute le champ `_method` pour la requête PUT (nécessaire pour Laravel)
         let methodInput = modalForm.querySelector('input[name="_method"]');

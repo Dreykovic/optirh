@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Department;
+use App\Models\Job;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -25,7 +26,7 @@ class DepartmentController extends Controller
         
 
         $departments = Department::orderBy('created_at', 'desc')->get();
-        return view('pages.personnel.directions', compact('departments', 'duties'));
+        return view('pages.admin.personnel.directions.index', compact('departments', 'duties'));
     }
     
 
@@ -42,7 +43,6 @@ class DepartmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
         try {
             $validatedData = $request->validate([
                 'name' => 'required|unique:departments,name|string|max:255',
@@ -50,21 +50,34 @@ class DepartmentController extends Controller
                 'director_id' => 'nullable|exists:employees,id'
             ]);
     
-            // Create the job
-            Department::create([
+            $validatedData['director_id'] = $validatedData['director_id'] ?? null;
+            $job_superior = Job::where('title', 'DB')->firstOrFail();
+            // Créer le département
+            $dept = Department::create([
                 'name' => $validatedData['name'],
                 'description' => $validatedData['description'],
                 'director_id' => $validatedData['director_id']
             ]);
-        return redirect()->back()->with('success', 'Department created successfully!');
+            Job::create([
+                'title' => 'Directeur·rice '.$dept->name,
+                'description' => 'Directeur·rice '.$dept->description,
+                'n_plus_one_job_id' => $job_superior->id
+            ]);
 
+            return response()->json(['message' => 'Department créé avec succès.', 'ok' => true]);
+    
+        }  catch (ValidationException $e) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
+            ], 422);
         } catch (\Throwable $th) {
-            //throw $th;
-            dump($th);
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
-        
 
     }
+    
 
     /**
      * Display the specified resource.
@@ -72,7 +85,7 @@ class DepartmentController extends Controller
     public function show(Department $department)
     {
         $nbre_postes = $department->jobs->count();
-        return view('pages.personnel.detail_direction', compact('department', 'nbre_postes'));
+        return view('pages.admin.personnel.directions.show', compact('department', 'nbre_postes'));
     }
     
 
@@ -87,10 +100,49 @@ class DepartmentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Department $department)
+    public function update(Request $request, $id)
     {
-        //
+        dump("je yas");
+        try {
+            dump("je yas1");
+            // Valider les données envoyées par l'utilisateur
+            $validatedData = $request->validate([
+                'name' => 'required|unique:departments,name,' . $id . '|string|max:255',
+                'description' => 'required|string|max:500',
+            ]);
+    
+            // Récupérer le département
+            $department = Department::findOrFail($id);
+    
+            // Mettre à jour les informations du département
+            $department->update([
+                'name' => $validatedData['name'],
+                'description' => $validatedData['description'],
+            ]);
+    
+            // Mettre à jour le job "Directeur·rice" associé au département
+            $job = Job::where('title', 'Directeur·rice ' . $department->name)->first();
+    
+            if ($job) {
+                $job->update([
+                    'title' => 'Directeur·rice ' . $department->name,
+                    'description' => 'Directeur·rice ' . $department->description,
+                ]);
+            }
+    
+            return response()->json(['message' => 'Department mis à jour avec succès.', 'ok' => true]);
+    
+        } catch (ValidationException $e) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+        }
     }
+    
 
     /**
      * Remove the specified resource from storage.

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Job;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class JobController extends Controller
 {
@@ -23,30 +24,38 @@ class JobController extends Controller
         //
     }
 
-  
-         /**
+    /**
      * Store a newly created job in storage.
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'title' => 'required|unique:jobs,title|string|max:255',
-            'description' => 'required|string|max:500',
-            'department_id' => 'required|exists:departments,id',
-            'n_plus_one_job_id' => 'nullable|exists:jobs,id',
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'title' => 'required|unique:jobs,title|string|max:255',
+                'description' => 'required|string|max:500',
+                'department_id' => 'required|exists:departments,id',
+                'n_plus_one_job_id' => 'nullable|exists:jobs,id',
+            ]);
 
-        // Create the job
-        Job::create([
-            'title' => $validatedData['title'],
-            'description' => $validatedData['description'],
-            'department_id' => $validatedData['department_id'],
-            'n_plus_one_job_id' => $validatedData['n_plus_one_job_id'],
-        ]);
+            // Create the job
+            Job::create([
+                'title' => $validatedData['title'],
+                'description' => $validatedData['description'],
+                'department_id' => $validatedData['department_id'],
+                'n_plus_one_job_id' => $validatedData['n_plus_one_job_id'],
+            ]);
 
-        return redirect()->back()->with('success', 'Job created successfully!');
+            return response()->json(['message' => 'Poste créé avec succès.', 'ok' => true]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
+            ], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+        }
     }
-    
 
     /**
      * Display the specified resource.
@@ -67,48 +76,9 @@ class JobController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    // public function update(Request $request, Job $job)
-    // {
-    //     //
-    // }
-
-    /**
-     * Mettre à jour un job existant.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    // public function update(Request $request, $id)
-    // {
-    //     // Récupération du job en fonction de l'ID
-    //     $job = Job::find($id);
-
-    //     // Si le job n'existe pas, renvoyer une erreur 404
-    //     if (!$job) {
-    //         return response()->json(['error' => 'Job not found'], 404);
-    //     }
-
-    //     // Validation des données reçues
-    //     $validatedData = $request->validate([
-    //         'title' => 'required|unique:jobs,title|string|max:255',
-    //         'description' => 'nullable|string',
-    //         'department_id' => 'required|exists:departments,id',
-    //         'status' => 'required|in:ACTIVATED,DEACTIVATED,PENDING,DELETED,ARCHIVED',
-    //         'n_plus_one_job_id' => 'nullable|exists:jobs,id',
-    //     ]);
-
-    //     // Mise à jour des attributs du job
-    //     $job->update($validatedData);
-
-    //     // Retourner une réponse JSON avec les informations mises à jour
-    //     return response()->json([
-    //         'message' => 'Job updated successfully',
-    //         'job' => $job,
-    //     ]);
-    // }
     public function update(Request $request, $id)
-        {
+    {
+        try {
             $job = Job::findOrFail($id);
 
             $validatedData = $request->validate([
@@ -124,23 +94,34 @@ class JobController extends Controller
 
             $job->update($validatedData);
 
-            return redirect()->back()->with('success', 'Poste mis à jour avec succès.');
+            return response()->json(['message' => 'Poste mis à jour avec succès.', 'ok' => true]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
+            ], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
-
+    }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy($id)
     {
-        // Trouver le job avec l'ID passé en paramètre
-        $job = Job::findOrFail($id);
-    
-        // Supprimer le job
-        $job->delete();
-    
-        // Retourner une réponse JSON ou rediriger avec un message de succès
-        return redirect()->back()->with('success', 'Poste supprimé avec succès.');
+        try {
+            // Trouver le job avec l'ID passé en paramètre
+            $job = Job::findOrFail($id);
 
+            // Supprimer le job
+            $job->delete();
+
+            // Retourner une réponse JSON ou rediriger avec un message de succès
+            return response()->json(['message' => 'Poste supprimé avec succès.', 'ok' => true]);
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+        }
     }
 }
