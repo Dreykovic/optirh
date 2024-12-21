@@ -1,13 +1,29 @@
 {
     "cSpell.words": [
+        "clearfix",
+        "csrf",
         "datatables",
         "enctype",
+        "endforeach",
+        "endforelse",
+        "endphp",
+        "endpush",
         "endsection",
+        "endswitch",
+        "forelse",
         "iban",
+        "icofont",
+        "labelledby",
+        "navs",
+        "novalidate",
         "numerify",
+        "Opti",
         "Sokodé",
         "stylesheet",
+        "tabindex",
         "tablist",
-        "Tchamba"
+        "tbody",
+        "Tchamba",
+        "thead"
     ]
 }

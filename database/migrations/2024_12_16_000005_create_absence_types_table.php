@@ -13,7 +13,8 @@ return new class extends Migration {
         Schema::create('absence_types', function (Blueprint $table) {
             $table->id();
             $table->string('label');
-            $table->string('description');
+            $table->text('description')->nullable();
+            $table->enum('type', ['EXCEPTIONAL', 'NORMAL'])->default('NORMAL');
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
             $table->timestamps();
         });
