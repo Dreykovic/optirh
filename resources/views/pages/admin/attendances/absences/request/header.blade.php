@@ -3,7 +3,9 @@
 
         <div class="card-header d-sm-flex justify-content-between">
             <div href="javascript:void(0);" class="d-flex align-items-center">
-                <img class="avatar rounded-circle" src={{ asset('assets/images/xs/avatar1.jpg') }} alt="">
+
+                <x-employee-icon :employee="$employee" />
+
                 <div class="flex-fill ms-3 text-truncate">
                     <a href="#">
                         <h6 class="d-flex justify-content-between mb-0">

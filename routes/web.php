@@ -5,6 +5,7 @@ use App\Http\Controllers\AbsenceTypeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -89,6 +90,19 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/save', [HolidayController::class,  'store'])->name('holidays.save');
             Route::post('/update/{holidayId}', [HolidayController::class,  'update'])->name('holidays.update');
             Route::delete('/delete/{holidayId}', [HolidayController::class,  'destroy'])->name('holidays.destroy');
+        });
+    });
+
+    /*
+    * Users Management
+    */
+
+    Route::prefix('/users-management')->group(function () {
+        /*
+        * Identifiants
+        */
+        Route::prefix('/credentials')->group(function () {
+            Route::get('/list/{status?}', [UserController::class,   'index'])->name('credentials.index');
         });
     });
 });

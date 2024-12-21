@@ -25,9 +25,8 @@
                                 <tr>
 
                                     <td>
-                                        <i
-                                            class="icofont icofont-{{ $employee->gender === 'FEMALE' ? 'business-man-alt-2' : 'businesswoman' }} fs-3  avatar rounded-circle    "></i>
 
+                                        <x-employee-icon :employee="$employee" />
                                         <a href="#" class="fw-bold">
                                             <span>{{ $employee->last_name . ' ' . $employee->first_name }}
                                             </span>
