@@ -42,6 +42,7 @@ class EmployeeFactory extends Factory
             'nationality' => $this->faker->optional()->country(),
             'religion' => $this->faker->optional()->randomElement(['Christian', 'Muslim', 'Jewish', 'Hindu', 'Buddhist', 'None', 'Other']),
             'marital_status' => $this->faker->optional()->randomElement(['Single', 'Married', 'Divorced', 'Widowed']),
+            'gender' => $this->faker->randomElement(['FEMALE', 'MALE']),
             'emergency_contact' => $this->faker->optional()->numerify('+33#########'),
             'status' => $this->faker->randomElement(['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED']),
         ];

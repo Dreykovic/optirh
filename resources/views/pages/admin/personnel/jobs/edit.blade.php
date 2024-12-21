@@ -13,15 +13,15 @@
                     <input type="hidden" name="_method" value="PUT">
                     <div class="mb-3">
                         <label for="title" class="form-label">Titre</label>
-                        <input type="text" class="form-control" id="title" name="title" {{ $job->title === 'DG' ? 'disabled' : '' }}>
+                        <input value='{{$job->title}}' type="text" class="form-control" id="title" name="title" {{ $job->title === 'DG' ? 'disabled' : '' }}>
                     </div>
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
-                        <input type="text" class="form-control" id="description" name="description" {{ $job->title === 'DG' ? 'disabled' : '' }}>
+                        <input type="text" value='{{$job->description}}' class="form-control" id="description" name="description" {{ $job->title === 'DG' ? 'disabled' : '' }}>
                     </div>
                     <div class="mb-3">
                         <label for="n" class="form-label">N+1</label>
-                        <select class="form-select" aria-label="Default select example" name="n_plus_one_job_id">
+                        <select class="form-select" aria-label="Default select example" name="n_plus_one_job_id" value='{{$job->n_plus_one_job->id ?? ""}}'>
                             @foreach ($department->jobs as $jobOption)
                                 <option value="{{ $jobOption->id }}">{{ $jobOption->title }}</option>
                             @endforeach

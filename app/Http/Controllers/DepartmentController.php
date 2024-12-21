@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Department;
 use App\Models\Job;
+use App\Models\Duty;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 
 class DepartmentController extends Controller
 {
@@ -51,18 +53,39 @@ class DepartmentController extends Controller
             ]);
     
             $validatedData['director_id'] = $validatedData['director_id'] ?? null;
-            $job_superior = Job::where('title', 'DB')->firstOrFail();
+            $job_superior = Job::where('title', 'DG')->firstOrFail();
             // Créer le département
             $dept = Department::create([
                 'name' => $validatedData['name'],
                 'description' => $validatedData['description'],
                 'director_id' => $validatedData['director_id']
             ]);
-            Job::create([
+
+            $job = Job::create([
                 'title' => 'Directeur·rice '.$dept->name,
                 'description' => 'Directeur·rice '.$dept->description,
-                'n_plus_one_job_id' => $job_superior->id
+                'n_plus_one_job_id' => $job_superior->id,
+                'department_id' => $dept->id
             ]);
+
+            if($validatedData['director_id']!=null){
+
+                $duty = Duty::where('evolution', 'ON_GOING')
+                ->where('employee_id', $validatedData['director_id'])
+                ->first();
+
+                if ($duty) {
+                    $duty->update([
+                        'evolution' => 'ENDED',
+                        'status' => 'DEACTIVATED',
+                    ]);
+                    Duty::create([
+                        'job_id' => $job->id,
+                        'employee_id' => $validatedData['director_id'],
+                        'begin_date' => Carbon::now()
+                    ]);
+                }
+            }
 
             return response()->json(['message' => 'Department créé avec succès.', 'ok' => true]);
     
@@ -85,7 +108,13 @@ class DepartmentController extends Controller
     public function show(Department $department)
     {
         $nbre_postes = $department->jobs->count();
-        return view('pages.admin.personnel.directions.show', compact('department', 'nbre_postes'));
+        $nbreduty = Duty::where('evolution', 'ON_GOING')
+        ->whereHas('job', function ($query) use ($department) {
+            $query->where('department_id', $department->id);
+        })
+        ->count();
+    
+        return view('pages.admin.personnel.directions.show', compact('department', 'nbre_postes', 'nbreduty'));
     }
     
 

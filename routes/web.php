@@ -49,9 +49,10 @@ Route::group(['middleware' => 'auth'], function () {
 
 
 
-    //Personnel
+    //Personnel job_employees
     Route::get('/membres', [EmployeeController::class, 'index'])->name('membres');
     Route::get('/membres/{employee}', [EmployeeController::class, 'show'])->name('membres.show');
+    Route::get('/membres/job{id}', [EmployeeController::class, 'employees'])->name('membres.job');
 
     Route::get('/directions', [DepartmentController::class, 'index'])->name('directions');
     Route::get('/directions/{department}', [DepartmentController::class, 'show'])->name('directions.show');
@@ -64,7 +65,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('/jobs/{id}', [JobController::class, 'update'])->name('jobs.update');
     Route::delete('/jobs/{id}', [JobController::class, 'destroy'])->name('jobs.destroy');
 
+    Route::get('/api/jobs/{departmentId}', [JobController::class, 'getJobsByDepartment']);
+
 
 
 });
+
 

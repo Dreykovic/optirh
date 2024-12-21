@@ -44,4 +44,5 @@ class Duty extends Model
     {
         return $this->hasMany(Absence::class, 'duty_id');
     }
+   
 }

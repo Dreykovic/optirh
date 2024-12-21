@@ -15,6 +15,11 @@ class JobController extends Controller
     {
         //
     }
+    public function getJobsByDepartment($departmentId)
+        {
+            $jobs = Job::where('department_id', $departmentId)->get(['id', 'title']);
+            return response()->json($jobs);
+        }
 
     /**
      * Show the form for creating a new resource.

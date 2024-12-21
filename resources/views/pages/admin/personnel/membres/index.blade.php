@@ -51,16 +51,9 @@
                                             </td> -->
                                             <td>
                                                 <div class='d-flex justify-content-start align-items-center'>
-                                                    <div class="avatar rounded-circle d-flex justify-content-center align-items-center text-white" style="width: 50px; height: 50px; background-color: {{ generateColor($employee->first_name . $employee->last_name) }};">
-                                                        @if ($employee)
-                                                            <span class="fw-bold">
-                                                                {{ strtoupper(substr($employee->first_name, 0, 1)) }}{{ strtoupper(substr($employee->last_name, 0, 1)) }}
-                                                            </span>
-                                                        @else
-                                                            <span class="fw-bold text-muted">N/A</span>
-                                                        @endif
-                                                    </div>
+                                                    
                                                     @if ($employee)
+                                                    <i class="icofont icofont-{{ $employee->gender === 'FEMALE' ? 'business-man-alt-2' : 'businesswoman' }} fs-3  avatar rounded-circle"></i>
                                                         <span class="fw-bold ms-1">{{ $employee->first_name }} {{ $employee->last_name }}</span>
                                                     @else
                                                         <span class="text-muted">Aucun directeur assigné</span>
@@ -79,14 +72,25 @@
                                                 {{ $employee->address1 }}
                                             </td>
                                             <td>
-                                                <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#depedit">
-                                                        <i class="icofont-edit text-success"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-outline-secondary deleterow">
-                                                        <i class="icofont-ui-delete text-danger"></i>
-                                                    </button>
-                                                </div>
+                                                 <!--  -->
+                                                 <div class="btn-group">
+                                                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Actions</button>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <span class='btn' data-bs-toggle="modal" data-bs-target=""><i class="icofont-edit text-success m-2"></i>Editer</span>
+                                                            </li>
+                                                            <li>
+                                                                <span class='btn'><i class="icofont-ui-delete text-danger m-2"></i></i>Supprimer</span>
+                                                            </li>
+                                                            <li>
+                                                                <a href="{{ route('membres.show', $employee->id) }}">
+                                                                    <span class='btn'><i class="icofont-eye-open m-2"></i></i>Détail</span>
+                                                                        
+                                                                </a>
+                                                            </li>
+                                                            
+                                                        </ul>
+                                                    </div><!-- /btn-group -->                                         
                                             </td>
                                         </tr>
                                         @endforeach
@@ -243,295 +247,107 @@
         <div class="modal fade" id="createemp" tabindex="-1"  aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
                 <div class="modal-content">
+                   
+                    <div class="modal-body">
                     <div class="modal-header">
-                        <h5 class="modal-title  fw-bold" id="createprojectlLabel"> Add Employee</h5>
+                        <h5 class="modal-title  fw-bold" id="createprojectlLabel"> Nouveau Employe</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="exampleFormControlInput877" class="form-label">Employee Name</label>
-                            <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="Explain what the Project Name">
-                        </div>
-                        <div class="mb-3">
-                            <label for="exampleFormControlInput977" class="form-label">Employee Company</label>
-                            <input type="text" class="form-control" id="exampleFormControlInput977" placeholder="Explain what the Project Name">
-                        </div>
-                        <div class="mb-3">
-                            <label for="formFileMultipleoneone" class="form-label">Employee Profile</label>
-                            <input class="form-control" type="file" id="formFileMultipleoneone" >
-                        </div>
-                        <div class="deadline-form">
-                            <form>
-                                <div class="row g-3 mb-3">
+                        <form action="" method="post">
+                            <fieldset class="border p-3 shadow-sm  border-dark mb-2">
+                            <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span class='mb-4'>Identité & Adresse</span></legende>
+                                <div class="row g-3 mb-3 mt-2">
                                     <div class="col-sm-6">
-                                        <label for="exampleFormControlInput1778" class="form-label">Employee ID</label>
-                                        <input type="text" class="form-control" id="exampleFormControlInput1778" placeholder="User Name">
+                                        <label for="last_name" class="form-label">Nom</label>
+                                        <input type="text" class="form-control" id="last_name" name='last_name' placeholder="">
                                     </div>
                                     <div class="col-sm-6">
-                                        <label for="exampleFormControlInput2778" class="form-label">Joining Date</label>
-                                        <input type="date" class="form-control" id="exampleFormControlInput2778">
+                                        <label for="first_name" class="form-label">Prénoms</label>
+                                        <input type="text" class="form-control" id="first_name" name='first_name'>
                                     </div>
                                 </div>
+                                <!--  -->
                                 <div class="row g-3 mb-3">
-                                <div class="col">
-                                    <label for="exampleFormControlInput177" class="form-label">User Name</label>
-                                    <input type="text" class="form-control" id="exampleFormControlInput177" placeholder="User Name">
+                                    <div class="col-sm-6">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" name='email' placeholder="">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="phone_number" class="form-label">Contact</label>
+                                        <input type="text" class="form-control" id="phone_number" name='phone_number'>
+                                    </div>
                                 </div>
-                                <div class="col">
-                                    <label for="exampleFormControlInput277" class="form-label">Password</label>
-                                    <input type="Password" class="form-control" id="exampleFormControlInput277" placeholder="Password">
-                                </div>
-                                </div> 
+                                <!--  -->
                                 <div class="row g-3 mb-3">
-                                    <div class="col">
-                                        <label for="exampleFormControlInput477" class="form-label">Email ID</label>
-                                        <input type="email" class="form-control" id="exampleFormControlInput477" placeholder="User Name">
+                                    <div class="col-sm-6">
+                                        <label for="address1" class="form-label">Adresse</label>
+                                        <input type="address1" class="form-control" id="address1" name='address1' placeholder="">
                                     </div>
-                                    <div class="col">
-                                        <label for="exampleFormControlInput777" class="form-label">Phone</label>
-                                        <input type="text" class="form-control" id="exampleFormControlInput777" placeholder="User Name">
-                                    </div>
-                                </div>
-                                <div class="row g-3 mb-3">
-                                    <div class="col">
-                                        <label  class="form-label">Department</label>
-                                        <select class="form-select" aria-label="Default select Project Category">
-                                            <option selected>Web Development</option>
-                                            <option value="1">It Management</option>
-                                            <option value="2">Marketing</option>
-                                        </select>
-                                    </div>
-                                    <div class="col">
-                                        <label  class="form-label">Designation</label>
-                                        <select class="form-select" aria-label="Default select Project Category">
-                                            <option selected>UI/UX Design</option>
-                                            <option value="1">Website Design</option>
-                                            <option value="2">App Development</option>
-                                            <option value="3">Quality Assurance</option>
-                                            <option value="4">Development</option>
-                                            <option value="5">Backend Development</option>
-                                            <option value="6">Software Testing</option>
-                                            <option value="7">Website Design</option>
-                                            <option value="8">Marketing</option>
-                                            <option value="9">SEO</option>
-                                            <option value="10">Other</option>
+                                    <div class="col-sm-6">
+                                        <label for="gender" class="form-label">Genre</label>
+                                        <select class="form-select" aria-label="Default select Project Category" id="gender" name='gender'>
+                                            <option selected value='MALE'>Homme</option>
+                                            <option value="FEMALE">Femme</option>
                                         </select>
                                     </div>
                                 </div>
-                            </form>
-                        </div>
-                        <div class="mb-3">          
-                            <label for="exampleFormControlTextarea78" class="form-label">Description (optional)</label>
-                            <textarea class="form-control" id="exampleFormControlTextarea78" rows="3" placeholder="Add any extra details about the request"></textarea>
-                        </div> 
-                        <div class="table-responsive">
-                            <table class="table table-striped custom-table">
-                                <thead>
-                                    <tr>
-                                        <th>Project Permission</th>
-                                        <th class="text-center">Read</th>
-                                        <th class="text-center">Write</th>
-                                        <th class="text-center">Create</th>
-                                        <th class="text-center">Delete</th>
-                                        <th class="text-center">Import</th>
-                                        <th class="text-center">Export</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="fw-bold">Projects</td>
-                                        <td class="text-center">
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault1" checked>
-                                        </td>
-                                        <td class="text-center">
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault2" checked>
-                                        </td>
-                                        <td class="text-center">
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault3" checked>
-                                        </td>
-                                        <td class="text-center">
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault4" checked>
-                                        </td>
-                                        <td class="text-center">
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault5" checked>
-                                        </td>
-                                        <td class="text-center">
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault6" checked>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td  class="fw-bold">Tasks</td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault7" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault8" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault9" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault10" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault11" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault12" checked>
-                        
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td  class="fw-bold">Chat</td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault13" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault14" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault15" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault16" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault17" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault18" checked>
-                        
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td  class="fw-bold">Estimates</td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault19" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault20" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault21" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault22" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault23" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault24" checked>
-                        
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td  class="fw-bold">Invoices</td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault25" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault26">
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault27" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault28">
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault29" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault30" checked>
-                        
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td  class="fw-bold">Timing Sheets</td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault31" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault32" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault33" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault34" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault35" checked>
-                        
-                                        </td>
-                                        <td class="text-center">
-                        
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault36" checked>
-                        
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Done</button>
-                        <button type="button" class="btn btn-primary">Create</button>
-                    </div> 
+                                <!--  -->
+                            </fieldset>
+                            <fieldset class="border p-3 shadow-sm  border-dark">
+                                <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow mb-3">Poste</legende>
+                                 <!--  -->
+                                 <div class="row g-3 mb-3 mt-2">
+                                    <div class="col-sm-6">
+                                        <label for="department" class="form-label">Direction</label>
+                                        <select class="form-select" id="department" name="department_id" onchange="loadJobs(this.value)">
+                                            <option selected>choisir</option>
+                                            @forelse($departments as $dept)
+                                                <option value="{{ $dept->id }}">{{ $dept->name }}</option>
+                                            @empty
+                                                <option value="">aucune direction</option>
+                                            @endforelse
+                                        </select>
+
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="job" class="form-label">Poste</label>
+                                        <select class="form-select" id="job" name="job_id">
+                                            <!-- <option selected>choisir</option> -->
+                                        </select>
+
+                                    </div>
+                                </div>
+                                <!--  -->
+                                 <!--  -->
+                                 <div class="row g-3 mb-3">
+                                    <div class="col-sm-6">
+                                        <label for="date" class="form-label">Date d'entrée</label>
+                                        <input type="date" class="form-control" id="date" name='begin_date' placeholder="">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="duration" class="form-label">Durée du contrat</label>
+                                        <input type="duration" class="form-control" id="duration" name='duration' placeholder="">
+                                    </div>
+                                </div>
+                                <!--  -->
+                                <div class="col">
+                                    <label for="type" class="form-label">Type du contrat</label>
+                                    <select id="type" name='type' class="form-select" aria-label="Default select Project Category">
+                                            <option value='CDI'>CDI</option>
+                                            <option value='CDD'>CDD</option>
+                                            <option value='interim'>interim</option>
+                                            <option value='stage'>stage</option>
+                                    </select>
+                                </div>
+
+                            </fieldset>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Done</button>
+                                <button type="button" class="btn btn-primary">Enregistrer</button>
+                            </div> 
+                        </form>
+                    </div>    
+                    
                 </div>  
             </div>
         </div>
@@ -555,49 +371,36 @@ document.addEventListener("DOMContentLoaded", (e) => {
 
 </script>
 
-<!-- <script>
-    document.addEventListener("DOMContentLoaded", () => {
-    const rows = document.querySelectorAll("#membres tbody tr");
-
-    rows.forEach((row) => {
-        row.addEventListener("click", (e) => {
-            // Vérifie si l'utilisateur a cliqué sur un bouton ou un élément interactif
-            if (
-                e.target.closest(".btn") || // Boutons d'action
-                e.target.closest(".btn-group") // Conteneur des boutons
-            ) {
-                return; // Ne rien faire si le clic est sur un bouton
-            }
-
-            // Récupère l'URL de redirection depuis l'attribut data-href
-            const href = row.dataset.href;
-            if (href) {
-                window.location.href = href; // Redirige l'utilisateur vers la page de détails
-            }
-        });
-    });
-});
-</script> -->
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const table = $("#membres").DataTable(); // Initialisation de DataTables
+    function loadJobs(departmentId) {
+        // Vérifie si un département a été sélectionné
+        if (!departmentId) {
+            document.getElementById('job').innerHTML = '<option selected>choisir</option>';
+            return;
+        }
 
-        // Ajout de la gestion des clics via la délégation d'événements
-        $('#membres tbody').on('click', 'tr', function (e) {
-            // Vérifie si l'utilisateur a cliqué sur un bouton ou un élément interactif
-            if (
-                e.target.closest(".btn") || // Boutons d'action
-                e.target.closest(".btn-group") // Conteneur des boutons
-            ) {
-                return; // Ne rien faire si le clic est sur un bouton
-            }
-
-            // Récupère l'URL de redirection depuis l'attribut data-href
-            const href = this.dataset.href;
-            if (href) {
-                window.location.href = href; // Redirige l'utilisateur vers la page de détails
-            }
-        });
-    });
+        // Effectue une requête AJAX
+        fetch(`/api/jobs/${departmentId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Erreur lors du chargement des jobs");
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Met à jour le champ "Poste"
+               
+                const jobSelect = document.getElementById('job');
+                jobSelect.innerHTML = '<option selected>choisir</option>';
+                data.forEach(job => {
+                    jobSelect.innerHTML += `<option value="${job.id}">${job.title}</option>`;
+                });
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert("Impossible de charger les postes....");
+            });
+    }
 </script>
+
 @endpush

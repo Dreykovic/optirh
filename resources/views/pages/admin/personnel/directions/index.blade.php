@@ -61,7 +61,7 @@
                                             <th>#</th>
                                             <th>Directeur</th>
                                             <th>Direction</th>
-                                            <th>Nbre Employes</th>
+                                            <th>Définition</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -87,8 +87,8 @@
                                             <td>
                                                 {{ $department->name }}
                                             </td>
-                                            <td>
-                                                {{ $department->employees_count ?? 0 }}
+                                            <td class='text-wrap w-50'>
+                                                {{ $department->description }}
                                             </td>
                                             <td>
                                                 <div class="btn-group" role="group" aria-label="Basic outlined example">
