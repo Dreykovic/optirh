@@ -101,8 +101,10 @@
 
 
 
+
                                     </td>
                                 </tr>
+                                @include('pages.admin.attendances.absences.request.comment')
                                 @include('pages.admin.attendances.absences.details')
                                 @empty
                                     <tr>
