@@ -31,6 +31,35 @@
     </li> --}}
 
 
+    <!-- Membres -->
+    <li class="collapsed">
+        <a class="m-link {{ Str::startsWith(request()->path(), 'membres') ? 'active' : '' }}"
+            data-bs-toggle="collapse" data-bs-target="#membres-navs" href="#">
+            <i class="icofont-calendar fs-5"></i> <span>Personnel</span> <span
+                class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
+        <!-- Menu: Sub menu ul -->
+        <ul class="sub-menu collapse {{ Str::startsWith(request()->path(), 'membres') ? 'show' : '' }}"
+            id="membres-navs">
+            <li>
+                <a class="ms-link {{ Str::startsWith(request()->path(), 'membres/directions/list') ? 'active' : '' }}"
+                    href="{{ route('directions') }}">
+                    <span>Directions</span>
+                </a>
+            </li>
+            <li>
+                <a class="ms-link {{ Str::startsWith(request()->path(), '/membres/list') ? 'active' : '' }}"
+                    href="{{ route('membres') }}">
+                    <span>Membres </span>
+                </a>
+            </li>
+          
+        </ul>
+
+    </li>
+
+
+
+
     <!-- Help -->
     <li><a class="ms-link {{ Request::is('help') ? 'active' : '' }}" href="{{ route('help') }}"><i
                 class="icofont-home fs-5"></i>

@@ -50,13 +50,13 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     //Personnel job_employees
-    Route::get('/membres', [EmployeeController::class, 'index'])->name('membres');
+    Route::get('/membres/list', [EmployeeController::class, 'index'])->name('membres');
     Route::get('/membres/{employee}', [EmployeeController::class, 'show'])->name('membres.show');
-    Route::get('/membres/job{id}', [EmployeeController::class, 'employees'])->name('membres.job');
+    Route::get('/api/membres/job{id}', [EmployeeController::class, 'jobEmployees'])->name('membres.job');
     Route::post('/membres/save', [EmployeeController::class, 'store'])->name('membres.store');
     Route::post('/membres/update', [EmployeeController::class, 'update'])->name('membres.update');
 
-    Route::get('/directions', [DepartmentController::class, 'index'])->name('directions');
+    Route::get('/membres/directions/list', [DepartmentController::class, 'index'])->name('directions');
     Route::get('/directions/{department}', [DepartmentController::class, 'show'])->name('directions.show');
     Route::post('/directions/create', [DepartmentController::class, 'store'])->name('directions.store');
     Route::put('/directions/{id}', [DepartmentController::class, 'update'])->name('directions.update');

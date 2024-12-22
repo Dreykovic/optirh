@@ -121,7 +121,7 @@
 
                             <td>
                                 <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#job_employees" data-bs-job-id='{{$job->id}}'><i class="text-success">Voir</i></button>
+                                    <button onclick="loadJobEmployees({{$job->id}})" type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#job_employees" data-bs-job-id='{{$job->id}}'><i class="text-success">Voir</i></button>
                                 </div>
                             </td>
                             <td>
@@ -171,10 +171,7 @@
                     <!-- Les employés seront injectés ici -->
                 </ul>
             </div>
-            <!-- <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div> -->
+          
         </div>
     </div>
 </div>
@@ -214,5 +211,38 @@ document.addEventListener("DOMContentLoaded", (e) => {
 
 </script>
 
+<!-- <script>
+    function loadJobEmployees(jobID) {
+        // Vérifie si un job a été sélectionné
+        if (!jobID) {
+            alert("Veuillez sélectionner un poste valide.");
+            return;
+        }
+
+        // Effectue une requête AJAX
+        fetch(`/api/membres/job/${jobID}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Erreur lors du chargement des employés.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                const empList = document.getElementById('employee-list');
+                empList.innerHTML = ''; // Réinitialise la liste
+                if (data.length === 0) {
+                    empList.innerHTML = '<li>Aucun employé trouvé.</li>';
+                } else {
+                    data.forEach(emp => {
+                        empList.innerHTML += `<li>${emp.last_name} ${emp.first_name}</li>`;
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert("Impossible de charger les employés.");
+            });
+    }
+</script> -->
 
 @endpush

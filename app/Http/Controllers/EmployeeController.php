@@ -39,36 +39,31 @@ class EmployeeController extends Controller
     //         return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
     //     }
     // }
-    function employees($id)
-        {
-            try {
-                // Récupérer uniquement les noms et prénoms des employés liés aux devoirs
-                $duties = Duty::where('evolution', 'ON_GOING')
-                    ->where('job_id', $id)
-                    ->with(['employee' => function ($query) {
-                        $query->select('id', 'firstname', 'lastname');
-                    }])
-                    ->get()
-                    ->map(function ($duty) {
-                        return [
-                            'id' => $duty->employee->id,
-                            'firstname' => $duty->employee->firstname,
-                            'lastname' => $duty->employee->lastname,
-                        ];
-                    });
-
-                return response()->json([
-                    'message' => 'Employés récupérés avec succès.',
-                    'ok' => true,
-                    'data' => []
-                ], 200)->header('Content-Type', 'application/json');
-            } catch (\Throwable $th) {
-                return response()->json([
-                    'ok' => false,
-                    'message' => $th->getMessage()
-                ], 500);
-            }
+    function jobEmployees($id)
+    {
+        try {
+            // Récupérer uniquement les noms et prénoms des employés liés aux devoirs
+            $duties = Duty::where('evolution', 'ON_GOING')
+                ->where('job_id', $id)
+                ->with(['employee:id,first_name,last_name']) // Charge les employés avec seulement les champs nécessaires
+                ->get()
+                ->map(function ($duty) {
+                    return [
+                        'id' => $duty->employee->id,
+                        'first_name' => $duty->employee->first_name,
+                        'last_name' => $duty->employee->last_name
+                    ];
+                });
+    
+            return response()->json($duties, 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'ok' => false,
+                'message' => $th->getMessage()
+            ], 500);
         }
+    }
+    
 
 
     /**
