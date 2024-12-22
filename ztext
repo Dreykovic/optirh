@@ -12,3 +12,8 @@ try {
         } catch (\Throwable $th) {
             return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
+
+
+        php artisan storage:link
+        chmod -R 775 storage
+

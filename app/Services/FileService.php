@@ -25,7 +25,7 @@ class FileService
             $counter++;
         }
 
-        $path = $file->storeAs($folder, "$fileName.$extension");
+        $path = $file->storeAs($folder, "$fileName.$extension",'public');
 
         return File::create([
             'employee_id' => $employeeId,
@@ -73,4 +73,13 @@ class FileService
         }
         return Storage::download($file->path);
     }
+
+    public function getFileUrl(File $file)
+    {
+        if (!Storage::exists($file->path)) {
+            throw new \Exception('Fichier introuvable.');
+        }
+        return Storage::url($file->path);
+    }
+
 }

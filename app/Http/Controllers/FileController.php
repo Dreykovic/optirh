@@ -74,7 +74,9 @@ class FileController extends Controller
             $file = File::findOrFail($fileId);
         $this->fileService->deleteFile($file);
 
-        return response()->json(['message' => 'Fichier supprimé avec succès.','ok' => true]);
+        // return response()->json(['message' => 'Fichier supprimé avec succès.','ok' => true]);
+        return redirect()->back()->with('message', 'Action réussie !');
+
         } catch (\Throwable $th) {
             return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
@@ -91,4 +93,40 @@ class FileController extends Controller
         }
        
     }
+
+    public function openFile($fileId)
+    {
+        try {
+            $file = File::findOrFail($fileId);
+            $fileUrl = $this->fileService->getFileUrl($file);
+            return redirect()->away($fileUrl); // Redirection vers l'URL du fichier
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+        }
+    }
+
+
+    public function getFiles(Request $request,$employeeId)
+    {
+        // $employeeId = $request->input('employee_id'); // ID de l'employé
+        $search = $request->input('search', '');      // Recherche par nom de fichier
+        $limit = $request->input('limit', 5);         // Nombre d'éléments par page (par défaut 5)
+        $page = $request->input('page', 1);           // Page actuelle (par défaut 1)
+    
+        // Récupérer les fichiers associés à l'employé et filtrer par recherche
+        $filesQuery = File::where('employee_id', $employeeId)
+                          ->where('name', 'LIKE', "%{$search}%");
+    
+        // Pagination avec les paramètres limit et page
+        $files = $filesQuery->paginate($limit);
+        foreach ($files as $file) {
+            $file->icon_class = getFileIconClass($file->mime_type);
+            $file->icon = getFileIcon($file->mime_type);
+        }
+    
+        return response()->json($files); // Retourner les résultats paginés en JSON
+    }
+    
+
+
 }
