@@ -17,41 +17,41 @@
                         <div class="card teacher-card  mb-3">
                             <div class="card-body  d-flex teacher-fulldeatil">
                                 <div class="profile-teacher pe-xl-4 pe-md-2 pe-sm-4 pe-0 text-center w220 mx-sm-0 mx-auto">
-                                    <a href="#">
-                                        <img src="assets/images/lg/avatar3.jpg" alt="" class="avatar xl rounded-circle img-thumbnail shadow-sm">
-                                    </a>
+                                    
+                                    <i class="icofont icofont-{{ $employee->gender === 'FEMALE' ? 'businesswoman' : 'business-man-alt-2' }} avatar xl rounded-circle img-thumbnail shadow-sm" style="font-size: 100px; width: 140px; height: 140px;"></i>
+                                   
                                     <div class="about-info d-flex align-items-center mt-3 justify-content-center flex-column">
-                                        <h6 class="mb-0 fw-bold d-block fs-6">Web Developer</h6>
-                                        <span class="text-muted small">Employee Id : 00001</span>
+                                        <h6 class="mb-0 fw-bold d-block small-11 text-muted">{{$employee->gender==='FEMALE'?'Femme':'Homme'}}</h6>
+                                        <!-- <span class="text-muted small">Employee Id : 00001</span> -->
                                     </div>
                                 </div>
                                 <div class="teacher-info border-start ps-xl-4 ps-md-3 ps-sm-4 ps-4 w-100">
-                                    <h6  class="mb-0 mt-2  fw-bold d-block fs-6">Luke Short</h6>
-                                    <span class="py-1 fw-bold small-11 mb-0 mt-1 text-muted">Web Designer</span>
-                                    <p class="mt-2 small">The purpose of lorem ipsum is to create a natural looking block of text (sentence, paragraph, page, etc.) that doesn't distract from the layout. A practice not without controversy</p>
+                                    <h6  class="mb-0 mt-2  fw-bold d-block fs-6">{{$employee->last_name}} {{$employee->first_name}}</h6>
+                                    <span class="py-1 fw-bold small-11 mb-0 mt-1 text-muted mb-4">{{$duty ? $duty->job->title :'Pas de contrat en cours'}}</span>
+                                    <!-- <p class="mt-2 small">The purpose of lorem ipsum is to create a natural looking block of text (sentence, paragraph, page, etc.) that doesn't distract from the layout. A practice not without controversy</p> -->
                                     <div class="row g-2 pt-2">
                                         <div class="col-xl-5">
                                             <div class="d-flex align-items-center">
                                                 <i class="icofont-ui-touch-phone"></i>
-                                                <span class="ms-2 small">202-555-0174 </span>
+                                                <span class="ms-2 small">{{$employee->phone_number}} </span>
                                             </div>
                                         </div>
                                         <div class="col-xl-5">
                                             <div class="d-flex align-items-center">
                                                 <i class="icofont-email"></i>
-                                                <span class="ms-2 small">LukeShortn@gmail.com</span>
+                                                <span class="ms-2 small">{{$employee->email}}</span>
                                             </div>
                                         </div>
                                         <div class="col-xl-5">
                                             <div class="d-flex align-items-center">
                                                 <i class="icofont-birthday-cake"></i>
-                                                <span class="ms-2 small">19/03/1980</span>
+                                                <span class="ms-2 small">{{$employee->birth_day?? 'Né le'}}</span>
                                             </div>
                                         </div>
                                         <div class="col-xl-5">
                                             <div class="d-flex align-items-center">
                                                 <i class="icofont-address-book"></i>
-                                                <span class="ms-2 small">2734  West Fork Street,EASTON 02334.</span>
+                                                <span class="ms-2 small">{{$employee->address1}}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -186,17 +186,17 @@
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12">
                                 <div class="card">
                                     <div class="card-header py-3 d-flex justify-content-between">
-                                        <h6 class="mb-0 fw-bold ">Personal Informations</h6>
-                                        <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#edit1"><i class="icofont-edit text-primary fs-6"></i></button>
+                                        <h6 class="mb-0 fw-bold ">Informations Personnelles</h6>
+                                        <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#updatePersInfoModal"><i class="icofont-edit text-primary fs-6"></i></button>
                                     </div>
                                     <div class="card-body">
                                         <ul class="list-unstyled mb-0">
                                             <li class="row flex-wrap mb-3">
                                                 <div class="col-6"> 
-                                                    <span class="fw-bold">Nationality</span>
+                                                    <span class="fw-bold">Nationalité</span>
                                                 </div>
                                                 <div class="col-6">
-                                                    <span class="text-muted">Indian</span>
+                                                    <span class="text-muted">{{$employee->nationality ?? '---'}}</span>
                                                 </div>
                                             </li>
                                             <li class="row flex-wrap mb-3">
@@ -204,31 +204,39 @@
                                                     <span class="fw-bold">Religion</span>
                                                 </div>
                                                 <div class="col-6">
-                                                    <span class="text-muted">Hindu</span>
+                                                    <span class="text-muted">{{$employee->religion ?? '---'}}</span>
                                                 </div>
                                              </li>
                                              <li class="row flex-wrap mb-3">
                                                 <div class="col-6"> 
-                                                    <span class="fw-bold">Marital Status</span>
+                                                    <span class="fw-bold">Situation Matri.</span>
                                                 </div>
                                                 <div class="col-6">
-                                                    <span class="text-muted">Married</span>
+                                                    <span class="text-muted">{{$employee->marital_status ?? '---'}}</span>
                                                 </div>
                                              </li>
                                              <li class="row flex-wrap mb-3">
                                                 <div class="col-6"> 
-                                                    <span class="fw-bold">Passport No.</span>
+                                                    <span class="fw-bold">Contact urgence</span>
                                                 </div>
                                                 <div class="col-6">
-                                                    <span class="text-muted">5468953210</span>
+                                                    <span class="text-muted">{{$employee->emergency_contact ?? '---'}}</span>
+                                                </div>
+                                             </li>
+                                             <li class="row flex-wrap mb-3">
+                                                <div class="col-6"> 
+                                                    <span class="fw-bold">Ville</span>
+                                                </div>
+                                                <div class="col-6">
+                                                    <span class="text-muted">{{$employee->city ?? '---'}}</span>
                                                 </div>
                                              </li>
                                              <li class="row flex-wrap">
                                                 <div class="col-6"> 
-                                                    <span class="fw-bold">Emergency Contact</span>
+                                                    <span class="fw-bold">Quartier</span>
                                                 </div>
                                                 <div class="col-6">
-                                                    <span class="text-muted">7468953210</span>
+                                                    <span class="text-muted">{{$employee->state ?? '---'}}</span>
                                                 </div>
                                              </li>
                                         </ul>
@@ -238,8 +246,8 @@
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12">
                                 <div class="card">
                                     <div class="card-header py-3 d-flex justify-content-between">
-                                        <h6 class="mb-0 fw-bold ">Bank information</h6>
-                                        <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#edit2"><i class="icofont-edit text-primary fs-6"></i></button>
+                                        <h6 class="mb-0 fw-bold ">Information Banquaire</h6>
+                                        <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#updateBankInfoModal"><i class="icofont-edit text-primary fs-6"></i></button>
                                     </div>
                                     <div class="card-body">
                                         <ul class="list-unstyled mb-0">
@@ -248,39 +256,55 @@
                                                     <span class="fw-bold">Bank Name</span>
                                                 </div>
                                                 <div class="col-6">
-                                                    <span class="text-muted">Kotak</span>
+                                                    <span class="text-muted">{{$employee->bank_name ?? '---'}}</span>
                                                 </div>
                                             </li>
                                             <li class="row flex-wrap mb-3">
                                                 <div class="col-6"> 
-                                                    <span class="fw-bold">Account No.</span>
+                                                    <span class="fw-bold">No. Compte</span>
                                                 </div>
                                                 <div class="col-6">
-                                                    <span class="text-muted">5436874596325486</span>
+                                                    <span class="text-muted">{{$employee->rib ?? '---'}}</span>
                                                 </div>
                                              </li>
                                              <li class="row flex-wrap mb-3">
                                                 <div class="col-6"> 
-                                                    <span class="fw-bold">IFSC Code</span>
+                                                    <span class="fw-bold">Code Banque</span>
                                                 </div>
                                                 <div class="col-6">
-                                                    <span class="text-muted">Kotak000021</span>
+                                                    <span class="text-muted">{{$employee->code_bank ?? '---'}}</span>
                                                 </div>
                                              </li>
                                              <li class="row flex-wrap mb-3">
                                                 <div class="col-6"> 
-                                                    <span class="fw-bold">Pan No</span>
+                                                    <span class="fw-bold">Code Guichet</span>
                                                 </div>
                                                 <div class="col-6">
-                                                    <span class="text-muted">ACQPF6584L</span>
+                                                    <span class="text-muted">{{$employee->code_guichet ?? '---'}}</span>
                                                 </div>
                                              </li>
                                              <li class="row flex-wrap">
                                                 <div class="col-6"> 
-                                                    <span class="fw-bold">UPI Id</span>
+                                                    <span class="fw-bold">IBAN</span>
                                                 </div>
                                                 <div class="col-6">
-                                                    <span class="text-muted">454812kotak@upi</span>
+                                                    <span class="text-muted">{{$employee->iban ?? '---'}}</span>
+                                                </div>
+                                             </li>
+                                             <li class="row flex-wrap mb-3">
+                                                <div class="col-6"> 
+                                                    <span class="fw-bold">Swift</span>
+                                                </div>
+                                                <div class="col-6">
+                                                    <span class="text-muted">{{$employee->swift ?? '---'}}</span>
+                                                </div>
+                                             </li>
+                                             <li class="row flex-wrap">
+                                                <div class="col-6"> 
+                                                    <span class="fw-bold">Clé RIB</span>
+                                                </div>
+                                                <div class="col-6">
+                                                    <span class="text-muted">{{$employee->cle_rib ?? '---'}}</span>
                                                 </div>
                                              </li>
                                         </ul>
@@ -573,97 +597,140 @@
         </div> 
 
         <!-- Edit Employee Personal Info-->
-        <div class="modal fade" id="edit1" tabindex="-1"  aria-hidden="true">
+        <div class="modal fade" id="updatePersInfoModal" tabindex="-1"  aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title  fw-bold" id="edit1Label"> Personal Informations</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
+                    
                     <div class="modal-body">
-                        <div class="deadline-form">
-                            <form>
+                        <div class="deadline-form modelUpdateFormContainer" id="updatePersInfoForm">
+                            <form id="modelAddForm" data-model-update-url="{{ route('membres.update') }}">
+                              
+                            <div class="modal-header">
+                                <h5 class="modal-title  fw-bold" id="edit1Label">Informations Personnelles</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
                                 <div class="row g-3 mb-3">
                                     <div class="col">
-                                        <label for="exampleFormControlInput877" class="form-label">Nationality</label>
-                                        <input type="text" class="form-control" id="exampleFormControlInput877" value="Indian"> 
+                                        <label for="nat" class="form-label">Nationalité</label>
+                                        <input type="text" class="form-control" id="nat" value="{{$employee->nationality}}" name='nationalitys'> 
                                     </div>
                                     <div class="col">
-                                        <label for="exampleFormControlInput977" class="form-label">Religion</label>
-                                        <input type="text" class="form-control" id="exampleFormControlInput977" value="Hindu"> 
+                                        <label for="religion" class="form-label">Religion</label>
+                                        <input type="text" class="form-control" id="religion" value="{{$employee->religion}}" name='religion'> 
                                     </div>
                                 </div>
                                 <div class="row g-3 mb-3">
                                 <div class="col">
-                                    <label for="exampleFormControlInput9777" class="form-label">Marital Status</label>
-                                    <input type="text" class="form-control" id="exampleFormControlInput9777" value="Married">
+                                    <label for="sm" class="form-label">Situation Matri.</label>
+                                    <select class="form-select" aria-label="Default select Project Category" id="sm" name='marital_status'>
+                                            <option selected value='{{$employee->marital_status}}'></option>
+                                            <option value="Single">Célibataire</option>
+                                            <option value="Married">Marié.e</option>
+                                            <option value="Divorced">Divorcé.e</option>
+                                            <option value="Widowed">Veuf.ve</option>
+                                        </select>
                                 </div>
                                 <div class="col">
-                                    <label for="exampleFormControlInput2770" class="form-label">Passport No</label>
-                                    <input type="text" class="form-control" id="exampleFormControlInput2770" value="5468953210">
+                                    <label for="cu" class="form-label">Contact urgence</label>
+                                    <input type="text" class="form-control" id="cu" value="{{$employee->emergency_contact}}" name='emergency_contact'>
                                 </div>
                                 </div> 
                                 <div class="row g-3 mb-3">
-                                    <div class="col-6">
-                                        <label for="exampleFormControlInput4777" class="form-label">Emergency Contact</label>
-                                        <input type="text" class="form-control" id="exampleFormControlInput4777" value="7468953210">
+                                    <div class="col">
+                                        <label for="ville" class="form-label">Ville</label>
+                                        <input type="text" class="form-control" id="ville" value="{{$employee->city}}" name='city'>
                                     </div>
+                                    <div class="col">
+                                        <label for="qt" class="form-label">Qyartier</label>
+                                        <input type="text" class="form-control" id="qt" value="{{$employee->state}}" name='state'>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-lg btn-block lift text-uppercase btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                    <button type="submit" class="btn btn-lg btn-block lift text-uppercase btn-primary modelUpdateBtn" atl="update emp" id="modelAddBtn"
+                                        data-bs-dismiss="modal">
+                                        <span class="normal-status">
+                                            Modifier
+                                        </span>
+                                        <span class="indicateur d-none">
+                                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                            Un Instant...
+                                        </span>
+                                    </button>
                                 </div>
                             </form>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Done</button>
-                        <button type="button" class="btn btn-primary">Create</button>
-                    </div> 
+                    
                 </div>  
             </div>
         </div>
 
         <!-- Edit Bank Personal Info-->
-        <div class="modal fade" id="edit2" tabindex="-1"  aria-hidden="true">
+        <div class="modal fade" id="updateBankInfoModal" tabindex="-1"  aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title  fw-bold" id="edit2Label"> Bank information</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
+                   
                     <div class="modal-body">
-                        <div class="deadline-form">
-                            <form>
+                        <div class="deadline-form modelUpdateFormContainer" id="updateBankInfoForm">
+                            <form id="modelAddForm" data-model-update-url="{{ route('membres.update') }}">
+                                <div class="modal-header">
+                                    <h5 class="modal-title  fw-bold" id="edit2Label"> Bank information</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
                                 <div class="row g-3 mb-3">
                                     <div class="col">
-                                        <label for="exampleFormControlInput8775" class="form-label">Bank Name</label>
-                                        <input type="text" class="form-control" id="exampleFormControlInput8775" value="Kotak"> 
+                                        <label for="bn" class="form-label">Nom Banque</label>
+                                        <input type="text" class="form-control" id="bn" value="{{$employee->bank_name}}" name='bank_name'> 
                                     </div>
                                     <div class="col">
-                                        <label for="exampleFormControlInput977" class="form-label">Account No.</label>
-                                        <input type="text" class="form-control" id="exampleFormControlInput9775" value="5436874596325486"> 
+                                        <label for="rib" class="form-label">No. Compte</label>
+                                        <input type="text" class="form-control" id="rib" value="{{$employee->rib}}" name='rib'> 
                                     </div>
                                 </div>
                                 <div class="row g-3 mb-3">
                                 <div class="col">
-                                    <label for="exampleFormControlInput97775" class="form-label">IFSC Code</label>
-                                    <input type="text" class="form-control" id="exampleFormControlInput97775" value="Kotak000021">
+                                    <label for="cb" class="form-label">Code Banque</label>
+                                    <input type="text" class="form-control" id="cb" value="{{$employee->code_bank}}" name='code_bank'>
                                 </div>
                                 <div class="col">
-                                    <label for="exampleFormControlInput27705" class="form-label">Pan No</label>
-                                    <input type="text" class="form-control" id="exampleFormControlInput27705" value="ACQPF6584L">
+                                    <label for="cg" class="form-label">Code Guichet</label>
+                                    <input type="text" class="form-control" id="cg" value="{{$employee->code_guichet}}" name='code_guichet'>
+                                </div>
+                                </div> 
+                                <!--  -->
+                                <div class="row g-3 mb-3">
+                                <div class="col">
+                                    <label for="iban" class="form-label">IBAN</label>
+                                    <input type="text" class="form-control" id="iban" value="{{$employee->iban}}" name='iban'>
+                                </div>
+                                <div class="col">
+                                    <label for="cle_rib" class="form-label">Clé RIB</label>
+                                    <input type="text" class="form-control" id="cle_rib" value="{{$employee->cle_rib}}" name='cle_rib'>
                                 </div>
                                 </div> 
                                 <div class="row g-3 mb-3">
-                                    <div class="col-6">
-                                        <label for="exampleFormControlInput47775" class="form-label">UPI Id</label>
-                                        <input type="text" class="form-control" id="exampleFormControlInput47775" value="454812kotak@upi">
+                                    <div class="col">
+                                        <label for="swift" class="form-label">Swift</label>
+                                        <input type="text" class="form-control" id="swift" value="{{$employee->swift}}">
                                     </div>
                                 </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-lg btn-block lift text-uppercase btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                    <button type="submit" class="btn btn-lg btn-block lift text-uppercase btn-primary modelUpdateBtn" atl="update emp" id="modelAddBtn"
+                                        data-bs-dismiss="modal">
+                                        <span class="normal-status">
+                                            Modifier
+                                        </span>
+                                        <span class="indicateur d-none">
+                                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                            Un Instant...
+                                        </span>
+                                    </button> 
                             </form>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Done</button>
-                        <button type="button" class="btn btn-primary">Create</button>
-                    </div> 
+                   
                 </div>  
             </div>
         </div>
@@ -672,5 +739,7 @@
 
 @endpush
 @push('js')
+<script src="{{ asset('app-js/crud/post.js') }}"></script>
+<script src="{{ asset('app-js/crud/put.js') }}"></script>
 
 @endpush

@@ -159,7 +159,10 @@ class EmployeeController extends Controller
     public function show(Employee $employee)
     {
         //
-        return view('pages.admin.personnel.membres.show', compact('employee'));
+        $duty = Duty::where('evolution', 'ON_GOING')
+                    ->where('employee_id',$employee->id)
+                    ->first();
+        return view('pages.admin.personnel.membres.show', compact('employee','duty'));
 
     }
 

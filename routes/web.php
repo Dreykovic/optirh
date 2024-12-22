@@ -54,6 +54,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/membres/{employee}', [EmployeeController::class, 'show'])->name('membres.show');
     Route::get('/membres/job{id}', [EmployeeController::class, 'employees'])->name('membres.job');
     Route::post('/membres/save', [EmployeeController::class, 'store'])->name('membres.store');
+    Route::post('/membres/update', [EmployeeController::class, 'update'])->name('membres.update');
 
     Route::get('/directions', [DepartmentController::class, 'index'])->name('directions');
     Route::get('/directions/{department}', [DepartmentController::class, 'show'])->name('directions.show');

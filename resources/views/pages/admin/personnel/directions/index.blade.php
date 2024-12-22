@@ -75,7 +75,7 @@
                                                 <div class='d-flex justify-content-start align-items-center'>
                                                    
                                                     @if ($department->director!=null)
-                                                    <i class="icofont icofont-{{ $department->director->gender === 'FEMALE' ? 'business-man-alt-2' : 'businesswoman' }} fs-3  avatar rounded-circle"></i>
+                                                    <i class="icofont icofont-{{ $department->director->gender === 'FEMALE' ? 'businesswoman' : 'business-man-alt-2' }} fs-3  avatar rounded-circle"></i>
                                                     <span class="fw-bold ms-1">{{ $department->director->first_name }} {{ $department->director->last_name }}</span>
                                                     @else
                                                         <span class="text-muted">Aucun directeur assigné</span>
