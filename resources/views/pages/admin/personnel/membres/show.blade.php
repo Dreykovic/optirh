@@ -12,7 +12,7 @@
                     <div class="col-md-12">
                         <div class="card border-0 mb-4 no-bg">
                             <div class="card-header py-3 px-0 d-flex align-items-center  justify-content-between border-bottom">
-                                <h3 class=" fw-bold flex-fill mb-0">Employee Profile</h3>
+                                <h3 class=" fw-bold flex-fill mb-0">Profile</h3>
                             </div>
                         </div>
                     </div>
@@ -251,7 +251,7 @@
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12">
                                 <div class="card">
                                     <div class="card-header py-3 d-flex justify-content-between">
-                                        <h6 class="mb-0 fw-bold ">Information Banquaire</h6>
+                                        <h6 class="mb-0 fw-bold ">Compte Bancaire</h6>
                                         <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#updateBankInfoModal"><i class="icofont-edit text-primary fs-6"></i></button>
                                     </div>
                                     <div class="card-body">
@@ -499,14 +499,14 @@
                 </div>
                 <form  id='modelAddForm' enctype="multipart/form-data" data-model-add-url="{{ route('files.upload',['employeeId' => $employee->id]) }}">
                     @csrf 
-                    <div class="bg-light">
+                    <div class="">
                         <label for="files" class="form-label">Choisir des fichiers (PDF, IMAGE) :</label>
-                        <input type="file" name="files[]" id="files" class="form-control" accept=".pdf, .png, .jpeg, .jpg" multiple>
+                        <input type="file" name="files[]" id="files" class="form-control form-control-lg" accept=".pdf, .png, .jpeg, .jpg" multiple>
                     </div>
 
                     <div class="modal-footer">
-                                <button type="button" class="btn btn-lg btn-block lift text-uppercase btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                <button type="submit" class="btn btn-lg btn-block lift text-uppercase btn-primary" atl="Ajouter Emp" id="modelAddBtn"
+                                <button type="button" class="btn btn-sm btn-block lift text-uppercase btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                <button type="submit" class="btn btn-sm btn-block lift text-uppercase btn-primary" atl="Ajouter Emp" id="modelAddBtn"
                                     data-bs-dismiss="modal">
                                     <span class="normal-status">
                                         Enregister

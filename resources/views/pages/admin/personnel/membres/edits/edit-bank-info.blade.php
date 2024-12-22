@@ -7,7 +7,7 @@
                         <div class="deadline-form modelUpdateFormContainer" id="updateBankInfoForm">
                             <form id="modelAddForm" data-model-update-url="{{ route('membres.update') }}">
                                 <div class="modal-header">
-                                    <h5 class="modal-title  fw-bold" id="edit2Label"> Bank information</h5>
+                                    <h5 class="modal-title  fw-bold" id="edit2Label">Compte Bancaire</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="row g-3 mb-3">

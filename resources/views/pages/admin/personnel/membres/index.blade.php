@@ -17,9 +17,8 @@
                                         Direction
                                     </button>
                                     <ul class="dropdown-menu  dropdown-menu-end" aria-labelledby="dropdownMenuButton2">
-                                    <li><a class="dropdown-item" href="#">All</a></li>
-                                    <li><a class="dropdown-item" href="#">Task Assign Members</a></li>
-                                    <li><a class="dropdown-item" href="#">Not Assign Members</a></li>
+                                    <li><a class="dropdown-item" href="#">Tout</a></li>
+                        
                                     </ul>
                                 </div>
                             </div>

@@ -17,3 +17,14 @@ try {
         php artisan storage:link
         chmod -R 775 storage
 
+
+
+        
+- editer dept
+-editer job
+-editer emp (pers et bank)
+- job employees list        
+- filtrer emp par dept 
+-sequencer les files 
+** politique de suppression(job, dept,emp)
+rappel : audrey user icon inverser
