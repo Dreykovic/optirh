@@ -60,7 +60,7 @@
                                 <div class="card ">
                                 <div class="card-body">
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar lg  rounded-1 no-thumbnail bg-lightblue color-defult"><i class="icofont-chart-flow-1 fs-4"></i></div>
+                                            <div class="avatar lg  rounded-1 no-thumbnail bg-lightblue color-defult"><i class="icofont-company fs-3"></i></div>
                                             <div class="flex-fill ms-4 text-truncate">
                                                 <span class="fw-bold">{{$nbre_postes}}</span>
                                                 <div class="text-truncate">Postes</div>

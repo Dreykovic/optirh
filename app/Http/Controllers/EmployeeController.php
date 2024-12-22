@@ -6,6 +6,7 @@ use App\Models\Employee;
 use App\Models\Duty;
 use App\Models\Job;
 use App\Models\Department;
+use App\Models\File;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
@@ -154,10 +155,11 @@ class EmployeeController extends Controller
     public function show(Employee $employee)
     {
         //
+        $files = File::where('employee_id',$employee->id)->get();
         $duty = Duty::where('evolution', 'ON_GOING')
                     ->where('employee_id',$employee->id)
                     ->first();
-        return view('pages.admin.personnel.membres.show', compact('employee','duty'));
+        return view('pages.admin.personnel.membres.show', compact('employee','duty','files'));
 
     }
 

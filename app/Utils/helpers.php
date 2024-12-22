@@ -14,10 +14,32 @@ if (!function_exists('formatDate')) {
     }
 }
 
-if (!function_exists('generateColor')) {
-    function generateColor($name)
+
+
+if (!function_exists('getFileIconClass')) {
+    /**
+     * Returns the CSS class for the background color of the file type.
+     */
+    function getFileIconClass(string $mimeType): string
     {
-        $hash = md5($name);
-        return '#' . substr($hash, 0, 6);
+        return match ($mimeType) {
+            'application/pdf' => 'bg-lightgreen',
+            'image/png', 'image/jpeg', 'image/jpg' => 'light-danger-bg',
+            default => 'light-danger-bg',
+        };
+    }
+}
+
+if (!function_exists('getFileIcon')) {
+    /**
+     * Returns the icon class for the file type.
+     */
+    function getFileIcon(string $mimeType): string
+    {
+        return match ($mimeType) {
+            'application/pdf' => 'icofont-file-pdf',
+            'image/png', 'image/jpeg', 'image/jpg' => 'icofont-image',
+            default => 'icofont-bug',
+        };
     }
 }

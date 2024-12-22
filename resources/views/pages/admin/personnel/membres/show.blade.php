@@ -1,4 +1,9 @@
 @extends('pages.admin.base')
+@section('plugins-style')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/datatables/responsive.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/datatables/dataTables.bootstrap5.min.css') }}">
+@endsection
 @section('admin-content')
   <!-- Body: Body -->
   <div class="body d-flex py-lg-3 py-md-2">
@@ -419,40 +424,53 @@
                             </div>
                         </div> -->
                         <div class="card">
-                                            <div class="card-body">
-                                                <h6 class="fw-bold mb-3 text-danger">Documents</h6>
-                                                <div class="flex-grow-1">
-                                                    <div class="py-2 d-flex align-items-center border-bottom">
-                                                        <div class="d-flex ms-3 align-items-center flex-fill">
-                                                            <span class="avatar lg bg-lightgreen rounded-circle text-center d-flex align-items-center justify-content-center"><i class="icofont-file-pdf fs-5"></i></span>
-                                                            <div class="d-flex flex-column ps-3">
-                                                                <h6 class="fw-bold mb-0 small-14">file1.pdf</h6> 
-                                                            </div>
-                                                        </div>
-                                                        <button type="button" class="btn bg-lightgreen text-end">Download</button>
-                                                    </div>
-                                                    <div class="py-2 d-flex align-items-center border-bottom">
-                                                    <div class="d-flex ms-3 align-items-center flex-fill">
-                                                            <span class="avatar lg light-danger-bg rounded-circle text-center d-flex align-items-center justify-content-center"><i class="icofont-bug fs-5"></i></span>
-                                                            <div class="d-flex flex-column ps-3">
-                                                                <h6 class="fw-bold mb-0 small-14">Image3.jpg</h6>
-                                                            </div>
-                                                        </div>
-                                                        <button type="button" class="btn light-danger-bg text-end">Download</button>
-                                                    </div>
-                                                    
-                                                    <div class="py-2 d-flex align-items-center">
-                                                        <div class="d-flex ms-3 align-items-center flex-fill">
-                                                            <span class="avatar lg bg-lightgreen rounded-circle text-center d-flex align-items-center justify-content-center"><i class="icofont-file-pdf fs-5"></i></span>
-                                                            <div class="d-flex flex-column ps-3">
-                                                                <h6 class="fw-bold mb-0 small-14">file5.pdf</h6>
-                                                            </div>
-                                                        </div>
-                                                        <button type="button" class="btn bg-lightgreen text-end">Download</button>
-                                                    </div>
-                                                </div>
+                            <div class="card-body">
+                                <div class='d-flex justify-content-between'>
+                                <h6 class="fw-bold mb-3 text-danger">Documents</h6>
+                                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addFileModal">Nouveau</button>
+                                </div>
+                                <div class="flex-grow-1">
+                                    @forelse($files as $file)
+                                    <div class="py-2 d-flex align-items-center border-bottom">
+                                        <!-- Icon and File Details -->
+                                        <div class="d-flex ms-3 align-items-center flex-fill">
+                                            <span class="avatar small-11 {{ getFileIconClass($file->mime_type) }} rounded-circle text-center d-flex align-items-center justify-content-center">
+                                                <i class="{{ getFileIcon($file->mime_type) }} fs-5"></i>
+                                            </span>
+                                            <div class="d-flex flex-column ps-3" style="max-width: 200px;">
+                                                <h6 class="fw-bold mb-0 small-14 text-truncate text-muted" title="{{ $file->name }}">
+                                                    {{ $file->name }}
+                                                </h6>
                                             </div>
                                         </div>
+
+                                        <!-- Actions Dropdown -->
+                                        <div class="btn-group">
+                                            <i class="bi bi-three-dots-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                                            <ul class="dropdown-menu border-0 shadow bg-primary">
+                                                <li>
+                                                    <a class="dropdown-item text-light" href="#" onclick="renameFile({{ $file->id }})">Renommer</a>
+                                                </li>
+                                                <li>
+                                                    <form action="{{ route('files.delete', $file->id) }}" method="POST" onsubmit="return confirm('Confirmer la suppression ?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="dropdown-item text-light">Supprimer</button>
+                                                    </form>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item text-light" href="{{ $file->url }}" target="_blank">Ouvrir</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    @empty
+                                    <span>Aucun document disponible</span>
+                                    @endforelse
+                                </div>
+                               
+                            </div>
+                        </div>
                         <!--  -->
                     </div>
                 </div>
@@ -596,6 +614,42 @@
             </div>
         </div> 
 
+        <!-- Modal Modal Center-->
+<div class="modal fade" id="addFileModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            
+            <div class="modal-body">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="">Nouveau Document</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form  id='modelAddForm' enctype="multipart/form-data" data-model-add-url="{{ route('files.upload',['employeeId' => $employee->id]) }}">
+                    @csrf 
+                    <div class="bg-light">
+                        <label for="files" class="form-label">Choisir des fichiers (PDF, PNG, JPEG, JPG) :</label>
+                        <input type="file" name="files[]" id="files" class="form-control" multiple>
+                    </div>
+                    <div class="modal-footer">
+                                <button type="button" class="btn btn-lg btn-block lift text-uppercase btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                <button type="submit" class="btn btn-lg btn-block lift text-uppercase btn-primary" atl="Ajouter Emp" id="modelAddBtn"
+                                    data-bs-dismiss="modal">
+                                    <span class="normal-status">
+                                        Enregister
+                                    </span>
+                                    <span class="indicateur d-none">
+                                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                        Un Instant...
+                                    </span>
+                                </button>
+                            </div>
+                </form>
+
+            </div>
+            
+        </div>
+    </div>
+</div>
       
     @include('pages.admin.personnel.membres.edits.edit-pers-info')
     @include('pages.admin.personnel.membres.edits.edit-bank-info')

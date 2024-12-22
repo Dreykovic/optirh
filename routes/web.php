@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\EmployeeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\FileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,6 +69,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('/jobs/{id}', [JobController::class, 'destroy'])->name('jobs.destroy');
 
     Route::get('/api/jobs/{departmentId}', [JobController::class, 'getJobsByDepartment']);
+
+    //files
+    Route::prefix('files')->group(function () {
+        Route::post('/upload/{employeeId}', [FileController::class, 'upload'])->name('files.upload');
+        Route::post('/rename/{fileId}', [FileController::class, 'rename'])->name('files.rename');
+        Route::delete('/delete/{fileId}', [FileController::class, 'delete'])->name('files.delete');
+        Route::get('/download/{fileId}', [FileController::class, 'download'])->name('files.download');
+    });
+    
 
 
 
