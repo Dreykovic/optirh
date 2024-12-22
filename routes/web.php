@@ -73,7 +73,7 @@ Route::group(['middleware' => 'auth'], function () {
     //files
     Route::prefix('files')->group(function () {
         Route::post('/upload/{employeeId}', [FileController::class, 'upload'])->name('files.upload');
-        Route::post('/rename/{fileId}', [FileController::class, 'rename'])->name('files.rename');
+        Route::post('/rename', [FileController::class, 'rename'])->name('files.rename');
         Route::delete('/delete/{fileId}', [FileController::class, 'delete'])->name('files.delete');
         Route::get('/download/{fileId}', [FileController::class, 'download'])->name('files.download');
         Route::get('/open/{fileId}', [FileController::class, 'openFile'])->name('files.open');

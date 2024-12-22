@@ -106,16 +106,15 @@ class FileController extends Controller
     }
 
 
-    public function getFiles(Request $request,$employeeId)
+    public function getFiles(Request $request, $employeeId)
     {
-        // $employeeId = $request->input('employee_id'); // ID de l'employé
-        $search = $request->input('search', '');      // Recherche par nom de fichier
-        $limit = $request->input('limit', 5);         // Nombre d'éléments par page (par défaut 5)
-        $page = $request->input('page', 1);           // Page actuelle (par défaut 1)
+        $search = $request->input('search', '');     
+        $limit = $request->input('limit', 5);   
+        $page = $request->input('page', 1);       
     
-        // Récupérer les fichiers associés à l'employé et filtrer par recherche
+        // Vérification insensible à la casse pour le nom
         $filesQuery = File::where('employee_id', $employeeId)
-                          ->where('name', 'LIKE', "%{$search}%");
+                          ->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%']);
     
         // Pagination avec les paramètres limit et page
         $files = $filesQuery->paginate($limit);
@@ -124,8 +123,9 @@ class FileController extends Controller
             $file->icon = getFileIcon($file->mime_type);
         }
     
-        return response()->json($files); // Retourner les résultats paginés en JSON
+        return response()->json($files);
     }
+    
     
 
 

@@ -565,6 +565,32 @@ function loadFiles() {
 }
 
 // Fonction pour afficher les fichiers
+// function renderFiles(files) {
+//     const fileList = document.getElementById('fileList');
+//     fileList.innerHTML = '';
+
+//     if (files.length === 0) {
+//         fileList.innerHTML = '<div class="alert alert-warning">Aucun fichier trouvé.</div>';
+//     } else {
+//         files.forEach(file => {
+//             const fileElement = document.createElement('div');
+//             fileElement.className = 'py-2 d-flex align-items-center border-bottom';
+//             fileElement.innerHTML = `
+//                 <div class="d-flex ms-3 align-items-center flex-fill">
+//                     <span class="avatar small-11 ${file.icon_class} rounded-circle text-center d-flex align-items-center justify-content-center">
+//                         <i class="${file.icon} fs-5"></i>
+//                     </span>
+//                     <div class="d-flex flex-column ps-3" style="max-width: 200px;">
+//                         <h6 class="fw-bold mb-0 small-14 text-truncate text-muted" title="${file.name}">
+//                             ${file.name}
+//                         </h6>
+//                     </div>
+//                 </div>
+//             `;
+//             fileList.appendChild(fileElement);
+//         });
+//     }
+// }
 function renderFiles(files) {
     const fileList = document.getElementById('fileList');
     fileList.innerHTML = '';
@@ -586,11 +612,36 @@ function renderFiles(files) {
                         </h6>
                     </div>
                 </div>
+
+                <!-- Dropdown Actions -->
+                <div class="btn-group">
+                    <i class="bi bi-three-dots-vertical" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
+                    <ul class="dropdown-menu border-0 shadow bg-primary">
+                        <!-- Rename File -->
+                        <li>
+                            <a class="dropdown-item text-light" href="#" onclick="renameFile(${file.id})">Renommer</a>
+                        </li>
+                        <!-- Delete File -->
+                        <li>
+                            <form action="/files/delete/${file.id}" method="POST" onsubmit="return confirm('Confirmer la suppression ?');">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                <input type="hidden" name="file_id" value="${file.id}">
+                                <button type="submit" class="dropdown-item text-light">Supprimer</button>
+                            </form>
+                        </li>
+                        <!-- Open File -->
+                        <li>
+                            <a class="dropdown-item text-light" href="${file.url}" target="_blank">Ouvrir</a>
+                        </li>
+                    </ul>
+                </div>
             `;
             fileList.appendChild(fileElement);
         });
     }
 }
+
 
 
 // Fonction pour afficher la pagination
@@ -620,6 +671,27 @@ function changePage(page) {
 
 // Charger les fichiers au démarrage de la page
 window.onload = loadFiles;
+
+</script>
+<script>
+    function renameFile(fileId) {
+    const newName = prompt("Entrez le nouveau nom pour ce fichier:");
+    if (newName) {
+        // Appel AJAX pour renommer le fichier
+        axios.post('/files/rename', {
+            file_id: fileId,
+            new_name: newName
+        })
+        .then(response => {
+            alert('Fichier renommé avec succès!');
+            // Recharge les fichiers après modification
+            loadFiles();
+        })
+        .catch(error => {
+            alert('Erreur lors du renommage.');
+        });
+    }
+}
 
 </script>
 @endpush
