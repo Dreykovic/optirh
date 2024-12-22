@@ -627,9 +627,10 @@
                 <form  id='modelAddForm' enctype="multipart/form-data" data-model-add-url="{{ route('files.upload',['employeeId' => $employee->id]) }}">
                     @csrf 
                     <div class="bg-light">
-                        <label for="files" class="form-label">Choisir des fichiers (PDF, PNG, JPEG, JPG) :</label>
-                        <input type="file" name="files[]" id="files" class="form-control" multiple>
+                        <label for="files" class="form-label">Choisir des fichiers (PDF, IMAGE) :</label>
+                        <input type="file" name="files[]" id="files" class="form-control" accept=".pdf, .png, .jpeg, .jpg" multiple>
                     </div>
+
                     <div class="modal-footer">
                                 <button type="button" class="btn btn-lg btn-block lift text-uppercase btn-secondary" data-bs-dismiss="modal">Annuler</button>
                                 <button type="submit" class="btn btn-lg btn-block lift text-uppercase btn-primary" atl="Ajouter Emp" id="modelAddBtn"
@@ -660,5 +661,6 @@
 @push('js')
 <script src="{{ asset('app-js/crud/post.js') }}"></script>
 <script src="{{ asset('app-js/crud/put.js') }}"></script>
+<script src="{{ asset('app-js/crud/delete.js') }}"></script>
 
 @endpush
