@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -43,8 +48,11 @@ class UserController extends Controller
 
             $users = $query->get();
             // $roles = Role::whereNotIn('name', ['client', 'main', 'admin'])->get();
+            $employeesWithoutUser = Employee::doesntHave('users')->get();
 
-            return view('pages.admin.users.credentials.index', compact('users', 'roles', 'status'));
+            session()->flash('success', "L'utilisateur  à été créé.");
+
+            return view('pages.admin.users.credentials.index', compact('users', 'roles', 'status', 'employeesWithoutUser'));
         } catch (\Throwable $th) {
             dd($th->getMessage());
             abort(500);
@@ -67,33 +75,48 @@ class UserController extends Controller
             $this->validate($request, [
                 'role' => 'required',
 
-                'username' => 'required',
-                'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // validation pour l'image
-
-                'email' => 'email|unique:users,email',
-                'password' => 'required|min:8|confirmed']);
-
-            $user = User::create([
-                'username' => $request->input('username'),
-                'email' => $request->input('email'),
-                'profile' => 'EMPLOYEE',
-                'password' => Hash::make($request->input('password')),
+                'employee' => 'required|exists:employees,id',
             ]);
-            // Upload de la nouvelle image si fournie
-            if ($request->hasFile('photo')) {
-                $photo = $request->file('photo');
-                $image_name = time().'.'.$photo->getClientOriginalExtension();
-                $image_path = $photo->storeAs('images/employees/photos', $image_name, 'public'); // Stocker l'image
-                $user->profile_picture = Storage::url($image_path);
-            }
-            $user->save();
+            $employee = Employee::findOrFail($request->input('employee'));
+            $user = User::create([
+                'username' => $request->input('firstname'),
+                'email' => $employee->email,
+                'password' => Hash::make('uk2024@'),
+            ]);
 
             $user->syncRoles([$request->input('role')]);
+            $currentUser = Auth::user();
 
-            return response()->json(['ok' => true, 'message' => 'Utilisateur créé avec succès !'], 200);
-        } catch (\Exception $e) {
-            // return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
-            return response()->json(['ok' => false, 'message' => $e->getMessage()]);
+            // session()->flash('success', "L'utilisateur *{$user->name} {$user->firstname}* à été créé.");
+            // Envoyer le lien de réinitialisation du mot de passe
+            $status = Password::sendResetLink(
+                $request->only('email')
+            );
+            if ($status === Password::RESET_LINK_SENT) {
+                return response()->json(['message' => __("Le compte à été créé et un lien est envoyé à l'utilisateur pour qu'il change de mode de passe"), 'ok' => true]);
+            } else {
+                return response()->json(['message' => __('Une erreur est survenue'), 'ok' => false]);
+            }
+        } catch (ValidationException $e) {
+            // Gestion des erreurs de validation
+            return response()->json([
+                'ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (ModelNotFoundException $e) {
+            // Gestion des cas où le modèle n'est pas trouvé
+            return response()->json([
+                'ok' => false,
+                'message' => 'Données introuvables. Veuillez vérifier les entrées.',
+            ], 404);
+        } catch (\Throwable $th) {
+            // Gestion générale des erreurs
+            return response()->json([
+                'ok' => false,
+                'message' => 'Une erreur s’est produite. Veuillez réessayer.',
+                'error' => $th->getMessage(),
+            ], 500);
         }
     }
 

@@ -13,11 +13,7 @@
 
             <!-- Body: Body -->
             <div class="body d-flex py-3">
-                @if (session('error'))
-                    <div class="alert alert-danger">
-                        {{ session('error') }}
-                    </div>
-                @endif
+                <x-session-message />
 
                 <div class="container-xxl">
                     @yield('admin-content')

@@ -21,6 +21,7 @@
 <body>
 
     <div id="mytask-layout" class="theme-indigo">
+
         @yield('content')
 
     </div>

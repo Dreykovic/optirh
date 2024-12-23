@@ -124,36 +124,31 @@
                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                </div>
                <div class="modal-body">
+                   <div class="alert alert-info" role="alert">
+                       Le nom d'utilisateur du membre du personnel sera généré automatiquement et envoyé par e-mail.
+                       Celui-ci devra modifier son mot de passe lors de sa première connexion.
+                   </div>
 
 
 
 
                    <!--begin::Input group-->
-                   <div class=" mb-3">
-                       <!--begin::Label-->
-                       <label class="required fw-semibold fs-6 mb-2" for="username">Username</label>
-                       <!--end::Label-->
+                   <div class="mb-3">
+                       <label class="form-label required" for="employeeId">Choisir </label>
+                       <select class="form-select" id="employeeId" name="employee">
 
-                       <!--begin::Input-->
-                       <input type="text" name="username" class="form-control form-control-solid mb-3 mb-lg-0"
-                           id="username" placeholder="Nom d'Utilisateur" value="">
-                       <!--end::Input-->
+                           @foreach ($employeesWithoutUser as $employee)
+                               <option value="{{ $employee->id }}">
+                                   {{ $employee->last_name . ' ' . $employee->first_name }}
+                               </option>
+                           @endforeach
+
+                       </select>
                    </div>
                    <!--end::Input group-->
 
 
-                   <!--begin::Input group-->
-                   <div class=" mb-3">
-                       <!--begin::Label-->
-                       <label class="required fw-semibold fs-6 mb-2" for="email">Email</label>
-                       <!--end::Label-->
 
-                       <!--begin::Input-->
-                       <input type="email" name="email" class="form-control form-control-solid mb-3 mb-lg-0"
-                           id="email" placeholder="example@domain.com" value="">
-                       <!--end::Input-->
-                   </div>
-                   <!--end::Input group-->
 
                    <!--begin::Input group-->
                    <div class="mb-3">
@@ -169,8 +164,7 @@
                                <div class="form-check form-check-custom form-check-solid">
                                    <!--begin::Input-->
                                    <input class="form-check-input me-3" name="role" type="radio"
-                                       value="{{ $role->name }}"
-                                       id="kt_modal_update_role_option_{{ $role->id }}">
+                                       value="{{ $role->name }}" id="kt_modal_update_role_option_{{ $role->id }}">
                                    <!--end::Input-->
 
                                    <!--begin::Label-->

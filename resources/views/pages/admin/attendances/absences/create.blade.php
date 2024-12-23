@@ -18,8 +18,8 @@
                         <div class="card-body">
 
                             <div class="mb-3">
-                                <label class="form-label required" for="transactionTypeSelect">Choisir </label>
-                                <select class="form-select" id="transactionTypeSelect" name="absence_type">
+                                <label class="form-label required" for="absenceTypeSelect">Choisir </label>
+                                <select class="form-select" id="absenceTypeSelect" name="absence_type">
 
                                     @foreach ($absenceTypes as $absenceType)
                                         <option value="{{ $absenceType->id }}">{{ $absenceType->label }}</option>
