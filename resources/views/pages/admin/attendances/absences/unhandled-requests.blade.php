@@ -43,8 +43,20 @@
                     $employee = $absence->duty->employee;
                     $absence_type = $absence->absence_type;
                 @endphp
+                @if (auth()->user()->employee_id === $absence->duty->employee_id ||
+                        (auth()->user()->employee_id !== $absence->duty->employee_id &&
+                            in_array($absence->level, ['ONE', 'TWO', 'THREE']) &&
+                            auth()->user()->hasRole('GRH')) ||
+                        (auth()->user()->employee_id !== $absence->duty->employee_id &&
+                            in_array($absence->level, ['TWO', 'THREE']) &&
+                            auth()->user()->hasRole('DG')) ||
+                        ($absence->stage !== 'CANCELLED' &&
+                            in_array($absence->level, ['ZERO', 'ONE', 'TWO', 'THREE']) &&
+                            auth()->user()->employee->duties->firstWhere('evolution', 'ON_GOING')->job_id ===
+                                $absence->duty->job->n_plus_one_job_id))
+                    @include('pages.admin.attendances.absences.request.card')
+                @endif
 
-                @include('pages.admin.attendances.absences.request.card')
 
             @empty
                 @switch($stage)

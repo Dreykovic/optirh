@@ -3,7 +3,13 @@
     <span class="visually-hidden">Toggle Dropdown</span>
 </div>
 <ul class="dropdown-menu border-0 shadow py-3 px-2">
-    @if (auth()->user()->can('écrire-une-absence'))
+
+    @if (
+        ($absence->level == 'ONE' && auth()->user()->hasRole('GRH')) ||
+            ($absence->level == 'TWO' && auth()->user()->hasRole('DG')) ||
+            ($absence->level == 'ZERO' &&
+                auth()->user()->employee->duties->firstWhere('evolution', 'ON_GOING')->job_id ===
+                    $absence->duty->job->n_plus_one_job_id))
         <li>
             <a class="dropdown-item py-2 rounded" data-bs-toggle="modal"
                 data-bs-target="#absenceReqDetails{{ $absence->id }}" role="button">
@@ -68,6 +74,7 @@
             </div>
         </li>
     @endif
+
     @if (auth()->user()->employee_id === $absence->duty->employee_id &&
             $absence->level === 'ZERO' &&
             $absence->stage !== 'CANCELLED')
