@@ -22,89 +22,94 @@
                                     $employee = $absence->duty->employee;
                                     $absence_type = $absence->absence_type;
                                 @endphp
-                                <tr>
+                                @if (
+                                    (auth()->user()->employee_id !== $absence->duty->employee_id && $absence->stage !== 'CANCELLED') ||
+                                        auth()->user()->employee_id === $absence->duty->employee_id)
+                                    <tr>
 
-                                    <td>
+                                        <td>
 
-                                        <x-employee-icon :employee="$employee" />
-                                        <a href="#" class="fw-bold">
-                                            <span>{{ $employee->last_name . ' ' . $employee->first_name }}
-                                            </span>
-                                        </a>
-
-
-
-
-                                    </td>
-                                    <td>
-                                        {{ !$absence_type ? 'Pas Définis' : $absence_type->label }}
-                                    </td>
-                                    <td>
-                                        @formatDateOnly($absence->start_date)
-
-                                    </td>
-                                    <td>
-                                        @formatDateOnly($absence->end_date)
-                                    </td>
-                                    <td>
-                                        {{ $absence->requested_days }} Jours
-                                    </td>
-                                    <td class="fw-bolder text-uppercase">
-                                        @switch($absence->stage)
-                                            @case('APPROVED')
-                                                <span class=" text-success">
-
-                                                    Approuvé
-
+                                            <x-employee-icon :employee="$employee" />
+                                            <a href="#" class="fw-bold">
+                                                <span>{{ $employee->last_name . ' ' . $employee->first_name }}
                                                 </span>
-                                            @break
-
-                                            @case('REJECTED')
-                                                <span class=" text-danger">
-
-                                                    Rejeté
-                                                </span>
-                                            @break
-
-                                            @case('CANCELLED')
-                                                <span class=" color-lavender-purple">
-
-                                                    Annulé
-                                                </span>
-                                            @break
-
-                                            @case('IN_PROGRESS')
-                                                <span class=" text-warning">
-
-                                                    En cours de Traitement
-                                                </span>
-                                            @break
-
-                                            @case('COMPLETED')
-                                                <span class=" ">
-
-                                                    Complété
-                                                </span>
-                                            @break
-
-                                            @default
-                                                <span class="color-light-orange">
-
-                                                    En attente
-                                                </span>
-                                        @endswitch
-
-                                    </td>
-                                    <td>
-                                        @include('pages.admin.attendances.absences.actions')
+                                            </a>
 
 
 
 
-                                    </td>
-                                </tr>
-                                @include('pages.admin.attendances.absences.request.comment')
-                                @include('pages.admin.attendances.absences.details')
+                                        </td>
+                                        <td>
+                                            {{ !$absence_type ? 'Pas Définis' : $absence_type->label }}
+                                        </td>
+                                        <td>
+                                            @formatDateOnly($absence->start_date)
+
+                                        </td>
+                                        <td>
+                                            @formatDateOnly($absence->end_date)
+                                        </td>
+                                        <td>
+                                            {{ $absence->requested_days }} Jours
+                                        </td>
+                                        <td class="fw-bolder text-uppercase">
+                                            @switch($absence->stage)
+                                                @case('APPROVED')
+                                                    <span class=" text-success">
+
+                                                        Approuvé
+
+                                                    </span>
+                                                @break
+
+                                                @case('REJECTED')
+                                                    <span class=" text-danger">
+
+                                                        Rejeté
+                                                    </span>
+                                                @break
+
+                                                @case('CANCELLED')
+                                                    <span class=" color-lavender-purple">
+
+                                                        Annulé
+                                                    </span>
+                                                @break
+
+                                                @case('IN_PROGRESS')
+                                                    <span class=" text-warning">
+
+                                                        En cours de Traitement
+                                                    </span>
+                                                @break
+
+                                                @case('COMPLETED')
+                                                    <span class=" ">
+
+                                                        Complété
+                                                    </span>
+                                                @break
+
+                                                @default
+                                                    <span class="color-light-orange">
+
+                                                        En attente
+                                                    </span>
+                                            @endswitch
+
+                                        </td>
+                                        <td>
+                                            @include('pages.admin.attendances.absences.actions')
+
+
+
+
+                                        </td>
+                                    </tr>
+                                    @include('pages.admin.attendances.absences.request.comment')
+                                    @include('pages.admin.attendances.absences.details')
+                                @endif
+
                                 @empty
                                     <tr>
                                         @switch($stage)

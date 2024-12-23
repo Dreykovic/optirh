@@ -147,11 +147,12 @@ class AbsenceController extends Controller
             $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
                                         ->where('employee_id', $currentEmployee->id)
                                         ->firstOrFail();
+            $absence_type_id = $request->input('absence_type');
 
             // Enregistrement de la demande d'absence
-            Absence::create([
+            $absence = Absence::create([
                 'duty_id' => $currentEmployeeDuty->id,
-                'absence_type_id' => $validatedData['absence_type'],
+                'absence_type_id' => $absence_type_id,
                 'address' => $validatedData['address'],
                 'start_date' => $validatedData['start_date'],
                 'end_date' => $validatedData['end_date'],
@@ -160,8 +161,15 @@ class AbsenceController extends Controller
             ]);
 
             // Redirection avec message de succès
+
+            // return response()->json([
+            //     'message' => "Demande d\'absence {$absence_type_id} créée avec succès.",
+            //     'ok' => true,
+            // ]);
+            $var = $absence->absence_type ? $absence->absence_type->label : '';
+
             return response()->json([
-                'message' => 'Demande d\'absence créée avec succès.',
+                'message' => "Demande d\'absence {$var}  créée avec succès.",
                 'ok' => true,
             ]);
         } catch (ValidationException $e) {
@@ -443,13 +451,13 @@ class AbsenceController extends Controller
         try {
             // Rechercher l'absence par ID
             $absence = Absence::findOrFail($id);
-            if ($absence->level != 'ONE') {
+            if ($absence->level != 'ZERO') {
                 return response()->json([
                     'ok' => false,
                     'message' => "Vous ne pouvez plus annulé cette demande de {$absence->absence_type->label}.",
                 ], 403);
             }
-            $absence->stage = 'CANCELED';
+            $absence->stage = 'CANCELLED';
 
             $absence->save();
 
@@ -475,8 +483,8 @@ class AbsenceController extends Controller
             // Gestion générale des erreurs
             return response()->json([
                 'ok' => false,
-                'message' => 'Une erreur s’est produite. Veuillez réessayer.',
-                'error' => $th->getMessage(),
+                'message' => 'Une erreur s’est produite. Veuillez réessayer. '.$th->getMessage(),
+                // 'error' => $th->getMessage(),
             ], 500);
         }
     }

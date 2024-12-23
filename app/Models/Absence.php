@@ -12,6 +12,7 @@ class Absence extends Model
 
     protected $fillable = [
         'requested_days',
+        'absence_type_id',
         'start_date',
         'end_date',
         'address',
@@ -35,6 +36,4 @@ class Absence extends Model
     {
         return $this->belongsTo(AbsenceType::class, 'absence_type_id');
     }
-
-
 }
