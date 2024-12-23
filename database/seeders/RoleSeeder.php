@@ -28,10 +28,10 @@ class RoleSeeder extends Seeder
             'configurer-un-employee',
 
             // Attendance
-            'voir-un-attendance',
-            'écrire-un-attendance',
-            'créer-un-attendance',
-            'configurer-un-attendance',
+            'voir-une-attendance',
+            'écrire-une-attendance',
+            'créer-une-attendance',
+            'configurer-une-attendance',
 
             // All
             'voir-un-all',
@@ -40,10 +40,10 @@ class RoleSeeder extends Seeder
             'configurer-un-all',
 
             // Absence Request
-            'voir-un-absence',
-            'écrire-un-absence',
-            'créer-un-absence',
-            'configurer-un-absence',
+            'voir-une-absence',
+            'écrire-une-absence',
+            'créer-une-absence',
+            'configurer-une-absence',
 
             // Credentials
             'voir-un-credentials',
@@ -77,10 +77,10 @@ class RoleSeeder extends Seeder
             'configurer-un-attendance',
 
             // Absence Request
-            'voir-un-absence',
-            'écrire-un-absence',
-            'créer-un-absence',
-            'configurer-un-absence',
+            'voir-une-absence',
+            'écrire-une-absence',
+            'créer-une-absence',
+            'configurer-une-absence',
 
             // Credentials
             'voir-un-credentials',
@@ -108,10 +108,10 @@ class RoleSeeder extends Seeder
             'configurer-un-attendance',
 
             // Absence Request
-            'voir-un-absence',
-            'écrire-un-absence',
-            'créer-un-absence',
-            'configurer-un-absence',
+            'voir-une-absence',
+            'écrire-une-absence',
+            'créer-une-absence',
+            'configurer-une-absence',
 
             // Credentials
             'voir-un-credentials',
@@ -130,9 +130,9 @@ class RoleSeeder extends Seeder
             'voir-un-attendance',
 
             // Absence Request
-            'voir-un-absence',
+            'voir-une-absence',
 
-            'créer-un-absence',
+            'créer-une-absence',
 
             // Credentials
             'écrire-un-credentials',
