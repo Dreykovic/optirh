@@ -177,7 +177,7 @@ class EmployeeController extends Controller
     public function updatePres(Request $request, $id)
     {
         $employee = Employee::findOrFail($id);
-        //dd($employee);
+       
         try {
             $validatedData = $request->validate([
                 'nationality' => 'max:255|sometimes',
@@ -212,6 +212,37 @@ class EmployeeController extends Controller
     public function updateBank(Request $request, Employee $employee)
     {
         //
+        try {
+            $validatedData = $request->validate([
+                'bank_name' => 'max:255|sometimes',
+                'rib' => 'max:255|sometimes',
+                'code_bank' => 'max:255|sometimes',
+                'code_guichet' => 'max:255|sometimes',
+                'iban' => 'max:255|sometimes',
+                'swift' => 'max:255|sometimes',
+                'cle_rib' => 'max:255|sometimes',
+                
+            ]);
+            $employee->update([
+                'bank_name' => $validatedData['bank_name'],
+                'rib' => $validatedData['rib'],
+                'code_bank' => $validatedData['code_bank'],
+                'code_guichet' => $validatedData['code_guichet'],
+                'iban' => $validatedData['iban'],
+                'swift' => $validatedData['swift'],
+                'cle_rib' => $validatedData['cle_rib'],
+            ]);
+            return response()->json(['message' => 'Employé editer avec succès.', 'ok' => true]);
+
+        }  catch (ValidationException $e) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
+            ], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+        }
     }
 
     /**
@@ -220,5 +251,9 @@ class EmployeeController extends Controller
     public function destroy(Employee $employee)
     {
         //
+    }
+
+    public function updateEmployeeData(){
+        return view('pages.admin.personnel.membres.edits.index');
     }
 }

@@ -59,12 +59,18 @@
 
 
 
+    <!--  -->
+    <li><a class="ms-link {{ Request::is('employee/data') ? 'active' : '' }}" href="{{ route('membres.data') }}"><i
+                class="icofont-home fs-5"></i>
+            <span>Mes informations</span></a>
+    </li>
 
     <!-- Help -->
     <li><a class="ms-link {{ Request::is('help') ? 'active' : '' }}" href="{{ route('help') }}"><i
                 class="icofont-home fs-5"></i>
             <span>Aide</span></a>
     </li>
+    
 
 
 

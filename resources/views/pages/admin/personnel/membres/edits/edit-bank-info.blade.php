@@ -4,7 +4,7 @@
                 <div class="modal-content">
                    
                     <div class="modal-body">
-                        <div class="deadline-form modelUpdateFormContainer" id="updateBankInfoForm">
+                        <div class="deadline-form modelUpdateFormContainer" id="updateBankInfoForm{{ $employee->id }}">
                             <form data-model-update-url="{{ route('membres.updateBank',$employee->id) }}">
                             @csrf
                             <input type="hidden" name="_method" value="PUT">
@@ -46,12 +46,12 @@
                                 <div class="row g-3 mb-3">
                                     <div class="col">
                                         <label for="swift" class="form-label">Swift</label>
-                                        <input type="text" class="form-control" id="swift" value="{{$employee->swift}}">
+                                        <input type="text" class="form-control" id="swift" value="{{$employee->swift}}" name='swift'>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-lg btn-block lift text-uppercase btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                    <button type="submit" class="btn btn-lg btn-block lift text-uppercase btn-primary modelUpdateBtn" atl="update emp" id="modelAddBtn"
+                                    <button type="submit" class="btn btn-lg btn-block lift text-uppercase btn-primary modelUpdateBtn" atl="update emp"
                                         data-bs-dismiss="modal">
                                         <span class="normal-status">
                                             Modifier

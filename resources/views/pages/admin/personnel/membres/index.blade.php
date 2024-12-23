@@ -75,9 +75,9 @@
                                                  <div class="btn-group">
                                                         <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Actions</button>
                                                         <ul class="dropdown-menu">
-                                                            <li>
+                                                            <!-- <li>
                                                                 <span class='btn' data-bs-toggle="modal" data-bs-target=""><i class="icofont-edit text-success m-2"></i>Editer</span>
-                                                            </li>
+                                                            </li> -->
                                                             <li>
                                                                 <span class='btn'><i class="icofont-ui-delete text-danger m-2"></i></i>Supprimer</span>
                                                             </li>

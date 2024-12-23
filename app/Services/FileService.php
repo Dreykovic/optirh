@@ -13,9 +13,12 @@ class FileService
         $folder = "employees/{$employeeId}";
         
         // Créer le répertoire si nécessaire
-        if (!Storage::exists($folder)) {
-            Storage::makeDirectory($folder);
+       
+        $disk = 'public';
+        if (!Storage::disk($disk)->exists($folder)) {
+            Storage::disk($disk)->makeDirectory($folder);
         }
+
     
         $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME); // Nom sans extension
         $extension = $file->getClientOriginalExtension(); // Extension
@@ -23,13 +26,16 @@ class FileService
         
         // Gestion des conflits de noms
         $counter = 1;
-        while (Storage::exists("$folder/$fileName.$extension")) {
+        
+        $extension = strtolower($extension);
+        while (Storage::disk($disk)->exists("$folder/$fileName.$extension")) {
             $fileName = "{$originalName}_{$counter}";
             $counter++;
         }
+
     
         // Enregistrer le fichier avec un nom unique
-        $path = $file->storeAs($folder, "$fileName.$extension", 'public');
+        $path = $file->storeAs($folder, "$fileName.$extension", $disk);
     
         // Sauvegarder les informations du fichier dans la base de données
         return File::create([

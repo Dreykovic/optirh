@@ -50,8 +50,9 @@ Route::group(['middleware' => 'auth'], function () {
 
 
 
-    //Personnel job_employees
+    //Personnel job_employees 
     Route::get('/membres/list', [EmployeeController::class, 'index'])->name('membres');
+    Route::get('/employee/data', [EmployeeController::class, 'updateEmployeeData'])->name('membres.data');
     Route::get('/membres/{employee}', [EmployeeController::class, 'show'])->name('membres.show');
     Route::get('/api/membres/job{id}', [EmployeeController::class, 'jobEmployees'])->name('membres.job');
     Route::post('/membres/save', [EmployeeController::class, 'store'])->name('membres.store');

@@ -21,8 +21,7 @@ try {
 
         
 -new head
--editer emp (pers et bank)
 - job employees list        
 - filtrer emp par dept 
--sequencer les files 
+-renommage
 ** politique de suppression(job, dept,emp)
