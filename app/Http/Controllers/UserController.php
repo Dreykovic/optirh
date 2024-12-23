@@ -14,6 +14,13 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['permission:voir-un-compte|écrire-un-compte|créer-un-compte|configurer-un-compte|voir-un-tout'], ['only' => ['index']]);
+        $this->middleware(['permission:créer-un-compte|créer-un-tout'], ['only' => ['store']]);
+        // $this->middleware(['permission:écrire-un-utilisateur|écrire-un-tout'], ['only' => ['destroy', 'destroyAll']]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -101,13 +108,12 @@ class UserController extends Controller
             // Notification à l'utilisateur actuel
             session()->flash('success', "L'utilisateur avec le nom *{$user->username}* et l'email *{$user->email}* a été créé. 
             Mot de passe *{$pwd}*. Retenez-le ou notez-le quelque part, il ne sera plus affiché.");
-            // $status = Password::sendResetLink(['email' => $employee->email]);
 
-            return response()->json(['message' => "L'utilisateur avec le nom {$user->username} et l'email {$user->email} a été créé.",  'ok' => true]);
+            return response()->json(['message' => "L'utilisateur avec le nom {$user->username} et l'email {$user->email} a été créé.et un lien de réinitialisation de mot de passe a été envoyé à l'utilisateur.",  'ok' => true]);
             // Envoi du lien de réinitialisation de mot de passe
             // $status = Password::sendResetLink(['email' => $employee->email]);
             // if ($status === Password::RESET_LINK_SENT) {
-            //     return response()->json(['message' => __("Le compte a été créé et un lien de réinitialisation a été envoyé à l'utilisateur."), 'ok' => true]);
+            //     return response()->json(['message' => "L'utilisateur avec le nom {$user->username} et l'email {$user->email} a été créé.et un lien de réinitialisation de mot de passe a été envoyé à l'utilisateur.",  'ok' => true]);
             // } else {
             //     return response()->json(['message' => __('Une erreur est survenue lors de l\'envoi du lien de réinitialisation.'), 'ok' => false]);
             // }
