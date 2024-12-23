@@ -49,7 +49,7 @@
                         </thead>
                         <tbody>
 
-                            @forelse ($users as $index => $user)
+                            @foreach ($users as $index => $user)
                                 <tr class="parent">
 
                                     <td>
@@ -115,34 +115,26 @@
                                         </div>
                                     </td>
                                 </tr>
-
-                                @empty
-                                    <tr>
-                                        <td colspan="4">
-
-                                            <x-no-data color="warning" text="Aucun Identifiant Enregistré" />
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                        {{-- 
+                            @endforeach
+                        </tbody>
+                    </table>
+                    {{-- 
                     <!-- Paginée, affiche les liens de pagination -->
                     <div class="mt-3">
                         {{ $users->links() }}
                     </div> --}}
 
-                    </div>
                 </div>
             </div>
-        </div><!-- Row End -->
-    @endsection
-    @push('plugins-js')
-        <script src={{ asset('assets/bundles/dataTables.bundle.js') }}></script>
-    @endpush
-    @push('js')
-        <script src="{{ asset('app-js/users/credentials/table.js') }}"></script>
-        <script src="{{ asset('app-js/crud/post.js') }}"></script>
-        <script src="{{ asset('app-js/crud/put.js') }}"></script>
-        <script src="{{ asset('app-js/crud/delete.js') }}"></script>
-    @endpush
+        </div>
+    </div><!-- Row End -->
+@endsection
+@push('plugins-js')
+    <script src={{ asset('assets/bundles/dataTables.bundle.js') }}></script>
+@endpush
+@push('js')
+    <script src="{{ asset('app-js/users/credentials/table.js') }}"></script>
+    <script src="{{ asset('app-js/crud/post.js') }}"></script>
+    <script src="{{ asset('app-js/crud/put.js') }}"></script>
+    <script src="{{ asset('app-js/crud/delete.js') }}"></script>
+@endpush

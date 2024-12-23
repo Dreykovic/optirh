@@ -61,6 +61,18 @@
                     <span>Identifiants</span>
                 </a>
             </li>
+            <li>
+                <a class="ms-link {{ Str::startsWith(request()->path(), 'users-management/roles/') ? 'active' : '' }}"
+                    href="{{ route('roles.index') }}">
+                    <span>Roles</span>
+                </a>
+            </li>
+            <li>
+                <a class="ms-link {{ Str::startsWith(request()->path(), 'users-management/permissions/') ? 'active' : '' }}"
+                    href="{{ route('permissions.index') }}">
+                    <span>Permissions</span>
+                </a>
+            </li>
 
 
 

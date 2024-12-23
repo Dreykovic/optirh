@@ -5,6 +5,7 @@ use App\Http\Controllers\AbsenceTypeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -103,6 +104,27 @@ Route::group(['middleware' => 'auth'], function () {
         */
         Route::prefix('/credentials')->group(function () {
             Route::get('/list/{status?}', [UserController::class,   'index'])->name('credentials.index');
+        });
+
+        /*
+         * Rôles
+         */
+        Route::prefix('/roles')->group(function () {
+            Route::delete('/delete/{id}', [RoleController::class, 'destroy'])->name('roles.delete');
+
+            Route::post('/add', [RoleController::class, 'store'])->name('roles.add');
+            Route::post('/update/{id}', [RoleController::class, 'update'])->name('roles.update');
+
+            Route::get('/list', [RoleController::class, 'index'])->name('roles.index');
+            Route::get('/details/{id}', [RoleController::class, 'show'])->name('roles.details');
+        });
+
+        /*
+         * Permissions
+         */
+
+        Route::prefix('/permissions')->group(function () {
+            Route::get('/list', [RoleController::class, 'get_permissions'])->name('permissions.index');
         });
     });
 });

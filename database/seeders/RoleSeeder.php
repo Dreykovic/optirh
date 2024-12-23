@@ -15,285 +15,127 @@ class RoleSeeder extends Seeder
     {
         // ensemble des permissions
         $permissions_list = [
-            // Account
-            'read-account',
-            'write-account',
-            'create-account',
-            // deposit
+            // compte
+            'voir-un-compte',
+            'écrire-un-compte',
+            'créer-un-compte',
+            'configurer-un-compte',
 
-            'read-deposit',
-            'write-deposit',
-            'create-deposit',
-
-            // withdrawal
-
-            'read-withdrawal',
-            'write-withdrawal',
-            'create-withdrawal',
-
-            // contribution
-
-            'read-contribution',
-            'write-contribution',
-            'create-contribution',
-
-            // refund
-
-            'read-refund',
-            'write-refund',
-            'create-refund',
-            // Inflow
-
-            'read-inflow',
-            'write-inflow',
-            'create-inflow',
-
-            // Outflow
-
-            'read-outflow',
-            'write-outflow',
-            'create-outflow',
-
-            // Client
-
-            'read-client',
-            'write-client',
-            'create-client',
             // Employee
+            'voir-un-employee',
+            'écrire-un-employee',
+            'créer-un-employee',
+            'configurer-un-employee',
 
-            'read-employee',
-            'write-employee',
-            'create-employee',
+            // Attendance
+            'voir-un-attendance',
+            'écrire-un-attendance',
+            'créer-un-attendance',
+            'configurer-un-attendance',
+
             // All
+            'voir-un-all',
+            'écrire-un-all',
+            'créer-un-all',
+            'configurer-un-all',
 
-            'read-all',
-            'write-all',
-            'create-all',
+            // Absence Request
+            'voir-un-absence',
+            'écrire-un-absence',
+            'créer-un-absence',
+            'configurer-un-absence',
+
+            // Credentials
+            'voir-un-credentials',
+            'écrire-un-credentials',
+            'créer-un-credentials',
+            'configurer-un-credentials',
+
+            // Role
+            'voir-un-role',
+            'écrire-un-role',
+            'créer-un-role',
+            'configurer-un-role',
         ];
+        $hr_permissions_list = [
+            // compte
+            'voir-un-compte',
+            'écrire-un-compte',
+            'créer-un-compte',
+            'configurer-un-compte',
 
-        $boss_permissions_list = [
-            // Account
-            'read-account',
-            'write-account',
-            'create-account',
-            // deposit
-
-            'read-deposit',
-            'write-deposit',
-            'create-deposit',
-
-            // withdrawal
-
-            'read-withdrawal',
-            'write-withdrawal',
-            'create-withdrawal',
-
-            // contribution
-
-            'read-contribution',
-            'write-contribution',
-            'create-contribution',
-
-            // refund
-
-            'read-refund',
-            'write-refund',
-            'create-refund',
-            // Inflow
-
-            'read-inflow',
-            'write-inflow',
-            'create-inflow',
-
-            // Outflow
-
-            'read-outflow',
-            'write-outflow',
-            'create-outflow',
-
-            // Client
-
-            'read-client',
-            'write-client',
-            'create-client',
             // Employee
+            'voir-un-employee',
+            'écrire-un-employee',
+            'créer-un-employee',
+            'configurer-un-employee',
 
-            'read-employee',
-            'write-employee',
-            'create-employee',
-            // All
+            // Attendance
+            'voir-un-attendance',
+            'écrire-un-attendance',
+            'créer-un-attendance',
+            'configurer-un-attendance',
 
-            'read-all',
-            'write-all',
-            'create-all',
+            // Absence Request
+            'voir-un-absence',
+            'écrire-un-absence',
+            'créer-un-absence',
+            'configurer-un-absence',
+
+            // Credentials
+            'voir-un-credentials',
+            'écrire-un-credentials',
+            'créer-un-credentials',
+            'configurer-un-credentials',
         ];
-        $admin_permissions_list = [
-            // Account
-            'read-account',
-            'write-account',
-            'create-account',
-            // deposit
+        $dg_permissions_list = [
+            // compte
+            'voir-un-compte',
+            'écrire-un-compte',
+            'créer-un-compte',
+            'configurer-un-compte',
 
-            'read-deposit',
-            'write-deposit',
-            'create-deposit',
-
-            // withdrawal
-
-            'read-withdrawal',
-            'write-withdrawal',
-            'create-withdrawal',
-
-            // contribution
-
-            'read-contribution',
-            'write-contribution',
-            'create-contribution',
-
-            // refund
-
-            'read-refund',
-            'write-refund',
-            'create-refund',
-            // Inflow
-
-            'read-inflow',
-            'write-inflow',
-            'create-inflow',
-
-            // Outflow
-
-            'read-outflow',
-            'write-outflow',
-            'create-outflow',
-
-            // Client
-
-            'read-client',
-            'write-client',
-            'create-client',
             // Employee
+            'voir-un-employee',
+            'écrire-un-employee',
+            'créer-un-employee',
+            'configurer-un-employee',
 
-            'read-employee',
-            'write-employee',
-            'create-employee',
-            // All
+            // Attendance
+            'voir-un-attendance',
+            'écrire-un-attendance',
+            'créer-un-attendance',
+            'configurer-un-attendance',
 
-            'read-all',
-            'write-all',
-            'create-all',
+            // Absence Request
+            'voir-un-absence',
+            'écrire-un-absence',
+            'créer-un-absence',
+            'configurer-un-absence',
+
+            // Credentials
+            'voir-un-credentials',
+            'écrire-un-credentials',
+            'créer-un-credentials',
+            'configurer-un-credentials',
         ];
-        $cashier_permissions_list = [
-            // Account
-            'read-account',
-            'write-account',
-            'create-account',
-            // deposit
+        $employee_permissions_list = [
+            // compte
+            'voir-un-compte',
+            'écrire-un-compte',
+            'créer-un-compte',
+            'configurer-un-compte',
 
-            'read-deposit',
-            'write-deposit',
-            'create-deposit',
+            // Attendance
+            'voir-un-attendance',
 
-            // withdrawal
+            // Absence Request
+            'voir-un-absence',
 
-            'read-withdrawal',
-            'write-withdrawal',
-            'create-withdrawal',
+            'créer-un-absence',
 
-            // contribution
-
-            'read-contribution',
-            'write-contribution',
-            'create-contribution',
-
-            // refund
-
-            'read-refund',
-            'write-refund',
-            'create-refund',
-            // Inflow
-
-            'read-inflow',
-            'write-inflow',
-            'create-inflow',
-
-            // Outflow
-
-            'read-outflow',
-            'write-outflow',
-            'create-outflow',
-
-            // Client
-
-            'read-client',
-            'write-client',
-            'create-client',
-            // Employee
-
-            'read-employee',
-            'write-employee',
-            'create-employee',
-            // All
-
-            'read-all',
-            'write-all',
-            'create-all',
-        ];
-        $accountant_permissions_list = [
-            // Account
-            'read-account',
-            'write-account',
-            'create-account',
-            // deposit
-
-            'read-deposit',
-            'write-deposit',
-            'create-deposit',
-
-            // withdrawal
-
-            'read-withdrawal',
-            'write-withdrawal',
-            'create-withdrawal',
-
-            // contribution
-
-            'read-contribution',
-            'write-contribution',
-            'create-contribution',
-
-            // refund
-
-            'read-refund',
-            'write-refund',
-            'create-refund',
-            // Inflow
-
-            'read-inflow',
-            'write-inflow',
-            'create-inflow',
-
-            // Outflow
-
-            'read-outflow',
-            'write-outflow',
-            'create-outflow',
-
-            // Client
-
-            'read-client',
-            'write-client',
-            'create-client',
-            // Employee
-
-            'read-employee',
-            'write-employee',
-            'create-employee',
-            // All
-
-            'read-all',
-            'write-all',
-            'create-all',
+            // Credentials
+            'écrire-un-credentials',
         ];
 
         // Création des permission
@@ -301,25 +143,22 @@ class RoleSeeder extends Seeder
             Permission::create(['name' => $permission]);
         }
         // Création des roles
-        $admin = Role::create(['name' => 'admin']);
-        $boss = Role::create(['name' => 'boss']);
-        $accountant = Role::create(['name' => 'accountant']);
-        $cashier = Role::create(['name' => 'cashier']);
-        Role::create(['name' => 'main']);
-        Role::create(['name' => 'client']);
-        Role::create(['name' => 'assistant']);
+        $admin = Role::create(['name' => 'ADMIN']);
+        $hr = Role::create(['name' => 'HR']);
+        $dg = Role::create(['name' => 'DG']);
+        $employee = Role::create(['name' => 'EMPLOYEE']);
 
         // Récupération des permissions
         $all_permissions = Permission::all();
-        $admin_permissions = $all_permissions->whereIn('name', $admin_permissions_list);
-        $boss_permissions = $all_permissions->whereIn('name', $boss_permissions_list);
-        $cashier_permissions = $all_permissions->whereIn('name', $cashier_permissions_list);
-        $accountant_permissions = $all_permissions->whereIn('name', $accountant_permissions_list);
+        $admin_permissions = $all_permissions->whereIn('name', $permissions_list);
+        $hr_permissions = $all_permissions->whereIn('name', $hr_permissions_list);
+        $dg_permissions = $all_permissions->whereIn('name', $dg_permissions_list);
+        $employee_permissions = $all_permissions->whereIn('name', $employee_permissions_list);
 
         // Synchronisation de chaque permission aux roles créés
         $admin->syncPermissions($admin_permissions);
-        $boss->syncPermissions($boss_permissions);
-        $cashier->syncPermissions($cashier_permissions);
-        $accountant->syncPermissions($accountant_permissions);
+        $hr->syncPermissions($hr_permissions);
+        $dg->syncPermissions($dg_permissions);
+        $employee->syncPermissions($employee_permissions);
     }
 }
