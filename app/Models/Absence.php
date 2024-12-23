@@ -11,15 +11,13 @@ class Absence extends Model
     use HasFactory;
 
     protected $fillable = [
-        'requested_days',
+        'day_requested',
         'start_date',
         'end_date',
         'address',
         'date_of_application',
         'date_of_approval',
         'level',
-        'stage',
-        'status',
         'reasons',
         'proof',
         'comment',
@@ -35,6 +33,4 @@ class Absence extends Model
     {
         return $this->belongsTo(AbsenceType::class, 'absence_type_id');
     }
-
-
 }

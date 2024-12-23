@@ -13,28 +13,13 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($status = 'ALL')
+    public function index()
     {
         try {
-            // Liste des statuss valides
-            $validStatus = ['ACTIVATED', 'DEACTIVATED', 'DELETED'];
-
-            // Vérification de la validité du status
-            if ($status !== 'ALL' && !in_array($status, $validStatus)) {
-                return redirect()->back()->with('error', 'status invalide');
-            }
-            $query = User::where('profile', '!=', 'ADMIN')->with('employee');
-            $query->where('status', '!=', 'DELETED');
-
-            // Filtrer par status si le status n'est pas "ALL"
-            $query->when($status !== 'ALL', function ($q) use ($status) {
-                $q->where('status', $status);
-            });
-
-            $users = $query->get();
+            $employees = User::where('profile', '!=', 'CLIENT')->get();
             $roles = Role::whereNotIn('name', ['client', 'main', 'admin'])->get();
 
-            return view('pages.admin.users.credentials.index', compact('users', 'roles', 'status'));
+            return view('pages.admin.employee.index', compact('employees', 'roles'));
         } catch (\Throwable $th) {
             dd($th->getMessage());
             abort(500);

@@ -12,7 +12,6 @@ class AbsenceType extends Model
     protected $fillable = [
         'label',
         'description',
-        'type',
     ];
 
     public function absences(): HasMany

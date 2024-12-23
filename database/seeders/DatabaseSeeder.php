@@ -19,9 +19,6 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             JobSeeder::class,
             DutySeeder::class,
-            AbsenceTypeSeeder::class,
-            AbsenceSeeder::class,
-            HolidaySeeder::class,
         ]);
     }
 }
