@@ -18,7 +18,7 @@
 
                         <li class="nav-item"><a
                                 class="nav-link {{ $stage === 'PENDING' || $stage === 'PENDING' ? 'active' : '' }}"
-                                href="{{ route('absences.requests', 'PENDING') }}" role="tab">Nouvelles</a></li>
+                                href="{{ route('absences.requests', 'PENDING') }}" role="tab">En Attente</a></li>
                         <li class="nav-item"><a
                                 class="nav-link {{ $stage === 'IN_PROGRESS' || $stage === 'IN_PROGRESS' ? 'active' : '' }}"
                                 href="{{ route('absences.requests', 'IN_PROGRESS') }}" role="tab">En

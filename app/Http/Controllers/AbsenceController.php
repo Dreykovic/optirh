@@ -300,7 +300,7 @@ class AbsenceController extends Controller
             // Rechercher l'absence par ID
             $absence = Absence::findOrFail($id);
 
-            switch ($absence->stage) {
+            switch ($absence->level) {
                 case 'ZERO':
                     $absence->stage = 'IN_PROGRESS';
                     $absence->level = 'ONE';
@@ -357,7 +357,7 @@ class AbsenceController extends Controller
                 // Sauvegarder les modifications
             }
 
-            switch ($absence->stage) {
+            switch ($absence->level) {
                 case 'ZERO':
                     $absence->level = 'ONE';
                     break;

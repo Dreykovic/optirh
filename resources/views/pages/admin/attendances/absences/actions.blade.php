@@ -68,7 +68,9 @@
             </div>
         </li>
     @endif
-    @if (auth()->user()->employee_id === $absence->duty->employee_id && $absence->stage !== 'CANCELLED')
+    @if (auth()->user()->employee_id === $absence->duty->employee_id &&
+            $absence->level === 'ZERO' &&
+            $absence->stage !== 'CANCELLED')
         <li>
             <div class="modelUpdateFormContainer  dropdown-item py-2 rounded" id="absenceCancelForm{{ $absence->id }}">
 

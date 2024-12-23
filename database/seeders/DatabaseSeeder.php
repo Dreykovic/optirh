@@ -198,7 +198,7 @@ class DatabaseSeeder extends Seeder
             'description' => '...',
             'department_id' => $dsafDpt->id,
             'status' => 'ACTIVATED',
-            'n_plus_one_job_id' => null,
+            'n_plus_one_job_id' => $dgJob->id,
         ], );
         $empChefJob = Job::create([
             'title' => 'Chef',
