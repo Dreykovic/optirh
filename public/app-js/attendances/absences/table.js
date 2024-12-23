@@ -1,13 +1,13 @@
 "use strict";
 
-let AppAccountListManager = (function () {
+let AppAbsenceListManager = (function () {
     return {
         init: () => {
-            AppModules.initDataTable("#accountsTable");
+            AppModules.initDataTable("#absencesTable");
         },
     };
 })();
 
 document.addEventListener("DOMContentLoaded", (e) => {
-    AppAccountListManager.init();
+    AppAbsenceListManager.init();
 });
