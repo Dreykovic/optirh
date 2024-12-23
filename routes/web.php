@@ -104,6 +104,7 @@ Route::group(['middleware' => 'auth'], function () {
         */
         Route::prefix('/credentials')->group(function () {
             Route::get('/list/{status?}', [UserController::class,   'index'])->name('credentials.index');
+            Route::post('/save', [UserController::class,   'store'])->name('credentials.save');
         });
 
         /*

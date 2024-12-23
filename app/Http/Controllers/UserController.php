@@ -6,7 +6,6 @@ use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
@@ -50,7 +49,7 @@ class UserController extends Controller
             // $roles = Role::whereNotIn('name', ['client', 'main', 'admin'])->get();
             $employeesWithoutUser = Employee::doesntHave('users')->get();
 
-            session()->flash('success', "L'utilisateur  à été créé.");
+            // session()->flash('success', "L'utilisateur  à été créé.");
 
             return view('pages.admin.users.credentials.index', compact('users', 'roles', 'status', 'employeesWithoutUser'));
         } catch (\Throwable $th) {
@@ -72,46 +71,58 @@ class UserController extends Controller
     public function store(Request $request)
     {
         try {
+            // Validation des données
             $this->validate($request, [
                 'role' => 'required',
-
                 'employee' => 'required|exists:employees,id',
             ]);
+
+            // Récupération de l'employé
             $employee = Employee::findOrFail($request->input('employee'));
+
+            $username = strtolower(substr($employee->first_name, 0, 1)).strtolower($employee->last_name).$employee->id;
+            $username = utf8_encode($username);
+
+            $randomString = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 6);
+            $pwd = strtolower(substr($employee->first_name, 0, 1)).ucfirst($employee->last_name).$randomString;
+            $pwd = utf8_encode($pwd);
+
+            // Création de l'utilisateur
             $user = User::create([
-                'username' => $request->input('firstname'),
+                'username' => $username,
                 'email' => $employee->email,
-                'password' => Hash::make('uk2024@'),
+                'password' => Hash::make($pwd),
+                'employee_id' => $employee->id,
             ]);
 
+            // Attribution des rôles
             $user->syncRoles([$request->input('role')]);
-            $currentUser = Auth::user();
 
-            // session()->flash('success', "L'utilisateur *{$user->name} {$user->firstname}* à été créé.");
-            // Envoyer le lien de réinitialisation du mot de passe
-            $status = Password::sendResetLink(
-                $request->only('email')
-            );
-            if ($status === Password::RESET_LINK_SENT) {
-                return response()->json(['message' => __("Le compte à été créé et un lien est envoyé à l'utilisateur pour qu'il change de mode de passe"), 'ok' => true]);
-            } else {
-                return response()->json(['message' => __('Une erreur est survenue'), 'ok' => false]);
-            }
+            // Notification à l'utilisateur actuel
+            session()->flash('success', "L'utilisateur avec le nom *{$user->username}* et l'email *{$user->email}* a été créé. 
+            Mot de passe *{$pwd}*. Retenez-le ou notez-le quelque part, il ne sera plus affiché.");
+            // $status = Password::sendResetLink(['email' => $employee->email]);
+
+            return response()->json(['message' => "L'utilisateur avec le nom {$user->username} et l'email {$user->email} a été créé.",  'ok' => true]);
+            // Envoi du lien de réinitialisation de mot de passe
+            // $status = Password::sendResetLink(['email' => $employee->email]);
+            // if ($status === Password::RESET_LINK_SENT) {
+            //     return response()->json(['message' => __("Le compte a été créé et un lien de réinitialisation a été envoyé à l'utilisateur."), 'ok' => true]);
+            // } else {
+            //     return response()->json(['message' => __('Une erreur est survenue lors de l\'envoi du lien de réinitialisation.'), 'ok' => false]);
+            // }
         } catch (ValidationException $e) {
-            // Gestion des erreurs de validation
             return response()->json([
                 'ok' => false,
                 'message' => 'Les données fournies sont invalides.',
                 'errors' => $e->errors(),
             ], 422);
         } catch (ModelNotFoundException $e) {
-            // Gestion des cas où le modèle n'est pas trouvé
             return response()->json([
                 'ok' => false,
                 'message' => 'Données introuvables. Veuillez vérifier les entrées.',
             ], 404);
         } catch (\Throwable $th) {
-            // Gestion générale des erreurs
             return response()->json([
                 'ok' => false,
                 'message' => 'Une erreur s’est produite. Veuillez réessayer.',
