@@ -18,7 +18,6 @@ class Duty extends Model
         'employee_id',
         'evolution',
         'status',
-        'absence_balance'
     ];
 
     public function employee(): BelongsTo
@@ -44,15 +43,5 @@ class Duty extends Model
     public function evaluations(): HasMany
     {
         return $this->hasMany(Absence::class, 'duty_id');
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($duty) {
-            // Génère le numéro de compte de manière sécurisée
-            $duty->absence_balance = 30;
-        });
     }
 }

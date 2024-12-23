@@ -13,10 +13,7 @@ let AppGeneralFilterManager = (function () {
                 e.preventDefault();
                 const formData = new FormData(searchForm);
                 const search = formData.get("search");
-                const url = `${modelUrl}?search=${search}`;
-                console.log(url);
-
-                window.location.href = url;
+                window.location.href = `${modelUrl}?search=${search}`;
             });
         }
     };

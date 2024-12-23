@@ -17,8 +17,6 @@ class Evaluation extends Model
         'description',
         'duty_id',
         'status',
-        'stage',
-
     ];
 
     public function duty(): BelongsTo

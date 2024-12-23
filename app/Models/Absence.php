@@ -11,16 +11,13 @@ class Absence extends Model
     use HasFactory;
 
     protected $fillable = [
-        'requested_days',
-        'absence_type_id',
+        'day_requested',
         'start_date',
         'end_date',
         'address',
         'date_of_application',
         'date_of_approval',
         'level',
-        'stage',
-        'status',
         'reasons',
         'proof',
         'comment',

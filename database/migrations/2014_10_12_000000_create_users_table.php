@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'DELETED'])->default('ACTIVATED');
 
             $table->string('email');
-            $table->timestamp(column: 'email_verified_at')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->default(Hash::make('secret'));
             $table->foreignIdFor(Employee::class);
 
