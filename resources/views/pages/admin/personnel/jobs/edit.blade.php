@@ -6,7 +6,7 @@
                 <h5 class="modal-title" id="add-job">Modifier Poste</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body modalUpdateFormContainer" id="updateJobForm{{ $job->id }}">
+            <div class="modal-body modelUpdateFormContainer" id="updateJobForm{{ $job->id }}">
                
                 <form data-model-update-url="{{ route('jobs.update', $job->id) }}">
                     @csrf

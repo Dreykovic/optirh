@@ -131,9 +131,9 @@ class DepartmentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        dump("je yas");
+        //dump("je yas");
         try {
-            dump("je yas1");
+            //dump("je yas1");
             // Valider les données envoyées par l'utilisateur
             $validatedData = $request->validate([
                 'name' => 'required|unique:departments,name,' . $id . '|string|max:255',

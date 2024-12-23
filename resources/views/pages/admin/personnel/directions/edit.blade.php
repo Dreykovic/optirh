@@ -7,7 +7,8 @@
                 </div>
                 <div class="modal-body modelUpdateFormContainer" id="updateDeptForm{{ $department->id }}">
                     <form data-model-update-url="{{ route('directions.update', $department->id) }}">
-                        {{--@csrf--}}
+                        @csrf
+                        <input type="hidden" name="_method" value="PUT">
                         <div class="mb-3">
                             <label for="name" class="form-label">Sigle</label>
                             <input type="text" value="{{ $department->name }}" class="form-control" id="name" name="name" {{ $department->name === 'DG' ? 'disabled' : '' }}>
