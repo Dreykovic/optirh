@@ -31,18 +31,8 @@ class UserController extends Controller
                 $q->where('status', $status);
             });
 
-            $query = $query->with(['roles' => function ($q1) {
-                $q1->where('name', '!=', 'ADMIN');
-            }])
-                ->whereHas('roles', function ($q2) {
-                    $q2->where('name', '!=', 'ADMIN');
-                })
-                ->orderBy('username', 'ASC');
-
-            $roles = Role::select('id', 'name')->where('name', '!=', 'ADMIN')->orderBy('id', 'ASC')->get();
-
             $users = $query->get();
-            // $roles = Role::whereNotIn('name', ['client', 'main', 'admin'])->get();
+            $roles = Role::whereNotIn('name', ['client', 'main', 'admin'])->get();
 
             return view('pages.admin.users.credentials.index', compact('users', 'roles', 'status'));
         } catch (\Throwable $th) {

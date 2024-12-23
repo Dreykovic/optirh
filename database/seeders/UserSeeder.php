@@ -6,6 +6,7 @@ use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
 {
@@ -14,53 +15,139 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Liste des profils possibles pour les utilisateurs
-        $profiles = ['EMPLOYEE', 'ADMIN'];
+        $adminRole = Role::where(['name' => 'ADMIN'])->first();
+        $hrRole = Role::where(['name' => 'GRH'])->first();
+        $dgRole = Role::where(['name' => 'DG'])->first();
+        $employeeRole = Role::where(['name' => 'EMPLOYEE'])->first();
+        // Création d'un administrateur
+        $adminEmployee = Employee::create([
+            'matricule' => 'ADM001',
+            'first_name' => 'Admin',
+            'last_name' => 'User',
+            'email' => 'admin@example.com',
+            'phone_number' => '1234567890',
+            'address1' => '1 Admin Street',
+            'city' => 'Admin City',
+            'state' => 'AC',
+            'country' => 'FR',
+            'birth_date' => '1980-01-01',
+            'nationality' => 'French',
+            'status' => 'ACTIVATED',
+        ]);
 
-        // Liste des statuts possibles pour les utilisateurs
-        $statuses = ['ACTIVATED', 'DEACTIVATED', 'DELETED'];
+        $adminUser = User::create([
+            'username' => 'admin_user',
+            'email' => 'admin@example.com',
+            'profile' => 'ADMIN',
+            'status' => 'ACTIVATED',
+            'password' => bcrypt('admin_password'),
+            'employee_id' => $adminEmployee->id,
+        ]);
+        $adminUser->syncRoles([$adminRole->id]);
+
+        // Création d'un responsable RH
+        $hrEmployee = Employee::create([
+            'matricule' => 'RH001',
+            'first_name' => 'HR',
+            'last_name' => 'Manager',
+            'email' => 'hr@example.com',
+            'phone_number' => '1234567891',
+            'address1' => '2 HR Lane',
+            'city' => 'HR City',
+            'state' => 'HC',
+            'country' => 'FR',
+            'birth_date' => '1985-02-15',
+            'nationality' => 'French',
+            'status' => 'ACTIVATED',
+        ]);
+
+        $hrUser = User::create([
+            'username' => 'hr_manager',
+            'email' => 'hr@example.com',
+            'profile' => 'EMPLOYEE',
+            'status' => 'ACTIVATED',
+            'password' => bcrypt('hr_password'),
+            'employee_id' => $hrEmployee->id,
+        ]);
+        $hrUser->syncRoles([$hrRole->id]);
+
+        // Création d'un directeur général
+        $directorEmployee = Employee::create([
+            'matricule' => 'DG001',
+            'first_name' => 'Director',
+            'last_name' => 'General',
+            'email' => 'dg@example.com',
+            'phone_number' => '1234567892',
+            'address1' => '3 Director Avenue',
+            'city' => 'Director City',
+            'state' => 'DC',
+            'country' => 'FR',
+            'birth_date' => '1975-05-20',
+            'nationality' => 'French',
+            'status' => 'ACTIVATED',
+        ]);
+
+        $directorUser = User::create([
+            'username' => 'director_general',
+            'email' => 'dg@example.com',
+            'profile' => 'EMPLOYEE',
+            'status' => 'ACTIVATED',
+            'password' => bcrypt('dg_password'),
+            'employee_id' => $directorEmployee->id,
+        ]);
+        $directorUser->syncRoles([$dgRole->id]);
+
+        // Création d'un employé standard
+        $employee = Employee::create([
+            'matricule' => 'EMP001',
+            'first_name' => 'Employee',
+            'last_name' => 'Standard',
+            'email' => 'employee@example.com',
+            'phone_number' => '1234567893',
+            'address1' => '4 Employee Road',
+            'city' => 'Employee City',
+            'state' => 'EC',
+            'country' => 'FR',
+            'birth_date' => '1990-03-25',
+            'nationality' => 'French',
+            'status' => 'ACTIVATED',
+        ]);
+
+        $employeeUser = User::create([
+            'username' => 'employee_standard',
+            'email' => 'employee@example.com',
+            'profile' => 'EMPLOYEE',
+            'status' => 'ACTIVATED',
+            'password' => bcrypt('employee_password'),
+            'employee_id' => $employee->id,
+        ]);
+        $employeeUser->syncRoles([$employeeRole->id]);
 
         // Ensemble de données prédéfinies pour les utilisateurs
         $usersData = [
             [
-                'username' => 'admin.master',
-                'picture' => 'assets/images/profile_av.png',
-                'profile' => 'ADMIN',
-                'status' => 'ACTIVATED',
-                'email' => 'admin@example.com',
-                'password' => Hash::make('Admin1234!'),
-            ],
-            [
-                'username' => 'employee.johndoe',
+                'username' => 'testUser1',
                 'picture' => 'assets/images/profile_av.png',
                 'profile' => 'EMPLOYEE',
                 'status' => 'ACTIVATED',
-                'email' => 'john.doe@example.com',
-                'password' => Hash::make('JohnDoe2024!'),
+                'email' => 'testUser1@example.com',
+                'password' => Hash::make('TestUser11234!'),
             ],
             [
-                'username' => 'employee.janedoe',
+                'username' => 'testUser2',
                 'picture' => 'assets/images/profile_av.png',
                 'profile' => 'EMPLOYEE',
                 'status' => 'ACTIVATED',
-                'email' => 'jane.doe@example.com',
-                'password' => Hash::make('JaneDoe2024!'),
+                'email' => 'testUser2@example.com',
+                'password' => Hash::make('TestUser21234!'),
             ],
             [
-                'username' => 'manager.robert',
-                'picture' => 'assets/images/profile_av.png',
-                'profile' => 'ADMIN',
-                'status' => 'DEACTIVATED',
-                'email' => 'robert.manager@example.com',
-                'password' => Hash::make('Manager2024!'),
-            ],
-            [
-                'username' => 'employee.alice',
+                'username' => 'testUser3',
                 'picture' => 'assets/images/profile_av.png',
                 'profile' => 'EMPLOYEE',
                 'status' => 'ACTIVATED',
-                'email' => 'alice.smith@example.com',
-                'password' => Hash::make('AliceSmith2024!'),
+                'email' => 'testUser3@example.com',
+                'password' => Hash::make('TestUser31234!'),
             ],
         ];
 
@@ -70,12 +157,8 @@ class UserSeeder extends Seeder
             $employee = Employee::factory()->create();
 
             // Insérer l'utilisateur en associant l'employee_id
-            User::create(array_merge($userData, ['employee_id' => $employee->id]));
+            $user = User::create(array_merge($userData, ['employee_id' => $employee->id]));
+            $user->syncRoles([$employeeRole->id]);
         }
-
-        // Générer 20 utilisateurs supplémentaires de manière aléatoire
-        User::factory()
-            ->count(20)
-            ->create();
     }
 }

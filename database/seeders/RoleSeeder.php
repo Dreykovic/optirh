@@ -144,7 +144,7 @@ class RoleSeeder extends Seeder
         }
         // Création des roles
         $admin = Role::create(['name' => 'ADMIN']);
-        $hr = Role::create(['name' => 'HR']);
+        $hr = Role::create(['name' => 'GRH']);
         $dg = Role::create(['name' => 'DG']);
         $employee = Role::create(['name' => 'EMPLOYEE']);
 

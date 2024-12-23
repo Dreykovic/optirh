@@ -10,8 +10,8 @@
                 class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
                 <h3 class="fw-bold mb-0">Identifiants</h3>
                 <div class="d-flex py-2 project-tab flex-wrap w-sm-100">
-                    <a role="button" href="{{ route('absences.create') }}" class="btn btn-dark w-sm-100"><i
-                            class="icofont-plus-circle me-2 fs-6"></i>Créer</a>
+                    <button type="button" class="btn btn-dark btn-set-task w-sm-100" data-bs-toggle="modal"
+                        data-bs-target="#credentialAddModal"><i class="icofont-plus-circle me-2 fs-6"></i>Ajouter</button>
                     <ul class="nav nav-tabs tab-body-header rounded ms-3 prtab-set w-sm-100" role="tablist">
                         <li class="nav-item"><a class="nav-link {{ $status === 'ALL' ? 'active' : '' }}"
                                 href="{{ route('credentials.index', 'ALL') }}" role="tab">Toutes</a></li>
@@ -128,6 +128,7 @@
             </div>
         </div>
     </div><!-- Row End -->
+    @include('pages.admin.users.credentials.create')
 @endsection
 @push('plugins-js')
     <script src={{ asset('assets/bundles/dataTables.bundle.js') }}></script>
