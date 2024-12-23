@@ -1,0 +1,27 @@
+curl -X POST -F "files[]=@/home/fayssol/Documents/modele_de_facture.pdf" -F "files[]=@/home/fayssol/Images/Captures d’écran/api2.png" http://localhost:8000/files/upload/9
+action="{{ route('files.upload', ['employeeId' => $employeeId]) }}"
+
+try {
+            //code...
+        }  catch (ValidationException $e) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
+            ], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+        }
+
+
+        php artisan storage:link
+        chmod -R 775 storage
+
+
+
+        
+-new head
+- job employees list        
+- filtrer emp par dept 
+-renommage
+** politique de suppression(job, dept,emp)

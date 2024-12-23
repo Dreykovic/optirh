@@ -13,6 +13,7 @@ return new class () extends Migration {
         Schema::create('duties', function (Blueprint $table) {
             $table->id();
             $table->string('duration')->nullable();
+
             $table->date('begin_date');
             $table->integer("absence_balance")->default(30);
             $table->string('type')->nullable();

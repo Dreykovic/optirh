@@ -46,6 +46,7 @@ class Duty extends Model
         return $this->hasMany(Absence::class, 'duty_id');
     }
 
+
     protected static function boot()
     {
         parent::boot();
@@ -55,4 +56,5 @@ class Duty extends Model
             $duty->absence_balance = 30;
         });
     }
+
 }
