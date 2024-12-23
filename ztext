@@ -20,8 +20,7 @@ try {
 
 
         
-- editer dept
--editer job
+-new head
 -editer emp (pers et bank)
 - job employees list        
 - filtrer emp par dept 

@@ -174,7 +174,42 @@ class EmployeeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Employee $employee)
+    public function updatePres(Request $request, $id)
+    {
+        $employee = Employee::findOrFail($id);
+        //dd($employee);
+        try {
+            $validatedData = $request->validate([
+                'nationality' => 'max:255|sometimes',
+                'religion' => 'max:255|sometimes',
+                'marital_status' => 'max:255|sometimes',
+                'emergency_contact' => 'max:255|sometimes',
+                'city' => 'max:255|sometimes',
+                'state' => 'max:255|sometimes',
+                
+            ]);
+            $employee->update([
+                'nationality' => $validatedData['nationality'],
+                'religion' => $validatedData['religion'],
+                'marital_status' => $validatedData['marital_status'],
+                'emergency_contact' => $validatedData['emergency_contact'],
+                'city' => $validatedData['city'],
+                'state' => $validatedData['state'],
+            ]);
+            return response()->json(['message' => 'Employé editer avec succès.', 'ok' => true]);
+
+        }  catch (ValidationException $e) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
+            ], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+        }
+    }
+    
+    public function updateBank(Request $request, Employee $employee)
     {
         //
     }

@@ -5,7 +5,9 @@
                    
                     <div class="modal-body">
                         <div class="deadline-form modelUpdateFormContainer" id="updateBankInfoForm">
-                            <form id="modelAddForm" data-model-update-url="{{ route('membres.update') }}">
+                            <form data-model-update-url="{{ route('membres.updateBank',$employee->id) }}">
+                            @csrf
+                            <input type="hidden" name="_method" value="PUT">
                                 <div class="modal-header">
                                     <h5 class="modal-title  fw-bold" id="edit2Label">Compte Bancaire</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

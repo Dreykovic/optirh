@@ -4,9 +4,10 @@
                 <div class="modal-content">
                     
                     <div class="modal-body">
-                        <div class="deadline-form modelUpdateFormContainer" id="updatePersInfoForm">
-                            <form id="modelAddForm" data-model-update-url="{{ route('membres.update') }}">
-                              
+                        <div class="deadline-form modelUpdateFormContainer" id="updatePersInfoForm{{ $employee->id }}">
+                            <form data-model-update-url="{{ route('membres.updatePres',$employee->id) }}">
+                            @csrf
+                            <input type="hidden" name="_method" value="PUT">
                             <div class="modal-header">
                                 <h5 class="modal-title  fw-bold" id="edit1Label">Informations Personnelles</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -14,7 +15,7 @@
                                 <div class="row g-3 mb-3">
                                     <div class="col">
                                         <label for="nat" class="form-label">Nationalité</label>
-                                        <input type="text" class="form-control" id="nat" value="{{$employee->nationality}}" name='nationalitys'> 
+                                        <input type="text" class="form-control" id="nat" value="{{$employee->nationality}}" name='nationality'> 
                                     </div>
                                     <div class="col">
                                         <label for="religion" class="form-label">Religion</label>
@@ -49,7 +50,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-lg btn-block lift text-uppercase btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                    <button type="submit" class="btn btn-lg btn-block lift text-uppercase btn-primary modelUpdateBtn" atl="update emp" id="modelAddBtn"
+                                    <button type="submit" class="btn btn-lg btn-block lift text-uppercase btn-primary modelUpdateBtn" atl="update emp" 
                                         data-bs-dismiss="modal">
                                         <span class="normal-status">
                                             Modifier
