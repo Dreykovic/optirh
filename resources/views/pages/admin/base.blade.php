@@ -13,6 +13,8 @@
 
             <!-- Body: Body -->
             <div class="body d-flex py-3">
+                <x-session-message />
+
                 <div class="container-xxl">
                     @yield('admin-content')
                 </div>

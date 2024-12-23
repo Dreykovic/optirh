@@ -1,7 +1,12 @@
 <?php
 
+use App\Http\Controllers\AbsenceController;
+use App\Http\Controllers\AbsenceTypeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,9 +24,13 @@ Route::group(['middleware' => 'guest'], function () {
     /*
      * Auth
      */
-    Route::get('/login', [AuthController::class,  'login']
+    Route::get(
+        '/login',
+        [AuthController::class,  'login']
     )->name('login');
-    Route::post('/login', [AuthController::class, 'logUser']
+    Route::post(
+        '/login',
+        [AuthController::class, 'logUser']
     );
 
     Route::get('/login/forgot-password', [AuthController::class, 'forgotPasswordFormGet'])->name('forgot-password');
@@ -43,4 +52,80 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/help', function () {
         return view('pages.admin.help');
     })->name('help');
+
+    /*
+     * Attendances
+     */
+
+    Route::prefix('/attendances')->group(function () {
+        /*
+        * Absences
+        */
+
+        Route::prefix('/absences')->group(function () {
+            Route::get('/requests/{stage?}', [AbsenceController::class,  'index'])->name('absences.requests');
+            Route::get('/request/create', [AbsenceController::class,  'create'])->name('absences.create');
+            Route::post('/request/save', [AbsenceController::class,  'store'])->name('absences.save');
+            Route::post('/request/approve/{absenceId}', [AbsenceController::class,  'approve'])->name('absences.approve');
+            Route::post('/request/reject/{absenceId}', [AbsenceController::class,  'reject'])->name('absences.reject');
+            Route::post('/request/comment/{absenceId}', [AbsenceController::class,  'comment'])->name('absences.comment');
+            Route::post('/request/cancel/{absenceId}', [AbsenceController::class,  'cancel'])->name('absences.cancel');
+        });
+        /*
+        * Absences Types
+        */
+
+        Route::prefix('/absence-types')->group(function () {
+            Route::get('/list', [AbsenceTypeController::class,  'index'])->name('absenceTypes.index');
+            Route::post('/save', [AbsenceTypeController::class,  'store'])->name('absenceTypes.save');
+            Route::post('/update/{absenceTypeId}', [AbsenceTypeController::class,  'update'])->name('absenceTypes.update');
+            Route::delete('/delete/{absenceTypeId}', [AbsenceTypeController::class,  'destroy'])->name('absenceTypes.destroy');
+        });
+
+        /*
+        * Holidays
+        */
+
+        Route::prefix('/holidays')->group(function () {
+            Route::get('/list/{stage?}', [HolidayController::class,  'index'])->name('holidays.index');
+            Route::post('/save', [HolidayController::class,  'store'])->name('holidays.save');
+            Route::post('/update/{holidayId}', [HolidayController::class,  'update'])->name('holidays.update');
+            Route::delete('/delete/{holidayId}', [HolidayController::class,  'destroy'])->name('holidays.destroy');
+        });
+    });
+
+    /*
+    * Users Management
+    */
+
+    Route::prefix('/users-management')->group(function () {
+        /*
+        * Identifiants
+        */
+        Route::prefix('/credentials')->group(function () {
+            Route::get('/list/{status?}', [UserController::class,   'index'])->name('credentials.index');
+            Route::post('/save', [UserController::class,   'store'])->name('credentials.save');
+        });
+
+        /*
+         * Rôles
+         */
+        Route::prefix('/roles')->group(function () {
+            Route::delete('/delete/{id}', [RoleController::class, 'destroy'])->name('roles.delete');
+
+            Route::post('/add', [RoleController::class, 'store'])->name('roles.add');
+            Route::post('/update/{id}', [RoleController::class, 'update'])->name('roles.update');
+
+            Route::get('/list', [RoleController::class, 'index'])->name('roles.index');
+            Route::get('/details/{id}', [RoleController::class, 'show'])->name('roles.details');
+        });
+
+        /*
+         * Permissions
+         */
+
+        Route::prefix('/permissions')->group(function () {
+            Route::get('/list', [RoleController::class, 'get_permissions'])->name('permissions.index');
+        });
+    });
 });
