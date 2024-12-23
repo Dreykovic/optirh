@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,8 +13,9 @@ return new class extends Migration {
         Schema::create('duties', function (Blueprint $table) {
             $table->id();
             $table->string('duration')->nullable();
-            $table->date('begin_date')->nullable();
 
+            $table->date('begin_date');
+            $table->integer("absence_balance")->default(30);
             $table->string('type')->nullable();
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
             $table->enum('evolution', ['ON_GOING', 'ENDED', 'CANCEL'])->default('ON_GOING');

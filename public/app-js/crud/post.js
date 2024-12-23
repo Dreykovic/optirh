@@ -7,7 +7,7 @@ let AppModelCreateManager = (function () {
     const handleModelAdd = () => {
         const addModelUrl = addModelForm.getAttribute("data-model-add-url");
 
-        modelAddBtn.addEventListener("click", async (e) => {
+        addModelForm.addEventListener("submit", async (e) => {
             e.preventDefault();
             const formData = new FormData(addModelForm);
             AppModules.submitFromBtn(
