@@ -70,6 +70,6 @@ class DutySeeder extends Seeder
         }
 
         // Génération de 10 autres tâches aléatoires
-        // Duty::factory()->count(10)->create();
+        Duty::factory()->count(10)->create();
     }
 }
