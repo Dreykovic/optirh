@@ -9,7 +9,7 @@
                         <i class="icofont-info-square fs-5"></i>
                     </a>
                 </div>
-                @include('partials.header.notification')
+                {{-- @include('partials.header.notification') --}}
                 @include('partials.header.user-menu')
             </div>
 
