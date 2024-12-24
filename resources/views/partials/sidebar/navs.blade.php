@@ -28,93 +28,102 @@
                     <span>Demandes </span>
                 </a>
             </li>
-            <li>
-                <a class="ms-link {{ Request::is('attendances/absence-types/list') ? 'active' : '' }}"
-                    href="{{ route('absenceTypes.index') }}">
-                    <span>Types d'absences</span>
-                </a>
-            </li>
-            <li>
-                <a class="ms-link {{ Request::is('attendances/holidays/list') ? 'active' : '' }}"
-                    href="{{ route('holidays.index') }}">
-                    <span>Jours Fériés</span>
-                </a>
-            </li>
+            @can('configurer-une-absence')
+                <li>
+                    <a class="ms-link {{ Request::is('attendances/absence-types/list') ? 'active' : '' }}"
+                        href="{{ route('absenceTypes.index') }}">
+                        <span>Types d'absences</span>
+                    </a>
+                </li>
+            @endcan
+
+            @can('voir-un-férié')
+                <li>
+                    <a class="ms-link {{ Request::is('attendances/holidays/list') ? 'active' : '' }}"
+                        href="{{ route('holidays.index') }}">
+                        <span>Jours Fériés</span>
+                    </a>
+                </li>
+            @endcan
 
 
 
         </ul>
 
     </li>
-    <!-- User Management -->
-    <li class="collapsed">
-        <a class="m-link {{ Str::startsWith(request()->path(), 'users-management') ? 'active' : '' }}"
-            data-bs-toggle="collapse" data-bs-target="#users-management-navs" href="#">
-            <i class="icofont-users-alt-2 fs-5"></i> <span>Utilisateurs</span> <span
-                class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
-        <!-- Menu: Sub menu ul -->
-        <ul class="sub-menu collapse {{ Str::startsWith(request()->path(), 'users-management') ? 'show' : '' }}"
-            id="users-management-navs">
-            <li>
-                <a class="ms-link {{ Str::startsWith(request()->path(), 'users-management/credentials/list') ? 'active' : '' }}"
-                    href="{{ route('credentials.index') }}">
-                    <span>Identifiants</span>
-                </a>
-            </li>
-            <li>
-                <a class="ms-link {{ Str::startsWith(request()->path(), 'users-management/roles/') ? 'active' : '' }}"
-                    href="{{ route('roles.index') }}">
-                    <span>Roles</span>
-                </a>
-            </li>
-            <li>
-                <a class="ms-link {{ Str::startsWith(request()->path(), 'users-management/permissions/') ? 'active' : '' }}"
-                    href="{{ route('permissions.index') }}">
-                    <span>Permissions</span>
-                </a>
-            </li>
+    @can('voir-un-credentials')
+        <!-- User Management -->
+        <li class="collapsed">
+            <a class="m-link {{ Str::startsWith(request()->path(), 'users-management') ? 'active' : '' }}"
+                data-bs-toggle="collapse" data-bs-target="#users-management-navs" href="#">
+                <i class="icofont-users-alt-2 fs-5"></i> <span>Utilisateurs</span> <span
+                    class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
+            <!-- Menu: Sub menu ul -->
+            <ul class="sub-menu collapse {{ Str::startsWith(request()->path(), 'users-management') ? 'show' : '' }}"
+                id="users-management-navs">
+                <li>
+                    <a class="ms-link {{ Str::startsWith(request()->path(), 'users-management/credentials/list') ? 'active' : '' }}"
+                        href="{{ route('credentials.index') }}">
+                        <span>Identifiants</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="ms-link {{ Str::startsWith(request()->path(), 'users-management/roles/') ? 'active' : '' }}"
+                        href="{{ route('roles.index') }}">
+                        <span>Roles</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="ms-link {{ Str::startsWith(request()->path(), 'users-management/permissions/') ? 'active' : '' }}"
+                        href="{{ route('permissions.index') }}">
+                        <span>Permissions</span>
+                    </a>
+                </li>
 
 
 
 
-        </ul>
+            </ul>
 
-    </li>
+        </li>
+    @endcan
+
+    @can('voir-un-employee')
+        <!-- Membres -->
+        <li class="collapsed">
+            <a class="m-link {{ Str::startsWith(request()->path(), 'membres') ? 'active' : '' }}" data-bs-toggle="collapse"
+                data-bs-target="#membres-navs" href="#">
+                <i class="icofont-calendar fs-5"></i> <span>Personnel</span> <span
+                    class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
+            <!-- Menu: Sub menu ul -->
+            <ul class="sub-menu collapse {{ Str::startsWith(request()->path(), 'membres') ? 'show' : '' }}"
+                id="membres-navs">
+                <li>
+                    <a class="ms-link {{ Str::startsWith(request()->path(), 'membres/directions/list') ? 'active' : '' }}"
+                        href="{{ route('directions') }}">
+                        <span>Directions</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="ms-link {{ Str::startsWith(request()->path(), 'membres/list') ? 'active' : '' }}"
+                        href="{{ route('membres') }}">
+                        <span>Membres </span>
+                    </a>
+                </li>
+
+            </ul>
+
+        </li>
+    @endcan
 
 
-    <!-- Membres -->
-    <li class="collapsed">
-        <a class="m-link {{ Str::startsWith(request()->path(), 'membres') ? 'active' : '' }}"
-            data-bs-toggle="collapse" data-bs-target="#membres-navs" href="#">
-            <i class="icofont-calendar fs-5"></i> <span>Personnel</span> <span
-                class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
-        <!-- Menu: Sub menu ul -->
-        <ul class="sub-menu collapse {{ Str::startsWith(request()->path(), 'membres') ? 'show' : '' }}"
-            id="membres-navs">
-            <li>
-                <a class="ms-link {{ Str::startsWith(request()->path(), 'membres/directions/list') ? 'active' : '' }}"
-                    href="{{ route('directions') }}">
-                    <span>Directions</span>
-                </a>
-            </li>
-            <li>
-                <a class="ms-link {{ Str::startsWith(request()->path(), '/membres/list') ? 'active' : '' }}"
-                    href="{{ route('membres') }}">
-                    <span>Membres </span>
-                </a>
-            </li>
-          
-        </ul>
-
-    </li>
-
-
-
-    <!--  -->
-    <li><a class="ms-link {{ Request::is('employee/data') ? 'active' : '' }}" href="{{ route('membres.data') }}"><i
-                class="icofont-home fs-5"></i>
-            <span>Mes informations</span></a>
-    </li>
+    @can('hide')
+        <!--  -->
+        <li><a class="ms-link {{ Request::is('employee/data') ? 'active' : '' }}" href="{{ route('membres.data') }}"><i
+                    class="icofont-home fs-5"></i>
+                <span>Mes informations</span></a>
+        </li>
+    @endcan
 
     <!-- Help -->
     <li>
@@ -123,7 +132,7 @@
             <span>Aide</span>
         </a>
     </li>
-    
+
 
 
 

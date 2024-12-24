@@ -2,15 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Employee;
-use App\Models\Duty;
-use App\Models\Job;
 use App\Models\Department;
+use App\Models\Duty;
+use App\Models\Employee;
 use App\Models\File;
+use App\Models\Job;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class EmployeeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['permission:voir-un-employee|configurer-un-employee|voir-un-tout'], ['only' => ['index']]);
+        $this->middleware(['permission:créer-un-employee|créer-un-tout'], ['only' => ['store', 'update', 'create']]);
+        $this->middleware(['permission:configurer-un-employee|configurer-un-tout'], ['only' => ['show', 'updateEmployeeData']]);
+        $this->middleware(['permission:écrire-un-employee|écrire-un-tout'], ['only' => ['updatePres', 'updateBank']]);
+        $this->middleware(['permission:configurer-un-employee|écrire-un-tout'], ['only' => ['destroy']]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -21,7 +31,8 @@ class EmployeeController extends Controller
         $departments = Department::orderBy('created_at', 'desc')->get();
         $employees = Employee::orderBy('created_at', 'desc')->get();
         $nbre_employees = $employees->count();
-        return view('pages.admin.personnel.membres.index',compact('employees', 'nbre_employees','departments'));
+
+        return view('pages.admin.personnel.membres.index', compact('employees', 'nbre_employees', 'departments'));
     }
 
     // function employees($id){
@@ -35,12 +46,11 @@ class EmployeeController extends Controller
     //             'data' => $duties], 200)
     //    ->header('Content-Type', 'application/json');
 
-
     //     } catch (\Throwable $th) {
     //         return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
     //     }
     // }
-    function jobEmployees($id)
+    public function jobEmployees($id)
     {
         try {
             // Récupérer uniquement les noms et prénoms des employés liés aux devoirs
@@ -52,27 +62,24 @@ class EmployeeController extends Controller
                     return [
                         'id' => $duty->employee->id,
                         'first_name' => $duty->employee->first_name,
-                        'last_name' => $duty->employee->last_name
+                        'last_name' => $duty->employee->last_name,
                     ];
                 });
-    
+
             return response()->json($duties, 200);
         } catch (\Throwable $th) {
             return response()->json([
                 'ok' => false,
-                'message' => $th->getMessage()
+                'message' => $th->getMessage(),
             ], 500);
         }
     }
-    
-
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        //
     }
 
     /**
@@ -95,22 +102,22 @@ class EmployeeController extends Controller
                 'job_id' => 'required|exists:jobs,id',
                 'department_id' => 'required|exists:departments,id',
             ]);
-    
+
             // Récupération de la direction et du poste
             $dept = Department::find($validatedData['department_id']);
             $job = Job::find($validatedData['job_id']);
-    
+
             if (!$dept || !$job) {
                 return response()->json(['ok' => false, 'message' => 'Direction ou poste introuvable.'], 404);
             }
-    
+
             // Vérification des conditions spécifiques à la direction
             if ($dept->name === 'DG' && $dept->director_id !== null && $job->title === 'DG') {
                 return response()->json(['ok' => false, 'message' => 'La direction générale a déjà un directeur.'], 400);
             } elseif ($dept->director_id !== null && str_starts_with($job->title, 'Directeur.rice')) {
                 return response()->json(['ok' => false, 'message' => 'Cette direction a déjà un directeur.'], 400);
             }
-    
+
             // Création de l'employé
             $emp = Employee::create([
                 'first_name' => $validatedData['first_name'],
@@ -118,25 +125,24 @@ class EmployeeController extends Controller
                 'email' => $validatedData['email'],
                 'phone_number' => $validatedData['phone_number'],
                 'address1' => $validatedData['address1'],
-                'gender' => $validatedData['gender']
+                'gender' => $validatedData['gender'],
             ]);
-    
+
             // Création du devoir (Duty)
             Duty::create([
                 'job_id' => $validatedData['job_id'],
                 'duration' => $validatedData['duration'],
                 'begin_date' => $validatedData['begin_date'],
                 'type' => $validatedData['type'],
-                'employee_id' => $emp->id
+                'employee_id' => $emp->id,
             ]);
-    
+
             // Mise à jour du directeur de la direction si applicable
             if ($dept->name === 'DG' || str_starts_with($job->title, 'Directeur.rice')) {
                 $dept->update(['director_id' => $emp->id]);
             }
-    
+
             return response()->json(['message' => 'Employé créé avec succès.', 'ok' => true]);
-    
         } catch (ValidationException $e) {
             return response()->json([
                 'ok' => false,
@@ -147,20 +153,18 @@ class EmployeeController extends Controller
             return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
     }
-    
 
     /**
      * Display the specified resource.
      */
     public function show(Employee $employee)
     {
-        //
-        $files = File::where('employee_id',$employee->id)->get();
+        $files = File::where('employee_id', $employee->id)->get();
         $duty = Duty::where('evolution', 'ON_GOING')
-                    ->where('employee_id',$employee->id)
+                    ->where('employee_id', $employee->id)
                     ->first();
-        return view('pages.admin.personnel.membres.show', compact('employee','duty','files'));
 
+        return view('pages.admin.personnel.membres.show', compact('employee', 'duty', 'files'));
     }
 
     /**
@@ -168,7 +172,6 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee)
     {
-        //
     }
 
     /**
@@ -177,7 +180,7 @@ class EmployeeController extends Controller
     public function updatePres(Request $request, $id)
     {
         $employee = Employee::findOrFail($id);
-       
+
         try {
             $validatedData = $request->validate([
                 'nationality' => 'max:255|sometimes',
@@ -186,7 +189,6 @@ class EmployeeController extends Controller
                 'emergency_contact' => 'max:255|sometimes',
                 'city' => 'max:255|sometimes',
                 'state' => 'max:255|sometimes',
-                
             ]);
             $employee->update([
                 'nationality' => $validatedData['nationality'],
@@ -196,9 +198,9 @@ class EmployeeController extends Controller
                 'city' => $validatedData['city'],
                 'state' => $validatedData['state'],
             ]);
-            return response()->json(['message' => 'Employé editer avec succès.', 'ok' => true]);
 
-        }  catch (ValidationException $e) {
+            return response()->json(['message' => 'Employé editer avec succès.', 'ok' => true]);
+        } catch (ValidationException $e) {
             return response()->json([
                 'ok' => false,
                 'message' => 'Les données fournies sont invalides.',
@@ -208,10 +210,9 @@ class EmployeeController extends Controller
             return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
     }
-    
+
     public function updateBank(Request $request, Employee $employee)
     {
-        //
         try {
             $validatedData = $request->validate([
                 'bank_name' => 'max:255|sometimes',
@@ -221,7 +222,6 @@ class EmployeeController extends Controller
                 'iban' => 'max:255|sometimes',
                 'swift' => 'max:255|sometimes',
                 'cle_rib' => 'max:255|sometimes',
-                
             ]);
             $employee->update([
                 'bank_name' => $validatedData['bank_name'],
@@ -232,9 +232,9 @@ class EmployeeController extends Controller
                 'swift' => $validatedData['swift'],
                 'cle_rib' => $validatedData['cle_rib'],
             ]);
-            return response()->json(['message' => 'Employé editer avec succès.', 'ok' => true]);
 
-        }  catch (ValidationException $e) {
+            return response()->json(['message' => 'Employé editer avec succès.', 'ok' => true]);
+        } catch (ValidationException $e) {
             return response()->json([
                 'ok' => false,
                 'message' => 'Les données fournies sont invalides.',
@@ -250,10 +250,10 @@ class EmployeeController extends Controller
      */
     public function destroy(Employee $employee)
     {
-        //
     }
 
-    public function updateEmployeeData(){
+    public function updateEmployeeData()
+    {
         return view('pages.admin.personnel.membres.edits.index');
     }
 }
