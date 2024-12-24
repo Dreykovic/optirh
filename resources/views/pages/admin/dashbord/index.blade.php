@@ -1,6 +1,6 @@
 @extends('pages.admin.base')
 @section('admin-content')
-    <div class="row clearfix g-3">
+    <!-- <div class="row clearfix g-3">
         <div class="col-xl-8 col-lg-12 col-md-12 flex-column">
             <div class="row g-3">
                 <div class="col-md-12">
@@ -331,7 +331,26 @@
                 </div>
             </div>
         </div>
-    </div><!-- Row End -->
+    </div> -->
+    <!-- <div class='d-flex justify-content-center align-items-center" style="height: 100vh;'>
+        <h1>WELCOME</h1>
+    </div> -->
+    <div class="body d-flex py-lg-3 py-md-2">
+            <div class="container-xxl">
+                <div class="col-12">
+                    <div class="card mb-3">
+                        <div class="card-body text-center p-5">
+                            <img src="../assets/images/no-data.svg" class="img-fluid mx-size" alt="No Data">
+                            <!-- <div class="mt-4 mb-2">
+                                <span class="text-muted">No data to show</span>
+                            </div> -->
+                            <!-- <button type="button" class="btn btn-white border lift mt-1">Get Started</button> -->
+                            <!-- <button type="button" class="btn btn-primary border lift mt-1">Back to Home</button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 @endsection
 @push('plugins-js')
     <script src="{{ asset('assets/bundles/apexcharts.bundle.js') }}"></script>
