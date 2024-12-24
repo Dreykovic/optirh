@@ -27,7 +27,10 @@
                                 <th>Jour Férié</th>
                                 <th> Date</th>
                                 <th>Nom</th>
-                                <th>Action</th>
+                                @can('configurer-un-férié')
+                                    <th>Action</th>
+                                @endcan
+
                             </tr>
                         </thead>
                         <tbody>
@@ -47,31 +50,33 @@
                                     <td class="{{ $tdClass }}">@dayOfWeek($holiday->date)</td>
                                     <td class="{{ $tdClass }}">@formatDateOnly($holiday->date)</td>
                                     <td class="{{ $tdClass }} model-value">{{ $holiday->name }}</td>
+                                    @can('configurer-un-férié')
+                                        <td>
+                                            <div class="btn-group" role="group" aria-label="Basic outlined example">
+                                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                                                    data-bs-target="#updateHolidayModal{{ $holiday->id }}"><i
+                                                        class="icofont-edit text-success"></i>
+                                                </button>
 
-                                    <td>
-                                        <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
-                                                data-bs-target="#updateHolidayModal{{ $holiday->id }}"><i
-                                                    class="icofont-edit text-success"></i>
-                                            </button>
+                                                <button type="button" class="btn btn-outline-secondary modelDeleteBtn"
+                                                    data-model-action="delete"
+                                                    data-model-delete-url={{ route('holidays.destroy', $holiday->id) }}
+                                                    data-model-parent-selector="tr.parent">
+                                                    <span class="normal-status">
+                                                        <i class="icofont-ui-delete text-danger"></i>
+                                                    </span>
+                                                    <span class="indicateur d-none">
+                                                        <span class="spinner-grow spinner-grow-sm" role="status"
+                                                            aria-hidden="true"></span>
 
-                                            <button type="button" class="btn btn-outline-secondary modelDeleteBtn"
-                                                data-model-action="delete"
-                                                data-model-delete-url={{ route('holidays.destroy', $holiday->id) }}
-                                                data-model-parent-selector="tr.parent">
-                                                <span class="normal-status">
-                                                    <i class="icofont-ui-delete text-danger"></i>
-                                                </span>
-                                                <span class="indicateur d-none">
-                                                    <span class="spinner-grow spinner-grow-sm" role="status"
-                                                        aria-hidden="true"></span>
+                                                    </span>
+                                                </button>
 
-                                                </span>
-                                            </button>
+                                            </div>
+                                            @include('pages.admin.attendances.holidays.edit')
+                                        </td>
+                                    @endcan
 
-                                        </div>
-                                        @include('pages.admin.attendances.holidays.edit')
-                                    </td>
                                 </tr>
 
                             @empty

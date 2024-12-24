@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Absence;
 use App\Models\Holiday;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -10,6 +9,14 @@ use Illuminate\Validation\ValidationException;
 
 class HolidayController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['permission:voir-un-férié|voir-un-tout'], ['only' => ['index']]);
+        $this->middleware(['permission:créer-un-férié|créer-un-tout'], ['only' => ['store',  'create']]);
+
+        $this->middleware(['permission:configurer-un-férié|écrire-un-tout'], ['only' => ['destroy', 'update']]);
+    }
+
     /**
      * Display a listing of the resource.
      */

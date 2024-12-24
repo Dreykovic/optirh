@@ -16,8 +16,8 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['permission:voir-un-compte|écrire-un-compte|créer-un-compte|configurer-un-compte|voir-un-tout'], ['only' => ['index']]);
-        $this->middleware(['permission:créer-un-compte|créer-un-tout'], ['only' => ['store']]);
+        $this->middleware(['permission:voir-un-credentials|écrire-un-credentials|créer-un-credentials|configurer-un-credentials|voir-un-tout'], ['only' => ['index']]);
+        $this->middleware(['permission:créer-un-credentials|créer-un-tout'], ['only' => ['store']]);
         // $this->middleware(['permission:écrire-un-utilisateur|écrire-un-tout'], ['only' => ['destroy', 'destroyAll']]);
     }
 

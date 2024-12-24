@@ -56,6 +56,12 @@ class RoleSeeder extends Seeder
             'écrire-un-role',
             'créer-un-role',
             'configurer-un-role',
+
+            // Fériés
+            'voir-un-férié',
+            'écrire-un-férié',
+            'créer-un-férié',
+            'configurer-un-férié',
         ];
         $hr_permissions_list = [
             // compte
@@ -71,10 +77,10 @@ class RoleSeeder extends Seeder
             'configurer-un-employee',
 
             // Attendance
-            'voir-un-attendance',
-            'écrire-un-attendance',
-            'créer-un-attendance',
-            'configurer-un-attendance',
+            'voir-une-attendance',
+            'écrire-une-attendance',
+            'créer-une-attendance',
+            'configurer-une-attendance',
 
             // Absence Request
             'voir-une-absence',
@@ -87,6 +93,12 @@ class RoleSeeder extends Seeder
             'écrire-un-credentials',
             'créer-un-credentials',
             'configurer-un-credentials',
+
+            // Fériés
+            'voir-un-férié',
+            'écrire-un-férié',
+            'créer-un-férié',
+            'configurer-un-férié',
         ];
         $dg_permissions_list = [
             // compte
@@ -102,10 +114,10 @@ class RoleSeeder extends Seeder
             'configurer-un-employee',
 
             // Attendance
-            'voir-un-attendance',
-            'écrire-un-attendance',
-            'créer-un-attendance',
-            'configurer-un-attendance',
+            'voir-une-attendance',
+            'écrire-une-attendance',
+            'créer-une-attendance',
+            'configurer-une-attendance',
 
             // Absence Request
             'voir-une-absence',
@@ -118,6 +130,12 @@ class RoleSeeder extends Seeder
             'écrire-un-credentials',
             'créer-un-credentials',
             'configurer-un-credentials',
+
+            // Fériés
+            'voir-un-férié',
+            'écrire-un-férié',
+            'créer-un-férié',
+            'configurer-un-férié',
         ];
         $employee_permissions_list = [
             // compte
@@ -127,7 +145,7 @@ class RoleSeeder extends Seeder
             'configurer-un-compte',
 
             // Attendance
-            'voir-un-attendance',
+            'voir-une-attendance',
 
             // Absence Request
             'voir-une-absence',
@@ -136,6 +154,9 @@ class RoleSeeder extends Seeder
 
             // Credentials
             'écrire-un-credentials',
+
+            // Fériés
+            'voir-un-férié',
         ];
 
         // Création des permission
