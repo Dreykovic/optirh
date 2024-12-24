@@ -19,8 +19,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            DgSeeder::class,
-            
+            // DgSeeder::class,
+
             RoleSeeder::class,
 
             // EmployeeSeeder::class,
@@ -28,8 +28,8 @@ class DatabaseSeeder extends Seeder
             // DepartmentSeeder::class,
             // JobSeeder::class,
             // DutySeeder::class,
-          //  FileSeeder::class,
-          
+            //  FileSeeder::class,
+
             AbsenceTypeSeeder::class,
             // AbsenceSeeder::class,
             HolidaySeeder::class,
@@ -191,8 +191,8 @@ class DatabaseSeeder extends Seeder
          * Job.
          */
         $dgJob = Job::create([
-            'title' => 'Directeur Général',
-            'description' => '..',
+            'title' => 'DG',
+            'description' => 'Directeur Général',
             'department_id' => $dgDpt->id,
             'status' => 'ACTIVATED',
             'n_plus_one_job_id' => null,
