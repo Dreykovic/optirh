@@ -7,13 +7,12 @@
             <form class="row g-1 p-3 p-md-4">
                 <div class="col-12 text-center mb-1 mb-lg-5">
                     <img src="../assets/images/not_found.svg" class="w240 mb-4" alt="" />
-                    <h5>OOP! PAGE NOT FOUND</h5>
-                    <span class="text-light">Sorry, the page you're looking for doesn;t exist. if you think
-                        something is brlken, report a problem.</span>
+                    <h5>Erreur Serveur 500</h5>
+                    <span class="text-light"></span>
                 </div>
                 <div class="col-12 text-center">
-                    <a href="index.html" title="" class="btn btn-lg btn-block btn-light lift text-uppercase">Back to
-                        Home</a>
+                    <a href="{{ route('home') }}" title=""
+                        class="btn btn-lg btn-block btn-light lift text-uppercase">Retourner A La Page D'Accueil</a>
                 </div>
             </form>
             <!-- End Form -->
