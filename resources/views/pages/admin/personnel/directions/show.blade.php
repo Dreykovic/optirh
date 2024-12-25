@@ -131,7 +131,7 @@
                                         class="btn btn-outline-secondary" 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#updateJobModal{{ $job->id }}"
-                                        {{ (strtolower($job->title) === 'dg' || preg_match('/^directeur(·rice)?/i', $job->title)) ? 'disabled' : '' }}
+                                        {{ (strtolower($job->title) === 'dg') ? 'disabled' : '' }}
                                     >
                                         <i class="icofont-edit text-success"></i>
                                     </button>
@@ -140,7 +140,7 @@
                                     <form action="{{ route('jobs.destroy', $job->id) }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-secondary deleterow" {{ (strtolower($job->title) === 'dg' || preg_match('/^directeur(·rice)?/i', $job->title)) ? 'disabled' : '' }}>
+                                        <button type="submit" class="btn btn-outline-secondary deleterow" {{ (strtolower($job->title) === 'dg') ? 'disabled' : '' }}>
                                             <i class="icofont-ui-delete text-danger"></i>
                                         </button>
                                     </form>

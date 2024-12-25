@@ -22,9 +22,13 @@
                     <div class="mb-3">
                         <label for="n" class="form-label">N+1</label>
                         <select class="form-select" aria-label="Default select example" name="n_plus_one_job_id" value='{{$job->n_plus_one_job->id ?? ""}}'>
+                            @if($job->n_plus_one_job->title != 'DG')
                             @foreach ($department->jobs as $jobOption)
                                 <option value="{{ $jobOption->id }}">{{ $jobOption->title }}</option>
                             @endforeach
+                            @else 
+                            <option value="{{ $job->n_plus_one_job->id }}">{{ $job->n_plus_one_job->title }}</option>
+                            @endif
                         </select>
                     </div>
                     <input type="hidden" name="department_id" value="{{ $department->id }}">
