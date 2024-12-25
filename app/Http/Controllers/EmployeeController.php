@@ -114,7 +114,7 @@ class EmployeeController extends Controller
             // Vérification des conditions spécifiques à la direction
             if ($dept->name === 'DG' && $dept->director_id !== null && $job->title === 'DG') {
                 return response()->json(['ok' => false, 'message' => 'La direction générale a déjà un directeur.'], 400);
-            } elseif ($dept->director_id !== null && str_starts_with($job->title, 'Directeur.rice')) {
+            } elseif ($dept->director_id !== null && $job->n_plus_one_job_id != null && $job->n_plus_one_job_id->title == 'DG') {
                 return response()->json(['ok' => false, 'message' => 'Cette direction a déjà un directeur.'], 400);
             }
 
