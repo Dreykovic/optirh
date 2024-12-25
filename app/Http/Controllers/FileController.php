@@ -114,7 +114,9 @@ class FileController extends Controller
     
         // Vérification insensible à la casse pour le nom
         $filesQuery = File::where('employee_id', $employeeId)
-                          ->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%']);
+                           ->where('status','ACTIVATED') 
+                          ->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%'])
+                          ->orderBy('created_at', 'desc');
     
         // Pagination avec les paramètres limit et page
         $files = $filesQuery->paginate($limit);

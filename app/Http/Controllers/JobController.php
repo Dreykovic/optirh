@@ -17,7 +17,7 @@ class JobController extends Controller
     }
     public function getJobsByDepartment($departmentId)
         {
-            $jobs = Job::where('department_id', $departmentId)->get(['id', 'title']);
+            $jobs = Job::where('department_id', $departmentId)->where('status','ACTIVATED')->get(['id', 'title']);
             return response()->json($jobs);
         }
 

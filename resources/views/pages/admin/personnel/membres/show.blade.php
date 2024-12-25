@@ -327,10 +327,10 @@
                                 </div>
                                 <div class="d-flex mb-3 justify-content-between">
                                     <!-- Champ de recherche -->
-                                    <input type="text" id="searchInput" class="form-control me-2" placeholder="Rechercher..." onkeyup="loadFiles()">
+                                    <input type="text" id="searchInput" class="form-control me-2" placeholder="Rechercher...">
                                     <input type="text" value='{{$employee->id}}' name='employee_id' id='employeeId' hidden>
                                     <!-- Choix du nombre d'éléments par page -->
-                                    <select id="limitSelect" class="form-select ms-2" onchange="loadFiles()">
+                                    <select id="limitSelect" class="form-select ms-2">
                                         <option value="5">5</option>
                                         <option value="10">10</option>
                                         <option value="15">15</option>
@@ -535,62 +535,22 @@
 <script src="{{ asset('app-js/crud/post.js') }}"></script>
 <script src="{{ asset('app-js/crud/put.js') }}"></script>
 <script src="{{ asset('app-js/crud/delete.js') }}"></script>
+<script src="{{ asset('app-js/employee/paginator.js') }}"></script>
+
 <script>
-    let currentPage = 1;  // Page actuelle
-let totalPages = 1;   // Total des pages (sera mis à jour avec la réponse)
-let totalFiles = 0;   // Nombre total de fichiers
+        const employeeId = document.getElementById('employeeId').value;
+// Exemple d'utilisation pour les fichiers
+const paginator = new Paginator({
+    apiUrl: `/api/files/${employeeId}`, // URL de l'API
+    renderElement: document.getElementById('fileList'), // Élément où afficher les données
+    renderCallback: renderFiles, // Fonction pour rendre les fichiers
+    searchInput: document.getElementById('searchInput'), // Input de recherche
+    limitSelect: document.getElementById('limitSelect'), // Sélecteur de limite
+    paginationElement: document.getElementById('pagination'), // Élément pour la pagination
+   
+});
 
-// Fonction pour charger les fichiers
-function loadFiles() {
-    const search = document.getElementById('searchInput').value;
-    const limit = document.getElementById('limitSelect').value;
-    const employeeId = document.getElementById('employeeId').value;
-    
-    // Appel AJAX pour récupérer les fichiers
-    fetch(`/api/files/${employeeId}?search=${search}&limit=${limit}&page=${currentPage}`)
-        .then(response => response.json())
-        .then(data => {
-            totalFiles = data.total;   // Nombre total de fichiers
-            totalPages = data.last_page; // Nombre total de pages
-            //alert(data.data);
-            console.log(data.data);
-            
-            // Rendre les fichiers à l'écran
-            renderFiles(data.data);
-            
-            // Rendre la pagination
-            renderPagination();
-        })
-        .catch(error => console.error('Erreur lors de la récupération des fichiers:', error));
-}
-
-// Fonction pour afficher les fichiers
-// function renderFiles(files) {
-//     const fileList = document.getElementById('fileList');
-//     fileList.innerHTML = '';
-
-//     if (files.length === 0) {
-//         fileList.innerHTML = '<div class="alert alert-warning">Aucun fichier trouvé.</div>';
-//     } else {
-//         files.forEach(file => {
-//             const fileElement = document.createElement('div');
-//             fileElement.className = 'py-2 d-flex align-items-center border-bottom';
-//             fileElement.innerHTML = `
-//                 <div class="d-flex ms-3 align-items-center flex-fill">
-//                     <span class="avatar small-11 ${file.icon_class} rounded-circle text-center d-flex align-items-center justify-content-center">
-//                         <i class="${file.icon} fs-5"></i>
-//                     </span>
-//                     <div class="d-flex flex-column ps-3" style="max-width: 200px;">
-//                         <h6 class="fw-bold mb-0 small-14 text-truncate text-muted" title="${file.name}">
-//                             ${file.name}
-//                         </h6>
-//                     </div>
-//                 </div>
-//             `;
-//             fileList.appendChild(fileElement);
-//         });
-//     }
-// }
+// Fonction de rendu pour les fichiers
 function renderFiles(files) {
     const fileList = document.getElementById('fileList');
     fileList.innerHTML = '';
@@ -612,28 +572,18 @@ function renderFiles(files) {
                         </h6>
                     </div>
                 </div>
-
-                <!-- Dropdown Actions -->
                 <div class="btn-group">
                     <i class="bi bi-three-dots-vertical" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
                     <ul class="dropdown-menu border-0 shadow bg-primary">
-                        <!-- Rename File -->
-                        <li>
-                            <a class="dropdown-item text-light" href="#" onclick="renameFile(${file.id})">Renommer</a>
-                        </li>
-                        <!-- Delete File -->
+                        <li><a class="dropdown-item text-light" href="#" onclick="renameFile(${file.id})">Renommer</a></li>
                         <li>
                             <form action="/files/delete/${file.id}" method="POST" onsubmit="return confirm('Confirmer la suppression ?');">
                                 <input type="hidden" name="_method" value="DELETE">
                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                <input type="hidden" name="file_id" value="${file.id}">
                                 <button type="submit" class="dropdown-item text-light">Supprimer</button>
                             </form>
                         </li>
-                        <!-- Open File -->
-                        <li>
-                            <a class="dropdown-item text-light" href="${file.url}" target="_blank">Ouvrir</a>
-                        </li>
+                        <li><a class="dropdown-item text-light" href="${file.url}" target="_blank">Ouvrir</a></li>
                     </ul>
                 </div>
             `;
@@ -642,37 +592,9 @@ function renderFiles(files) {
     }
 }
 
-
-
-// Fonction pour afficher la pagination
-function renderPagination() {
-    const pagination = document.getElementById('pagination');
-    pagination.innerHTML = '';  // Vider la pagination avant de la remplir
-
-    const prevPage = currentPage > 1 ? `<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="changePage(${currentPage - 1})">Précédent</a></li>` : '';
-    const nextPage = currentPage < totalPages ? `<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="changePage(${currentPage + 1})">Suivant</a></li>` : '';
-
-    pagination.innerHTML = `
-        <ul class="pagination">
-            ${prevPage}
-            <li class="page-item disabled"><span class="page-link">Page ${currentPage} sur ${totalPages}</span></li>
-            ${nextPage}
-        </ul>
-    `;
-}
-
-// Fonction pour changer de page
-function changePage(page) {
-    if (page >= 1 && page <= totalPages) {
-        currentPage = page;
-        loadFiles();
-    }
-}
-
-// Charger les fichiers au démarrage de la page
-window.onload = loadFiles;
-
 </script>
+
+
 <script>
     function renameFile(fileId) {
     const newName = prompt("Entrez le nouveau nom pour ce fichier:");
@@ -692,6 +614,5 @@ window.onload = loadFiles;
         });
     }
 }
-
 </script>
 @endpush
