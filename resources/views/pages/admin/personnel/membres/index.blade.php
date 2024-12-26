@@ -265,21 +265,28 @@
         } else {
             employees.forEach(employee => {
                 const row = document.createElement('tr');
+            
                 row.innerHTML = `
-                    <td>${employee.first_name} ${employee.last_name}</td>
-                    <td>${employee.phone_number}</td>
-                    <td>${employee.email}</td>
-                    <td>${employee.address1}</td>
-                    <td>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Actions</button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/membres/${employee.id}">Détails</a></li>
-                                <li><button class="dropdown-item text-danger">Supprimer</button></li>
-                            </ul>
-                        </div>
-                    </td>
-                `;
+                            <td>
+                                <div class="d-flex align-items-center">
+                                <i class="icofont icofont-${employee.gender === 'FEMALE' ? 'businesswoman' : 'business-man-alt-2'} fs-3 avatar rounded-circle"></i>
+                                ${employee.first_name} ${employee.last_name}
+                                </div>
+                            </td>
+                            <td>${employee.phone_number}</td>
+                            <td>${employee.email}</td>
+                            <td>${employee.address1}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Actions</button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="/membres/${employee.id}">Détails</a></li>
+                                        <li><button class="dropdown-item text-danger">Supprimer</button></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        `;
+
                 tableBody.appendChild(row);
             });
         }

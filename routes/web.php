@@ -74,7 +74,8 @@ Route::group(['middleware' => 'auth'], function () {
     });
     Route::get('/api/membres/job{id}', [EmployeeController::class, 'jobEmployees'])->name('membres.job');
     //mes données
-    Route::get('/employee/data', [EmployeeController::class, 'updateEmployeeData'])->name('membres.data');
+    Route::get('/employee/data', [EmployeeController::class, 'editEmployeeData'])->name('membres.data');
+    Route::post('/employee/{id}/data', [EmployeeController::class, 'updateEmployeeData'])->name('membres.data.update');
    
     //directions
     Route::prefix('directions')->group(function () {

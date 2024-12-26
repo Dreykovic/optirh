@@ -10,6 +10,7 @@ use App\Models\Job;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class EmployeeController extends Controller
 {
@@ -294,8 +295,77 @@ class EmployeeController extends Controller
     {
     }
 
-    public function updateEmployeeData()
-    {
-        return view('pages.admin.personnel.membres.edits.index');
-    }
+    public function editEmployeeData()
+        {
+            $user = Auth::user();
+            $employee = $user->employee;
+            return view('pages.admin.personnel.membres.edits.index',compact('employee'));
+        }
+    public function updateEmployeeData(Request $request, $id){
+        $employee = Employee::findOrFail($id);
+        try {
+            $validatedData = $request->validate([
+                'first_name' => 'max:255|string|required',
+                'last_name' => 'max:255|string|required',
+                'phone_number' => 'max:255|string|required',
+                'email' => 'max:255|string|required',
+                'gender' => 'max:255|string|required',
+                'address1' => 'max:255|string|sometimes',
+                'birth_date' => 'sometimes',
+
+                'nationality' => 'max:255|sometimes',
+                'religion' => 'max:255|sometimes',
+                'marital_status' => 'max:255|sometimes',
+                'emergency_contact' => 'max:255|sometimes',
+                'city' => 'max:255|sometimes',
+                'state' => 'max:255|sometimes',
+
+                'bank_name' => 'max:255|sometimes',
+                'rib' => 'max:255|sometimes',
+                'code_bank' => 'max:255|sometimes',
+                'code_guichet' => 'max:255|sometimes',
+                'iban' => 'max:255|sometimes',
+                'swift' => 'max:255|sometimes',
+                'cle_rib' => 'max:255|sometimes',
+            ]);
+            $employee->update([
+                'nationality' => $validatedData['nationality'],
+                'religion' => $validatedData['religion'],
+                'marital_status' => $validatedData['marital_status'],
+                'emergency_contact' => $validatedData['emergency_contact'],
+                'city' => $validatedData['city'],
+                'state' => $validatedData['state'],
+
+                'bank_name' => $validatedData['bank_name'],
+                'rib' => $validatedData['rib'],
+                'code_bank' => $validatedData['code_bank'],
+                'code_guichet' => $validatedData['code_guichet'],
+                'iban' => $validatedData['iban'],
+                'swift' => $validatedData['swift'],
+                'cle_rib' => $validatedData['cle_rib'],
+
+                'first_name' => $validatedData['first_name'],
+                'last_name' => $validatedData['last_name'],
+                'phone_number' => $validatedData['phone_number'],
+                'email' => $validatedData['email'],
+                'gender' => $validatedData['gender'],
+                'address1' => $validatedData['address1'],
+                'birth_date' => $validatedData['birth_date'],
+
+            ]);
+
+            return response()->json(['message' => 'Employé editer avec succès.', 'ok' => true]);
+        }catch (ValidationException $e) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
+            ], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+        }
+
+    }    
+
+
 }
