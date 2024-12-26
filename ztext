@@ -23,6 +23,6 @@ try {
 -new head
 - job employees list        
 -renommage des fichiers
--mes données
+-create emp public access
 -politique de suppression(job, dept,emp)
 

@@ -25,14 +25,63 @@
             </div>
             <div class="col-sm-6">
                 <label for="religion" class="form-label">Religion</label>
-                <input type="text" value='{{$employee->religion}}' class="form-control" id="religion" name='religion'>
+                <select class="form-select" aria-label="Default select Project Category" id="religion" name='religion'>
+                    @if($employee->religion == 'Christian')
+                        <option selected value='{{$employee->religion}}'>Chrétien.ne </option>
+                        <option value="Muslim">Musulman.e</option>
+                        <option value="Other">Autre</option>
+                    @elseif($employee->religion == 'Muslim')  
+                        <option selected value='{{$employee->religion}}'>Musulman.e </option>
+                        <option value="Christian">Chrétien.ne</option>
+                        <option value="Other">Autre</option>
+                    @elseif($employee->religion == 'Other')
+                        <option selected value='{{$employee->religion}}'>Autre </option>
+                        <option value="Christian">Chrétien.ne</option>
+                        <option value="Muslim">Musulman.e</option>
+                    @else 
+                        <option selected value=''>Choisir </option>  
+                        <option value="Muslim">Musulman.e</option>
+                        <option value="Christian">Chrétien.ne</option>  
+                        <option value="Other">Autre</option>  
+                    @endif         
+                
+                </select>
             </div>
         </div>
        
         <div class="row g-3 mb-3">
             <div class="col-sm-6">
                 <label for="marital_status" class="form-label">St Matrimoniale</label>
-                <input type="marital_status" class="form-control" value='{{$employee->marital_status}}' id="marital_status" name='marital_status' placeholder="">
+                <select class="form-select" aria-label="Default select Project Category" id="marital_status" name='marital_status'>
+                    @if($employee->marital_status == 'Single')
+                        <option selected value='{{$employee->marital_status}}'>Célibataire </option>
+                        <option value="Married">Marié.e</option>
+                        <option value="Divorced">Divorcé.e</option>
+                        <option value="Widowed">Veuf.ve</option>
+                    @elseif($employee->marital_status == 'Married')  
+                        <option selected value='{{$employee->marital_status}}'>Marié.e </option>
+                        <option value="Single">Célibataire</option>
+                        <option value="Divorced">Divorcé.e</option>
+                        <option value="Widowed">Veuf.ve</option>
+                    @elseif($employee->marital_status == 'Divorced') 
+                        <option selected value='{{$employee->marital_status}}'>Divorcé.e </option> 
+                        <option value="Single">Célibataire</option>
+                        <option value="Maried">Marié.e</option>
+                        <option value="Widowed">Veuf.ve</option>
+                    @elseif($employee->marital_status == 'Widowed')
+                        <option selected value='{{$employee->marital_status}}'>Veuf.ve </option> 
+                        <option value="Single">Célibataire</option>
+                        <option value="Maried">Marié.e</option>
+                        <option value="Divorced">Divorcé.e</option>
+                    @else
+                        <option value="" selected>Choisir</option>
+                        <option value='Widowed'>Veuf.ve </option> 
+                        <option value="Single">Célibataire</option>
+                        <option value="Maried">Marié.e</option>
+                        <option value="Divorced">Divorcé.e</option>
+                    @endif         
+                
+                </select>
             </div>
             <div class="col-sm-6">
                 <label for="gender" class="form-label">Genre</label>
