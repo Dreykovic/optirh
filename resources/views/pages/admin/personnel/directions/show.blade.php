@@ -197,17 +197,17 @@
     });
 </script>
 <script>
-let AppPostesListManager = (function () {
-    return {
-        init: () => {
-            AppModules.initDataTable("#postes");
-        },
-    };
-})();
+    let AppPostesListManager = (function () {
+        return {
+            init: () => {
+                AppModules.initDataTable("#postes");
+            },
+        };
+    })();
 
-document.addEventListener("DOMContentLoaded", (e) => {
-    AppPostesListManager.init();
-});
+    document.addEventListener("DOMContentLoaded", (e) => {
+        AppPostesListManager.init();
+    });
 
 </script>
 

@@ -60,27 +60,37 @@ Route::group(['middleware' => 'auth'], function () {
 
 
 
-    //Personnel job_employees 
-    Route::get('/membres/list', [EmployeeController::class, 'index'])->name('membres');
-    Route::get('/employee/data', [EmployeeController::class, 'updateEmployeeData'])->name('membres.data');
-    Route::get('/membres/{employee}', [EmployeeController::class, 'show'])->name('membres.show');
+    //membres
+    Route::prefix('membres')->group(function () {
+        Route::get('/list', [EmployeeController::class, 'index'])->name('membres');
+        Route::get('/pages', [EmployeeController::class, 'pages'])->name('membres.pages');
+        Route::get('/{employee}', [EmployeeController::class, 'show'])->name('membres.show');
+        Route::post('/save', [EmployeeController::class, 'store'])->name('membres.store');
+        Route::put('/update/{employee}', [EmployeeController::class, 'update'])->name('membres.update');
+        Route::put('/update/pers/{id}', [EmployeeController::class, 'updatePres'])->name('membres.updatePres');
+        Route::put('/update/bank/{employee}', [EmployeeController::class, 'updateBank'])->name('membres.updateBank');
+        Route::get('/directions/list', [DepartmentController::class, 'index'])->name('directions');
+
+    });
     Route::get('/api/membres/job{id}', [EmployeeController::class, 'jobEmployees'])->name('membres.job');
-    Route::post('/membres/save', [EmployeeController::class, 'store'])->name('membres.store');
-    Route::put('/membres/update/{employee}', [EmployeeController::class, 'update'])->name('membres.update');
-    Route::put('/membres/update/pers/{id}', [EmployeeController::class, 'updatePres'])->name('membres.updatePres');
-    Route::put('/membres/update/bank/{employee}', [EmployeeController::class, 'updateBank'])->name('membres.updateBank');
+    //mes données
+    Route::get('/employee/data', [EmployeeController::class, 'updateEmployeeData'])->name('membres.data');
+   
+    //directions
+    Route::prefix('directions')->group(function () {
+        Route::get('/{department}', [DepartmentController::class, 'show'])->name('directions.show');
+        Route::post('/create', [DepartmentController::class, 'store'])->name('directions.store');
+        Route::put('/{id}', [DepartmentController::class, 'update'])->name('directions.update');
+        Route::delete('/{id}', [DepartmentController::class, 'destroy'])->name('directions.destroy');
+    });
 
-    Route::get('/membres/directions/list', [DepartmentController::class, 'index'])->name('directions');
-    Route::get('/directions/{department}', [DepartmentController::class, 'show'])->name('directions.show');
-    Route::post('/directions/create', [DepartmentController::class, 'store'])->name('directions.store');
-    Route::put('/directions/{id}', [DepartmentController::class, 'update'])->name('directions.update');
-    Route::delete('/directions/{id}', [DepartmentController::class, 'destroy'])->name('directions.destroy');
-
-
-    Route::post('/jobs/create', [JobController::class, 'store'])->name('jobs.store');
-    Route::put('/jobs/{id}', [JobController::class, 'update'])->name('jobs.update');
-    Route::delete('/jobs/{id}', [JobController::class, 'destroy'])->name('jobs.destroy');
-
+    //jobs
+    Route::prefix('jobs')->group(function () {
+        Route::post('/create', [JobController::class, 'store'])->name('jobs.store');
+        Route::put('/{id}', [JobController::class, 'update'])->name('jobs.update');
+        Route::delete('/{id}', [JobController::class, 'destroy'])->name('jobs.destroy');
+        
+    });
     Route::get('/api/jobs/{departmentId}', [JobController::class, 'getJobsByDepartment']);
 
     //files
@@ -94,6 +104,8 @@ Route::group(['middleware' => 'auth'], function () {
     });
     Route::get('/api/files/{employeeId}', [FileController::class, 'getFiles']);
     
+
+   
 
 
 

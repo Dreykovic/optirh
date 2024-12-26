@@ -105,8 +105,8 @@
                     </a>
                 </li>
                 <li>
-                    <a class="ms-link {{ Str::startsWith(request()->path(), 'membres/list') ? 'active' : '' }}"
-                        href="{{ route('membres') }}">
+                    <a class="ms-link {{ Str::startsWith(request()->path(), 'membres/pages') ? 'active' : '' }}"
+                        href="{{ route('membres.pages') }}">
                         <span>Membres </span>
                     </a>
                 </li>
@@ -117,13 +117,13 @@
     @endcan
 
 
-    @can('hide')
+   
         <!--  -->
         <li><a class="ms-link {{ Request::is('employee/data') ? 'active' : '' }}" href="{{ route('membres.data') }}"><i
                     class="icofont-home fs-5"></i>
                 <span>Mes informations</span></a>
         </li>
-    @endcan
+    
 
     <!-- Help -->
     <li>

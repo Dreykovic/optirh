@@ -1,7 +1,5 @@
 @extends('pages.admin.base')
 @section('plugins-style')
-    <link rel="stylesheet" href="{{ asset('assets/plugins/datatables/responsive.dataTables.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/plugins/datatables/dataTables.bootstrap5.min.css') }}">
 @endsection
 @section('admin-content')
 
@@ -12,15 +10,12 @@
                             <div class="card-header py-3 px-0 d-sm-flex align-items-center  justify-content-between border-bottom">
                                 <h3 class=" fw-bold flex-fill mb-0 mt-sm-0">Nos Employés(Total : {{$nbre_employees}})</h3>
                                 <button type="button" class="btn btn-dark me-1 mt-1 w-sm-100" data-bs-toggle="modal" data-bs-target="#addEmpModal"><i class="icofont-plus-circle me-2 fs-6"></i>Ajouter</button>
-                                <div class="dropdown">
-                                    <button class="btn btn-primary dropdown-toggle mt-1  w-sm-100" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Direction
-                                    </button>
-                                    <ul class="dropdown-menu  dropdown-menu-end" aria-labelledby="dropdownMenuButton2">
-                                    <li><a class="dropdown-item" href="#">Tout</a></li>
-                        
-                                    </ul>
-                                </div>
+                                <select id="directorInput" class='btn btn-dark me-1 mt-1 w-sm-100'>
+                                    @foreach($departments as $dept)
+                                    <option value="{{$dept->id}}">{{$dept->name}}</option>
+                                    @endforeach
+                                    <option value="" selected>Directions</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -31,74 +26,45 @@
                   <div class="col-sm-12">
                         <div class="card mb-3">
                             <div class="card-body">
-                                <table id="membres" class="table table-hover align-middle mb-0" style="width:100%">
+                                <div class='d-flex justify-content-between'>
+                                    <div class='d-flex justify-content-between align-items-center'>
+                                        <span>Afficher</span>
+                                        <select id="limitSelect" class='form-select mx-2'>
+                                            <option value="5">5</option>
+                                            <option value="10">10</option>
+                                            <option value="15">15</option>
+                                            <option value="20">20</option>
+                                            <option value="30">30</option>
+                                            <option value="40">40</option>
+                                            <option value="50">50</option>
+                                        </select>
+                                        <span>éléments</span>
+                                    </div>
+                                    <div class='d-flex justify-content-between align-items-center'>
+                                        <label for="searchInput" class='me-2'>Rechercher: </label>
+                                        <input type="text" id="searchInput" placeholder="Rechercher" class='form-control me-2'>
+                                    </div>
+                                    
+                                </div>
+                                
+                                <table id="membres" class="table table-hover align-middle mb-0">
                                     <thead>
                                         <tr>
-                                            <!-- <th>#</th> -->
-                                            <th>Employe</th> 
-                                            <th>Contact</th> 
-                                            <th>Email</th>   
-                                            <th>Adresse</th>   
-                                            <th>Actions</th>  
+                                            <th>Employe</th>
+                                            <th>Contact</th>
+                                            <th>Email</th>
+                                            <th>Adresse</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                    @foreach ($employees as $index => $employee)
-                                        <tr data-href="{{ route('membres.show', ['employee' => $employee->id]) }}">
-                                            <!-- <td>
-                                                <span class="fw-bold">{{ $index + 1 }}</span>
-                                            </td> -->
-                                            <td>
-                                                <div class='d-flex justify-content-start align-items-center'>
-                                                    
-                                                    @if ($employee)
-                                                    <i class="icofont icofont-{{ $employee->gender === 'FEMALE' ? 'businesswoman' : 'business-man-alt-2' }} fs-3  avatar rounded-circle"></i>
-                                                        <span class="fw-bold ms-1">{{ $employee->first_name }} {{ $employee->last_name }}</span>
-                                                    @else
-                                                        <span class="text-muted">Aucun directeur assigné</span>
-                                                    @endif
-
-                                                </div>
-                                               <!--  -->
-                                            </td>
-                                            <td>
-                                                {{ $employee->phone_number }}
-                                            </td>
-                                            <td>
-                                                {{ $employee->email }}
-                                            </td>
-                                            <td>
-                                                {{ $employee->address1 }}
-                                            </td>
-                                            <td>
-                                                 <!--  -->
-                                                 <div class="btn-group">
-                                                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Actions</button>
-                                                        <ul class="dropdown-menu">
-                                                            <!-- <li>
-                                                                <span class='btn' data-bs-toggle="modal" data-bs-target=""><i class="icofont-edit text-success m-2"></i>Editer</span>
-                                                            </li> -->
-                                                            <li>
-                                                                <span class='btn'><i class="icofont-ui-delete text-danger m-2"></i></i>Supprimer</span>
-                                                            </li>
-                                                            <li>
-                                                                <a href="{{ route('membres.show', $employee->id) }}">
-                                                                    <span class='btn'><i class="icofont-eye-open m-2"></i></i>Détail</span>
-                                                                        
-                                                                </a>
-                                                            </li>
-                                                            
-                                                        </ul>
-                                                    </div><!-- /btn-group -->                                         
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
+                                    <tbody></tbody>
                                 </table>
+                                <div id="pagination" class='mt-3'></div>
+                              <!--  -->
                             </div>
                         </div>
                   </div>
-                </div><!-- Row End -->
+                </div>
             </div>
         </div>
             </div>
@@ -245,25 +211,10 @@
       @include('pages.admin.personnel.membres.create')
 @endsection
 @push('plugins-js')
-<script src="{{asset('assets/bundles/dataTables.bundle.js')}}"></script>
 @endpush
 @push('js')
 <script src="{{ asset('app-js/crud/post.js') }}"></script>
-
-<script>
-let AppDepartmentListManager = (function () {
-    return {
-        init: () => {
-            AppModules.initDataTable("#membres");
-        },
-    };
-})();
-
-document.addEventListener("DOMContentLoaded", (e) => {
-    AppDepartmentListManager.init();
-});
-
-</script>
+<script src="{{ asset('app-js/employee/paginator.js') }}"></script>
 
 <script>
     function loadJobs(departmentId) {
@@ -295,6 +246,45 @@ document.addEventListener("DOMContentLoaded", (e) => {
                 alert("Impossible de charger les postes....");
             });
     }
+</script>
+
+<script>
+
+    const paginator = new Paginator({
+        apiUrl: '/membres/list', 
+        renderElement: document.getElementById('membres'),
+        searchInput: document.getElementById('searchInput'), // Input de recherche
+        department: document.getElementById('directorInput'),
+        limitSelect: document.getElementById('limitSelect'), // Sélecteur de limite
+        paginationElement: document.getElementById('pagination'), // Élément pour la pagination
+    renderCallback: (employees) => {
+        const tableBody = document.querySelector('#membres tbody');
+        tableBody.innerHTML = '';
+        if (employees.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="5" class="text-center">Aucun employé trouvé.</td></tr>';
+        } else {
+            employees.forEach(employee => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${employee.first_name} ${employee.last_name}</td>
+                    <td>${employee.phone_number}</td>
+                    <td>${employee.email}</td>
+                    <td>${employee.address1}</td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Actions</button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/membres/${employee.id}">Détails</a></li>
+                                <li><button class="dropdown-item text-danger">Supprimer</button></li>
+                            </ul>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+    }
+});
 </script>
 
 @endpush

@@ -539,58 +539,58 @@
 
 <script>
         const employeeId = document.getElementById('employeeId').value;
-// Exemple d'utilisation pour les fichiers
-const paginator = new Paginator({
-    apiUrl: `/api/files/${employeeId}`, // URL de l'API
-    renderElement: document.getElementById('fileList'), // Élément où afficher les données
-    renderCallback: renderFiles, // Fonction pour rendre les fichiers
-    searchInput: document.getElementById('searchInput'), // Input de recherche
-    limitSelect: document.getElementById('limitSelect'), // Sélecteur de limite
-    paginationElement: document.getElementById('pagination'), // Élément pour la pagination
-   
-});
-
-// Fonction de rendu pour les fichiers
-function renderFiles(files) {
-    const fileList = document.getElementById('fileList');
-    fileList.innerHTML = '';
-
-    if (files.length === 0) {
-        fileList.innerHTML = '<div class="alert alert-warning">Aucun fichier trouvé.</div>';
-    } else {
-        files.forEach(file => {
-            const fileElement = document.createElement('div');
-            fileElement.className = 'py-2 d-flex align-items-center border-bottom';
-            fileElement.innerHTML = `
-                <div class="d-flex ms-3 align-items-center flex-fill">
-                    <span class="avatar small-11 ${file.icon_class} rounded-circle text-center d-flex align-items-center justify-content-center">
-                        <i class="${file.icon} fs-5"></i>
-                    </span>
-                    <div class="d-flex flex-column ps-3" style="max-width: 200px;">
-                        <h6 class="fw-bold mb-0 small-14 text-truncate text-muted" title="${file.name}">
-                            ${file.name}
-                        </h6>
-                    </div>
-                </div>
-                <div class="btn-group">
-                    <i class="bi bi-three-dots-vertical" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
-                    <ul class="dropdown-menu border-0 shadow bg-primary">
-                        <li><a class="dropdown-item text-light" href="#" onclick="renameFile(${file.id})">Renommer</a></li>
-                        <li>
-                            <form action="/files/delete/${file.id}" method="POST" onsubmit="return confirm('Confirmer la suppression ?');">
-                                <input type="hidden" name="_method" value="DELETE">
-                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                <button type="submit" class="dropdown-item text-light">Supprimer</button>
-                            </form>
-                        </li>
-                        <li><a class="dropdown-item text-light" href="${file.url}" target="_blank">Ouvrir</a></li>
-                    </ul>
-                </div>
-            `;
-            fileList.appendChild(fileElement);
+        const paginator = new Paginator({
+            apiUrl: `/api/files/${employeeId}`, // URL de l'API
+            renderElement: document.getElementById('fileList'), // Élément où afficher les données
+            renderCallback: renderFiles, // Fonction pour rendre les fichiers
+            searchInput: document.getElementById('searchInput'), // Input de recherche
+            directorInput:document.getElementById('directorInput'),
+            limitSelect: document.getElementById('limitSelect'), // Sélecteur de limite
+            paginationElement: document.getElementById('pagination'), // Élément pour la pagination
+        
         });
-    }
-}
+
+        // Fonction de rendu pour les fichiers
+        function renderFiles(files) {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+
+            if (files.length === 0) {
+                fileList.innerHTML = '<div class="alert alert-warning">Aucun fichier trouvé.</div>';
+            } else {
+                files.forEach(file => {
+                    const fileElement = document.createElement('div');
+                    fileElement.className = 'py-2 d-flex align-items-center border-bottom';
+                    fileElement.innerHTML = `
+                        <div class="d-flex ms-3 align-items-center flex-fill">
+                            <span class="avatar small-11 ${file.icon_class} rounded-circle text-center d-flex align-items-center justify-content-center">
+                                <i class="${file.icon} fs-5"></i>
+                            </span>
+                            <div class="d-flex flex-column ps-3" style="max-width: 200px;">
+                                <h6 class="fw-bold mb-0 small-14 text-truncate text-muted" title="${file.name}">
+                                    ${file.name}
+                                </h6>
+                            </div>
+                        </div>
+                        <div class="btn-group">
+                            <i class="bi bi-three-dots-vertical" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
+                            <ul class="dropdown-menu border-0 shadow bg-primary">
+                                <li><a class="dropdown-item text-light" href="#" onclick="renameFile(${file.id})">Renommer</a></li>
+                                <li>
+                                    <form action="/files/delete/${file.id}" method="POST" onsubmit="return confirm('Confirmer la suppression ?');">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="dropdown-item text-light">Supprimer</button>
+                                    </form>
+                                </li>
+                                <li><a class="dropdown-item text-light" href="${file.url}" target="_blank">Ouvrir</a></li>
+                            </ul>
+                        </div>
+                    `;
+                    fileList.appendChild(fileElement);
+                });
+            }
+        }
 
 </script>
 

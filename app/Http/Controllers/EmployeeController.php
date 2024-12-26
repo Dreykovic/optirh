@@ -9,6 +9,7 @@ use App\Models\File;
 use App\Models\Job;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
 
 class EmployeeController extends Controller
 {
@@ -24,16 +25,57 @@ class EmployeeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-        // $employees = Employee::all();
-        $departments = Department::orderBy('created_at', 'desc')->get();
-        $employees = Employee::orderBy('created_at', 'desc')->get();
-        $nbre_employees = $employees->count();
-
-        return view('pages.admin.personnel.membres.index', compact('employees', 'nbre_employees', 'departments'));
+        $search = $request->input('search', '');     
+        $limit = $request->input('limit', 5);   
+        $page = $request->input('page', 1);  
+        $departmentId = $request->input('deptValue', null); 
+    
+        // Construire la requête
+        $query = DB::table('employees')
+            ->join('duties', 'employees.id', '=', 'duties.employee_id')
+            ->join('jobs', 'duties.job_id', '=', 'jobs.id')
+            ->select('employees.*')
+            ->where('duties.evolution', '=', 'ON_GOING')
+            ->orderBy('created_at', 'desc');
+    
+        // Filtrer par département, si fourni
+        if (!is_null($departmentId)) {
+            
+            $query->where('jobs.department_id', '=', $departmentId);
+        }
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->whereRaw('LOWER(first_name) LIKE ?', ['%' . strtolower($search) . '%'])
+                  ->orWhereRaw('LOWER(last_name) LIKE ?', ['%' . strtolower($search) . '%'])
+                  ->orWhereRaw('LOWER(email) LIKE ?', ['%' . strtolower($search) . '%'])
+                  ->orWhereRaw('LOWER(phone_number) LIKE ?', ['%' . strtolower($search) . '%'])
+                  ->orWhereRaw('LOWER(address1) LIKE ?', ['%' . strtolower($search) . '%']);
+            });
+        }
+        
+    
+        // Ajouter la pagination
+        $employees = $query->paginate($limit);
+    
+        // Retourner la réponse JSON
+        return response()->json($employees);
     }
+    
+    
+    function pages(){
+        $departments = Department::orderBy('created_at', 'desc')->get();
+        $query = DB::table('employees')
+            ->join('duties', 'employees.id', '=', 'duties.employee_id')
+            ->join('jobs', 'duties.job_id', '=', 'jobs.id')
+            ->select('employees.*')
+            ->where('duties.evolution', '=', 'ON_GOING');
+        $nbre_employees = $query->count();
+        return view('pages.admin.personnel.membres.index', compact('nbre_employees', 'departments'));
+        
+    }
+  
 
     // function employees($id){
     //     try {

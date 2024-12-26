@@ -22,7 +22,6 @@ try {
         
 -new head
 - job employees list        
-- filtrer emp par dept 
 -renommage des fichiers
 -mes données
 -politique de suppression(job, dept,emp)

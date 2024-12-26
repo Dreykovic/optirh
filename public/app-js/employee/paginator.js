@@ -12,6 +12,7 @@ class Paginator {
         this.limitSelect = options.limitSelect || null; // Select pour le nombre d'éléments par page
         this.extraParams = options.extraParams || {}; // Paramètres supplémentaires pour la requête
         this.paginationElement = options.paginationElement || null; // Élément DOM pour la pagination
+        this.department = options.department || null; // Input pour la recherche
 
         this.init();
     }
@@ -20,6 +21,10 @@ class Paginator {
     init() {
         if (this.searchInput) {
             this.searchInput.addEventListener('input', () => this.loadData());
+        }
+
+        if (this.department) {            
+            this.department.addEventListener('change', () => this.loadData());
         }
 
         if (this.limitSelect) {
@@ -33,10 +38,12 @@ class Paginator {
     loadData() {
         const search = this.searchInput ? this.searchInput.value : '';
         const limit = this.limitSelect ? this.limitSelect.value : 10;
+        const deptValue = this.department ? this.department.value : '';
 
         const params = new URLSearchParams({
             search,
             limit,
+            deptValue,
             page: this.currentPage,
             ...this.extraParams,
         });
