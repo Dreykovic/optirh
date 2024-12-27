@@ -121,8 +121,8 @@ class DatabaseSeeder extends Seeder
 
         // Création d'un employé standard
         $employeeChef = Employee::create([
-            'matricule' => 'EMP001',
-            'first_name' => 'Employee',
+            'matricule' => 'Chef001',
+            'first_name' => 'ChefDivision',
             'last_name' => 'Standard',
             'email' => 'employeeChef@example.com',
             'phone_number' => '1234567897',
@@ -136,7 +136,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $employeeChefUser = User::create([
-            'username' => 'employee_chef',
+            'username' => 'chef_division',
             'email' => 'employeeChef@example.com',
             'profile' => 'EMPLOYEE',
             'status' => 'ACTIVATED',
