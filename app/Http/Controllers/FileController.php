@@ -44,14 +44,14 @@ class FileController extends Controller
        
     }
 
-    public function rename(Request $request, $fileId)
+    public function rename(Request $request, $id)
     {
         try {
             $request->validate([
                 'new_name' => 'required|string',
             ]);
     
-            $file = File::findOrFail($fileId);
+            $file = File::findOrFail($id);
     
             $updatedFile = $this->fileService->renameFile($file, $request->new_name);
     

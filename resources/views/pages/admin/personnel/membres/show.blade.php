@@ -488,42 +488,42 @@
         </div> 
 
         <!-- Modal Modal Center-->
-<div class="modal fade" id="addFileModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            
-            <div class="modal-body">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="">Nouveau Document</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form  id='modelAddForm' enctype="multipart/form-data" data-model-add-url="{{ route('files.upload',['employeeId' => $employee->id]) }}">
-                    @csrf 
-                    <div class="">
-                        <label for="files" class="form-label">Choisir des fichiers (PDF, IMAGE) :</label>
-                        <input type="file" name="files[]" id="files" class="form-control form-control-lg" accept=".pdf, .png, .jpeg, .jpg" multiple>
+    <div class="modal fade" id="addFileModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                
+                <div class="modal-body">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="">Nouveau Document</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+                    <form  id='modelAddForm' enctype="multipart/form-data" data-model-add-url="{{ route('files.upload',['employeeId' => $employee->id]) }}">
+                        @csrf 
+                        <div class="">
+                            <label for="files" class="form-label">Choisir des fichiers (PDF, IMAGE) :</label>
+                            <input type="file" name="files[]" id="files" class="form-control form-control-lg" accept=".pdf, .png, .jpeg, .jpg" multiple>
+                        </div>
 
-                    <div class="modal-footer">
-                                <button type="button" class="btn btn-sm btn-block lift text-uppercase btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                <button type="submit" class="btn btn-sm btn-block lift text-uppercase btn-primary" atl="Ajouter Emp" id="modelAddBtn"
-                                    data-bs-dismiss="modal">
-                                    <span class="normal-status">
-                                        Enregister
-                                    </span>
-                                    <span class="indicateur d-none">
-                                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                                        Un Instant...
-                                    </span>
-                                </button>
-                            </div>
-                </form>
+                        <div class="modal-footer">
+                                    <button type="button" class="btn btn-sm btn-block lift text-uppercase btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                    <button type="submit" class="btn btn-sm btn-block lift text-uppercase btn-primary" atl="Ajouter Emp" id="modelAddBtn"
+                                        data-bs-dismiss="modal">
+                                        <span class="normal-status">
+                                            Enregister
+                                        </span>
+                                        <span class="indicateur d-none">
+                                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                            Un Instant...
+                                        </span>
+                                    </button>
+                                </div>
+                    </form>
 
+                </div>
+                
             </div>
-            
         </div>
     </div>
-</div>
       
     @include('pages.admin.personnel.membres.edits.edit-pers-info')
     @include('pages.admin.personnel.membres.edits.edit-bank-info')
@@ -577,6 +577,13 @@
                             <ul class="dropdown-menu border-0 shadow bg-primary">
                                 <li><a class="dropdown-item text-light" href="#" onclick="renameFile(${file.id})">Renommer</a></li>
                                 <li>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                                                    data-bs-target="#updateFileModal${file.id}"><i
+                                                        class="icofont-edit text-success"></i>
+                                                </button>
+
+                                </li>
+                                <li>
                                     <form action="/files/delete/${file.id}" method="POST" onsubmit="return confirm('Confirmer la suppression ?');">
                                         <input type="hidden" name="_method" value="DELETE">
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -586,6 +593,45 @@
                                 <li><a class="dropdown-item text-light" href="${file.url}" target="_blank">Ouvrir</a></li>
                             </ul>
                         </div>
+
+
+                                <!-- Modal Modal Center-->
+    <div class="modal fade" id="updateFileModal${file.id}" tabindex="-1" aria-labelledby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                
+                <div class="modal-body modelUpdateFormContainer" id="updateFileForm${file.id}">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="">Modifier Document</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form data-model-update-url="/files/rename/${file.id}/knjn">
+                        
+                        <div class="">
+                            <label for="files" class="form-label">Nouveau nom du fichier:</label>
+                            <input type="text" value="${file.id}" name="new_name" id="files" class="form-control form-control">
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary  modelUpdateBtn" atl="Modifier Absence Type"
+                                data-bs-dismiss="modal">
+                                <span class="normal-status">
+                                    Enregistrer
+                                </span>
+                                <span class="indicateur d-none">
+                                    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                    Un Instant...
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+                
+            </div>
+        </div>
+    </div>
                     `;
                     fileList.appendChild(fileElement);
                 });
@@ -595,24 +641,4 @@
 </script>
 
 
-<script>
-    function renameFile(fileId) {
-    const newName = prompt("Entrez le nouveau nom pour ce fichier:");
-    if (newName) {
-        // Appel AJAX pour renommer le fichier
-        axios.post('/files/rename', {
-            file_id: fileId,
-            new_name: newName
-        })
-        .then(response => {
-            alert('Fichier renommé avec succès!');
-            // Recharge les fichiers après modification
-            loadFiles();
-        })
-        .catch(error => {
-            alert('Erreur lors du renommage.');
-        });
-    }
-}
-</script>
 @endpush
