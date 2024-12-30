@@ -67,7 +67,7 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($departments as $index => $department)
-                                        <tr data-href="{{ route('directions.show', ['department' => $department->id]) }}">
+                                        <tr>
                                             <td>
                                                 <span class="fw-bold">{{ $index + 1 }}</span>
                                             </td>

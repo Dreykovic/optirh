@@ -72,7 +72,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/directions/list', [DepartmentController::class, 'index'])->name('directions');
 
     });
-    Route::get('/api/membres/job{id}', [EmployeeController::class, 'jobEmployees'])->name('membres.job');
+    Route::get('/api/membres/job/{id}', [EmployeeController::class, 'jobEmployees'])->name('membres.job');
     //mes données
     Route::get('/employee/data', [EmployeeController::class, 'editEmployeeData'])->name('membres.data');
     Route::post('/employee/{id}/data', [EmployeeController::class, 'updateEmployeeData'])->name('membres.data.update');
@@ -97,7 +97,7 @@ Route::group(['middleware' => 'auth'], function () {
     //files
     Route::prefix('files')->group(function () {
         Route::post('/upload/{employeeId}', [FileController::class, 'upload'])->name('files.upload');
-        Route::post('/rename/{$id}', [FileController::class, 'rename'])->name('files.rename');
+        Route::put('/rename/{id}', [FileController::class, 'rename'])->name('files.rename');
         Route::delete('/delete/{fileId}', [FileController::class, 'delete'])->name('files.delete');
         Route::get('/download/{fileId}', [FileController::class, 'download'])->name('files.download');
         Route::get('/open/{fileId}', [FileController::class, 'openFile'])->name('files.open');

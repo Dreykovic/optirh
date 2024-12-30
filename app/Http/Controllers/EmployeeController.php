@@ -99,17 +99,21 @@ class EmployeeController extends Controller
             // Récupérer uniquement les noms et prénoms des employés liés aux devoirs
             $duties = Duty::where('evolution', 'ON_GOING')
                 ->where('job_id', $id)
-                ->with(['employee:id,first_name,last_name']) // Charge les employés avec seulement les champs nécessaires
+                ->with(['employee:id,first_name,last_name,gender']) // Charge les employés avec seulement les champs nécessaires
                 ->get()
                 ->map(function ($duty) {
                     return [
                         'id' => $duty->employee->id,
                         'first_name' => $duty->employee->first_name,
                         'last_name' => $duty->employee->last_name,
+                        'gender' => $duty->employee->gender,
                     ];
                 });
-
-            return response()->json($duties, 200);
+                return response()->json([
+                    'data' => $duties,
+                ], 200);
+                
+            // return response()->json($duties, 200);
         } catch (\Throwable $th) {
             return response()->json([
                 'ok' => false,

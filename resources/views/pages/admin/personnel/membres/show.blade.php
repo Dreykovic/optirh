@@ -524,7 +524,47 @@
             </div>
         </div>
     </div>
-      
+
+    <!--  -->
+        <!-- Modal Modal Center
+    <div class="modal fade" id="updateFileModal4" tabindex="-1" aria-labelledby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                
+                <div class="modal-body modelUpdateFormContainer" id="updateFileForm4">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="">Modifier Document</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form data-model-update-url="/files/rename/4">
+                        @csrf
+                            <input type="hidden" name="_method" value="PUT">
+                        <div class="">
+                            <label for="files" class="form-label">Nouveau nom du fichier:</label>
+                            <input type="text" value="" name="new_name" id="files" class="form-control form-control">
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary  modelUpdateBtn" atl="Modifier Absence Type"
+                                data-bs-dismiss="modal">
+                                <span class="normal-status">
+                                    Enregistrer4
+                                </span>
+                                <span class="indicateur d-none">
+                                    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                    Un Instant...
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+                
+            </div>
+        </div>
+    </div>
+       -->
     @include('pages.admin.personnel.membres.edits.edit-pers-info')
     @include('pages.admin.personnel.membres.edits.edit-bank-info')
 @endsection
@@ -533,7 +573,6 @@
 @endpush
 @push('js')
 <script src="{{ asset('app-js/crud/post.js') }}"></script>
-<script src="{{ asset('app-js/crud/put.js') }}"></script>
 <script src="{{ asset('app-js/crud/delete.js') }}"></script>
 <script src="{{ asset('app-js/employee/paginator.js') }}"></script>
 
@@ -576,13 +615,7 @@
                             <i class="bi bi-three-dots-vertical" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
                             <ul class="dropdown-menu border-0 shadow bg-primary">
                                 <li><a class="dropdown-item text-light" href="#" onclick="renameFile(${file.id})">Renommer</a></li>
-                                <li>
-                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
-                                                    data-bs-target="#updateFileModal${file.id}"><i
-                                                        class="icofont-edit text-success"></i>
-                                                </button>
-
-                                </li>
+                               
                                 <li>
                                     <form action="/files/delete/${file.id}" method="POST" onsubmit="return confirm('Confirmer la suppression ?');">
                                         <input type="hidden" name="_method" value="DELETE">
@@ -593,45 +626,6 @@
                                 <li><a class="dropdown-item text-light" href="${file.url}" target="_blank">Ouvrir</a></li>
                             </ul>
                         </div>
-
-
-                                <!-- Modal Modal Center-->
-    <div class="modal fade" id="updateFileModal${file.id}" tabindex="-1" aria-labelledby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                
-                <div class="modal-body modelUpdateFormContainer" id="updateFileForm${file.id}">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="">Modifier Document</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form data-model-update-url="/files/rename/${file.id}/knjn">
-                        
-                        <div class="">
-                            <label for="files" class="form-label">Nouveau nom du fichier:</label>
-                            <input type="text" value="${file.id}" name="new_name" id="files" class="form-control form-control">
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                            <button type="submit" class="btn btn-primary  modelUpdateBtn" atl="Modifier Absence Type"
-                                data-bs-dismiss="modal">
-                                <span class="normal-status">
-                                    Enregistrer
-                                </span>
-                                <span class="indicateur d-none">
-                                    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                                    Un Instant...
-                                </span>
-                            </button>
-                        </div>
-                    </form>
-
-                </div>
-                
-            </div>
-        </div>
-    </div>
                     `;
                     fileList.appendChild(fileElement);
                 });

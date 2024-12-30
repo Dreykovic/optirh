@@ -55,11 +55,12 @@ class FileService
         $extension = pathinfo($file->path, PATHINFO_EXTENSION);
 
         $newPath = "$folder/$newName.$extension";
-        if (Storage::exists($newPath)) {
+        $disk = 'public';
+        if (Storage::disk($disk)->exists($newPath)) {
             throw new \Exception('Un fichier avec le même nom existe déjà.');
         }
 
-        Storage::move($file->path, $newPath);
+        Storage::disk($disk)->move($file->path, $newPath);
 
         $file->update([
             'name' => $newName,
