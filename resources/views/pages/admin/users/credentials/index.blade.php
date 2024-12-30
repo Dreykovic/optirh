@@ -103,6 +103,7 @@
                                     </td>
                                 </tr>
                                 @include('pages.admin.users.credentials.edit-details')
+                                @include('pages.admin.users.credentials.edit-role')
                             @endforeach
                         </tbody>
                     </table>
