@@ -4,15 +4,14 @@ use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AbsenceTypeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\EmployeeController;
-
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\HolidayController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\JobController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\JobController;
-use App\Http\Controllers\FileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,9 +57,7 @@ Route::group(['middleware' => 'auth'], function () {
         return view('pages.admin.help');
     })->name('help');
 
-
-
-    //Personnel job_employees 
+    // Personnel job_employees
     Route::get('/membres/list', [EmployeeController::class, 'index'])->name('membres');
     Route::get('/employee/data', [EmployeeController::class, 'updateEmployeeData'])->name('membres.data');
     Route::get('/membres/{employee}', [EmployeeController::class, 'show'])->name('membres.show');
@@ -76,27 +73,21 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('/directions/{id}', [DepartmentController::class, 'update'])->name('directions.update');
     Route::delete('/directions/{id}', [DepartmentController::class, 'destroy'])->name('directions.destroy');
 
-
     Route::post('/jobs/create', [JobController::class, 'store'])->name('jobs.store');
     Route::put('/jobs/{id}', [JobController::class, 'update'])->name('jobs.update');
     Route::delete('/jobs/{id}', [JobController::class, 'destroy'])->name('jobs.destroy');
 
     Route::get('/api/jobs/{departmentId}', [JobController::class, 'getJobsByDepartment']);
 
-    //files
+    // files
     Route::prefix('files')->group(function () {
         Route::post('/upload/{employeeId}', [FileController::class, 'upload'])->name('files.upload');
         Route::post('/rename', [FileController::class, 'rename'])->name('files.rename');
         Route::delete('/delete/{fileId}', [FileController::class, 'delete'])->name('files.delete');
         Route::get('/download/{fileId}', [FileController::class, 'download'])->name('files.download');
         Route::get('/open/{fileId}', [FileController::class, 'openFile'])->name('files.open');
-        
     });
     Route::get('/api/files/{employeeId}', [FileController::class, 'getFiles']);
-    
-
-
-
 
     /*
      * Attendances
@@ -150,6 +141,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::prefix('/credentials')->group(function () {
             Route::get('/list/{status?}', [UserController::class,   'index'])->name('credentials.index');
             Route::post('/save', [UserController::class,   'store'])->name('credentials.save');
+            Route::post('/update-details/{userId}', [UserController::class,   'updateDetails'])->name('credentials.updateDetails');
         });
 
         /*
@@ -174,5 +166,3 @@ Route::group(['middleware' => 'auth'], function () {
         });
     });
 });
-
-
