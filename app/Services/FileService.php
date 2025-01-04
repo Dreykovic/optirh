@@ -41,6 +41,7 @@ class FileService
         return File::create([
             'employee_id' => $employeeId,
             'name' => "$fileName.$extension", // (nom + extension)
+            'display_name' => "$fileName.$extension",
             'path' => $path, 
             'url' => Storage::url($path), // URL publique
             'mime_type' => $file->getClientMimeType(), // Type MIME
@@ -51,21 +52,10 @@ class FileService
 
     public function renameFile(File $file, $newName)
     {
-        $folder = pathinfo($file->path, PATHINFO_DIRNAME);
         $extension = pathinfo($file->path, PATHINFO_EXTENSION);
 
-        $newPath = "$folder/$newName.$extension";
-        $disk = 'public';
-        if (Storage::disk($disk)->exists($newPath)) {
-            throw new \Exception('Un fichier avec le même nom existe déjà.');
-        }
-
-        Storage::disk($disk)->move($file->path, $newPath);
-
         $file->update([
-            'name' => $newName,
-            'path' => $newPath,
-            'url' => Storage::url($newPath),
+            'display_name' => "$newName.$extension",
         ]);
 
         return $file;

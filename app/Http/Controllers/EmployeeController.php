@@ -76,6 +76,11 @@ class EmployeeController extends Controller
         return view('pages.admin.personnel.membres.index', compact('nbre_employees', 'departments'));
         
     }
+
+    function pay(){
+        $departments = Department::orderBy('created_at', 'desc')->get();
+        return view('pages.admin.personnel.membres.pay-form',compact('departments'));
+    }
   
 
     // function employees($id){
@@ -148,6 +153,7 @@ class EmployeeController extends Controller
                 'type' => 'required|string|max:255',
                 'job_id' => 'required|exists:jobs,id',
                 'department_id' => 'required|exists:departments,id',
+                'absence_balance' => 'required'
             ]);
 
             // Récupération de la direction et du poste
@@ -182,6 +188,7 @@ class EmployeeController extends Controller
                 'begin_date' => $validatedData['begin_date'],
                 'type' => $validatedData['type'],
                 'employee_id' => $emp->id,
+                'absence_balance' => $validatedData['absence_balance']
             ]);
 
             // Mise à jour du directeur de la direction si applicable

@@ -5,7 +5,7 @@ let AppAdminModelUpdateManager = (function () {
     const handleModelUpdate = () => {
         modelUpdateFormContainers.forEach((modelUpdateFormContainer) => {
             const updateModelFormId = modelUpdateFormContainer.id;
-            console.log(updateModelFormId);
+            // console.log(updateModelFormId);
 
             const modelUpdateBtn = document.querySelector(
                 `#${updateModelFormId} .modelUpdateBtn`
@@ -23,6 +23,8 @@ let AppAdminModelUpdateManager = (function () {
             modelUpdateBtn.addEventListener("click", (e) => {
                 e.preventDefault();
                 const formData = new FormData(modelUpdateForm);
+                console.log(formData);
+                
                 AppModules.submitFromBtn(
                     modelUpdateBtn,
                     formData,
@@ -41,7 +43,7 @@ let AppAdminModelUpdateManager = (function () {
             modelUpdateFormContainers = document.querySelectorAll(
                 ".modelUpdateFormContainer"
             );
-            // console.log(modelUpdateFormContainers);
+             console.log(modelUpdateFormContainers);
 
             if (!modelUpdateFormContainers) {
                 return;

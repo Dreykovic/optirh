@@ -63,6 +63,9 @@ Route::group(['middleware' => 'auth'], function () {
     //membres
     Route::prefix('membres')->group(function () {
         Route::get('/list', [EmployeeController::class, 'index'])->name('membres');
+        Route::get('/pay', [EmployeeController::class, 'index'])->name('membres.pay');
+        Route::get('/pay-form', [EmployeeController::class, 'pay'])->name('membres.pay-form');
+
         Route::get('/pages', [EmployeeController::class, 'pages'])->name('membres.pages');
         Route::get('/{employee}', [EmployeeController::class, 'show'])->name('membres.show');
         Route::post('/save', [EmployeeController::class, 'store'])->name('membres.store');
@@ -96,6 +99,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     //files
     Route::prefix('files')->group(function () {
+        Route::post('/upload', [FileController::class, 'uploadFiles'])->name('files.uploads');
         Route::post('/upload/{employeeId}', [FileController::class, 'upload'])->name('files.upload');
         Route::put('/rename/{id}', [FileController::class, 'rename'])->name('files.rename');
         Route::delete('/delete/{fileId}', [FileController::class, 'delete'])->name('files.delete');

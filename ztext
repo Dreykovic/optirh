@@ -20,9 +20,11 @@ try {
 
 
         
--new head
-- job employees list        
+-new head 
 -renommage des fichiers
 -create emp public access
 -politique de suppression(job, dept,emp)
+
+
+0 0 1 1 * php /home/fayssol/Stage/optirh/artisan duties:update-absence-balance >> /dev/null 2>&1
 

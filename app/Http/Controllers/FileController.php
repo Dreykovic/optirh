@@ -15,6 +15,26 @@ class FileController extends Controller
         $this->fileService = $fileService;
     }
 
+    public function uploadFiles(Request $request)
+    {
+        $files = $request->file('files');
+
+        foreach ($files as $employeeId => $file) {
+            if ($file) {
+                try {
+                    // Utilisation de votre service de stockage
+                    app(FileService::class)->storeFile($employeeId, $file);
+                } catch (\Exception $e) {
+                    // Gérer les erreurs pour chaque fichier
+                    return back()->with('error', "Erreur lors du téléchargement pour l'employé ID: {$employeeId}");
+                }
+            }
+        }
+
+        return back()->with('success', 'Documents téléchargés avec succès.');
+    }
+
+
     public function upload(Request $request, $employeeId)
     {
         try {
@@ -116,6 +136,7 @@ class FileController extends Controller
         $filesQuery = File::where('employee_id', $employeeId)
                            ->where('status','ACTIVATED') 
                           ->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%'])
+                          ->whereRaw('LOWER(display_name) LIKE ?', ['%' . strtolower($search) . '%'])
                           ->orderBy('created_at', 'desc');
     
         // Pagination avec les paramètres limit et page
