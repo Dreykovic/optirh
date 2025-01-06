@@ -17,6 +17,9 @@ class FileController extends Controller
 
     public function uploadFiles(Request $request)
     {
+        $request->validate([
+            'files.*' => 'required|file|mimes:pdf|max:2048', // Limite de 2 Mo par fichier
+        ]);
         $files = $request->file('files');
 
         foreach ($files as $employeeId => $file) {
@@ -39,7 +42,7 @@ class FileController extends Controller
     {
         try {
             $request->validate([
-                'files.*' => 'required|file|mimes:pdf,png,jpeg,jpg|max:2048', // Limite de 2 Mo par fichier
+                'files.*' => 'required|file|mimes:pdf|max:2048', // Limite de 2 Mo par fichier
             ]);
     
             $uploadedFiles = [];

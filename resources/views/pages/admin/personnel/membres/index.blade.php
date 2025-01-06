@@ -270,7 +270,7 @@
                             <td>
                                 <div class="d-flex align-items-center">
                                 <i class="icofont icofont-${employee.gender === 'FEMALE' ? 'businesswoman' : 'business-man-alt-2'} fs-3 avatar rounded-circle"></i>
-                                ${employee.first_name} ${employee.last_name}
+                                    <span class='text-uppercase mx-2'>${employee.last_name}</span> <span class='text-capitalize'>${employee.first_name}</span>
                                 </div>
                             </td>
                             <td>${employee.phone_number}</td>

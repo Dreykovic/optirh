@@ -111,30 +111,49 @@
                     </a>
                 </li>
 
+                <li>
+                    <a class="ms-link {{ Str::startsWith(request()->path(), 'membres/pay-form') ? 'active' : '' }}"
+                        href="{{ route('membres.pay-form') }}">
+                        <span>Factures </span>
+                    </a>
+                </li>
+
             </ul>
 
         </li>
     @endcan
 
-
-   
-        <!--  -->
-        <li><a class="ms-link {{ Request::is('employee/data') ? 'active' : '' }}" href="{{ route('membres.data') }}"><i
-                    class="icofont-home fs-5"></i>
-                <span>Mes informations</span></a>
-        </li>
+        <li class="collapsed">
+            <a class="m-link {{ Str::startsWith(request()->path(), 'employee') ? 'active' : '' }}" data-bs-toggle="collapse"
+                data-bs-target="#employees-navs" href="#">
+                <i class="icofont-calendar fs-5"></i> <span>Mes Données</span> <span
+                    class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
+            <!-- Menu: Sub menu ul -->
+            <ul class="sub-menu collapse {{ Str::startsWith(request()->path(), 'employee') ? 'show' : '' }}"
+                id="employees-navs">
+                <li><a class="ms-link {{ Request::is('employee/data') ? 'active' : '' }}" href="{{ route('employee.data') }}">
+                <span>informations</span></a>
+                </li>
     
+                <li>
+                    <a class="ms-link {{ Str::startsWith(request()->path(), 'employee/pay') ? 'active' : '' }}"
+                        href="{{ route('employee.pay',Auth::user()->employee) }}">
+                        <span>Factures </span>
+                    </a>
+                </li>
 
-    <!-- Help -->
-    <li>
-        <a class="ms-link {{ Request::is('help') ? 'active' : '' }}" href="{{ route('help') }}">
-            <i class="icofont-info fs-5"></i>
-            <span>Aide</span>
-        </a>
-    </li>
+            </ul>
+
+        </li>
 
 
-
+          <!-- Help -->
+          <li>
+            <a class="ms-link {{ Request::is('help') ? 'active' : '' }}" href="{{ route('help') }}">
+                <i class="icofont-info fs-5"></i>
+                <span>Aide</span>
+            </a>
+        </li>
 
 
 </ul>

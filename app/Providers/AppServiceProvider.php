@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use App\Models\Employee;
+use App\Observers\EmployeeObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Directives Blade personnalisées
         $this->registerBladeDirectives();
+        Employee::observe(EmployeeObserver::class);
     }
 
     /**

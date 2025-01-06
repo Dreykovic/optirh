@@ -31,8 +31,8 @@
                                     </div>
                                 </div>
                                 <div class="teacher-info border-start ps-xl-4 ps-md-3 ps-sm-4 ps-4 w-100">
-                                    <h6  class="mb-0 mt-2  fw-bold d-block fs-6">{{$employee->last_name}} {{$employee->first_name}}</h6>
-                                    <span class="py-1 fw-bold small-11 mb-0 mt-1 text-muted mb-4">{{$duty ? $duty->job->title :'Pas de contrat en cours'}}</span>
+                                    <h6  class="mb-0 mt-2  fw-bold d-block fs-6 text-uppercase">{{$employee->last_name}} {{$employee->first_name}}</h6>
+                                    <span class="py-1 fw-bold small-11 mb-0 mt-1 text-muted mb-4 text-uppercase">{{$duty ? $duty->job->title :'Pas de contrat en cours'}}</span>
                                     <!-- <p class="mt-2 small">The purpose of lorem ipsum is to create a natural looking block of text (sentence, paragraph, page, etc.) that doesn't distract from the layout. A practice not without controversy</p> -->
                                     <div class="row g-2 pt-2">
                                         <div class="col-xl-5">
@@ -501,7 +501,7 @@
                         @csrf 
                         <div class="">
                             <label for="files" class="form-label">Choisir des fichiers (PDF, IMAGE) :</label>
-                            <input type="file" name="files[]" id="files" class="form-control form-control-lg" accept=".pdf, .png, .jpeg, .jpg" multiple>
+                            <input type="file" name="files[]" id="files" class="form-control form-control-lg" accept=".pdf" multiple>
                         </div>
 
                         <div class="modal-footer">

@@ -64,7 +64,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::prefix('membres')->group(function () {
         Route::get('/list', [EmployeeController::class, 'index'])->name('membres');
         Route::get('/pay', [EmployeeController::class, 'index'])->name('membres.pay');
-        Route::get('/pay-form', [EmployeeController::class, 'pay'])->name('membres.pay-form');
+        Route::get('/pay-form/v1', [EmployeeController::class, 'pay'])->name('membres.pay-form.v1');
+        Route::get('/pay-form', [EmployeeController::class, 'paycode'])->name('membres.pay-form');
 
         Route::get('/pages', [EmployeeController::class, 'pages'])->name('membres.pages');
         Route::get('/{employee}', [EmployeeController::class, 'show'])->name('membres.show');
@@ -77,7 +78,12 @@ Route::group(['middleware' => 'auth'], function () {
     });
     Route::get('/api/membres/job/{id}', [EmployeeController::class, 'jobEmployees'])->name('membres.job');
     //mes données
-    Route::get('/employee/data', [EmployeeController::class, 'editEmployeeData'])->name('membres.data');
+    Route::prefix('employee')->group(function () {
+        Route::get('/data', [EmployeeController::class, 'editEmployeeData'])->name('employee.data');
+        Route::get('/pay/{employee}', [EmployeeController::class, 'mesFactures'])->name('employee.pay');    
+    });
+
+   
     Route::post('/employee/{id}/data', [EmployeeController::class, 'updateEmployeeData'])->name('membres.data.update');
    
     //directions

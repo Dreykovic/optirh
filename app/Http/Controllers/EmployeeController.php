@@ -81,6 +81,10 @@ class EmployeeController extends Controller
         $departments = Department::orderBy('created_at', 'desc')->get();
         return view('pages.admin.personnel.membres.pay-form',compact('departments'));
     }
+    function paycode(){
+        $departments = Department::orderBy('created_at', 'desc')->get();
+        return view('pages.admin.personnel.membres.pay-form-code',compact('departments'));
+    }
   
 
     // function employees($id){
@@ -141,20 +145,22 @@ class EmployeeController extends Controller
     {
         try {
             // Validation des données d'entrée
+    
             $validatedData = $request->validate([
                 'first_name' => 'required|max:255|string',
                 'last_name' => 'required|max:255|string',
-                'email' => 'required|email|max:255',
-                'phone_number' => 'required|string|max:255',
+                'email' => 'required|email|max:255|unique:employees,email',
+                'phone_number' => 'required|string|max:255|unique:employees,phone_number',
                 'address1' => 'required|string|max:255',
-                'gender' => 'required|string|max:255',
-                'duration' => 'required|string|max:255',
+                'gender' => 'required|in:MALE,FEMALE',
+                'duration' => 'sometimes|string',
                 'begin_date' => 'required|date',
                 'type' => 'required|string|max:255',
                 'job_id' => 'required|exists:jobs,id',
                 'department_id' => 'required|exists:departments,id',
-                'absence_balance' => 'required'
+                'absence_balance' => 'required|numeric|min:0'
             ]);
+            
 
             // Récupération de la direction et du poste
             $dept = Department::find($validatedData['department_id']);
@@ -211,6 +217,12 @@ class EmployeeController extends Controller
     /**
      * Display the specified resource.
      */
+    public function mesFactures(Employee $employee){
+        $files = File::where('employee_id', $employee->id)->get();
+       
+        return view('pages.admin.personnel.membres.employee-pay', compact('employee', 'files'));
+    }
+
     public function show(Employee $employee)
     {
         $files = File::where('employee_id', $employee->id)->get();
