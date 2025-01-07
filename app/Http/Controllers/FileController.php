@@ -136,11 +136,19 @@ class FileController extends Controller
         $page = $request->input('page', 1);       
     
         // Vérification insensible à la casse pour le nom
+        // $filesQuery = File::where('employee_id', $employeeId)
+        //     ->where('status','ACTIVATED') 
+        //     ->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%'])
+        //     ->whereRaw('LOWER(display_name) LIKE ?', ['%' . strtolower($search) . '%'])
+        //     ->orderBy('created_at', 'desc');
         $filesQuery = File::where('employee_id', $employeeId)
-                           ->where('status','ACTIVATED') 
-                          ->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%'])
-                          ->whereRaw('LOWER(display_name) LIKE ?', ['%' . strtolower($search) . '%'])
-                          ->orderBy('created_at', 'desc');
+            ->where('status', 'ACTIVATED')
+            ->where(function ($query) use ($search) {
+                $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%'])
+                    ->orWhereRaw('LOWER(display_name) LIKE ?', ['%' . strtolower($search) . '%']);
+            })
+            ->orderBy('created_at', 'desc');
+
     
         // Pagination avec les paramètres limit et page
         $files = $filesQuery->paginate($limit);
@@ -152,7 +160,71 @@ class FileController extends Controller
         return response()->json($files);
     }
     
-    
+    //v1-json response
+    // public function uploadInvoices(Request $request)
+    //     {
+    //         $request->validate([
+    //             'files' => 'required|array',
+    //             'files.*' => 'required|file|mimes:pdf|max:2048',
+    //         ]);
+
+    //         $files = $request->file('files');
+
+    //         try {
+    //             $results = app(FileService::class)->storeFilesWithCodes($files);
+
+    //             return response()->json([
+    //                 'ok' => true,
+    //                 'message' => 'Traitement terminé',
+    //                 'summary' => [
+    //                     'successful' => count($results['success']),
+    //                     'failed' => count($results['failed']),
+    //                     'missing' => count($results['missing']),
+    //                 ],
+    //                 'details' => $results,
+    //             ], 200);
+    //         } catch (\Exception $e) {
+    //             return response()->json([
+    //                 'ok' => false,
+    //                 'error' => 'Erreur lors du traitement des fichiers',
+    //                 'details' => $e->getMessage(),
+    //             ], 500);
+    //         }
+    //     }
+
+    public function uploadInvoices(Request $request)
+    {
+        $request->validate([
+            'files' => 'required|array',
+            'files.*' => 'required|file|mimes:pdf|max:2048',
+        ]);
+
+        $files = $request->file('files');
+
+        try {
+            // Appelle le service pour traiter les fichiers
+            $results = app(FileService::class)->storeFilesWithCodes($files);
+
+            // Prépare les données pour le résumé
+            $summary = [
+                'successful' => count($results['success']),
+                'failed' => count($results['failed']),
+                'missing' => count($results['missing']),
+            ];
+
+            // Retourne avec les données dans la session
+            return back()
+                ->with('success', 'Les factures ont été traitées avec succès.')
+                ->with('summary', $summary)
+                ->with('details', $results);
+
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Erreur lors du traitement des fichiers.')
+                ->with('details', $e->getMessage());
+        }
+    }
+
 
 
 }

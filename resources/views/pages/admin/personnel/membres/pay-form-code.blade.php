@@ -53,18 +53,82 @@
     <div class='col-sm-4 col-lg-4 col-xl-4 '>
         <div class="card mb-3">
             <div class="card-body">
-            <form action="/files/upload" method="post" enctype="multipart/form-data">
+            <form action="{{ route('files.invoices') }}" method='POST' enctype="multipart/form-data">
+                @csrf
                 <div class="card-header">
-                    <h4 for="files">Nouveaux Factures</h4>
+                    <h4 for="files">Envoi des bulletins</h4>
                 </div>
                     <input type="file" name="files[]" id="files" class='form-control mb-3' accept=".pdf" multiple>
-                    <div class="card-footer ">
-                        <button type="submit" class='btn btn-primary'>Envoyer</button>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-lg btn-block lift text-uppercase btn-primary" atl="Envoyer factures">
+                            <span class="normal-status">
+                                Envoyer
+                            </span>
+                            <span class="indicateur d-none">
+                                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                Un Instant...
+                            </span>
+                        </button>  
                     </div>
                </form>
-                <!--  -->
+               
             </div>
         </div>
+        <!--  -->
+   
+    {{-- Résumé du traitement --}}
+    @if (session('summary') && session('details'))
+        <div class="mt-5">
+            <h5>Résumé d'envoi</h5>
+
+            {{-- Résumé général --}}
+            <div class="alert alert-info">
+                <p><strong>Envois Réussis :</strong> {{ session('summary')['successful'] }}</p>
+                <p><strong>Envois Non Reconnus :</strong> {{ session('summary')['failed'] }}</p>
+                <p><strong>Non Envoyés :</strong> {{ session('summary')['missing'] }}</p>
+            </div>
+
+        <!-- reussi -->
+
+            {{-- Détails des échecs --}}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5>Envois Non Reconnus</h5>
+                    @if (!empty(session('details')['failed']))
+                        <ul class="list-group">
+                            @foreach (session('details')['failed'] as $file)
+                                <li class="list-group-item list-group-item-danger">
+                                    Fichier : <strong>{{ $file }}</strong>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p>Aucun fichier échoué.</p>
+                    @endif
+                </div>
+            </div>
+
+            {{-- Détails des codes manquants --}}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5>Non Envoyés</h5>
+                    @if (!empty(session('details')['missing']))
+                        <ul class="list-group">
+                            @foreach (session('details')['missing'] as $code)
+                                <li class="list-group-item list-group-item-warning">
+                                    Employé : <strong>{{ $code }}</strong>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p>Tous les employés ont reçu un fichier.</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+    @endif
+</div>
+        <!--  -->
     </div>
 
 </div>
@@ -74,7 +138,7 @@
 @endpush
 @push('js')
 <script src="{{ asset('app-js/employee/paginator.js') }}"></script>
-
+<!-- <script src="{{ asset('app-js/crud/post.js') }}"></script> -->
 
 <script>
 

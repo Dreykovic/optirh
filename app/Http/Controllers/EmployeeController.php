@@ -77,10 +77,10 @@ class EmployeeController extends Controller
         
     }
 
-    function pay(){
-        $departments = Department::orderBy('created_at', 'desc')->get();
-        return view('pages.admin.personnel.membres.pay-form',compact('departments'));
-    }
+    // function pay(){
+    //     $departments = Department::orderBy('created_at', 'desc')->get();
+    //     return view('pages.admin.personnel.membres.pay-form',compact('departments'));
+    // }
     function paycode(){
         $departments = Department::orderBy('created_at', 'desc')->get();
         return view('pages.admin.personnel.membres.pay-form-code',compact('departments'));

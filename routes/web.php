@@ -111,6 +111,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/delete/{fileId}', [FileController::class, 'delete'])->name('files.delete');
         Route::get('/download/{fileId}', [FileController::class, 'download'])->name('files.download');
         Route::get('/open/{fileId}', [FileController::class, 'openFile'])->name('files.open');
+        Route::post('/invoices', [FileController::class, 'uploadInvoices'])->name('files.invoices');
         
     });
     Route::get('/api/files/{employeeId}', [FileController::class, 'getFiles']);

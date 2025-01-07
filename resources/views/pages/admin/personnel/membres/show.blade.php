@@ -322,7 +322,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class='d-flex justify-content-between'>
-                                    <h6 class="fw-bold mb-3 text-danger">Factures</h6>
+                                    <h6 class="fw-bold mb-3 text-danger">Bulletins de paie</h6>
                                     <button type="button" class="btn btn-secondary mb-3" data-bs-toggle="modal" data-bs-target="#addFileModal">Nouveau</button>
                                 </div>
                                 <div class="d-flex mb-3 justify-content-between">
@@ -570,7 +570,7 @@
                             <span class="avatar small-11 ${file.icon_class} rounded-circle text-center d-flex align-items-center justify-content-center">
                                 <i class="${file.icon} fs-5"></i>
                             </span>
-                            <div class="d-flex flex-column ps-3" style="max-width: 200px;">
+                            <div class="d-flex flex-column ps-3" style="max-width: 400px;">
                                 <h6 class="fw-bold mb-0 small-14 text-truncate text-muted" title="${file.display_name}">
                                     ${file.display_name}
                                 </h6>
