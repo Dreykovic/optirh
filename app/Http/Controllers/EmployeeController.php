@@ -39,8 +39,9 @@ class EmployeeController extends Controller
             ->join('jobs', 'duties.job_id', '=', 'jobs.id')
             ->select('employees.*')
             ->where('duties.evolution', '=', 'ON_GOING')
+            ->where('employees.status', '=', 'ACTIVATED')
             ->orderBy('created_at', 'desc');
-    
+        
         // Filtrer par département, si fourni
         if (!is_null($departmentId)) {
             
@@ -52,6 +53,7 @@ class EmployeeController extends Controller
                   ->orWhereRaw('LOWER(last_name) LIKE ?', ['%' . strtolower($search) . '%'])
                   ->orWhereRaw('LOWER(email) LIKE ?', ['%' . strtolower($search) . '%'])
                   ->orWhereRaw('LOWER(phone_number) LIKE ?', ['%' . strtolower($search) . '%'])
+                  ->orWhereRaw('LOWER(code) LIKE ?', ['%' . strtolower($search) . '%'])
                   ->orWhereRaw('LOWER(address1) LIKE ?', ['%' . strtolower($search) . '%']);
             });
         }
@@ -71,7 +73,10 @@ class EmployeeController extends Controller
             ->join('duties', 'employees.id', '=', 'duties.employee_id')
             ->join('jobs', 'duties.job_id', '=', 'jobs.id')
             ->select('employees.*')
-            ->where('duties.evolution', '=', 'ON_GOING');
+            ->where('duties.evolution', '=', 'ON_GOING')
+            ->where('employees.status', '=', 'ACTIVATED')
+            ->orderBy('created_at', 'desc');
+
         $nbre_employees = $query->count();
         return view('pages.admin.personnel.membres.index', compact('nbre_employees', 'departments'));
         

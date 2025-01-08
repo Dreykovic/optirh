@@ -58,7 +58,11 @@ class FileService
     $missing = [];
 
     // Récupérer les codes d'employés valides
-    $employeeCodes = Employee::pluck('id', 'code'); // ['code1' => id1, 'code2' => id2, ...]
+    // $employeeCodes = Employee::pluck('id', 'code'); // ['code1' => id1, 'code2' => id2, ...]
+    $employeeCodes = Employee::whereDoesntHave('users', function ($query) {
+        $query->role('ADMIN');
+    })->pluck('id', 'code');
+    
 
     // Marquer tous les employés comme sans fichier au départ
     $employeesWithoutFiles = $employeeCodes->keys()->toArray();
