@@ -15,7 +15,7 @@ return new class () extends Migration {
             $table->string('duration')->nullable();
 
             $table->date('begin_date');
-            $table->integer("absence_balance")->default(30);
+            $table->integer("absence_balance")->default(0);
             $table->string('type')->nullable();
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
             $table->enum('evolution', ['ON_GOING', 'ENDED', 'CANCEL'])->default('ON_GOING');

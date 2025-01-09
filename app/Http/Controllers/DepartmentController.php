@@ -133,8 +133,7 @@ class DepartmentController extends Controller
     {
         //dump("je yas");
         try {
-            //dump("je yas1");
-            // Valider les données envoyées par l'utilisateur
+            
             $validatedData = $request->validate([
                 'name' => 'required|unique:departments,name,' . $id . '|string|max:255',
                 'description' => 'required|string|max:500',
@@ -150,14 +149,14 @@ class DepartmentController extends Controller
             ]);
     
             // Mettre à jour le job "Directeur·rice" associé au département
-            $job = Job::where('title', 'Directeur·rice ' . $department->name)->first();
+            // $job = Job::where('title', 'Directeur·rice ' . $department->name)->first();
     
-            if ($job) {
-                $job->update([
-                    'title' => 'Directeur·rice ' . $department->name,
-                    'description' => 'Directeur·rice ' . $department->description,
-                ]);
-            }
+            // if ($job) {
+            //     $job->update([
+            //         'title' => 'Directeur·rice ' . $department->name,
+            //         'description' => 'Directeur·rice ' . $department->description,
+            //     ]);
+            // }
     
             return response()->json(['message' => 'Department mis à jour avec succès.', 'ok' => true]);
     

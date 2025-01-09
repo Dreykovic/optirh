@@ -46,6 +46,7 @@ return new class extends Migration {
 
             // Statut de l'employé
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED')->comment('Statut de l\'employé');
+            $table->string('code')->nullable()->unique();//code de 5 carecteres
 
             // Horodatage
             $table->timestamps();

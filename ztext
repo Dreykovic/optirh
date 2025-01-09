@@ -20,8 +20,113 @@ try {
 
 
         
--new head
-- job employees list        
-- filtrer emp par dept 
--renommage
-** politique de suppression(job, dept,emp)
+-new head 
+-renommage des fichiers
+-create emp public access
+-politique de suppression(job, dept,emp)
+
+
+0 0 1 1 * php /home/fayssol/Stage/optirh/artisan duties:update-absence-balance >> /dev/null 2>&1
+
+
+
+
+
+@extends('layouts.app')
+
+@section('content')
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Envoi des factures</h1>
+
+    {{-- Formulaire --}}
+    <form action="{{ route('upload-invoices') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <div class="form-group mb-3">
+            <label for="files">Sélectionnez les factures (PDF uniquement) :</label>
+            <input type="file" name="files[]" id="files" class="form-control" multiple required>
+        </div>
+        <button type="submit" class="btn btn-primary">Envoyer</button>
+    </form>
+
+    {{-- Affichage des messages de succès ou d'erreur --}}
+    @if (session('success'))
+        <div class="alert alert-success mt-4">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger mt-4">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    {{-- Résumé du traitement --}}
+    @if (session('summary') && session('details'))
+        <div class="mt-5">
+            <h2>Résumé du traitement</h2>
+
+            {{-- Résumé général --}}
+            <div class="alert alert-info">
+                <p><strong>Factures traitées avec succès :</strong> {{ session('summary')['successful'] }}</p>
+                <p><strong>Factures échouées :</strong> {{ session('summary')['failed'] }}</p>
+                <p><strong>Codes manquants :</strong> {{ session('summary')['missing'] }}</p>
+            </div>
+
+            {{-- Détails des succès --}}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3>Factures envoyées avec succès</h3>
+                    @if (!empty(session('details')['success']))
+                        <ul class="list-group">
+                            @foreach (session('details')['success'] as $code)
+                                <li class="list-group-item list-group-item-success">
+                                    Code employé : <strong>{{ $code }}</strong>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p>Aucune facture envoyée avec succès.</p>
+                    @endif
+                </div>
+            </div>
+
+            {{-- Détails des échecs --}}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3>Factures échouées</h3>
+                    @if (!empty(session('details')['failed']))
+                        <ul class="list-group">
+                            @foreach (session('details')['failed'] as $file)
+                                <li class="list-group-item list-group-item-danger">
+                                    Fichier : <strong>{{ $file }}</strong>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p>Aucun fichier échoué.</p>
+                    @endif
+                </div>
+            </div>
+
+            {{-- Détails des codes manquants --}}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3>Codes manquants</h3>
+                    @if (!empty(session('details')['missing']))
+                        <ul class="list-group">
+                            @foreach (session('details')['missing'] as $code)
+                                <li class="list-group-item list-group-item-warning">
+                                    Code employé : <strong>{{ $code }}</strong>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p>Tous les employés ont reçu un fichier.</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+    @endif
+</div>
+@endsection

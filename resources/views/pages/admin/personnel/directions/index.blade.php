@@ -67,7 +67,7 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($departments as $index => $department)
-                                        <tr data-href="{{ route('directions.show', ['department' => $department->id]) }}">
+                                        <tr>
                                             <td>
                                                 <span class="fw-bold">{{ $index + 1 }}</span>
                                             </td>
@@ -144,41 +144,19 @@
 <script src="{{ asset('app-js/crud/put.js') }}"></script>
 <script src="{{ asset('app-js/crud/delete.js') }}"></script>
 <script>
-let AppDepartmentListManager = (function () {
-    return {
-        init: () => {
-            AppModules.initDataTable("#directions");
-        },
-    };
-})();
+    let AppDepartmentListManager = (function () {
+        return {
+            init: () => {
+                AppModules.initDataTable("#directions");
+            },
+        };
+    })();
 
-document.addEventListener("DOMContentLoaded", (e) => {
-    AppDepartmentListManager.init();
-});
+    document.addEventListener("DOMContentLoaded", (e) => {
+        AppDepartmentListManager.init();
+    });
 
 </script>
 
-<!-- <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const table = $("#directions").DataTable(); // Initialisation de DataTables
-
-        // Ajout de la gestion des clics via la délégation d'événements
-        $('#directions tbody').on('click', 'tr', function (e) {
-            // Vérifie si l'utilisateur a cliqué sur un bouton ou un élément interactif
-            if (
-                e.target.closest(".btn") || // Boutons d'action
-                e.target.closest(".btn-group") // Conteneur des boutons
-            ) {
-                return; // Ne rien faire si le clic est sur un bouton
-            }
-
-            // Récupère l'URL de redirection depuis l'attribut data-href
-            const href = this.dataset.href;
-            if (href) {
-                window.location.href = href; // Redirige l'utilisateur vers la page de détails
-            }
-        });
-    });
-</script> -->
 
 @endpush
