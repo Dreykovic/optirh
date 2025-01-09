@@ -213,85 +213,10 @@
 @push('plugins-js')
 @endpush
 @push('js')
-<script src="{{ asset('app-js/crud/post.js') }}"></script>
-<script src="{{ asset('app-js/employee/paginator.js') }}"></script>
 
-<script>
-    function loadJobs(departmentId) {
-        // Vérifie si un département a été sélectionné
-        if (!departmentId) {
-            document.getElementById('job').innerHTML = '<option selected>choisir</option>';
-            return;
-        }
-
-        // Effectue une requête AJAX
-        fetch(`/api/jobs/${departmentId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Erreur lors du chargement des jobs");
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Met à jour le champ "Poste"
-               
-                const jobSelect = document.getElementById('job');
-                jobSelect.innerHTML = '<option selected>choisir</option>';
-                data.forEach(job => {
-                    jobSelect.innerHTML += `<option value="${job.id}">${job.title}</option>`;
-                });
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                alert("Impossible de charger les postes....");
-            });
-    }
-</script>
-
-<script>
-
-    const paginator = new Paginator({
-        apiUrl: '/membres/list', 
-        renderElement: document.getElementById('membres'),
-        searchInput: document.getElementById('searchInput'), // Input de recherche
-        department: document.getElementById('directorInput'),
-        limitSelect: document.getElementById('limitSelect'), // Sélecteur de limite
-        paginationElement: document.getElementById('pagination'), // Élément pour la pagination
-    renderCallback: (employees) => {
-        const tableBody = document.querySelector('#membres tbody');
-        tableBody.innerHTML = '';
-        if (employees.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="5" class="text-center">Aucun employé trouvé.</td></tr>';
-        } else {
-            employees.forEach(employee => {
-                const row = document.createElement('tr');
-            
-                row.innerHTML = `
-                            <td>
-                                <div class="d-flex align-items-center">
-                                <i class="icofont icofont-${employee.gender === 'FEMALE' ? 'businesswoman' : 'business-man-alt-2'} fs-3 avatar rounded-circle"></i>
-                                    <span class='text-uppercase mx-2'>${employee.last_name}</span> <span class='text-capitalize'>${employee.first_name}</span>
-                                </div>
-                            </td>
-                            <td>${employee.phone_number}</td>
-                            <td>${employee.email}</td>
-                            <td>${employee.address1}</td>
-                            <td>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Actions</button>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="/membres/${employee.id}">Détails</a></li>
-                                        <li><button class="dropdown-item text-danger">Supprimer</button></li>
-                                    </ul>
-                                </div>
-                            </td>
-                        `;
-
-                tableBody.appendChild(row);
-            });
-        }
-    }
-});
-</script>
+<script src="{{ asset('app-js/personnel/paginator.js') }}"></script>
+<script src="{{ asset('app-js/personnel/jobs/loadJobs.js') }}"></script>
+<script src="{{ asset('app-js/personnel/membres/create.js') }}"></script>
+<script src="{{ asset('app-js/personnel/membres/list.js') }}"></script>
 
 @endpush

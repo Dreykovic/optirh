@@ -120,7 +120,7 @@
 
 @endpush
 @push('js')
-<script src="{{ asset('app-js/employee/paginator.js') }}"></script>
+<script src="{{ asset('app-js/personnel/paginator.js') }}"></script>
 
 
 <script>

@@ -186,7 +186,8 @@
 <script src="{{ asset('app-js/crud/post.js') }}"></script>
 <script src="{{ asset('app-js/crud/put.js') }}"></script>
 <script src="{{ asset('app-js/crud/delete.js') }}"></script>
-<script src="{{ asset('app-js/employee/paginator.js') }}"></script>
+<script src="{{ asset('app-js/personnel/paginator.js') }}"></script>
+<script src="{{ asset('app-js/personnel/jobs/membres.js') }}"></script>
 <script>
     // Assurez-vous que le DOM est complètement chargé
     document.addEventListener('DOMContentLoaded', function () {
@@ -212,76 +213,6 @@
 
 </script>
 
-<!-- <script>
-    function loadJobEmployees(jobID) {
-        // Vérifie si un job a été sélectionné
-        if (!jobID) {
-            alert("Veuillez sélectionner un poste valide.");
-            return;
-        }
-
-        // Effectue une requête AJAX
-        fetch(`/api/membres/job/${jobID}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Erreur lors du chargement des employés.");
-                }
-                return response.json();
-            })
-            .then(data => {
-                const empList = document.getElementById('employee-list');
-                empList.innerHTML = ''; // Réinitialise la liste
-                if (data.length === 0) {
-                    empList.innerHTML = '<li>Aucun employé trouvé.</li>';
-                } else {
-                    data.forEach(emp => {
-                        empList.innerHTML += `<li>${emp.last_name} ${emp.first_name}</li>`;
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                alert("Impossible de charger les employés.");
-            });
-    }
-</script> -->
-
-<script>
-document.querySelector('table').addEventListener('click', function(event) {
-    if (event.target.closest('.job')) {
-        const button = event.target.closest('.job');
-        const jobId = button.dataset.bsJobId; // Récupère la valeur de data-bs-job-id
-        console.log('Job ID:', jobId);
-
-        const paginator = new Paginator({
-            apiUrl: `/api/membres/job/${jobId}`, // URL de l'API
-            renderElement: document.getElementById('employee_list'), // Élément où afficher les données
-            renderCallback: renderFiles, // Fonction pour rendre les fichiers        
-        });
-
-    }
-
-    function renderFiles(emps) {
-            const empList = document.getElementById('employee_list');
-            empList.innerHTML = '';
-
-            if (emps.length === 0) {
-                empList.innerHTML = '<div class="alert alert-warning">Aucun employe trouvé.</div>';
-            } else {
-                emps.forEach(emp => {
-                    const empElement = document.createElement('li');
-                    empElement.className = 'py-2 d-flex align-items-center border-bottom';
-                    empElement.innerHTML = `
-                        <i class="icofont icofont-${emp.gender === 'FEMALE' ? 'businesswoman' : 'business-man-alt-2'} fs-3 avatar rounded-circle"></i>
-                       <span class='text-uppercase'>${emp.last_name} ${emp.first_name}</span>
-                    `;
-                    empList.appendChild(empElement);
-                });
-            }
-        }
-});
-
-</script>
 
 
 @endpush
