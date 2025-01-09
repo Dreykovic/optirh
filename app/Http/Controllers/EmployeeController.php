@@ -163,7 +163,8 @@ class EmployeeController extends Controller
                 'type' => 'required|string|max:255',
                 'job_id' => 'required|exists:jobs,id',
                 'department_id' => 'required|exists:departments,id',
-                'absence_balance' => 'required|numeric|min:0'
+                'absence_balance' => 'required|numeric|min:0',
+                'force_create' => 'sometimes|boolean',
             ]);
             
 
@@ -177,9 +178,21 @@ class EmployeeController extends Controller
 
             // Vérification des conditions spécifiques à la direction
             if ($dept->name === 'DG' && $dept->director_id !== null && $job->title === 'DG') {
-                return response()->json(['ok' => false, 'message' => 'La direction générale a déjà un directeur.'], 400);
+                if (empty($validatedData['force_create'])) {
+                    return response()->json([
+                        'ok' => false,
+                        'message' => 'La direction générale a déjà un directeur. Voulez-vous continuer ?',
+                        'requires_confirmation' => true,
+                    ], 400);
+                }
             } elseif ($dept->director_id !== null && $job->n_plus_one_job_id != null && $job->n_plus_one_job_id->title == 'DG') {
-                return response()->json(['ok' => false, 'message' => 'Cette direction a déjà un directeur.'], 400);
+                if (empty($validatedData['force_create'])) {
+                    return response()->json([
+                        'ok' => false,
+                        'message' => 'La direction générale a déjà un directeur. Voulez-vous continuer ?',
+                        'requires_confirmation' => true,
+                    ], 400);
+                }
             }
 
             // Création de l'employé
@@ -218,6 +231,7 @@ class EmployeeController extends Controller
             return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
     }
+
 
     /**
      * Display the specified resource.

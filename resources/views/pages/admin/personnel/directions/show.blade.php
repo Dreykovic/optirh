@@ -11,7 +11,7 @@
                     <div class="border-0 mb-4">
                         <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
                             <!-- <h3 class="fw-bold mb-0">{{$department->name}}({{$department->description}})</h3> -->
-                            <h3 class="fw-bold mb-0">
+                            <h3 class="fw-bold mb-0 text-uppercase">
                                 {{$department->name}}
                                 <span data-bs-toggle="tooltip" title="{{ $department->description }}">
                                     <i class="icofont-question-circle" style="cursor: pointer;"></i>
@@ -31,7 +31,7 @@
                                             <div class="avatar lg  rounded-1 no-thumbnail bg-lightblue color-defult"><i class="icofont-user fs-4"></i></div>
                                             <div class="flex-fill ms-4 text-truncate">
                                                 @if ($department->director)
-                                                <span class="fw-bold ms-1">{{ $department->director->first_name }} {{ $department->director->last_name }}</span>
+                                                <span class="fw-bold ms-1 text-uppercase">{{ $department->director->last_name }} {{ $department->director->first_name }}</span>
                                                 @else
                                                 <span class="text-muted">Aucun directeur assigné</span>
                                                 @endif
@@ -103,14 +103,14 @@
                                 <span class="fw-bold">{{ $index + 1 }}</span>
                             </td> -->
                             <td>
-                                <span class="fw-bold ms-1">{{$job->title}}</span>
+                                <span class="fw-bold ms-1 text-uppercase">{{$job->title}}</span>
                             </td>
-                            <td class='text-wrap w-50'>
+                            <td class='text-wrap w-50 text-capitalize'>
                                 {{$job->description}}
                             </td>
 
                             @if($job->n_plus_one_job)
-                            <td>
+                            <td class='text-uppercase'>
                                 {{$job->n_plus_one_job->title}}
                             </td>    
                             @else
@@ -186,7 +186,8 @@
 <script src="{{ asset('app-js/crud/post.js') }}"></script>
 <script src="{{ asset('app-js/crud/put.js') }}"></script>
 <script src="{{ asset('app-js/crud/delete.js') }}"></script>
-<script src="{{ asset('app-js/employee/paginator.js') }}"></script>
+<script src="{{ asset('app-js/personnel/paginator.js') }}"></script>
+<script src="{{ asset('app-js/personnel/jobs/membres.js') }}"></script>
 <script>
     // Assurez-vous que le DOM est complètement chargé
     document.addEventListener('DOMContentLoaded', function () {
@@ -212,76 +213,6 @@
 
 </script>
 
-<!-- <script>
-    function loadJobEmployees(jobID) {
-        // Vérifie si un job a été sélectionné
-        if (!jobID) {
-            alert("Veuillez sélectionner un poste valide.");
-            return;
-        }
-
-        // Effectue une requête AJAX
-        fetch(`/api/membres/job/${jobID}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Erreur lors du chargement des employés.");
-                }
-                return response.json();
-            })
-            .then(data => {
-                const empList = document.getElementById('employee-list');
-                empList.innerHTML = ''; // Réinitialise la liste
-                if (data.length === 0) {
-                    empList.innerHTML = '<li>Aucun employé trouvé.</li>';
-                } else {
-                    data.forEach(emp => {
-                        empList.innerHTML += `<li>${emp.last_name} ${emp.first_name}</li>`;
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                alert("Impossible de charger les employés.");
-            });
-    }
-</script> -->
-
-<script>
-document.querySelector('table').addEventListener('click', function(event) {
-    if (event.target.closest('.job')) {
-        const button = event.target.closest('.job');
-        const jobId = button.dataset.bsJobId; // Récupère la valeur de data-bs-job-id
-        console.log('Job ID:', jobId);
-
-        const paginator = new Paginator({
-            apiUrl: `/api/membres/job/${jobId}`, // URL de l'API
-            renderElement: document.getElementById('employee_list'), // Élément où afficher les données
-            renderCallback: renderFiles, // Fonction pour rendre les fichiers        
-        });
-
-    }
-
-    function renderFiles(emps) {
-            const empList = document.getElementById('employee_list');
-            empList.innerHTML = '';
-
-            if (emps.length === 0) {
-                empList.innerHTML = '<div class="alert alert-warning">Aucun employe trouvé.</div>';
-            } else {
-                emps.forEach(emp => {
-                    const empElement = document.createElement('li');
-                    empElement.className = 'py-2 d-flex align-items-center border-bottom';
-                    empElement.innerHTML = `
-                        <i class="icofont icofont-${emp.gender === 'FEMALE' ? 'businesswoman' : 'business-man-alt-2'} fs-3 avatar rounded-circle"></i>
-                       <span class='text-uppercase'>${emp.last_name} ${emp.first_name}</span>
-                    `;
-                    empList.appendChild(empElement);
-                });
-            }
-        }
-});
-
-</script>
 
 
 @endpush
