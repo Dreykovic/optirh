@@ -76,7 +76,7 @@
                                                    
                                                     @if ($department->director!=null)
                                                     <i class="icofont icofont-{{ $department->director->gender === 'FEMALE' ? 'businesswoman' : 'business-man-alt-2' }} fs-3  avatar rounded-circle"></i>
-                                                    <span class="fw-bold ms-1">{{ $department->director->first_name }} {{ $department->director->last_name }}</span>
+                                                    <span class="fw-bold ms-1 text-uppercase">{{ $department->director->last_name }} {{ $department->director->first_name }}</span>
                                                     @else
                                                         <span class="text-muted">Aucun directeur assigné</span>
                                                     @endif
@@ -84,10 +84,10 @@
                                                 </div>
                                                 <!--  -->
                                             </td>
-                                            <td>
-                                                {{ $department->name }}
+                                            <td class='text-uppercase'>
+                                               {{ $department->name }}
                                             </td>
-                                            <td class='text-wrap w-50'>
+                                            <td class='text-wrap w-50 text-capitalize'>
                                                 {{ $department->description }}
                                             </td>
                                             <td>

@@ -11,7 +11,7 @@
                     <div class="border-0 mb-4">
                         <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
                             <!-- <h3 class="fw-bold mb-0">{{$department->name}}({{$department->description}})</h3> -->
-                            <h3 class="fw-bold mb-0">
+                            <h3 class="fw-bold mb-0 text-uppercase">
                                 {{$department->name}}
                                 <span data-bs-toggle="tooltip" title="{{ $department->description }}">
                                     <i class="icofont-question-circle" style="cursor: pointer;"></i>
@@ -31,7 +31,7 @@
                                             <div class="avatar lg  rounded-1 no-thumbnail bg-lightblue color-defult"><i class="icofont-user fs-4"></i></div>
                                             <div class="flex-fill ms-4 text-truncate">
                                                 @if ($department->director)
-                                                <span class="fw-bold ms-1">{{ $department->director->first_name }} {{ $department->director->last_name }}</span>
+                                                <span class="fw-bold ms-1 text-uppercase">{{ $department->director->last_name }} {{ $department->director->first_name }}</span>
                                                 @else
                                                 <span class="text-muted">Aucun directeur assigné</span>
                                                 @endif
@@ -103,14 +103,14 @@
                                 <span class="fw-bold">{{ $index + 1 }}</span>
                             </td> -->
                             <td>
-                                <span class="fw-bold ms-1">{{$job->title}}</span>
+                                <span class="fw-bold ms-1 text-uppercase">{{$job->title}}</span>
                             </td>
-                            <td class='text-wrap w-50'>
+                            <td class='text-wrap w-50 text-capitalize'>
                                 {{$job->description}}
                             </td>
 
                             @if($job->n_plus_one_job)
-                            <td>
+                            <td class='text-uppercase'>
                                 {{$job->n_plus_one_job->title}}
                             </td>    
                             @else
