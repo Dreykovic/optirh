@@ -164,7 +164,7 @@ class EmployeeController extends Controller
                 'job_id' => 'required|exists:jobs,id',
                 'department_id' => 'required|exists:departments,id',
                 'absence_balance' => 'required|numeric|min:0',
-                'force_create' => 'sometimes|boolean',
+                // 'force_create' => 'sometimes|boolean',
             ]);
             
 
@@ -178,15 +178,15 @@ class EmployeeController extends Controller
 
             // Vérification des conditions spécifiques à la direction
             if ($dept->name === 'DG' && $dept->director_id !== null && $job->title === 'DG') {
-                if (empty($validatedData['force_create'])) {
+                if (empty($request->input('force_create'))) {
                     return response()->json([
                         'ok' => false,
                         'message' => 'La direction générale a déjà un directeur. Voulez-vous continuer ?',
                         'requires_confirmation' => true,
                     ], 400);
                 }
-            } elseif ($dept->director_id !== null && $job->n_plus_one_job_id != null && $job->n_plus_one_job_id->title == 'DG') {
-                if (empty($validatedData['force_create'])) {
+            } elseif ($dept->director_id !== null && $job->n_plus_one_job != null && $job->n_plus_one_job->title == 'DG') {
+                if (empty($request->input('force_create'))) {
                     return response()->json([
                         'ok' => false,
                         'message' => 'La direction générale a déjà un directeur. Voulez-vous continuer ?',
@@ -196,35 +196,96 @@ class EmployeeController extends Controller
             }
 
             // Création de l'employé
-            $emp = Employee::create([
-                'first_name' => $validatedData['first_name'],
-                'last_name' => $validatedData['last_name'],
-                'email' => $validatedData['email'],
-                'phone_number' => $validatedData['phone_number'],
-                'address1' => $validatedData['address1'],
-                'gender' => $validatedData['gender'],
-            ]);
+            if (empty($request->input('force_create'))) {
+                $emp = Employee::create([
+                    'first_name' => $validatedData['first_name'],
+                    'last_name' => $validatedData['last_name'],
+                    'email' => $validatedData['email'],
+                    'phone_number' => $validatedData['phone_number'],
+                    'address1' => $validatedData['address1'],
+                    'gender' => $validatedData['gender'],
+                ]);
 
             // Création du devoir (Duty)
-            Duty::create([
-                'job_id' => $validatedData['job_id'],
-                'duration' => $validatedData['duration'],
-                'begin_date' => $validatedData['begin_date'],
-                'type' => $validatedData['type'],
-                'employee_id' => $emp->id,
-                'absence_balance' => $validatedData['absence_balance']
-            ]);
+                Duty::create([
+                    'job_id' => $validatedData['job_id'],
+                    'duration' => $validatedData['duration'],
+                    'begin_date' => $validatedData['begin_date'],
+                    'type' => $validatedData['type'],
+                    'employee_id' => $emp->id,
+                    'absence_balance' => $validatedData['absence_balance']
+                ]);
 
-            // Mise à jour du directeur de la direction si applicable
-            if ($dept->name === 'DG' || str_starts_with($job->title, 'Directeur.rice')) {
-                $dept->update(['director_id' => $emp->id]);
+                // Mise à jour du directeur de la direction si applicable
+                if ($dept->name === 'DG' || ($job->n_plus_one_job != null && $job->n_plus_one_job->title == 'DG')) {
+                    $dept->update(['director_id' => $emp->id]);
+                }
             }
+
+            if ($dept->name === 'DG' && $dept->director_id !== null && $job->title === 'DG') {
+                if ($request->input('force_create')==true) {
+                    $old_header = Employee::find($dept->director_id);
+                    $old_header->update(['status' => 'DELETED']);
+
+                    $old_header_duty = Duty::where('employee_id',$old_header->id)->where('evolution','ON_GOING');
+                    $old_header_duty->update(['evolution' => 'ENDED']);
+                    // Création de l'employé
+                    $emp = Employee::create([
+                        'first_name' => $validatedData['first_name'],
+                        'last_name' => $validatedData['last_name'],
+                        'email' => $validatedData['email'],
+                        'phone_number' => $validatedData['phone_number'],
+                        'address1' => $validatedData['address1'],
+                        'gender' => $validatedData['gender'],
+                    ]);
+
+                    // Création du devoir (Duty)
+                    Duty::create([
+                        'job_id' => $validatedData['job_id'],
+                        'duration' => $validatedData['duration'],
+                        'begin_date' => $validatedData['begin_date'],
+                        'type' => $validatedData['type'],
+                        'employee_id' => $emp->id,
+                        'absence_balance' => $validatedData['absence_balance']
+                    ]);
+                    $dept->update(['director_id' => $emp->id]);
+                }
+            } elseif ($dept->director_id !== null && $job->n_plus_one_job != null && $job->n_plus_one_job->title == 'DG') {
+                if ($request->input('force_create')==true) {
+                    $old_header = Employee::find($dept->director_id);
+                    $old_header->update(['status' => 'DELETED']);
+
+                    $old_header_duty = Duty::where('employee_id',$old_header->id)->where('evolution','ON_GOING');
+                    $old_header_duty->update(['evolution' => 'ENDED']);
+                    // Création de l'employé
+                    $emp = Employee::create([
+                        'first_name' => $validatedData['first_name'],
+                        'last_name' => $validatedData['last_name'],
+                        'email' => $validatedData['email'],
+                        'phone_number' => $validatedData['phone_number'],
+                        'address1' => $validatedData['address1'],
+                        'gender' => $validatedData['gender'],
+                    ]);
+
+                    // Création du devoir (Duty)
+                    Duty::create([
+                        'job_id' => $validatedData['job_id'],
+                        'duration' => $validatedData['duration'],
+                        'begin_date' => $validatedData['begin_date'],
+                        'type' => $validatedData['type'],
+                        'employee_id' => $emp->id,
+                        'absence_balance' => $validatedData['absence_balance']
+                    ]);
+                    $dept->update(['director_id' => $emp->id]);
+                }
+            }
+
 
             return response()->json(['message' => 'Employé créé avec succès.', 'ok' => true]);
         } catch (ValidationException $e) {
             return response()->json([
                 'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
+                'message' => $e->getMessage(),
                 'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
             ], 422);
         } catch (\Throwable $th) {

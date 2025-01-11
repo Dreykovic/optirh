@@ -12,9 +12,9 @@
                                 <button type="button" class="btn btn-dark me-1 mt-1 w-sm-100" data-bs-toggle="modal" data-bs-target="#addEmpModal"><i class="icofont-plus-circle me-2 fs-6"></i>Ajouter</button>
                                 <select id="directorInput" class='btn btn-dark me-1 mt-1 w-sm-100'>
                                     @foreach($departments as $dept)
-                                    <option value="{{$dept->id}}">{{$dept->name}}</option>
+                                    <option value="{{$dept->id}}">{{ strtoupper($dept->name) }}</option>
                                     @endforeach
-                                    <option value="" selected>Directions</option>
+                                    <option value="" selected >Directions</option>
                                 </select>
                             </div>
                         </div>

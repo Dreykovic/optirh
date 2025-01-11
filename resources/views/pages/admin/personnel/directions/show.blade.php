@@ -137,13 +137,13 @@
                                     </button>
 
                                     <!--  -->
-                                    <form action="{{ route('jobs.destroy', $job->id) }}" method="POST" style="display:inline;">
+                                    <!-- <form action="{{ route('jobs.destroy', $job->id) }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-outline-secondary deleterow" {{ (strtolower($job->title) === 'dg') ? 'disabled' : '' }}>
                                             <i class="icofont-ui-delete text-danger"></i>
                                         </button>
-                                    </form>
+                                    </form> -->
 
                                    
                                 </div>
