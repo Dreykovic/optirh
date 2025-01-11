@@ -13,6 +13,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\DutyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,6 +67,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/pay', [EmployeeController::class, 'index'])->name('membres.pay');
         Route::get('/pay-form/v1', [EmployeeController::class, 'pay'])->name('membres.pay-form.v1');
         Route::get('/pay-form', [EmployeeController::class, 'paycode'])->name('membres.pay-form');
+        Route::get('/contrats', [DutyController::class, 'index'])->name('contrats.index');
 
         Route::get('/pages', [EmployeeController::class, 'pages'])->name('membres.pages');
         Route::get('/{employee}', [EmployeeController::class, 'show'])->name('membres.show');
@@ -116,8 +118,14 @@ Route::group(['middleware' => 'auth'], function () {
     });
     Route::get('/api/files/{employeeId}', [FileController::class, 'getFiles']);
     
+    /**
+     * contrats
+     */
+    Route::prefix('contrats')->group(function () {
+        Route::get('/request/{ev}', [DutyController::class, 'enCours'])->name('contrats.encours');
 
-   
+    });
+    
 
 
 
