@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Duty;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -13,8 +14,17 @@ class DutyController extends Controller
      */
     public function index()
     {
-        //
-        return view('pages.admin.personnel.contrats.index');
+        $duties = DB::table('duties')
+            ->join('employees', 'duties.employee_id', '=', 'employees.id')
+            ->join('jobs', 'duties.job_id', '=', 'jobs.id') // Ajouter cette jointure pour accéder au job
+            ->leftJoin('departments', 'employees.id', '=', 'departments.director_id')
+            ->whereNot('duties.evolution', 'ON_GOING')
+            // ->whereNull('departments.director_id') // S'assurer que l'employé n'est pas un directeur
+            ->select('jobs.title', 'employees.first_name', 'employees.last_name', 'employees.id')
+            ->distinct()
+            ->get();
+        $departments = Department::orderBy('created_at', 'desc')->get();
+        return view('pages.admin.personnel.contrats.index',compact('departments', 'duties'));
     }
 
     public function enCours(Request $request, string $ev){
@@ -27,7 +37,8 @@ class DutyController extends Controller
         $departmentId = $request->input('deptValue', null); 
     
         // Construire la requête
-        if ($ev == 'ON_GOING') {
+        //en cours
+        if ($ev == $evolutions[0]) {
             $query = DB::table('duties')
                 ->join('employees', 'duties.employee_id', '=', 'employees.id')
                 ->join('jobs', 'duties.job_id', '=', 'jobs.id')
@@ -43,10 +54,112 @@ class DutyController extends Controller
                     'jobs.title as job_title',
                     'departments.name as department_name'
                 )
-                ->where('duties.evolution', '=', 'ON_GOING')
-                ->where('employees.status', '=', 'ACTIVATED')
-                ->orderBy('duties.created_at', 'desc')
-                ;
+                ->where('duties.evolution', '=', $evolutions[0])
+                ->where('employees.status', '=', $status[0])
+                ->orderBy('duties.created_at', 'desc');
+        }
+        //suspendus
+        if ($ev == $evolutions[3]) {
+            $query = DB::table('duties')
+                ->join('employees', 'duties.employee_id', '=', 'employees.id')
+                ->join('jobs', 'duties.job_id', '=', 'jobs.id')
+                ->join('departments', 'jobs.department_id', '=', 'departments.id')
+                ->select(
+                    'duties.id as duty_id',
+                    'duties.begin_date',
+                    'duties.absence_balance',
+                    'duties.type',
+                    'employees.first_name',
+                    'employees.last_name',
+                    'employees.gender',
+                    'jobs.title as job_title',
+                    'departments.name as department_name'
+                )
+                ->where('duties.evolution', '=', $evolutions[0])
+                ->where('employees.status', '=', $status[1])
+                ->orderBy('duties.created_at', 'desc');
+        }
+        //terminés
+        if ($ev == $evolutions[1]) {
+            $query = DB::table('duties')
+                ->join('employees', 'duties.employee_id', '=', 'employees.id')
+                ->join('jobs', 'duties.job_id', '=', 'jobs.id')
+                ->join('departments', 'jobs.department_id', '=', 'departments.id')
+                ->select(
+                    'duties.id as duty_id',
+                    'duties.begin_date',
+                    'duties.absence_balance',
+                    'duties.type',
+                    'employees.first_name',
+                    'employees.last_name',
+                    'employees.gender',
+                    'jobs.title as job_title',
+                    'departments.name as department_name'
+                )
+                ->where('duties.evolution', '=', $evolutions[1])
+                ->orderBy('duties.created_at', 'desc');
+        }
+        //démissionés
+        if ($ev == $evolutions[4]) {
+            $query = DB::table('duties')
+                ->join('employees', 'duties.employee_id', '=', 'employees.id')
+                ->join('jobs', 'duties.job_id', '=', 'jobs.id')
+                ->join('departments', 'jobs.department_id', '=', 'departments.id')
+                ->select(
+                    'duties.id as duty_id',
+                    'duties.begin_date',
+                    'duties.absence_balance',
+                    'duties.type',
+                    'employees.first_name',
+                    'employees.last_name',
+                    'employees.gender',
+                    'jobs.title as job_title',
+                    'departments.name as department_name'
+                )
+                ->where('duties.evolution', '=', $evolutions[4])
+                ->where('employees.status', '=', $status[1])
+                ->orderBy('duties.created_at', 'desc');
+        }
+        //licencies
+        if ($ev == $evolutions[5]) {
+            $query = DB::table('duties')
+                ->join('employees', 'duties.employee_id', '=', 'employees.id')
+                ->join('jobs', 'duties.job_id', '=', 'jobs.id')
+                ->join('departments', 'jobs.department_id', '=', 'departments.id')
+                ->select(
+                    'duties.id as duty_id',
+                    'duties.begin_date',
+                    'duties.absence_balance',
+                    'duties.type',
+                    'employees.first_name',
+                    'employees.last_name',
+                    'employees.gender',
+                    'jobs.title as job_title',
+                    'departments.name as department_name'
+                )
+                ->where('duties.evolution', '=', $evolutions[5])
+                ->where('employees.status', '=', $status[1])
+                ->orderBy('duties.created_at', 'desc');
+        }
+        //supprimes
+        if ($ev == $status[3]) {
+            $query = DB::table('duties')
+                ->join('employees', 'duties.employee_id', '=', 'employees.id')
+                ->join('jobs', 'duties.job_id', '=', 'jobs.id')
+                ->join('departments', 'jobs.department_id', '=', 'departments.id')
+                ->select(
+                    'duties.id as duty_id',
+                    'duties.begin_date',
+                    'duties.absence_balance',
+                    'duties.type',
+                    'employees.first_name',
+                    'employees.last_name',
+                    'employees.gender',
+                    'jobs.title as job_title',
+                    'departments.name as department_name'
+                )
+                ->where('duties.status', '=', $status[3])
+                ->orderBy('duties.created_at', 'desc');
         }
         
         
