@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Duty;
 use App\Models\Department;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -188,6 +189,24 @@ class DutyController extends Controller
         // Retourner la réponse JSON
         return response()->json($employees);
     }
+
+    public function suspended(Request $request, int $id){
+        try {
+            $duty = Duty::find($id);
+            $emp = Employee::find($duty->employee_id);
+            $emp->update([
+                'status' => 'DEACTIVATED'
+            ]);
+            return response()->json(['message' => 'Suspendu avec succès.', 'ok' => true]);
+
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+        }
+        
+    }
+
+
+
 
     /**
      * Show the form for creating a new resource.

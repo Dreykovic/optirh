@@ -32,7 +32,16 @@ function initPaginator(status) {
                             <div class="btn-group">
                                 <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Actions</button>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="">Suspendre</a></li>
+                                <li>
+                                    <a class="dropdown-item action-btn" 
+                                        href="#" 
+                                        data-id="${contrat.duty_id}" 
+                                        data-url="/contrats/${contrat.duty_id}/suspended" 
+                                        data-action="Suspendre" 
+                                        data-message="Cette action suspendra cet employé.">
+                                        Suspendre
+                                    </a>
+                                    </li>
                                     <li><a class="dropdown-item" href="">Démissioner</a></li>
                                     <li><a class="dropdown-item" href="">Licencier</a></li>
                                     <li><a class="dropdown-item" href="">Terminer</a></li>

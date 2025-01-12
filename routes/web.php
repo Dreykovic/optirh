@@ -123,6 +123,7 @@ Route::group(['middleware' => 'auth'], function () {
      */
     Route::prefix('contrats')->group(function () {
         Route::get('/request/{ev}', [DutyController::class, 'enCours'])->name('contrats.encours');
+        Route::put('/{id}/suspended', [DutyController::class, 'suspended'])->name('contrats.suspended');
 
     });
     
