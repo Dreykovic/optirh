@@ -11,7 +11,10 @@
                 ($absence->level == 'TWO' && auth()->user()->hasRole('DG')) ||
                 ($absence->level == 'ZERO' &&
                     auth()->user()->employee->duties->firstWhere('evolution', 'ON_GOING')->job_id ===
-                        $absence->duty->job->n_plus_one_job_id))
+                        $absence->duty->job->n_plus_one_job_id) ||
+                (in_array($absence->level, ['ZERO']) &&
+                    auth()->user()->hasRole('GRH') &&
+                    $absence->duty->job->n_plus_one_job_id === null))
             <div class="modelUpdateFormContainer mx-2" id="absenceApproveForm{{ $absence->id }}">
 
                 <form data-model-update-url="{{ route('absences.approve', $absence->id) }}">

@@ -17,37 +17,20 @@ class AbsenceTypeSeeder extends Seeder
         // Données fixes d'exemple
         $absenceTypes = [
             [
-                'label' => 'Congé annuel',
+                'label' => 'annuel',
                 'description' => 'Absence pour congés payés annuels',
                 'status' => 'ACTIVATED'
             ],
+
             [
-                'label' => 'Congé maladie',
-                'description' => 'Absence en cas de maladie avec justificatif médical',
-                'status' => 'ACTIVATED'
-            ],
-            [
-                'label' => 'Congé maternité',
+                'label' => 'maternité',
                 'description' => 'Congé accordé pour les salariées enceintes',
                 'status' => 'ACTIVATED'
             ],
+
+
             [
-                'label' => 'Congé paternité',
-                'description' => 'Congé réservé au père de l’enfant après la naissance',
-                'status' => 'ACTIVATED'
-            ],
-            [
-                'label' => 'Absence injustifiée',
-                'description' => 'Absence non justifiée par le salarié',
-                'status' => 'DEACTIVATED'
-            ],
-            [
-                'label' => 'Formation',
-                'description' => 'Absence pour participer à une session de formation',
-                'status' => 'ACTIVATED'
-            ],
-            [
-                'label' => 'autre',
+                'label' => 'exceptionnel',
                 'description' => 'Absence pour une raison spécifique',
                 'status' => 'ACTIVATED'
             ]

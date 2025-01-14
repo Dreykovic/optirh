@@ -6,6 +6,7 @@ use App\Models\Absence;
 use App\Models\AbsenceType;
 use App\Models\Duty;
 use App\Models\Employee;
+use App\Services\AbsencePdfService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -20,7 +21,20 @@ class AbsenceController extends Controller
         // $this->middleware(['permission:écrire-une-absence|écrire-un-tout'], ['only' => ['approve', 'reject', 'comment']]);
         // $this->middleware(['permission:écrire-un-utilisateur|écrire-un-tout'], ['only' => ['destroy', 'destroyAll']]);
     }
+    public function download($absenceId)
+    {
+        try {
+            $absence = Absence::findOrFail($absenceId);
+            $absencePdf =  new AbsencePdfService();
+            return $absencePdf->generate($absence);
+        } catch (\Throwable $th) {
+            dd('Erreur lors du chargement des absences : '.$th->getMessage());
+            // Log propre de l'erreur et affichage d'un message utilisateur
+            \Log::error('Erreur lors du chargement des absences : '.$th->getMessage());
 
+            return back()->with('error', 'Une erreur s\'est produite lors du chargement des absences. Veuillez réessayer.');
+        }
+    }
     /**
      * Display a listing of the resource.
      */
