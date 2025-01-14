@@ -9,7 +9,8 @@
         </div>
 
         <div class="col-sm-6">
-            <h6 class="mb-3"> {{ $absence->duty->job->n_plus_one_job->title }} </h6>
+            <h6 class="mb-3">
+                {{ $absence->duty->job->n_plus_one_job ? $absence->duty->job->n_plus_one_job->title : 'Néant' }} </h6>
             <div> Du <strong> @formatDateOnly($absence->start_date)</strong> Au
                 <strong> @formatDateOnly($absence->end_date)
                 </strong>

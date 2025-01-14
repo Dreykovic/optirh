@@ -9,7 +9,10 @@
             ($absence->level == 'TWO' && auth()->user()->hasRole('DG')) ||
             ($absence->level == 'ZERO' &&
                 auth()->user()->employee->duties->firstWhere('evolution', 'ON_GOING')->job_id ===
-                    $absence->duty->job->n_plus_one_job_id))
+                    $absence->duty->job->n_plus_one_job_id) ||
+            (in_array($absence->level, ['ZERO']) &&
+                auth()->user()->hasRole('GRH') &&
+                $absence->duty->job->n_plus_one_job_id === null))
         <li>
             <a class="dropdown-item py-2 rounded" data-bs-toggle="modal"
                 data-bs-target="#absenceReqDetails{{ $absence->id }}" role="button">
