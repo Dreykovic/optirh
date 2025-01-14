@@ -100,6 +100,43 @@ class RoleSeeder extends Seeder
             'créer-un-férié',
             'configurer-un-férié',
         ];
+        $dsaf_permissions_list = [
+            // compte
+            'voir-un-compte',
+            'écrire-un-compte',
+            'créer-un-compte',
+            'configurer-un-compte',
+
+            // Employee
+            'voir-un-employee',
+            'écrire-un-employee',
+            'créer-un-employee',
+            'configurer-un-employee',
+
+            // Attendance
+            'voir-une-attendance',
+            'écrire-une-attendance',
+            'créer-une-attendance',
+            'configurer-une-attendance',
+
+            // Absence Request
+            'voir-une-absence',
+            'écrire-une-absence',
+            'créer-une-absence',
+            'configurer-une-absence',
+
+            // Credentials
+            'voir-un-credentials',
+            'écrire-un-credentials',
+            'créer-un-credentials',
+            'configurer-un-credentials',
+
+            // Fériés
+            'voir-un-férié',
+            'écrire-un-férié',
+            'créer-un-férié',
+            'configurer-un-férié',
+        ];
         $dg_permissions_list = [
             // compte
             'voir-un-compte',
@@ -168,11 +205,13 @@ class RoleSeeder extends Seeder
         $hr = Role::create(['name' => 'GRH']);
         $dg = Role::create(['name' => 'DG']);
         $employee = Role::create(['name' => 'EMPLOYEE']);
+        $dsaf = Role::create(['name' => 'DSAF']);
 
         // Récupération des permissions
         $all_permissions = Permission::all();
         $admin_permissions = $all_permissions->whereIn('name', $permissions_list);
         $hr_permissions = $all_permissions->whereIn('name', $hr_permissions_list);
+        $dsaf_permissions = $all_permissions->whereIn('name', $dsaf_permissions_list);
         $dg_permissions = $all_permissions->whereIn('name', $dg_permissions_list);
         $employee_permissions = $all_permissions->whereIn('name', $employee_permissions_list);
 
@@ -181,5 +220,6 @@ class RoleSeeder extends Seeder
         $hr->syncPermissions($hr_permissions);
         $dg->syncPermissions($dg_permissions);
         $employee->syncPermissions($employee_permissions);
+        $dsaf->syncPermissions($dsaf_permissions);
     }
 }
