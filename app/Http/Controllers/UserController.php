@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role;
 
@@ -158,10 +159,152 @@ class UserController extends Controller
     {
     }
 
+    public function updateDetails(Request $request, string $id)
+    {
+        try {
+            // Valider les fichiers et l'image
+            $request->validate([
+                'email' => [
+                    'email',
+                    Rule::unique('users', 'email')->ignore($id),
+                ],
+                'username' => [
+                    'string',
+                    Rule::unique('users', 'username')->ignore($id),
+                ],
+                'status' => 'required|in:ACTIVATED,DEACTIVATED',
+            ]);
+            $user = User::find($id);
+            $user->email = $request->input('email');
+            $user->username = $request->input('username');
+            $user->status = $request->input('status');
+
+            $user->save();
+
+            session()->flash('success', 'Les détails ont été mis à jour.');
+
+            return response()->json(['ok' => true, 'message' => 'Les détails de l\'utilisateur ont été mis à jour avec succès']);
+        } catch (ValidationException $e) {
+            // Gestion des erreurs de validation
+            // return response()->json(['ok' => false, 'errors' => $e->errors(), 'message' => 'Données invalides. Veuillez vérifier votre saisie.']);
+            return response()->json(['ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
+            ], 422);
+        } catch (\Throwable $th) {
+            // return response()->json(['ok' => false,  'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
+
+            return response()->json(['ok' => false,  'message' => $th->getMessage()], 500);
+        }
+    }
+
+    public function updatePassword(Request $request, string $id)
+    {
+        try {
+            // Valider les fichiers et l'image
+            $request->validate([
+                'current_password' => 'required',
+                'new_password' => 'required|min:8|different:current_password|confirmed',
+            ]);
+            $user = User::find($id);
+
+            if (!Hash::check($request->input('current_password'), $user->password)) {
+                return response()->json(['ok' => true, 'message' => 'Mot de passe actuel incorrect.'], 401);
+            }
+
+            $user->password = Hash::make($request->input('new_password'));
+            $user->save();
+
+            session()->flash('success', 'Le mot de passe à été mis à jour.');
+
+            return response()->json(['ok' => true, 'message' => 'Mot de passe mis à jour avec succès !'], 200);
+        } catch (ValidationException $e) {
+            // Gestion des erreurs de validation
+            // return response()->json(['ok' => false, 'errors' => $e->errors(), 'message' => 'Données invalides. Veuillez vérifier votre saisie.']);
+            return response()->json(['ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
+            ], 422);
+        } catch (\Throwable $th) {
+            // return response()->json(['ok' => false,  'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
+
+            return response()->json(['ok' => false,  'message' => $th->getMessage()], 500);
+        }
+    }
+
+    public function changePassword(Request $request, string $id)
+    {
+        try {
+            // Valider les fichiers et l'image
+            $request->validate([
+                'password' => 'required|min:8|confirmed',
+            ]);
+            $user = User::find($id);
+            $user->password = Hash::make($request->input('password'));
+
+            $user->save();
+            session()->flash('success', 'Le mot de passe à été mis à jour.');
+
+            return response()->json(['message' => __(' Votre mot de passe a été mis à jour avec succès .'), 'ok' => true]);
+        } catch (ValidationException $e) {
+            // Gestion des erreurs de validation
+            // return response()->json(['ok' => false, 'errors' => $e->errors(), 'message' => 'Données invalides. Veuillez vérifier votre saisie.']);
+            return response()->json(['ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
+            ], 422);
+        } catch (\Throwable $th) {
+            // return response()->json(['ok' => false,  'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
+
+            return response()->json(['ok' => false,  'message' => $th->getMessage()], 500);
+        }
+    }
+
+    public function updateRole(Request $request, string $id)
+    {
+        try {
+            // Valider les fichiers et l'image
+            $request->validate([
+                'role' => 'required',
+            ]);
+            $user = User::find($id);
+            $user->syncRoles([$request->input('role')]);
+
+            session()->flash('success', 'Le role à été mis à jour.');
+
+            return response()->json(['ok' => true, 'message' => 'Le role de l\'utilisateur a été mis à jour avec succès']);
+        } catch (ValidationException $e) {
+            // Gestion des erreurs de validation
+            // return response()->json(['ok' => false, 'errors' => $e->errors(), 'message' => 'Données invalides. Veuillez vérifier votre saisie.']);
+            return response()->json(['ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
+            ], 422);
+        } catch (\Throwable $th) {
+            // return response()->json(['ok' => false,  'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
+
+            return response()->json(['ok' => false,  'message' => $th->getMessage()], 500);
+        }
+    }
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
+        try {
+            $currentUser = auth()->user();
+
+            // Vérifie si l'utilisateur actuel correspond à l'ID à supprimer
+            if ($currentUser->id == $id) {
+                return response()->json(['ok' => false, 'message' => 'Vous ne pouvez pas supprimer votre propre compte.']);
+            }
+
+            \DB::table('users')->where('id', $id)->delete();
+
+            return response()->json(['ok' => true, 'message' => 'l\'utilisateur à été supprimé avec succès.']);
+        } catch (\Exception $e) {
+            return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
+        }
     }
 }

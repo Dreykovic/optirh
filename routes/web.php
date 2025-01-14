@@ -4,16 +4,18 @@ use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AbsenceTypeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\EmployeeController;
-
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\HolidayController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\JobController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\DutyController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -105,7 +107,7 @@ Route::group(['middleware' => 'auth'], function () {
     });
     Route::get('/api/jobs/{departmentId}', [JobController::class, 'getJobsByDepartment']);
 
-    //files
+    // files
     Route::prefix('files')->group(function () {
         Route::post('/upload', [FileController::class, 'uploadFiles'])->name('files.uploads');
         Route::post('/upload/{employeeId}', [FileController::class, 'upload'])->name('files.upload');
@@ -114,7 +116,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/download/{fileId}', [FileController::class, 'download'])->name('files.download');
         Route::get('/open/{fileId}', [FileController::class, 'openFile'])->name('files.open');
         Route::post('/invoices', [FileController::class, 'uploadInvoices'])->name('files.invoices');
-        
     });
     Route::get('/api/files/{employeeId}', [FileController::class, 'getFiles']);
     
@@ -183,6 +184,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::prefix('/credentials')->group(function () {
             Route::get('/list/{status?}', [UserController::class,   'index'])->name('credentials.index');
             Route::post('/save', [UserController::class,   'store'])->name('credentials.save');
+            Route::post('/update-details/{userId}', [UserController::class,   'updateDetails'])->name('credentials.updateDetails');
+            Route::post('/update-password/{userId}', [UserController::class,   'updatePassword'])->name('credentials.updatePwd');
+            Route::post('/change-password/{userId}', [UserController::class,   'changePassword'])->name('credentials.changePassword');
+            Route::post('/change-role/{userId}', [UserController::class,   'updateRole'])->name('credentials.updateRole');
+            Route::delete('/delete/{userId}', [UserController::class,   'destroy'])->name('credentials.destroy');
         });
 
         /*
@@ -207,5 +213,3 @@ Route::group(['middleware' => 'auth'], function () {
         });
     });
 });
-
-
