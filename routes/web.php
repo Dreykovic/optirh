@@ -79,12 +79,12 @@ Route::group(['middleware' => 'auth'], function () {
     //mes données
     Route::prefix('employee')->group(function () {
         Route::get('/data', [EmployeeController::class, 'editEmployeeData'])->name('employee.data');
-        Route::get('/pay/{employee}', [EmployeeController::class, 'mesFactures'])->name('employee.pay');    
+        Route::get('/pay/{employee}', [EmployeeController::class, 'mesFactures'])->name('employee.pay');
     });
 
-   
+
     Route::post('/employee/{id}/data', [EmployeeController::class, 'updateEmployeeData'])->name('membres.data.update');
-   
+
     //directions
     Route::prefix('directions')->group(function () {
         Route::get('/{department}', [DepartmentController::class, 'show'])->name('directions.show');
@@ -98,7 +98,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/create', [JobController::class, 'store'])->name('jobs.store');
         Route::put('/{id}', [JobController::class, 'update'])->name('jobs.update');
         Route::delete('/{id}', [JobController::class, 'destroy'])->name('jobs.destroy');
-        
+
     });
     Route::get('/api/jobs/{departmentId}', [JobController::class, 'getJobsByDepartment']);
 
@@ -113,9 +113,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/invoices', [FileController::class, 'uploadInvoices'])->name('files.invoices');
     });
     Route::get('/api/files/{employeeId}', [FileController::class, 'getFiles']);
-    
 
-   
+
+
 
 
 
@@ -137,6 +137,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/request/reject/{absenceId}', [AbsenceController::class,  'reject'])->name('absences.reject');
             Route::post('/request/comment/{absenceId}', [AbsenceController::class,  'comment'])->name('absences.comment');
             Route::post('/request/cancel/{absenceId}', [AbsenceController::class,  'cancel'])->name('absences.cancel');
+            Route::get('/request/download/{absenceId}', [AbsenceController::class,  'download'])->name('absences.download');
         });
         /*
         * Absences Types

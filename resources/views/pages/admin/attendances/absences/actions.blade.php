@@ -104,4 +104,18 @@
             </div>
         </li>
     @endif
+    @if ($absence->stage === 'APPROVED')
+        <li>
+
+
+
+            <a role="button" class="" atl="Download Pdf" href="{{ route('absences.download', $absence->id) }}">
+
+                <i class="icofont-download text-black"></i>
+                <span class=" d-sm-none d-md-inline">Télécharger</span>
+
+            </a>
+
+        </li>
+    @endif
 </ul>
