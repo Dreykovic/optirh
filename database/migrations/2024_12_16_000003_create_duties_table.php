@@ -17,8 +17,9 @@ return new class () extends Migration {
             $table->date('begin_date');
             $table->integer("absence_balance")->default(0);
             $table->string('type')->nullable();
+            $table->string('comment')->nullable();
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
-            $table->enum('evolution', ['ON_GOING', 'ENDED', 'CANCEL'])->default('ON_GOING');
+            $table->enum('evolution', ['ON_GOING', 'ENDED', 'CANCEL','SUSPENDED','RESIGNED', 'DISMISSED'])->default('ON_GOING');
             $table->foreignId('job_id')->constrained()->onDelete('cascade');
             $table->foreignId('employee_id')->constrained()->onDelete('cascade');
             $table->timestamps();

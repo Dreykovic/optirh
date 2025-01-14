@@ -132,3 +132,10 @@ try {
     @endif
 </div>
 @endsection
+
+
+encours : ev:on_going, st:activated 
+suspendus: ev:on_going, st:deactivated
+termines : ev:ended
+demissions : ev:resigned, st:deactivated
+supprimes : st:deleted

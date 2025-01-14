@@ -25,7 +25,7 @@
                     <div class='d-flex justify-content-between align-items-center'>
                         <select id="directorInput" class='btn btn-secondary me-1 mt-1 w-sm-100'>
                             @foreach($departments as $dept)
-                            <option value="{{$dept->id}}">{{$dept->name}}</option>
+                            <option value="{{$dept->id}}">{{ strtoupper($dept->name) }}</option>
                             @endforeach
                             <option value="" selected>Directions</option>
                         </select>
