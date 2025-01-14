@@ -5,45 +5,30 @@
                    
                     <div class="modal-body">
                         <div class="modal-header">
-                            <h5 class="modal-title  fw-bold" id="createprojectlLabel"> Nouveau Employé</h5>
+                            <h5 class="modal-title  fw-bold" id="createprojectlLabel"> Nouveau Contrat</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <form id="modelAddForm" data-model-add-url="{{ route('membres.store') }}">
                             @csrf
                             <fieldset class="border p-3 shadow-sm  border-dark mb-2">
-                            <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span class='mb-4'>Identité & Adresse</span></legende>
-                                <div class="row g-3 mb-3 mt-2">
-                                    <div class="col-sm-6">
-                                        <label for="last_name" class="form-label">Nom</label>
-                                        <input type="text" class="form-control" id="last_name" name='last_name' placeholder="">
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <label for="first_name" class="form-label">Prénoms</label>
-                                        <input type="text" class="form-control" id="first_name" name='first_name'>
-                                    </div>
-                                </div>
-                                <!--  -->
-                                <div class="row g-3 mb-3">
-                                    <div class="col-sm-6">
-                                        <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="email" name='email' placeholder="">
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <label for="phone_number" class="form-label">Contact</label>
-                                        <input type="text" class="form-control" id="phone_number" name='phone_number'>
-                                    </div>
-                                </div>
-                                <!--  -->
-                                <div class="row g-3 mb-3">
-                                    <div class="col-sm-6">
-                                        <label for="address1" class="form-label">Adresse</label>
-                                        <input type="address1" class="form-control" id="address1" name='address1' placeholder="">
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <label for="gender" class="form-label">Genre</label>
+                            <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span class='mb-4'>Ancien Employé</span></legende>
+                                                                <!--  -->
+                                <div class="row g-3 m-4">
+                                    <div class="col-sm-12">
                                         <select class="form-select" aria-label="Default select Project Category" id="gender" name='gender'>
-                                            <option selected value='MALE'>Homme</option>
-                                            <option value="FEMALE">Femme</option>
+                                        <option selected disabled>Choisir</option> <!-- Option par défaut -->
+                                            @if($duties)
+                                                @foreach($duties as $duty)
+                                                    <option value="{{ $duty->id }}">
+                                                        {{ $duty->first_name }} {{ $duty->last_name }} 
+                                                        @if($duty->title)
+                                                            - <i class='' style="color: #6c757d;">{{ $duty->title }}</i>
+                                                        @else
+                                                            - Pas de poste attribué
+                                                        @endif
+                                                    </option>
+                                                @endforeach
+                                            @endif
                                         </select>
                                     </div>
                                 </div>
@@ -77,7 +62,7 @@
                                  <!--  -->
                                  <div class="row g-3 mb-3">
                                     <div class="col-sm-6">
-                                        <label for="date" class="form-label">Date Embauche</label>
+                                        <label for="date" class="form-label">Date Signature</label>
                                         <input type="date" class="form-control" id="date" name='begin_date' placeholder="">
                                     </div>
                                     <div class="col-sm-6">

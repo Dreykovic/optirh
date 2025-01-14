@@ -117,6 +117,12 @@
                         <span>Factures </span>
                     </a>
                 </li>
+                <li>
+                    <a class="ms-link {{ Str::startsWith(request()->path(), 'membres/contrats') ? 'active' : '' }}"
+                        href="{{ route('contrats.index') }}">
+                        <span>Contrats </span>
+                    </a>
+                </li>
 
             </ul>
 

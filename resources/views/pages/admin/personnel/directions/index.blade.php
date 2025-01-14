@@ -99,9 +99,9 @@
                                                             <li>
                                                                 <span class='btn' data-bs-toggle="modal" data-bs-target="#updateDeptModal{{ $department->id }}"><i class="icofont-edit text-success m-2"></i>Editer</span>
                                                             </li>
-                                                            <li>
+                                                            <!-- <li>
                                                                 <span class='btn'><i class="icofont-ui-delete text-danger m-2"></i></i>Supprimer</span>
-                                                            </li>
+                                                            </li> -->
                                                             <li>
                                                                 <a href="{{ route('directions.show', $department->id) }}">
                                                                     <span class='btn'><i class="icofont-eye-open m-2"></i></i>Détail</span>

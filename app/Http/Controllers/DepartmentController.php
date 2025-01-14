@@ -62,7 +62,7 @@ class DepartmentController extends Controller
             ]);
 
             $job = Job::create([
-                'title' => 'Directeur·rice '.$dept->name,
+                'title' => 'Directeur·trice '.$dept->name,
                 'description' => 'Directeur·trice '.$dept->description,
                 'n_plus_one_job_id' => $job_superior->id,
                 'department_id' => $dept->id

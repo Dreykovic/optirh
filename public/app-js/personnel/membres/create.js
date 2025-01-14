@@ -31,7 +31,8 @@
 
                 if (confirmation.isConfirmed) {
                     formData.append("force_create", true);
-
+                    console.log(formData);
+                    
                     const forcedResponse = await fetch(url, {
                         method: "POST",
                         body: formData,
