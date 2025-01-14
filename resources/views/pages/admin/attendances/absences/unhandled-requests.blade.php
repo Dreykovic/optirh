@@ -48,9 +48,6 @@
                             in_array($absence->level, ['ONE', 'TWO', 'THREE']) &&
                             auth()->user()->hasRole('GRH')) ||
                         (auth()->user()->employee_id !== $absence->duty->employee_id &&
-                            in_array($absence->level, ['ONE', 'TWO', 'THREE']) &&
-                            auth()->user()->hasRole('DSAF')) ||
-                        (auth()->user()->employee_id !== $absence->duty->employee_id &&
                             in_array($absence->level, ['TWO', 'THREE']) &&
                             auth()->user()->hasRole('DG')) ||
                         ($absence->stage !== 'CANCELLED' &&

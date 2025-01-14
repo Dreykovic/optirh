@@ -41,7 +41,6 @@ class DatabaseSeeder extends Seeder
         $hrRole = Role::where(['name' => 'GRH'])->first();
         $dgRole = Role::where(['name' => 'DG'])->first();
         $employeeRole = Role::where(['name' => 'EMPLOYEE'])->first();
-        $dsafRole = Role::where(['name' => 'DSAF'])->first();
         // Création d'un administrateur
         $adminEmployee = Employee::create([
             'matricule' => 'ADM001',
@@ -96,31 +95,6 @@ class DatabaseSeeder extends Seeder
             'employee_id' => $hrEmployee->id,
         ]);
         $hrUser->syncRoles([$hrRole->id]);
-        // Création d'un Directeur Services Finances et Administratifs
-        $dsafEmployee = Employee::create([
-            'matricule' => 'DSAF001',
-            'first_name' => 'Directeur',
-            'last_name' => 'Finances',
-            'email' => 'dsaf@example.com',
-            'phone_number' => '99999999',
-            'address1' => '2 dsaf Lane',
-            'city' => 'DSAF City',
-            'state' => 'DSAF',
-            'country' => 'FR',
-            'birth_date' => '1985-02-15',
-            'nationality' => 'French',
-            'status' => 'ACTIVATED',
-        ]);
-
-        $dsafUser = User::create([
-            'username' => 'Finance Director',
-            'email' => 'dsaf@example.com',
-            'profile' => 'EMPLOYEE',
-            'status' => 'ACTIVATED',
-            'password' => bcrypt(value: 'dsaf_password'),
-            'employee_id' => $dsafEmployee->id,
-        ]);
-        $dsafUser->syncRoles([$dsafRole->id]);
 
         // Création d'un directeur général
         $directorEmployee = Employee::create([
@@ -217,7 +191,7 @@ class DatabaseSeeder extends Seeder
         $dsafDpt = Department::create([
             'name' => 'DSAF',
             'description' => '',
-            'director_id' => $dsafEmployee->id,
+            'director_id' => null,
             'status' => 'ACTIVATED',
         ]);
         /**
@@ -230,20 +204,13 @@ class DatabaseSeeder extends Seeder
             'status' => 'ACTIVATED',
             'n_plus_one_job_id' => null,
         ], );
-        $dsafJob = Job::create([
-            'title' => 'DSAF',
-            'description' => '...',
-            'department_id' => $dsafDpt->id,
-            'status' => 'ACTIVATED',
-            'n_plus_one_job_id' => $dgJob->id,
-        ], );
 
         $hrfJob = Job::create([
             'title' => 'Grh',
             'description' => '...',
             'department_id' => $dsafDpt->id,
             'status' => 'ACTIVATED',
-            'n_plus_one_job_id' => $dsafJob->id,
+            'n_plus_one_job_id' => $dgJob->id,
         ], );
         $empChefJob = Job::create([
             'title' => 'Chef',
@@ -269,14 +236,6 @@ class DatabaseSeeder extends Seeder
             'status' => 'ACTIVATED',
             'job_id' => $dgJob->id, // Associe au job avec l'ID 5
             'employee_id' => $directorEmployee->id, // Associe à l'employé avec l'ID 5
-        ], );
-        $rhDuty = Duty::create([
-            'duration' => '2 months',
-            'begin_date' => '2023-11-20',
-            'type' => 'Full-Time',
-            'status' => 'ACTIVATED',
-            'job_id' => $dsafJob->id, // Associe au job avec l'ID 5
-            'employee_id' => $dsafEmployee->id, // Associe à l'employé avec l'ID 5
         ], );
         $rhDuty = Duty::create([
             'duration' => '2 months',

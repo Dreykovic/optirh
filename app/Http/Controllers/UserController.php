@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role;
 
@@ -157,44 +156,6 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-    }
-
-    public function updateDetails(Request $request, string $id)
-    {
-        try {
-            // Valider les fichiers et l'image
-            $request->validate([
-                'email' => [
-                    'email',
-                    Rule::unique('users', 'email')->ignore($id),
-                ],
-                'username' => [
-                    'string',
-                    Rule::unique('users', 'username')->ignore($id),
-                ],
-                'status' => 'required|in:ACTIVATED,DEACTIVATED',
-            ]);
-            $user = User::find($id);
-            $user->email = $request->input('email');
-            $user->username = $request->input('username');
-            $user->status = $request->input('status');
-
-            $user->save();
-
-            // Redirection avec message de succès
-            return response()->json(['message' => 'Utilisateur mis à jour avec succès.', 'ok' => true]);
-        } catch (ValidationException $e) {
-            // Gestion des erreurs de validation
-            // return response()->json(['ok' => false, 'errors' => $e->errors(), 'message' => 'Données invalides. Veuillez vérifier votre saisie.']);
-            return response()->json(['ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
-            ], 422);
-        } catch (\Throwable $th) {
-            // return response()->json(['ok' => false,  'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
-
-            return response()->json(['ok' => false,  'message' => $th->getMessage()], 500);
-        }
     }
 
     /**
