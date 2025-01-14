@@ -10,43 +10,15 @@
 
             <span class="d-none d-sm-none d-md-inline">Modifier</span>
         </a>
-
+        </div>
     </li>
 
     <li>
-        <a class="dropdown-item py-2 rounded" data-bs-toggle="modal"
-            data-bs-target="#credentialsPasswordUpdate{{ $user->id }}" role="button">
+        <a class="dropdown-item py-2 rounded" data-bs-toggle="modal" data-bs-target="#" role="button">
             <i class="icofont-key"></i>
 
-            <span class="d-none d-sm-none d-md-inline">Changer Mot De Passe</span>
+            <span class="d-none d-sm-none d-md-inline">Modifier Mot De Passe</span>
         </a>
-
-    </li>
-    <li>
-        <a class="dropdown-item py-2 rounded" data-bs-toggle="modal"
-            data-bs-target="#credentialsRoleUpdate{{ $user->id }}" role="button">
-            <i class="icofont-users"></i>
-
-            <span class="d-none d-sm-none d-md-inline">Changer Role</span>
-        </a>
-
-    </li>
-    <li>
-        <a class="dropdown-item py-2 rounded modelDeleteBtn" data-model-action="delete"
-            data-model-delete-url={{ route('credentials.destroy', $user->id) }} data-model-parent-selector="tr.parent"
-            role="button">
-            <span class="normal-status">
-                <i class="icofont-ui-delete text-danger"></i>
-
-                <span class="d-none d-sm-none d-md-inline">Supprimer</span>
-
-            </span>
-
-            <span class="indicateur d-none">
-                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-
-            </span>
-        </a>
-
+        </div>
     </li>
 </ul>
