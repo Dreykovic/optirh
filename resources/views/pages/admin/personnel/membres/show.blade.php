@@ -31,8 +31,8 @@
                                     </div>
                                 </div>
                                 <div class="teacher-info border-start ps-xl-4 ps-md-3 ps-sm-4 ps-4 w-100">
-                                    <h6  class="mb-0 mt-2  fw-bold d-block fs-6">{{$employee->last_name}} {{$employee->first_name}}</h6>
-                                    <span class="py-1 fw-bold small-11 mb-0 mt-1 text-muted mb-4">{{$duty ? $duty->job->title :'Pas de contrat en cours'}}</span>
+                                    <h6  class="mb-0 mt-2  fw-bold d-block fs-6 text-uppercase">{{$employee->last_name}} {{$employee->first_name}}</h6>
+                                    <span class="py-1 fw-bold small-11 mb-0 mt-1 text-muted mb-4 text-uppercase">{{$duty ? $duty->job->title :'Pas de contrat en cours'}}</span>
                                     <!-- <p class="mt-2 small">The purpose of lorem ipsum is to create a natural looking block of text (sentence, paragraph, page, etc.) that doesn't distract from the layout. A practice not without controversy</p> -->
                                     <div class="row g-2 pt-2">
                                         <div class="col-xl-5">
@@ -322,15 +322,15 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class='d-flex justify-content-between'>
-                                    <h6 class="fw-bold mb-3 text-danger">Documents</h6>
+                                    <h6 class="fw-bold mb-3 text-danger">Bulletins de paie</h6>
                                     <button type="button" class="btn btn-secondary mb-3" data-bs-toggle="modal" data-bs-target="#addFileModal">Nouveau</button>
                                 </div>
                                 <div class="d-flex mb-3 justify-content-between">
                                     <!-- Champ de recherche -->
-                                    <input type="text" id="searchInput" class="form-control me-2" placeholder="Rechercher..." onkeyup="loadFiles()">
+                                    <input type="text" id="searchInput" class="form-control me-2" placeholder="Rechercher...">
                                     <input type="text" value='{{$employee->id}}' name='employee_id' id='employeeId' hidden>
                                     <!-- Choix du nombre d'éléments par page -->
-                                    <select id="limitSelect" class="form-select ms-2" onchange="loadFiles()">
+                                    <select id="limitSelect" class="form-select ms-2">
                                         <option value="5">5</option>
                                         <option value="10">10</option>
                                         <option value="15">15</option>
@@ -488,210 +488,58 @@
         </div> 
 
         <!-- Modal Modal Center-->
-<div class="modal fade" id="addFileModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            
-            <div class="modal-body">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="">Nouveau Document</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form  id='modelAddForm' enctype="multipart/form-data" data-model-add-url="{{ route('files.upload',['employeeId' => $employee->id]) }}">
-                    @csrf 
-                    <div class="">
-                        <label for="files" class="form-label">Choisir des fichiers (PDF, IMAGE) :</label>
-                        <input type="file" name="files[]" id="files" class="form-control form-control-lg" accept=".pdf, .png, .jpeg, .jpg" multiple>
+    <div class="modal fade" id="addFileModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                
+                <div class="modal-body">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="">Nouveau Document</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+                    <form  id='modelAddForm' enctype="multipart/form-data" data-model-add-url="{{ route('files.upload',['employeeId' => $employee->id]) }}">
+                        @csrf 
+                        <div class="">
+                            <label for="files" class="form-label">Choisir des fichiers (PDF, IMAGE) :</label>
+                            <input type="file" name="files[]" id="files" class="form-control form-control-lg" accept=".pdf" multiple>
+                        </div>
 
-                    <div class="modal-footer">
-                                <button type="button" class="btn btn-sm btn-block lift text-uppercase btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                <button type="submit" class="btn btn-sm btn-block lift text-uppercase btn-primary" atl="Ajouter Emp" id="modelAddBtn"
-                                    data-bs-dismiss="modal">
-                                    <span class="normal-status">
-                                        Enregister
-                                    </span>
-                                    <span class="indicateur d-none">
-                                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                                        Un Instant...
-                                    </span>
-                                </button>
-                            </div>
-                </form>
+                        <div class="modal-footer">
+                                    <button type="button" class="btn btn-sm btn-block lift text-uppercase btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                    <button type="submit" class="btn btn-sm btn-block lift text-uppercase btn-primary" atl="Ajouter Emp" id="modelAddBtn"
+                                        data-bs-dismiss="modal">
+                                        <span class="normal-status">
+                                            Enregister
+                                        </span>
+                                        <span class="indicateur d-none">
+                                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                            Un Instant...
+                                        </span>
+                                    </button>
+                                </div>
+                    </form>
 
+                </div>
+                
             </div>
-            
         </div>
     </div>
-</div>
-      
+
+    <!--  -->
+    
+       
     @include('pages.admin.personnel.membres.edits.edit-pers-info')
     @include('pages.admin.personnel.membres.edits.edit-bank-info')
+    
 @endsection
 @push('plugins-js')
 
 @endpush
 @push('js')
 <script src="{{ asset('app-js/crud/post.js') }}"></script>
-<script src="{{ asset('app-js/crud/put.js') }}"></script>
 <script src="{{ asset('app-js/crud/delete.js') }}"></script>
-<script>
-    let currentPage = 1;  // Page actuelle
-let totalPages = 1;   // Total des pages (sera mis à jour avec la réponse)
-let totalFiles = 0;   // Nombre total de fichiers
+<script src="{{ asset('app-js/personnel/paginator.js') }}"></script>
+<script src="{{ asset('app-js/crud/put.js') }}"></script>
+<script src="{{ asset('app-js/personnel/membres/show-files.js') }}"></script>
 
-// Fonction pour charger les fichiers
-function loadFiles() {
-    const search = document.getElementById('searchInput').value;
-    const limit = document.getElementById('limitSelect').value;
-    const employeeId = document.getElementById('employeeId').value;
-    
-    // Appel AJAX pour récupérer les fichiers
-    fetch(`/api/files/${employeeId}?search=${search}&limit=${limit}&page=${currentPage}`)
-        .then(response => response.json())
-        .then(data => {
-            totalFiles = data.total;   // Nombre total de fichiers
-            totalPages = data.last_page; // Nombre total de pages
-            //alert(data.data);
-            console.log(data.data);
-            
-            // Rendre les fichiers à l'écran
-            renderFiles(data.data);
-            
-            // Rendre la pagination
-            renderPagination();
-        })
-        .catch(error => console.error('Erreur lors de la récupération des fichiers:', error));
-}
-
-// Fonction pour afficher les fichiers
-// function renderFiles(files) {
-//     const fileList = document.getElementById('fileList');
-//     fileList.innerHTML = '';
-
-//     if (files.length === 0) {
-//         fileList.innerHTML = '<div class="alert alert-warning">Aucun fichier trouvé.</div>';
-//     } else {
-//         files.forEach(file => {
-//             const fileElement = document.createElement('div');
-//             fileElement.className = 'py-2 d-flex align-items-center border-bottom';
-//             fileElement.innerHTML = `
-//                 <div class="d-flex ms-3 align-items-center flex-fill">
-//                     <span class="avatar small-11 ${file.icon_class} rounded-circle text-center d-flex align-items-center justify-content-center">
-//                         <i class="${file.icon} fs-5"></i>
-//                     </span>
-//                     <div class="d-flex flex-column ps-3" style="max-width: 200px;">
-//                         <h6 class="fw-bold mb-0 small-14 text-truncate text-muted" title="${file.name}">
-//                             ${file.name}
-//                         </h6>
-//                     </div>
-//                 </div>
-//             `;
-//             fileList.appendChild(fileElement);
-//         });
-//     }
-// }
-function renderFiles(files) {
-    const fileList = document.getElementById('fileList');
-    fileList.innerHTML = '';
-
-    if (files.length === 0) {
-        fileList.innerHTML = '<div class="alert alert-warning">Aucun fichier trouvé.</div>';
-    } else {
-        files.forEach(file => {
-            const fileElement = document.createElement('div');
-            fileElement.className = 'py-2 d-flex align-items-center border-bottom';
-            fileElement.innerHTML = `
-                <div class="d-flex ms-3 align-items-center flex-fill">
-                    <span class="avatar small-11 ${file.icon_class} rounded-circle text-center d-flex align-items-center justify-content-center">
-                        <i class="${file.icon} fs-5"></i>
-                    </span>
-                    <div class="d-flex flex-column ps-3" style="max-width: 200px;">
-                        <h6 class="fw-bold mb-0 small-14 text-truncate text-muted" title="${file.name}">
-                            ${file.name}
-                        </h6>
-                    </div>
-                </div>
-
-                <!-- Dropdown Actions -->
-                <div class="btn-group">
-                    <i class="bi bi-three-dots-vertical" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
-                    <ul class="dropdown-menu border-0 shadow bg-primary">
-                        <!-- Rename File -->
-                        <li>
-                            <a class="dropdown-item text-light" href="#" onclick="renameFile(${file.id})">Renommer</a>
-                        </li>
-                        <!-- Delete File -->
-                        <li>
-                            <form action="/files/delete/${file.id}" method="POST" onsubmit="return confirm('Confirmer la suppression ?');">
-                                <input type="hidden" name="_method" value="DELETE">
-                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                <input type="hidden" name="file_id" value="${file.id}">
-                                <button type="submit" class="dropdown-item text-light">Supprimer</button>
-                            </form>
-                        </li>
-                        <!-- Open File -->
-                        <li>
-                            <a class="dropdown-item text-light" href="${file.url}" target="_blank">Ouvrir</a>
-                        </li>
-                    </ul>
-                </div>
-            `;
-            fileList.appendChild(fileElement);
-        });
-    }
-}
-
-
-
-// Fonction pour afficher la pagination
-function renderPagination() {
-    const pagination = document.getElementById('pagination');
-    pagination.innerHTML = '';  // Vider la pagination avant de la remplir
-
-    const prevPage = currentPage > 1 ? `<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="changePage(${currentPage - 1})">Précédent</a></li>` : '';
-    const nextPage = currentPage < totalPages ? `<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="changePage(${currentPage + 1})">Suivant</a></li>` : '';
-
-    pagination.innerHTML = `
-        <ul class="pagination">
-            ${prevPage}
-            <li class="page-item disabled"><span class="page-link">Page ${currentPage} sur ${totalPages}</span></li>
-            ${nextPage}
-        </ul>
-    `;
-}
-
-// Fonction pour changer de page
-function changePage(page) {
-    if (page >= 1 && page <= totalPages) {
-        currentPage = page;
-        loadFiles();
-    }
-}
-
-// Charger les fichiers au démarrage de la page
-window.onload = loadFiles;
-
-</script>
-<script>
-    function renameFile(fileId) {
-    const newName = prompt("Entrez le nouveau nom pour ce fichier:");
-    if (newName) {
-        // Appel AJAX pour renommer le fichier
-        axios.post('/files/rename', {
-            file_id: fileId,
-            new_name: newName
-        })
-        .then(response => {
-            alert('Fichier renommé avec succès!');
-            // Recharge les fichiers après modification
-            loadFiles();
-        })
-        .catch(error => {
-            alert('Erreur lors du renommage.');
-        });
-    }
-}
-
-</script>
 @endpush

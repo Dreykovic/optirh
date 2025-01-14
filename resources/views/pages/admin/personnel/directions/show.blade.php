@@ -11,7 +11,7 @@
                     <div class="border-0 mb-4">
                         <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
                             <!-- <h3 class="fw-bold mb-0">{{$department->name}}({{$department->description}})</h3> -->
-                            <h3 class="fw-bold mb-0">
+                            <h3 class="fw-bold mb-0 text-uppercase">
                                 {{$department->name}}
                                 <span data-bs-toggle="tooltip" title="{{ $department->description }}">
                                     <i class="icofont-question-circle" style="cursor: pointer;"></i>
@@ -31,7 +31,7 @@
                                             <div class="avatar lg  rounded-1 no-thumbnail bg-lightblue color-defult"><i class="icofont-user fs-4"></i></div>
                                             <div class="flex-fill ms-4 text-truncate">
                                                 @if ($department->director)
-                                                <span class="fw-bold ms-1">{{ $department->director->first_name }} {{ $department->director->last_name }}</span>
+                                                <span class="fw-bold ms-1 text-uppercase">{{ $department->director->last_name }} {{ $department->director->first_name }}</span>
                                                 @else
                                                 <span class="text-muted">Aucun directeur assigné</span>
                                                 @endif
@@ -103,14 +103,14 @@
                                 <span class="fw-bold">{{ $index + 1 }}</span>
                             </td> -->
                             <td>
-                                <span class="fw-bold ms-1">{{$job->title}}</span>
+                                <span class="fw-bold ms-1 text-uppercase">{{$job->title}}</span>
                             </td>
-                            <td class='text-wrap w-50'>
+                            <td class='text-wrap w-50 text-capitalize'>
                                 {{$job->description}}
                             </td>
 
                             @if($job->n_plus_one_job)
-                            <td>
+                            <td class='text-uppercase'>
                                 {{$job->n_plus_one_job->title}}
                             </td>    
                             @else
@@ -121,7 +121,7 @@
 
                             <td>
                                 <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                    <button onclick="loadJobEmployees({{$job->id}})" type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#job_employees" data-bs-job-id='{{$job->id}}'><i class="text-success">Voir</i></button>
+                                    <button type="button" class="btn btn-outline-secondary job" data-bs-toggle="modal" data-bs-target="#job_employees" data-bs-job-id='{{$job->id}}'><i class="text-success">Voir</i></button>
                                 </div>
                             </td>
                             <td>
@@ -131,7 +131,7 @@
                                         class="btn btn-outline-secondary" 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#updateJobModal{{ $job->id }}"
-                                        {{ (strtolower($job->title) === 'dg' || preg_match('/^directeur(·rice)?/i', $job->title)) ? 'disabled' : '' }}
+                                        {{ (strtolower($job->title) === 'dg') ? 'disabled' : '' }}
                                     >
                                         <i class="icofont-edit text-success"></i>
                                     </button>
@@ -140,7 +140,7 @@
                                     <form action="{{ route('jobs.destroy', $job->id) }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-secondary deleterow" {{ (strtolower($job->title) === 'dg' || preg_match('/^directeur(·rice)?/i', $job->title)) ? 'disabled' : '' }}>
+                                        <button type="submit" class="btn btn-outline-secondary deleterow" {{ (strtolower($job->title) === 'dg') ? 'disabled' : '' }}>
                                             <i class="icofont-ui-delete text-danger"></i>
                                         </button>
                                     </form>
@@ -167,7 +167,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <ul id="employee-list" class="list-group">
+                <ul id="employee_list" class="list-group">
                     <!-- Les employés seront injectés ici -->
                 </ul>
             </div>
@@ -186,6 +186,8 @@
 <script src="{{ asset('app-js/crud/post.js') }}"></script>
 <script src="{{ asset('app-js/crud/put.js') }}"></script>
 <script src="{{ asset('app-js/crud/delete.js') }}"></script>
+<script src="{{ asset('app-js/personnel/paginator.js') }}"></script>
+<script src="{{ asset('app-js/personnel/jobs/membres.js') }}"></script>
 <script>
     // Assurez-vous que le DOM est complètement chargé
     document.addEventListener('DOMContentLoaded', function () {
@@ -197,52 +199,20 @@
     });
 </script>
 <script>
-let AppPostesListManager = (function () {
-    return {
-        init: () => {
-            AppModules.initDataTable("#postes");
-        },
-    };
-})();
+    let AppPostesListManager = (function () {
+        return {
+            init: () => {
+                AppModules.initDataTable("#postes");
+            },
+        };
+    })();
 
-document.addEventListener("DOMContentLoaded", (e) => {
-    AppPostesListManager.init();
-});
+    document.addEventListener("DOMContentLoaded", (e) => {
+        AppPostesListManager.init();
+    });
 
 </script>
 
-<!-- <script>
-    function loadJobEmployees(jobID) {
-        // Vérifie si un job a été sélectionné
-        if (!jobID) {
-            alert("Veuillez sélectionner un poste valide.");
-            return;
-        }
 
-        // Effectue une requête AJAX
-        fetch(`/api/membres/job/${jobID}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Erreur lors du chargement des employés.");
-                }
-                return response.json();
-            })
-            .then(data => {
-                const empList = document.getElementById('employee-list');
-                empList.innerHTML = ''; // Réinitialise la liste
-                if (data.length === 0) {
-                    empList.innerHTML = '<li>Aucun employé trouvé.</li>';
-                } else {
-                    data.forEach(emp => {
-                        empList.innerHTML += `<li>${emp.last_name} ${emp.first_name}</li>`;
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                alert("Impossible de charger les employés.");
-            });
-    }
-</script> -->
 
 @endpush

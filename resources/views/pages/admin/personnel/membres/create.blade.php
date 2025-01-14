@@ -82,19 +82,26 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <label for="duration" class="form-label">Durée du contrat</label>
-                                        <input type="duration" class="form-control" id="duration" name='duration' placeholder="">
+                                        <input type="text" class="form-control" id="duration" name='duration' placeholder="">
                                     </div>
                                 </div>
-                                <!--  -->
-                                <div class="col">
-                                    <label for="type" class="form-label">Type du contrat</label>
-                                    <select id="type" name='type' class="form-select" aria-label="Default select Project Category">
-                                            <option value='CDI'>CDI</option>
-                                            <option value='CDD'>CDD</option>
-                                            <option value='interim'>interim</option>
-                                            <option value='stage'>stage</option>
-                                    </select>
-                                </div>
+                                <!-- absence_balance -->
+                                 <div class='row g-3 mb-3'>
+                                        <div class="col-sm-6">
+                                            <label for="type" class="form-label">Type du contrat</label>
+                                            <select id="type" name='type' class="form-select" aria-label="Default select Project Category">
+                                                    <option value='CDI'>CDI</option>
+                                                    <option value='CDD'>CDD</option>
+                                                    <option value='interim'>interim</option>
+                                                    <option value='stage'>stage</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label for="balance" class="form-label">Solde congé</label>
+                                            <input type="text" class="form-control" id="balance" name='absence_balance' placeholder="">
+                                        </div>
+                                 </div>
+                                
 
                             </fieldset>
                             <div class="modal-footer">

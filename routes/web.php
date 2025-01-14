@@ -57,37 +57,68 @@ Route::group(['middleware' => 'auth'], function () {
         return view('pages.admin.help');
     })->name('help');
 
-    // Personnel job_employees
-    Route::get('/membres/list', [EmployeeController::class, 'index'])->name('membres');
-    Route::get('/employee/data', [EmployeeController::class, 'updateEmployeeData'])->name('membres.data');
-    Route::get('/membres/{employee}', [EmployeeController::class, 'show'])->name('membres.show');
-    Route::get('/api/membres/job{id}', [EmployeeController::class, 'jobEmployees'])->name('membres.job');
-    Route::post('/membres/save', [EmployeeController::class, 'store'])->name('membres.store');
-    Route::put('/membres/update/{employee}', [EmployeeController::class, 'update'])->name('membres.update');
-    Route::put('/membres/update/pers/{id}', [EmployeeController::class, 'updatePres'])->name('membres.updatePres');
-    Route::put('/membres/update/bank/{employee}', [EmployeeController::class, 'updateBank'])->name('membres.updateBank');
 
-    Route::get('/membres/directions/list', [DepartmentController::class, 'index'])->name('directions');
-    Route::get('/directions/{department}', [DepartmentController::class, 'show'])->name('directions.show');
-    Route::post('/directions/create', [DepartmentController::class, 'store'])->name('directions.store');
-    Route::put('/directions/{id}', [DepartmentController::class, 'update'])->name('directions.update');
-    Route::delete('/directions/{id}', [DepartmentController::class, 'destroy'])->name('directions.destroy');
 
-    Route::post('/jobs/create', [JobController::class, 'store'])->name('jobs.store');
-    Route::put('/jobs/{id}', [JobController::class, 'update'])->name('jobs.update');
-    Route::delete('/jobs/{id}', [JobController::class, 'destroy'])->name('jobs.destroy');
+    //membres
+    Route::prefix('membres')->group(function () {
+        Route::get('/list', [EmployeeController::class, 'index'])->name('membres');
+        Route::get('/pay', [EmployeeController::class, 'index'])->name('membres.pay');
+        Route::get('/pay-form/v1', [EmployeeController::class, 'pay'])->name('membres.pay-form.v1');
+        Route::get('/pay-form', [EmployeeController::class, 'paycode'])->name('membres.pay-form');
 
+        Route::get('/pages', [EmployeeController::class, 'pages'])->name('membres.pages');
+        Route::get('/{employee}', [EmployeeController::class, 'show'])->name('membres.show');
+        Route::post('/save', [EmployeeController::class, 'store'])->name('membres.store');
+        Route::put('/update/{employee}', [EmployeeController::class, 'update'])->name('membres.update');
+        Route::put('/update/pers/{id}', [EmployeeController::class, 'updatePres'])->name('membres.updatePres');
+        Route::put('/update/bank/{employee}', [EmployeeController::class, 'updateBank'])->name('membres.updateBank');
+        Route::get('/directions/list', [DepartmentController::class, 'index'])->name('directions');
+
+    });
+    Route::get('/api/membres/job/{id}', [EmployeeController::class, 'jobEmployees'])->name('membres.job');
+    //mes données
+    Route::prefix('employee')->group(function () {
+        Route::get('/data', [EmployeeController::class, 'editEmployeeData'])->name('employee.data');
+        Route::get('/pay/{employee}', [EmployeeController::class, 'mesFactures'])->name('employee.pay');    
+    });
+
+   
+    Route::post('/employee/{id}/data', [EmployeeController::class, 'updateEmployeeData'])->name('membres.data.update');
+   
+    //directions
+    Route::prefix('directions')->group(function () {
+        Route::get('/{department}', [DepartmentController::class, 'show'])->name('directions.show');
+        Route::post('/create', [DepartmentController::class, 'store'])->name('directions.store');
+        Route::put('/{id}', [DepartmentController::class, 'update'])->name('directions.update');
+        Route::delete('/{id}', [DepartmentController::class, 'destroy'])->name('directions.destroy');
+    });
+
+    //jobs
+    Route::prefix('jobs')->group(function () {
+        Route::post('/create', [JobController::class, 'store'])->name('jobs.store');
+        Route::put('/{id}', [JobController::class, 'update'])->name('jobs.update');
+        Route::delete('/{id}', [JobController::class, 'destroy'])->name('jobs.destroy');
+        
+    });
     Route::get('/api/jobs/{departmentId}', [JobController::class, 'getJobsByDepartment']);
 
     // files
     Route::prefix('files')->group(function () {
+        Route::post('/upload', [FileController::class, 'uploadFiles'])->name('files.uploads');
         Route::post('/upload/{employeeId}', [FileController::class, 'upload'])->name('files.upload');
-        Route::post('/rename', [FileController::class, 'rename'])->name('files.rename');
+        Route::put('/rename/{id}', [FileController::class, 'rename'])->name('files.rename');
         Route::delete('/delete/{fileId}', [FileController::class, 'delete'])->name('files.delete');
         Route::get('/download/{fileId}', [FileController::class, 'download'])->name('files.download');
         Route::get('/open/{fileId}', [FileController::class, 'openFile'])->name('files.open');
+        Route::post('/invoices', [FileController::class, 'uploadInvoices'])->name('files.invoices');
     });
     Route::get('/api/files/{employeeId}', [FileController::class, 'getFiles']);
+    
+
+   
+
+
+
 
     /*
      * Attendances

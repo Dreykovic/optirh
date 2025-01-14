@@ -19,6 +19,7 @@ class File extends Model
         'upload_date',
         'status',
         'name',
+        'display_name',
         'employee_id',
     ];
 
