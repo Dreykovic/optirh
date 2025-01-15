@@ -9,6 +9,9 @@ use Illuminate\Support\Str;
 
 class FileService
 {
+    protected $evolutions = ['ON_GOING', 'ENDED', 'CANCEL', 'SUSPENDED', 'RESIGNED', 'DISMISSED'];
+    protected $status = ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'];
+
     public function storeFile($employeeId, $file)
     {
         $folder = "employees/{$employeeId}";
@@ -46,7 +49,7 @@ class FileService
             'path' => $path, 
             'url' => Storage::url($path), // URL publique
             'mime_type' => $file->getClientMimeType(), // Type MIME
-            'status' => 'ACTIVATED',
+            'status' => $this->status[0],
         ]);
     }
 
@@ -66,7 +69,7 @@ class FileService
     ->whereHas('duties', function ($query) {
         $query->where('evolution', 'ON_GOING');
     })
-    ->where('status', 'ACTIVATED')
+    ->where('status', $this->status[0])
     ->pluck('id', 'code');
 
    
@@ -116,7 +119,7 @@ class FileService
                 'path' => $path,
                 'url' => Storage::url($path),
                 'mime_type' => $file->getClientMimeType(),
-                'status' => 'ACTIVATED',
+                'status' => $this->status[0],
             ]);
 
             $success[] = $code;

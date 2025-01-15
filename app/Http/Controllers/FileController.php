@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 
 class FileController extends Controller
 {
+    protected $evolutions = ['ON_GOING', 'ENDED', 'CANCEL', 'SUSPENDED', 'RESIGNED', 'DISMISSED'];
+    protected $status = ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'];
     protected $fileService;
 
     public function __construct(FileService $fileService)
@@ -142,7 +144,7 @@ class FileController extends Controller
         //     ->whereRaw('LOWER(display_name) LIKE ?', ['%' . strtolower($search) . '%'])
         //     ->orderBy('created_at', 'desc');
         $filesQuery = File::where('employee_id', $employeeId)
-            ->where('status', 'ACTIVATED')
+            ->where('status', $this->status[0])
             ->where(function ($query) use ($search) {
                 $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%'])
                     ->orWhereRaw('LOWER(display_name) LIKE ?', ['%' . strtolower($search) . '%']);

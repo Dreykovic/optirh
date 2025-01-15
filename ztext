@@ -139,3 +139,6 @@ suspendus: ev:on_going, st:deactivated
 termines : ev:ended
 demissions : ev:resigned, st:deactivated
 supprimes : st:deleted
+
+protected $evolutions = ['ON_GOING', 'ENDED', 'CANCEL', 'SUSPENDED', 'RESIGNED', 'DISMISSED'];
+protected $status = ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'];
