@@ -51,10 +51,10 @@ class Duty extends Model
     {
         parent::boot();
 
-        static::creating(function ($duty) {
-            // Génère le numéro de compte de manière sécurisée
-            $duty->absence_balance = 30;
-        });
+        // static::creating(function ($duty) {
+        //     // Génère le numéro de compte de manière sécurisée
+        //     $duty->absence_balance = 30;
+        // });
     }
 
 }

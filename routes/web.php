@@ -78,7 +78,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/directions/list', [DepartmentController::class, 'index'])->name('directions');
 
     });
-    Route::get('/api/membres/job/{id}', [EmployeeController::class, 'jobEmployees'])->name('membres.job');
     //mes données
     Route::prefix('employee')->group(function () {
         Route::get('/data', [EmployeeController::class, 'editEmployeeData'])->name('employee.data');
@@ -103,7 +102,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/{id}', [JobController::class, 'destroy'])->name('jobs.destroy');
         
     });
-    Route::get('/api/jobs/{departmentId}', [JobController::class, 'getJobsByDepartment']);
 
     // files
     Route::prefix('files')->group(function () {
@@ -115,17 +113,27 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/open/{fileId}', [FileController::class, 'openFile'])->name('files.open');
         Route::post('/invoices', [FileController::class, 'uploadInvoices'])->name('files.invoices');
     });
-    Route::get('/api/files/{employeeId}', [FileController::class, 'getFiles']);
     
     /**
      * contrats
      */
     Route::prefix('contrats')->group(function () {
-        Route::get('/request/{ev}', [DutyController::class, 'enCours'])->name('contrats.encours');
+        Route::get('/request/{ev}', [DutyController::class, 'contrats'])->name('contrats.encours');
         Route::put('/{id}/suspended', [DutyController::class, 'suspended'])->name('contrats.suspended');
+        Route::put('/{id}/ongoing', [DutyController::class, 'ongoing'])->name('contrats.ongoing');
+        Route::put('/{id}/ended', [DutyController::class, 'ended'])->name('contrats.ended');
+        Route::put('/{id}/resigned', [DutyController::class, 'resigned'])->name('contrats.resigned');
+        Route::put('/{id}/dismissed', [DutyController::class, 'dismissed'])->name('contrats.dismissed');
+        Route::put('/{id}/deleted', [DutyController::class, 'deleted'])->name('contrats.deleted');
 
     });
     
+    Route::prefix('api')->group(function () {
+        Route::get('/files/{employeeId}', [FileController::class, 'getFiles']);
+        Route::get('/jobs/{departmentId}', [JobController::class, 'getJobsByDepartment']);
+        Route::get('/membres/job/{id}', [EmployeeController::class, 'jobEmployees'])->name('membres.job');
+
+    });
 
 
 
