@@ -3,9 +3,8 @@
 namespace App\Services;
 
 use App\Models\Absence;
-use Barryvdh\DomPDF\Facade\Pdf;
-
 use App\Models\AbsenceType;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AbsencePdfService
 {
@@ -20,7 +19,7 @@ class AbsencePdfService
         ];
 
         // On choisit le template en fonction du type d'absence
-        switch ($absenceType->name) {
+        switch ($absenceType->label) {
             case 'annuel':
                 $view = 'pdf.absences.leave_request_annual';
                 break;

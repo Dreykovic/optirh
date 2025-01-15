@@ -21,11 +21,13 @@ class AbsenceController extends Controller
         // $this->middleware(['permission:écrire-une-absence|écrire-un-tout'], ['only' => ['approve', 'reject', 'comment']]);
         // $this->middleware(['permission:écrire-un-utilisateur|écrire-un-tout'], ['only' => ['destroy', 'destroyAll']]);
     }
+
     public function download($absenceId)
     {
         try {
             $absence = Absence::findOrFail($absenceId);
-            $absencePdf =  new AbsencePdfService();
+            $absencePdf = new AbsencePdfService();
+
             return $absencePdf->generate($absence);
         } catch (\Throwable $th) {
             dd('Erreur lors du chargement des absences : '.$th->getMessage());
@@ -35,6 +37,7 @@ class AbsenceController extends Controller
             return back()->with('error', 'Une erreur s\'est produite lors du chargement des absences. Veuillez réessayer.');
         }
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -127,9 +130,8 @@ class AbsenceController extends Controller
         $endDate = Carbon::parse($endDate);
 
         while ($currentDate->lte($endDate)) {
-            if (!$currentDate->isWeekend()) {
-                ++$count;
-            }
+            ++$count;
+
             $currentDate->addDay();
         }
 
@@ -154,7 +156,7 @@ class AbsenceController extends Controller
             ]);
 
             // Calcul du nombre de jours d'absence
-            $workingDays = $this->calculateWorkingDays($validatedData['start_date'], $validatedData['end_date']);
+            $workingDays = calculateWorkingDays($validatedData['start_date'], $validatedData['end_date']);
 
             // Récupération de l'employé actuel et de sa mission en cours
             $currentEmployee = Employee::findOrFail(auth()->id());
@@ -223,7 +225,7 @@ class AbsenceController extends Controller
         ]);
 
         // Calcul du nombre de jours d'absence
-        $workingDays = $this->calculateWorkingDays($request->start_date, $request->end_date);
+        $workingDays = calculateWorkingDays($request->start_date, $request->end_date);
 
         return response()->json(['working_days' => $workingDays]);
     }
@@ -314,51 +316,19 @@ class AbsenceController extends Controller
             // Rechercher l'absence par ID
             $absence = Absence::findOrFail($id);
 
-            switch ($absence->level) {
-                case 'ZERO':
-                    $absence->stage = 'IN_PROGRESS';
-                    $absence->level = 'ONE';
-                    break;
-                case 'ONE':
-                    $absence->stage = 'IN_PROGRESS';
-                    $absence->level = 'TWO';
-                    break;
-                case 'TWO':
-                    $absence->stage = 'APPROVED';
-                    $absence->level = 'THREE';
-                    break;
+            // Mise à jour du niveau et du statut
+            $absence->updateLevelAndStage();
 
-                default:
-                    $absence->stage = 'APPROVED';
-                    $absence->level = 'THREE';
-                    break;
-            }
-            $absence->save();
-
-            return response()->json([
-                'message' => "Demande De {$absence->absence_type->label} acceptée",
-                'ok' => true,
-            ]);
+            return $this->successResponse(
+                'Demande de congé acceptée',
+                ['absence' => $absence]
+            );
         } catch (ValidationException $e) {
-            // Gestion des erreurs de validation
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
+            return $this->validationErrorResponse($e);
         } catch (ModelNotFoundException $e) {
-            // Gestion des cas où le modèle n'est pas trouvé
-            return response()->json([
-                'ok' => false,
-                'message' => 'Données introuvables. Veuillez vérifier les entrées.',
-            ], 404);
+            return $this->notFoundResponse();
         } catch (\Throwable $th) {
-            // Gestion générale des erreurs
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s’est produite. Veuillez réessayer.',
-                'error' => $th->getMessage(),
-            ], 500);
+            return $this->generalErrorResponse($th);
         }
     }
 
