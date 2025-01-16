@@ -20,18 +20,20 @@ class DepartmentController extends Controller
     public function index()
     {
 
-        $duties = DB::table('duties')
+        $employees = DB::table('duties')
             ->join('employees', 'duties.employee_id', '=', 'employees.id')
             ->join('jobs', 'duties.job_id', '=', 'jobs.id') // Ajouter cette jointure pour accéder au job
             ->leftJoin('departments', 'employees.id', '=', 'departments.director_id')
-            ->where('duties.evolution', $this->evolutions[0])
+            ->whereNot('duties.status', $this->status[3])
+            // ->orWhere('duties.evolution', $this->evolutions[1])
+            // ->orWhere('duties.evolution', $this->evolutions[3])
             ->whereNull('departments.director_id') // S'assurer que l'employé n'est pas un directeur
             ->select('jobs.title', 'employees.first_name', 'employees.last_name', 'employees.id')
             ->get();
         
 
         $departments = Department::orderBy('created_at', 'desc')->get();
-        return view('pages.admin.personnel.directions.index', compact('departments', 'duties'));
+        return view('pages.admin.personnel.directions.index', compact('departments', 'employees'));
     }
     
 

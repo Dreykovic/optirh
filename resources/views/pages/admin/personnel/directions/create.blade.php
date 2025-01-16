@@ -21,12 +21,12 @@
                             <label for="head" class="form-label">Directeur</label>
                             <select class="form-select" aria-label="Default select example" name='director_id'>
                                 <option selected disabled>Choisir le directeur</option> <!-- Option par défaut -->
-                                @if($duties)
-                                    @foreach($duties as $duty)
-                                        <option value="{{ $duty->id }}">
-                                            {{ $duty->first_name }} {{ $duty->last_name }} 
-                                            @if($duty->title)
-                                                - <i class='' style="color: #6c757d;">{{ $duty->title }}</i>
+                                @if($employees)
+                                    @foreach($employees as $emp)
+                                        <option value="{{ $emp->id }}">
+                                            {{ $emp->last_name }} {{ $emp->first_name }} 
+                                            @if($emp->title)
+                                                - <i class='' style="color: #6c757d;">{{ $emp->title }}</i>
                                             @else
                                                 - Pas de poste attribué
                                             @endif

@@ -8,21 +8,21 @@
                             <h5 class="modal-title  fw-bold" id="createprojectlLabel"> Nouveau Contrat</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <form id="modelAddForm" data-model-add-url="{{ route('membres.store') }}">
+                        <form id="modelAddForm" data-model-add-url="{{ route('contrats.add') }}">
                             @csrf
                             <fieldset class="border p-3 shadow-sm  border-dark mb-2">
                             <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span class='mb-4'>Ancien Employé</span></legende>
                                                                 <!--  -->
                                 <div class="row g-3 m-4">
                                     <div class="col-sm-12">
-                                        <select class="form-select" aria-label="Default select Project Category" id="gender" name='gender'>
+                                        <select class="form-select" aria-label="Default select Project Category" id="gender" name='employee_id'>
                                         <option selected disabled>Choisir</option> <!-- Option par défaut -->
-                                            @if($duties)
-                                                @foreach($duties as $duty)
-                                                    <option value="{{ $duty->id }}">
-                                                        {{ $duty->first_name }} {{ $duty->last_name }} 
-                                                        @if($duty->title)
-                                                            - <i class='' style="color: #6c757d;">{{ $duty->title }}</i>
+                                            @if($employees)
+                                                @foreach($employees as $emp)
+                                                    <option value="{{ $emp->id }}">
+                                                        {{ $emp->first_name }} {{ $emp->last_name }} 
+                                                        @if($emp->title)
+                                                            - <i class='' style="color: #6c757d;">{{ $emp->title }}</i>
                                                         @else
                                                             - Pas de poste attribué
                                                         @endif

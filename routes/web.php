@@ -125,6 +125,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::put('/{id}/resigned', [DutyController::class, 'resigned'])->name('contrats.resigned');
         Route::put('/{id}/dismissed', [DutyController::class, 'dismissed'])->name('contrats.dismissed');
         Route::put('/{id}/deleted', [DutyController::class, 'deleted'])->name('contrats.deleted');
+        Route::post('/add', [DutyController::class, 'add'])->name('contrats.add');
 
     });
     

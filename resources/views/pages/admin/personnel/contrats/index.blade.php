@@ -85,8 +85,8 @@
 
 <script src="{{ asset('app-js/personnel/paginator.js') }}"></script>
 <script src="{{ asset('app-js/personnel/contrats/list.js') }}"></script>
-<script src="{{ asset('app-js/personnel/contrats/add.js') }}"></script>
+<script src="{{ asset('app-js/personnel/contrats/actions.js') }}"></script>
 
 <script src="{{ asset('app-js/personnel/jobs/loadJobs.js') }}"></script>
-<script src="{{ asset('app-js/personnel/membres/create.js') }}"></script>
+<script src="{{ asset('app-js/personnel/membres/create.js') }}"></script><!-- using the same js code for duty add -->
 @endpush
