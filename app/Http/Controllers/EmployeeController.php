@@ -42,7 +42,7 @@ class EmployeeController extends Controller
             ->join('jobs', 'duties.job_id', '=', 'jobs.id')
             ->select('employees.*')
             ->where('duties.evolution', '=', $this->evolutions[0])
-            ->where('employees.status', '=', $this->status[0])
+            // ->where('employees.status', '=', $this->status[0])
             ->where('duties.status', '=', $this->status[0])
             ->orderBy('created_at', 'desc');
         

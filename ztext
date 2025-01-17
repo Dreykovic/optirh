@@ -142,3 +142,16 @@ supprimes : st:deleted
 
 protected $evolutions = ['ON_GOING', 'ENDED', 'CANCEL', 'SUSPENDED', 'RESIGNED', 'DISMISSED'];
 protected $status = ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'];
+
+
+$employees = DB::table('duties')
+            ->join('employees', 'duties.employee_id', '=', 'employees.id')
+            ->join('jobs', 'duties.job_id', '=', 'jobs.id') // Ajouter cette jointure pour accéder au job
+            ->leftJoin('departments', 'employees.id', '=', 'departments.director_id')
+            ->whereNot('duties.evolution', $this->evolutions[0])
+            ->whereNot('duties.status', $this->status[3])
+            // ->whereNull('departments.director_id') // S'assurer que l'employé n'est pas un directeur
+            ->select('jobs.title', 'employees.first_name', 'employees.last_name', 'employees.id')
+            ->distinct()
+            ->get(); protected $evolutions = ['ON_GOING', 'ENDED', 'CANCEL', 'SUSPENDED', 'RESIGNED', 'DISMISSED'];
+    protected $status = ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED']; 2

@@ -147,16 +147,39 @@ class DutyController extends Controller
 
     public function index()
     {
-        $employees = DB::table('duties')
-            ->join('employees', 'duties.employee_id', '=', 'employees.id')
-            ->join('jobs', 'duties.job_id', '=', 'jobs.id') // Ajouter cette jointure pour accéder au job
-            ->leftJoin('departments', 'employees.id', '=', 'departments.director_id')
-            ->whereNot('duties.evolution', $this->evolutions[0])
-            ->whereNot('duties.status', $this->status[3])
-            // ->whereNull('departments.director_id') // S'assurer que l'employé n'est pas un directeur
-            ->select('jobs.title', 'employees.first_name', 'employees.last_name', 'employees.id')
+        $employees = DB::table('employees')
+            ->leftJoin('duties', 'employees.id', '=', 'duties.employee_id')
+            ->join('jobs', 'duties.job_id', '=', 'jobs.id') // Récupérer le job associé
+            ->leftJoin('departments', 'employees.id', '=', 'departments.director_id') // Exclure les directeurs si nécessaire
+            ->whereNotExists(function ($query) {
+                // Vérifier qu'il n'existe pas de contrat EN COURS pour cet employé
+                $query->select(DB::raw(1))
+                    ->from('duties as d')
+                    ->whereColumn('d.employee_id', 'employees.id')
+                    ->where('d.evolution', $this->evolutions[0]); // Contrat en cours
+            })
+            ->whereExists(function ($query) {
+                // Inclure seulement si l'employé a au moins un contrat qui n'est pas supprimé
+                $query->select(DB::raw(1))
+                    ->from('duties as d')
+                    ->whereColumn('d.employee_id', 'employees.id')
+                    ->where('d.status', '!=', $this->status[3]); // Pas tous supprimés
+            })
+            ->select('employees.id', 'employees.first_name', 'employees.last_name', 'jobs.title')
             ->distinct()
             ->get();
+
+        
+        // $employees = DB::table('duties')
+        //     ->join('employees', 'duties.employee_id', '=', 'employees.id')
+        //     ->join('jobs', 'duties.job_id', '=', 'jobs.id') // Ajouter cette jointure pour accéder au job
+        //     ->leftJoin('departments', 'employees.id', '=', 'departments.director_id')
+        //     ->whereNot('duties.evolution', $this->evolutions[0])
+        //     ->whereNot('duties.status', $this->status[3])
+        //     // ->whereNull('departments.director_id') // S'assurer que l'employé n'est pas un directeur
+        //     ->select('jobs.title', 'employees.first_name', 'employees.last_name', 'employees.id')
+        //     ->distinct()
+        //     ->get();
         $departments = Department::orderBy('created_at', 'desc')->get();
         return view('pages.admin.personnel.contrats.index',compact('departments', 'employees'));
     }
@@ -187,7 +210,8 @@ class DutyController extends Controller
                     'departments.name as department_name'
                 )
                 ->where('duties.evolution', '=', $this->evolutions[0])
-                ->where('employees.status', '=', $this->status[0])
+                // ->where('employees.status', '=', $this->status[0])
+                ->where('duties.status', '=', $this->status[0])
                 ->orderBy('duties.created_at', 'desc');
         }
         //suspendus
@@ -207,8 +231,8 @@ class DutyController extends Controller
                     'jobs.title as job_title',
                     'departments.name as department_name'
                 )
-                ->where('duties.evolution', '=', $this->evolutions[0])
-                ->where('employees.status', '=', $this->status[1])
+                ->where('duties.evolution', '=', $this->evolutions[3])
+                // ->where('employees.status', '=', $this->status[1])
                 ->where('duties.status', '=', $this->status[1])
                 ->orderBy('duties.created_at', 'desc');
         }
@@ -252,7 +276,7 @@ class DutyController extends Controller
                 )
                 ->where('duties.evolution', '=', $this->evolutions[4])
                 ->where('duties.status', '=', $this->status[1])
-                ->where('employees.status', '=', $this->status[1])
+                // ->where('employees.status', '=', $this->status[1])
                 ->orderBy('duties.created_at', 'desc');
         }
         //licencies
@@ -274,7 +298,7 @@ class DutyController extends Controller
                 )
                 ->where('duties.evolution', '=', $this->evolutions[5])
                 ->where('duties.status', '=', $this->status[1])
-                ->where('employees.status', '=', $this->status[1])
+                // ->where('employees.status', '=', $this->status[1])
                 ->orderBy('duties.created_at', 'desc');
         }
         //supprimes
@@ -329,11 +353,12 @@ class DutyController extends Controller
         try {
             $duty = Duty::find($id);
             $emp = Employee::find($duty->employee_id);
-            $emp->update([
-                'status' => $this->status[1]
-            ]);
+            // $emp->update([
+            //     'status' => $this->status[1]
+            // ]);
             $duty->update([
-                'status' => $this->status[1]
+                'status' => $this->status[1],
+                'evolution' => $this->evolutions[3]
             ]);
             return response()->json(['message' => 'Suspendu avec succès.', 'ok' => true]);
 
@@ -365,9 +390,9 @@ class DutyController extends Controller
         try {
             $duty = Duty::find($id);
             $emp = Employee::find($duty->employee_id);
-            $emp->update([
-                'status' => $this->status[1]
-            ]);
+            // $emp->update([
+            //     'status' => $this->status[1]
+            // ]);
             $duty->update([
                 'evolution' => $this->evolutions[4],
                 'status' => $this->status[1]
@@ -383,9 +408,9 @@ class DutyController extends Controller
         try {
             $duty = Duty::find($id);
             $emp = Employee::find($duty->employee_id);
-            $emp->update([
-                'status' => $this->status[1]
-            ]);
+            // $emp->update([
+            //     'status' => $this->status[1]
+            // ]);
             $duty->update([
                 'evolution' => $this->evolutions[5],
                 'status' => $this->status[1]
