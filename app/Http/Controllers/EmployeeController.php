@@ -78,7 +78,8 @@ class EmployeeController extends Controller
             ->join('jobs', 'duties.job_id', '=', 'jobs.id')
             ->select('employees.*')
             ->where('duties.evolution', '=', $this->evolutions[0])
-            ->where('employees.status', '=', $this->status[0])
+            // ->where('employees.status', '=', $this->status[0])
+            ->where('duties.status', '=', $this->status[0])
             ->orderBy('created_at', 'desc');
 
         $nbre_employees = $query->count();
@@ -162,7 +163,7 @@ class EmployeeController extends Controller
                 'phone_number' => 'required|string|max:255|unique:employees,phone_number',
                 'address1' => 'required|string|max:255',
                 'gender' => 'required|in:MALE,FEMALE',
-                'duration' => 'sometimes|string',
+                'duration' => 'sometimes',
                 'begin_date' => 'required|date',
                 'type' => 'required|string|max:255',
                 'job_id' => 'required|exists:jobs,id',

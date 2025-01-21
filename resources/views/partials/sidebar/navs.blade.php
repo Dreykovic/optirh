@@ -114,7 +114,7 @@
                 <li>
                     <a class="ms-link {{ Str::startsWith(request()->path(), 'membres/pay-form') ? 'active' : '' }}"
                         href="{{ route('membres.pay-form') }}">
-                        <span>Factures </span>
+                        <span>Envoi de bulletins de paie </span>
                     </a>
                 </li>
                 <li>
@@ -144,7 +144,7 @@
                 <li>
                     <a class="ms-link {{ Str::startsWith(request()->path(), 'employee/pay') ? 'active' : '' }}"
                         href="{{ route('employee.pay',Auth::user()->employee) }}">
-                        <span>Factures </span>
+                        <span>bulletins de paie Reçus </span>
                     </a>
                 </li>
 

@@ -24,7 +24,7 @@ class DutyController extends Controller
     
             $validatedData = $request->validate([
                
-                'duration' => 'sometimes|string',
+                'duration' => 'sometimes',
                 'begin_date' => 'required|date',
                 'type' => 'required|string|max:255',
                 'job_id' => 'required|exists:jobs,id',
