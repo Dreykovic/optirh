@@ -37,7 +37,7 @@
                 </li>
             @endcan
 
-            @can('voir-un-férié')
+            @can('voir-un-all')
                 <li>
                     <a class="ms-link {{ Request::is('attendances/holidays/list') ? 'active' : '' }}"
                         href="{{ route('holidays.index') }}">
@@ -147,19 +147,18 @@
                         <span>bulletins de paie Reçus </span>
                     </a>
                 </li>
+        </ul>
 
-            </ul>
-
-        </li>
+    </li>
 
 
-          <!-- Help -->
-          <li>
-            <a class="ms-link {{ Request::is('help') ? 'active' : '' }}" href="{{ route('help') }}">
-                <i class="icofont-info fs-5"></i>
-                <span>Aide</span>
-            </a>
-        </li>
+    <!-- Help -->
+    <li>
+        <a class="ms-link {{ Request::is('help') ? 'active' : '' }}" href="{{ route('help') }}">
+            <i class="icofont-info fs-5"></i>
+            <span>Aide</span>
+        </a>
+    </li>
 
 
 </ul>

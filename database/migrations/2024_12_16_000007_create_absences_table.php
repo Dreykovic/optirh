@@ -27,6 +27,7 @@ return new class extends Migration {
             $table->text('reasons')->nullable();
             $table->string('proof')->nullable();
             $table->text('comment')->nullable();
+            $table->bigInteger('absence_number')->nullable();
             $table->foreignIdFor(Duty::class)->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('absence_type_id')->nullable()->constrained()->onDelete('set null'); // Clé étrangère vers le type d'absence
 

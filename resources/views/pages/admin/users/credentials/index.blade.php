@@ -104,6 +104,7 @@
                                 </tr>
                                 @include('pages.admin.users.credentials.edit-details')
                                 @include('pages.admin.users.credentials.edit-role')
+                                @include('pages.admin.users.credentials.edit-pwd')
                             @endforeach
                         </tbody>
                     </table>
