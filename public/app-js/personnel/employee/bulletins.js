@@ -36,15 +36,6 @@
                         <div class="btn-group">
                             <i class="bi bi-three-dots-vertical" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
                             <ul class="dropdown-menu border-0 shadow bg-primary">
-                                <li><a data-bs-target="#updateFileModal${file.id}" data-bs-toggle="modal" class="dropdown-item text-light" ><i class="icofont-edit text-success m-2"></i>Renommer</a></li>
-                               
-                                <li>
-                                    <form action="/files/delete/${file.id}" method="POST" onsubmit="return confirm('Confirmer la suppression ?');">
-                                        <input type="hidden" name="_method" value="DELETE">
-                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                        <button type="submit" class="dropdown-item text-light">Supprimer</button>
-                                    </form>
-                                </li>
                                 <li><a class="dropdown-item text-light" href="${file.url}" target="_blank">Ouvrir</a></li>
                             </ul>
                         </div>

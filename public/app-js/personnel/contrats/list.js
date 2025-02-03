@@ -44,23 +44,67 @@ function initPaginator(status) {
                                             </a>
                                         </li>` 
                                     : ''}
+                                    ${status == 'ON_GOING' || status == 'SUSPENDED' ? 
+                                        `<li>
+                                            <a class="dropdown-item action-btn" 
+                                                href="#" 
+                                                data-id="${contrat.duty_id}" 
+                                                data-url="/contrats/${contrat.duty_id}/resigned" 
+                                                data-action="Démissioner" 
+                                                data-message="Cette action va marquer cet employé comme Démissionaire.">
+                                                Démissioner
+                                            </a>
+                                        </li>` 
+                                    : ''}
+                                    ${status == 'ON_GOING' || status == 'SUSPENDED' ? 
+                                        `<li>
+                                            <a class="dropdown-item action-btn" 
+                                                href="#" 
+                                                data-id="${contrat.duty_id}" 
+                                                data-url="/contrats/${contrat.duty_id}/dismissed" 
+                                                data-action="Licencier" 
+                                                data-message="Cette action va marquer cet employé comme licencié.">
+                                                Licencier
+                                            </a>
+                                        </li>` 
+                                    : ''}
+                                     ${status == 'ON_GOING' ? 
+                                        `<li>
+                                            <a class="dropdown-item action-btn" 
+                                                href="#" 
+                                                data-id="${contrat.duty_id}" 
+                                                data-url="/contrats/${contrat.duty_id}/ended" 
+                                                data-action=" Mettre fin au contrat" 
+                                                data-message="Cette action va mettre fin au contrat de cet employé.">
+                                                Terminer
+                                            </a>
+                                        </li>` 
+                                    : ''}
                                     
-                                    <li><a class="dropdown-item" href="">Démissioner</a></li>
-                                    <li><a class="dropdown-item" href="">Licencier</a></li>
-                                    <li><a class="dropdown-item" href="">Terminer</a></li>
-                                    ${status !== 'ON_GOING' ? 
+                                    ${status !== 'ON_GOING' && status !== 'DELETED'? 
                                         `<li>
                                             <a class="dropdown-item action-btn" 
                                                 href="#" 
                                                 data-id="${contrat.duty_id}" 
                                                 data-url="/contrats/${contrat.duty_id}/deleted" 
-                                                data-action="Suspendre" 
-                                                data-message="Cette action Supprimera cet employé.">
+                                                data-action="Supprimer" 
+                                                data-message="Cette action Supprimera ce contrat.">
                                                 Supprimer
                                             </a>
                                         </li>` 
                                     : ''}
-                                    ${status !== 'ON_GOING' ? `<li><a class="dropdown-item" href="">Réintégrer</a></li>` : ''}
+                                    ${status !== 'ON_GOING' && status !== 'DELETED' ?
+                                         `<li>
+                                            <a class="dropdown-item action-btn" 
+                                                href="#" 
+                                                data-id="${contrat.duty_id}" 
+                                                data-url="/contrats/${contrat.duty_id}/ongoing" 
+                                                data-action="Réintégrer" 
+                                                data-message="Cette action Réintégrera cet employé.">
+                                                Réintégrer
+                                            </a>
+                                        </li>`  
+                                    : ''}
                                 </ul>
                             </div>
                         </td>

@@ -11,15 +11,15 @@
                 <div class="row clearfix">
                     <div class="col-md-12">
                         <div class="card border-0 mb-4 no-bg">
-                            <div class="card-header py-3 px-0 d-flex align-items-center  justify-content-between border-bottom">
-                                <h3 class=" fw-bold flex-fill mb-0">Mes Factures</h3>
+                            <div class="card-header py-3 px-0 d-flex align-items-center  justify-content-between border-bottom mx-auto">
+                                <h3 class=" fw-bold flex-fill mb-0">Mes bulletins de paie</h3>
                             </div>
                         </div>
                     </div>
                 </div><!-- Row End -->
                 <div class="row g-3">
                    
-                    <div class="col-xl-12 col-lg-12 col-md-12">
+                    <div class="col-xl-8 col-lg-8 col-md-12 mx-auto">
                         <div class="card">
                             <div class="card-body">
                                 <div class="d-flex mb-3 justify-content-between">

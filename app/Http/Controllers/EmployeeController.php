@@ -22,6 +22,9 @@ class EmployeeController extends Controller
         $this->middleware(['permission:écrire-un-employee|écrire-un-tout'], ['only' => ['updatePres', 'updateBank']]);
         $this->middleware(['permission:configurer-un-employee|écrire-un-tout'], ['only' => ['destroy']]);
     }
+    protected $evolutions = ['ON_GOING', 'ENDED', 'CANCEL', 'SUSPENDED', 'RESIGNED', 'DISMISSED'];
+    protected $status = ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'];
+
 
     /**
      * Display a listing of the resource.
@@ -38,8 +41,9 @@ class EmployeeController extends Controller
             ->join('duties', 'employees.id', '=', 'duties.employee_id')
             ->join('jobs', 'duties.job_id', '=', 'jobs.id')
             ->select('employees.*')
-            ->where('duties.evolution', '=', 'ON_GOING')
-            ->where('employees.status', '=', 'ACTIVATED')
+            ->where('duties.evolution', '=', $this->evolutions[0])
+            // ->where('employees.status', '=', $this->status[0])
+            ->where('duties.status', '=', $this->status[0])
             ->orderBy('created_at', 'desc');
         
         // Filtrer par département, si fourni
@@ -73,8 +77,9 @@ class EmployeeController extends Controller
             ->join('duties', 'employees.id', '=', 'duties.employee_id')
             ->join('jobs', 'duties.job_id', '=', 'jobs.id')
             ->select('employees.*')
-            ->where('duties.evolution', '=', 'ON_GOING')
-            ->where('employees.status', '=', 'ACTIVATED')
+            ->where('duties.evolution', '=', $this->evolutions[0])
+            // ->where('employees.status', '=', $this->status[0])
+            ->where('duties.status', '=', $this->status[0])
             ->orderBy('created_at', 'desc');
 
         $nbre_employees = $query->count();
@@ -111,7 +116,7 @@ class EmployeeController extends Controller
     {
         try {
             // Récupérer uniquement les noms et prénoms des employés liés aux devoirs
-            $duties = Duty::where('evolution', 'ON_GOING')
+            $duties = Duty::where('evolution', $this->evolutions[0])
                 ->where('job_id', $id)
                 ->with(['employee:id,first_name,last_name,gender']) // Charge les employés avec seulement les champs nécessaires
                 ->get()
@@ -158,7 +163,7 @@ class EmployeeController extends Controller
                 'phone_number' => 'required|string|max:255|unique:employees,phone_number',
                 'address1' => 'required|string|max:255',
                 'gender' => 'required|in:MALE,FEMALE',
-                'duration' => 'sometimes|string',
+                'duration' => 'sometimes',
                 'begin_date' => 'required|date',
                 'type' => 'required|string|max:255',
                 'job_id' => 'required|exists:jobs,id',
@@ -225,10 +230,10 @@ class EmployeeController extends Controller
             if ($dept->name === 'DG' && $dept->director_id !== null && $job->title === 'DG') {
                 if ($request->input('force_create')==true) {
                     $old_header = Employee::find($dept->director_id);
-                    $old_header->update(['status' => 'DELETED']);
+                    $old_header->update(['status' => $this->status[3]]);
 
                     $old_header_duty = Duty::where('employee_id',$old_header->id)->where('evolution','ON_GOING');
-                    $old_header_duty->update(['evolution' => 'ENDED']);
+                    $old_header_duty->update(['evolution' => $this->evolutions[1]]);
                     // Création de l'employé
                     $emp = Employee::create([
                         'first_name' => $validatedData['first_name'],
@@ -256,7 +261,7 @@ class EmployeeController extends Controller
                     $old_header->update(['status' => 'DELETED']);
 
                     $old_header_duty = Duty::where('employee_id',$old_header->id)->where('evolution','ON_GOING');
-                    $old_header_duty->update(['evolution' => 'ENDED']);
+                    $old_header_duty->update(['evolution' => $this->status[1]]);
                     // Création de l'employé
                     $emp = Employee::create([
                         'first_name' => $validatedData['first_name'],
@@ -306,7 +311,7 @@ class EmployeeController extends Controller
     public function show(Employee $employee)
     {
         $files = File::where('employee_id', $employee->id)->get();
-        $duty = Duty::where('evolution', 'ON_GOING')
+        $duty = Duty::where('evolution', $this->evolutions[0])
                     ->where('employee_id', $employee->id)
                     ->first();
 
