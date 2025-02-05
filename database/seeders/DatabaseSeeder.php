@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
 
             AbsenceTypeSeeder::class,
             // AbsenceSeeder::class,
+            DocumentTypeSeeder::class,
             HolidaySeeder::class,
         ]);
         /**
@@ -56,7 +57,7 @@ class DatabaseSeeder extends Seeder
             'birth_date' => '1980-01-01',
             'nationality' => 'French',
             'status' => 'ACTIVATED',
-            'code' => 'UA-01'
+            'code' => 'UA-01',
         ]);
 
         $adminUser = User::create([
@@ -83,8 +84,7 @@ class DatabaseSeeder extends Seeder
             'birth_date' => '1985-02-15',
             'nationality' => 'French',
             'status' => 'ACTIVATED',
-            'code' => 'MH-01'
-
+            'code' => 'MH-01',
         ]);
 
         $hrUser = User::create([
@@ -136,8 +136,7 @@ class DatabaseSeeder extends Seeder
             'birth_date' => '1975-05-20',
             'nationality' => 'French',
             'status' => 'ACTIVATED',
-            'code' => 'GD-01'
-
+            'code' => 'GD-01',
         ]);
 
         $directorUser = User::create([
@@ -164,7 +163,7 @@ class DatabaseSeeder extends Seeder
             'birth_date' => '1990-03-25',
             'nationality' => 'French',
             'status' => 'ACTIVATED',
-            'code' => 'SE-01'
+            'code' => 'SE-01',
         ]);
 
         $employeeChefUser = User::create([
@@ -190,7 +189,7 @@ class DatabaseSeeder extends Seeder
             'birth_date' => '1990-03-25',
             'nationality' => 'French',
             'status' => 'ACTIVATED',
-            'code' => 'OE-01'
+            'code' => 'OE-01',
         ]);
 
         $employeeUser = User::create([
