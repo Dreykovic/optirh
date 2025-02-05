@@ -7,7 +7,7 @@ use App\Models\DocumentRequest;
 use App\Models\DocumentType;
 use App\Models\Duty;
 use App\Models\Employee;
-use App\Services\AbsencePdfService;
+use App\Services\DocumentPdfService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -25,10 +25,10 @@ class DocumentRequestController extends Controller
     public function download($absenceId)
     {
         try {
-            $absence = Absence::findOrFail($absenceId);
-            $absencePdf = new AbsencePdfService();
+            $documentRequest = DocumentRequest::findOrFail($absenceId);
+            $documentPdf = new DocumentPdfService();
 
-            return $absencePdf->generate($absence);
+            return $documentPdf->generate($documentRequest);
         } catch (\Throwable $th) {
             dd('Erreur lors du chargement des absences : '.$th->getMessage());
             // Log propre de l'erreur et affichage d'un message utilisateur
