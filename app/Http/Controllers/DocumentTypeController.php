@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AbsenceType;
 use App\Models\DocumentType;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
 class DocumentTypeController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware(['permission:configurer-une-absence|voir-un-tout'], ['only' => ['index']]);
-    //     $this->middleware(['permission:configurer-une-absence|créer-un-tout'], ['only' => ['store', 'update', 'create']]);
-    //     // $this->middleware(['permission:écrire-une-absence|écrire-un-tout'], ['only' => ['approve', 'reject', 'comment']]);
-    //     $this->middleware(['permission:configurer-une-absence|écrire-un-tout'], ['only' => ['destroy']]);
-    // }
+    public function __construct()
+    {
+        $this->middleware(['permission:configurer-un-document|voir-un-tout'], ['only' => ['index']]);
+        $this->middleware(['permission:configurer-un-document|créer-un-tout'], ['only' => ['store', 'update', 'create']]);
+        // $this->middleware(['permission:écrire-un-document|écrire-un-tout'], ['only' => ['approve', 'reject', 'comment']]);
+        $this->middleware(['permission:configurer-un-document|écrire-un-tout'], ['only' => ['destroy']]);
+    }
 
     /**
      * Display a listing of the resource.
@@ -55,14 +54,14 @@ class DocumentTypeController extends Controller
                 'type' => 'sometimes',
             ]);
 
-            AbsenceType::create([
+            DocumentType::create([
                 'label' => $request->input('libelle'),
                 'description' => $request->input('description'),
                 'type' => $request->input('type') ?? 'NORMAL',
             ]);
 
             // Redirection avec message de succès
-            return response()->json(['message' => 'Type Absence créé avec succès.', 'ok' => true]);
+            return response()->json(['message' => 'Type Document créé avec succès.', 'ok' => true]);
         } catch (ValidationException $e) {
             // Gestion des erreurs de validation
             // return response()->json(['ok' => false, 'errors' => $e->errors(), 'message' => 'Données invalides. Veuillez vérifier votre saisie.']);
@@ -80,21 +79,21 @@ class DocumentTypeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(AbsenceType $absenceType)
+    public function show(DocumentType $documentType)
     {
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(AbsenceType $absenceType)
+    public function edit(DocumentType $documentType)
     {
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $absenceTypeId)
+    public function update(Request $request, $documentTypeId)
     {
         try {
             // Valider les fichiers et l'image
@@ -103,15 +102,15 @@ class DocumentTypeController extends Controller
                 'description' => 'sometimes',
                 'type' => 'sometimes',
             ]);
-            $absenceType = AbsenceType::find($absenceTypeId);
-            $absenceType->label = $request->input('libelle');
-            $absenceType->description = $request->input('description');
-            $absenceType->type = $request->input('type') ?? $absenceType->type;
+            $documentType = DocumentType::find($documentTypeId);
+            $documentType->label = $request->input('libelle');
+            $documentType->description = $request->input('description');
+            $documentType->type = $request->input('type') ?? $documentType->type;
 
-            $absenceType->save();
+            $documentType->save();
 
             // Redirection avec message de succès
-            return response()->json(['message' => 'Type Absence mis à jour avec succès.', 'ok' => true]);
+            return response()->json(['message' => 'Type Document mis à jour avec succès.', 'ok' => true]);
         } catch (ValidationException $e) {
             // Gestion des erreurs de validation
             // return response()->json(['ok' => false, 'errors' => $e->errors(), 'message' => 'Données invalides. Veuillez vérifier votre saisie.']);
@@ -132,9 +131,9 @@ class DocumentTypeController extends Controller
     public function destroy($id)
     {
         try {
-            \DB::table('absence_types')->where('id', $id)->delete();
+            \DB::table('document_types')->where('id', $id)->delete();
 
-            return response()->json(['ok' => true, 'message' => 'Le type d\absence a été retiré avec succès.']);
+            return response()->json(['ok' => true, 'message' => 'Le type d\document a été retiré avec succès.']);
         } catch (\Throwable $th) {
             return response()->json(['ok' => false, 'message' => $th->getMessage()]);
             // return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
