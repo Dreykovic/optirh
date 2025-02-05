@@ -49,18 +49,18 @@ class DocumentRequestController extends Controller
 
             // Vérification de la validité du stage
             if ($stage !== 'ALL' && !in_array($stage, $validStages)) {
-                return redirect()->route('absences.index')->with('error', 'Stage invalide');
+                return redirect()->route('documents.index')->with('error', 'Stage invalide');
             }
 
             // Récupérer les filtres de recherche
             $type = $request->input('type');
             $search = $request->input('search');
 
-            // Récupérer les types d'absences (éviter de faire la requête à chaque appel)
-            $absence_types = DocumentType::all();
+            // Récupérer les types de document (éviter de faire la requête à chaque appel)
+            $document_types = DocumentType::all();
 
             // Construire la requête principale avec les relations nécessaires
-            $query = Absence::with(['absence_type', 'duty', 'duty.employee']);
+            $query = DocumentRequest::with(['document_type', 'duty', 'duty.employee']);
 
             // Appliquer le filtre de recherche (groupe de conditions OR)
             $query->when($search, function ($q) use ($search) {
@@ -71,9 +71,9 @@ class DocumentRequestController extends Controller
             });
             $query->orderBy('date_of_application');
 
-            // Filtrer par type d'absence, si précisé
+            // Filtrer par type de document, si précisé
             $query->when($type, function ($q) use ($type) {
-                $q->where('absence_type_id', $type);
+                $q->where('document_type_id', $type);
             });
 
             // Filtrer par stage si le stage n'est pas "ALL"
@@ -82,18 +82,18 @@ class DocumentRequestController extends Controller
             });
             // $limit = in_array($stage, ['PENDING', 'IN_PROGRESS']) ? 2 : 10;
             // Appliquer la pagination seulement si on filtre par stage (sauf ALL)
-            $absences = (in_array($stage, ['PENDING', 'IN_PROGRESS']))
+            $documentRequests = (in_array($stage, ['PENDING', 'IN_PROGRESS']))
                 ? $query->paginate(2)
                 : $query->get();
 
             // Retourner la vue avec les données nécessaires
-            return view('pages.admin.documents.main.index', compact('absences', 'stage', 'absence_types'));
+            return view('pages.admin.documents.main.index', compact('documentRequests', 'stage', 'document_types'));
         } catch (\Throwable $th) {
-            dd('Erreur lors du chargement des absences : '.$th->getMessage());
+            dd('Erreur lors du chargement des demandes de documents : '.$th->getMessage());
             // Log propre de l'erreur et affichage d'un message utilisateur
-            \Log::error('Erreur lors du chargement des absences : '.$th->getMessage());
+            \Log::error('Erreur lors du chargement des demandes de documents : '.$th->getMessage());
 
-            return back()->with('error', 'Une erreur s\'est produite lors du chargement des absences. Veuillez réessayer.');
+            return back()->with('error', 'Une erreur s\'est produite lors du chargement des demandes de documents. Veuillez réessayer.');
         }
     }
 
@@ -175,25 +175,6 @@ class DocumentRequestController extends Controller
                 'error' => $th->getMessage(),
             ], 500);
         }
-    }
-
-    /**
-     * Calcule le nombre de jours entre deux dates via une requête AJAX.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function calculateDays(Request $request)
-    {
-        // Validation des dates
-        $request->validate([
-            'start_date' => 'required|date|before_or_equal:end_date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-        ]);
-
-        // Calcul du nombre de jours d'absence
-        $workingDays = calculateWorkingDays($request->start_date, $request->end_date);
-
-        return response()->json(['working_days' => $workingDays]);
     }
 
     /**

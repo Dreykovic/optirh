@@ -34,7 +34,7 @@ class DocumentRequest extends Model
 
     public function document_type(): BelongsTo
     {
-        return $this->belongsTo(AbsenceType::class, 'document_type_id');
+        return $this->belongsTo(DocumentType::class, 'document_type_id');
     }
 
     /**

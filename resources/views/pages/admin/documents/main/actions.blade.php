@@ -3,34 +3,34 @@
     <span class="visually-hidden">Toggle Dropdown</span>
 </div>
 <ul class="dropdown-menu border-0 shadow py-3 px-2">
+    <li>
+        <a class="dropdown-item py-2 rounded" data-bs-toggle="modal"
+            data-bs-target="#documentReqDetails{{ $documentRequest->id }}" role="button">
+            <i class="icofont-eye text-info"></i>
 
+            <span class="d-none d-sm-none d-md-inline">Détails</span>
+        </a>
+        </div>
+    </li>
     @if (
-        ($absence->level == 'ONE' && auth()->user()->hasRole('GRH')) ||
-            ($absence->level == 'TWO' && auth()->user()->hasRole('DG')) ||
-            ($absence->level == 'ZERO' &&
+        ($documentRequest->level == 'ONE' && auth()->user()->hasRole('GRH')) ||
+            ($documentRequest->level == 'TWO' && auth()->user()->hasRole('DG')) ||
+            ($documentRequest->level == 'ZERO' &&
                 auth()->user()->employee->duties->firstWhere('evolution', 'ON_GOING')->job_id ===
-                    $absence->duty->job->n_plus_one_job_id) ||
-            (in_array($absence->level, ['ZERO']) &&
+                    $documentRequest->duty->job->n_plus_one_job_id) ||
+            (in_array($documentRequest->level, ['ZERO']) &&
                 auth()->user()->hasRole('GRH') &&
-                $absence->duty->job->n_plus_one_job_id === null))
+                $documentRequest->duty->job->n_plus_one_job_id === null))
         <li>
-            <a class="dropdown-item py-2 rounded" data-bs-toggle="modal"
-                data-bs-target="#absenceReqDetails{{ $absence->id }}" role="button">
-                <i class="icofont-eye text-info"></i>
+            <div class="modelUpdateFormContainer dropdown-item py-2 rounded"
+                id="documentRequestApproveForm{{ $documentRequest->id }}">
 
-                <span class="d-none d-sm-none d-md-inline">Détails</span>
-            </a>
-            </div>
-        </li>
-        <li>
-            <div class="modelUpdateFormContainer dropdown-item py-2 rounded" id="absenceApproveForm{{ $absence->id }}">
-
-                <form data-model-update-url="{{ route('absences.approve', $absence->id) }}">
+                <form data-model-update-url="{{ route('documents.approve', $documentRequest->id) }}">
 
 
 
 
-                    <a role="button" class=" modelUpdateBtn " atl="update client status">
+                    <a role="button" class=" modelUpdateBtn " atl="update document request status">
                         <span class="normal-status">
                             <i class="icofont-check text-success  "></i>
                             <span class="d-none d-sm-none d-md-inline">Approuver</span>
@@ -45,14 +45,15 @@
             </div>
         </li>
         <li>
-            <div class="modelUpdateFormContainer dropdown-item py-2 rounded" id="absenceRejectForm{{ $absence->id }}">
+            <div class="modelUpdateFormContainer dropdown-item py-2 rounded"
+                id="documentRequestRejectForm{{ $documentRequest->id }}">
 
-                <form data-model-update-url="{{ route('absences.reject', $absence->id) }}">
+                <form data-model-update-url="{{ route('documents.reject', $documentRequest->id) }}">
 
 
 
 
-                    <a role="button" class="modelUpdateBtn " atl="update client status">
+                    <a role="button" class="modelUpdateBtn " atl="update document request status">
                         <span class="normal-status">
                             <i class="icofont-close text-danger"></i>
                             <span class="d-none d-sm-none d-md-inline">Rejeter</span>
@@ -69,7 +70,7 @@
 
         <li>
             <a class="dropdown-item py-2 rounded" data-bs-toggle="modal"
-                data-bs-target="#absenceCommentAdd{{ $absence->id }}" role="button">
+                data-bs-target="#documentRequestCommentAdd{{ $documentRequest->id }}" role="button">
                 <i class="icofont-comment"></i>
 
                 <span class="d-none d-sm-none d-md-inline">Commenter</span>
@@ -78,18 +79,19 @@
         </li>
     @endif
 
-    @if (auth()->user()->employee_id === $absence->duty->employee_id &&
-            $absence->level === 'ZERO' &&
-            $absence->stage !== 'CANCELLED')
+    @if (auth()->user()->employee_id === $documentRequest->duty->employee_id &&
+            $documentRequest->level === 'ZERO' &&
+            $documentRequest->stage !== 'CANCELLED')
         <li>
-            <div class="modelUpdateFormContainer  dropdown-item py-2 rounded" id="absenceCancelForm{{ $absence->id }}">
+            <div class="modelUpdateFormContainer  dropdown-item py-2 rounded"
+                id="documentRequestCancelForm{{ $documentRequest->id }}">
 
-                <form data-model-update-url="{{ route('absences.cancel', $absence->id) }}">
+                <form data-model-update-url="{{ route('documents.cancel', $documentRequest->id) }}">
 
 
 
 
-                    <a role="button" class="modelUpdateBtn " atl="update client status">
+                    <a role="button" class="modelUpdateBtn " atl="update document request status">
                         <span class="normal-status">
                             <i class="icofont-ban text-warning"></i>
                             <span class="d-none d-sm-none d-md-inline">Annuler</span>
@@ -104,12 +106,13 @@
             </div>
         </li>
     @endif
-    @if ($absence->stage === 'APPROVED')
+    @if ($documentRequest->stage === 'APPROVED')
         <li>
 
 
 
-            <a role="button" class="" atl="Download Pdf" href="{{ route('absences.download', $absence->id) }}">
+            <a role="button" class="" atl="Download Pdf"
+                href="{{ route('documents.download', $documentRequest->id) }}">
 
                 <i class="icofont-download text-black"></i>
                 <span class=" d-sm-none d-md-inline">Télécharger</span>
