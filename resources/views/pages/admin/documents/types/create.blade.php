@@ -1,11 +1,11 @@
    <!-- Add Department-->
-   <div class="modal fade" id="absenceTypeAdd" tabindex="-1" aria-hidden="true">
+   <div class="modal fade" id="documentTypeAdd" tabindex="-1" aria-hidden="true">
        <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
-           <form id="modelAddForm"class="modal-content" data-model-add-url="{{ route('absenceTypes.save') }}">
+           <form id="modelAddForm"class="modal-content" data-model-add-url="{{ route('documentTypes.save') }}">
                @csrf
 
                <div class="modal-header">
-                   <h5 class="modal-title  fw-bold" id="absenceTypeLabel">Ajout Type Absence</h5>
+                   <h5 class="modal-title  fw-bold" id="documentTypeLabel">Ajout Type Document</h5>
                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                </div>
                <div class="modal-body">
@@ -36,7 +36,7 @@
                </div>
                <div class="modal-footer">
                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                   <button type="submit" class="btn btn-primary" atl="Ajouter Absence Type" id="modelAddBtn"
+                   <button type="submit" class="btn btn-primary" atl="Ajouter Document Type" id="modelAddBtn"
                        data-bs-dismiss="modal">
                        <span class="normal-status">
                            Ajouter
