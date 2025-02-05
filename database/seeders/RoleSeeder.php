@@ -45,6 +45,12 @@ class RoleSeeder extends Seeder
             'créer-une-absence',
             'configurer-une-absence',
 
+            // Document Request
+            'voir-un-document',
+            'écrire-un-document',
+            'créer-un-document',
+            'configurer-un-document',
+
             // Credentials
             'voir-un-credentials',
             'écrire-un-credentials',
