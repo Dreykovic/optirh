@@ -11,52 +11,38 @@
             <div class="card p-xl-5 p-lg-4 p-0">
                 <div class="deadline-form">
                     <div class="card-header">
-                        <h3>Soumettre Une Demande d'Absence</h3>
+                        <h3>Soumettre Une Demande De Document</h3>
                     </div>
-                    <form id="modelAddForm" data-model-add-url="{{ route('absences.save') }}">
+                    <form id="modelAddForm" data-model-add-url="{{ route('documents.save') }}">
                         @csrf
                         <div class="card-body">
 
                             <div class="mb-3">
-                                <label class="form-label required" for="absenceTypeSelect">Choisir </label>
-                                <select class="form-select" id="absenceTypeSelect" name="absence_type">
+                                <label class="form-label required" for="documentTypeSelect">Choisir </label>
+                                <select class="form-select" id="documentTypeSelect" name="document_type">
 
-                                    @foreach ($absenceTypes as $absenceType)
-                                        <option value="{{ $absenceType->id }}">{{ $absenceType->label }}</option>
+                                    @foreach ($documentTypes as $documentType)
+                                        <option value="{{ $documentType->id }}">{{ $documentType->label }}</option>
                                     @endforeach
 
                                 </select>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="absenceAddress" class="form-label">Adresse De Congé</label>
-                                <input type="text" class="form-control" id="absenceAddress" name="address"
-                                    value="{{ auth()->user()->employee->address1 }}">
-                            </div>
 
                             <div class="row g-3 mb-3">
                                 <div class="col-sm-6">
-                                    <label for="absenceStartDate" class="form-label">Absence Du</label>
-                                    <input type="date" class="form-control" id="absenceStartDate" name="start_date">
+                                    <label for="documentStartDate" class="form-label"> Du</label>
+                                    <input type="date" class="form-control" id="documentStartDate" name="start_date">
                                 </div>
                                 <div class="col-sm-6">
-                                    <label for="absenceEndDate" class="form-label">Au</label>
-                                    <input type="date" class="form-control" id="absenceEndDate" name="end_date">
+                                    <label for="documentEndDate" class="form-label">Au</label>
+                                    <input type="date" class="form-control" id="documentEndDate" name="end_date">
                                 </div>
                             </div>
-                            <div>
-                                <span class=""> Soit: <strong><span class="days-requested"></span></strong></span>
-                            </div>
 
-                            <div class="mb-3">
-                                <label for="absenceReason" class="form-label">Raisons de l’absence</label>
-                                <textarea class="form-control" id="absenceReason" rows="3" name="reasons"></textarea>
-                            </div>
-                            <div class="alert alert-info" role="alert">
-                                Vous devez fournir un justificatif pour les permissions exceptionnelles, au plus tard huit
-                                jours
-                                après la date d’absence.
-                            </div>
+
+
+
                         </div>
                         <div class="card-footer modal-footer ">
                             <button type="reset" class="btn btn-secondary">Annuler</button>
@@ -80,6 +66,5 @@
     <script src={{ asset('assets/plugins/select2/js/select2.min.js') }}></script>
 @endpush
 @push('js')
-    <script src="{{ asset('app-js/attendances/absences/create.js') }}"></script>
     <script src="{{ asset('app-js/crud/post.js') }}"></script>
 @endpush
