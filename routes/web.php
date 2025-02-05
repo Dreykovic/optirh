@@ -4,6 +4,8 @@ use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AbsenceTypeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\DocumentTypeController;
+use App\Http\Controllers\DutyController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\HolidayController;
@@ -12,8 +14,6 @@ use App\Http\Controllers\JobController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DutyController;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -59,9 +59,7 @@ Route::group(['middleware' => 'auth'], function () {
         return view('pages.admin.help');
     })->name('help');
 
-
-
-    //membres
+    // membres
     Route::prefix('membres')->group(function () {
         Route::get('/list', [EmployeeController::class, 'index'])->name('membres');
         Route::get('/pay', [EmployeeController::class, 'index'])->name('membres.pay');
@@ -76,18 +74,16 @@ Route::group(['middleware' => 'auth'], function () {
         Route::put('/update/pers/{id}', [EmployeeController::class, 'updatePres'])->name('membres.updatePres');
         Route::put('/update/bank/{employee}', [EmployeeController::class, 'updateBank'])->name('membres.updateBank');
         Route::get('/directions/list', [DepartmentController::class, 'index'])->name('directions');
-
     });
-    //mes données
+    // mes données
     Route::prefix('employee')->group(function () {
         Route::get('/data', [EmployeeController::class, 'editEmployeeData'])->name('employee.data');
         Route::get('/pay/{employee}', [EmployeeController::class, 'mesFactures'])->name('employee.pay');
     });
 
-
     Route::post('/employee/{id}/data', [EmployeeController::class, 'updateEmployeeData'])->name('membres.data.update');
 
-    //directions
+    // directions
     Route::prefix('directions')->group(function () {
         Route::get('/{department}', [DepartmentController::class, 'show'])->name('directions.show');
         Route::post('/create', [DepartmentController::class, 'store'])->name('directions.store');
@@ -95,12 +91,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/{id}', [DepartmentController::class, 'destroy'])->name('directions.destroy');
     });
 
-    //jobs
+    // jobs
     Route::prefix('jobs')->group(function () {
         Route::post('/create', [JobController::class, 'store'])->name('jobs.store');
         Route::put('/{id}', [JobController::class, 'update'])->name('jobs.update');
         Route::delete('/{id}', [JobController::class, 'destroy'])->name('jobs.destroy');
-
     });
 
     // files
@@ -116,9 +111,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/api/files/{employeeId}', [FileController::class, 'getFiles']);
 
-
-    
-    /**
+    /*
      * contrats
      */
     Route::prefix('contrats')->group(function () {
@@ -130,20 +123,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::put('/{id}/dismissed', [DutyController::class, 'dismissed'])->name('contrats.dismissed');
         Route::put('/{id}/deleted', [DutyController::class, 'deleted'])->name('contrats.deleted');
         Route::post('/add', [DutyController::class, 'add'])->name('contrats.add');
-
     });
-    
+
     Route::prefix('api')->group(function () {
         Route::get('/files/{employeeId}', [FileController::class, 'getFiles']);
         Route::get('/jobs/{departmentId}', [JobController::class, 'getJobsByDepartment']);
         Route::get('/membres/job/{id}', [EmployeeController::class, 'jobEmployees'])->name('membres.job');
-
     });
-
-  
-
-
-
 
     /*
      * Attendances
@@ -184,6 +170,36 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/save', [HolidayController::class,  'store'])->name('holidays.save');
             Route::post('/update/{holidayId}', [HolidayController::class,  'update'])->name('holidays.update');
             Route::delete('/delete/{holidayId}', [HolidayController::class,  'destroy'])->name('holidays.destroy');
+        });
+    });
+    /*
+     * Attendances
+     */
+
+    Route::prefix('/documents')->group(function () {
+        /*
+        * Document Request
+        */
+
+        Route::prefix('/request')->group(function () {
+            Route::get('/requests/{stage?}', [AbsenceController::class,  'index'])->name('documents.requests');
+            Route::get('/request/create', [AbsenceController::class,  'create'])->name('documents.create');
+            Route::post('/request/save', [AbsenceController::class,  'store'])->name('documents.save');
+            Route::post('/request/approve/{absenceId}', [AbsenceController::class,  'approve'])->name('documents.approve');
+            Route::post('/request/reject/{absenceId}', [AbsenceController::class,  'reject'])->name('documents.reject');
+            Route::post('/request/comment/{absenceId}', [AbsenceController::class,  'comment'])->name('documents.comment');
+            Route::post('/request/cancel/{absenceId}', [AbsenceController::class,  'cancel'])->name('documents.cancel');
+            Route::get('/request/download/{absenceId}', [AbsenceController::class,  'download'])->name('documents.download');
+        });
+        /*
+        * Document Types
+        */
+
+        Route::prefix('/document-types')->group(function () {
+            Route::get('/list', [DocumentTypeController::class,  'index'])->name('documentTypes.index');
+            Route::post('/save', [DocumentTypeController::class,  'store'])->name('documentTypes.save');
+            Route::post('/update/{documentTypeId}', [DocumentTypeController::class,  'update'])->name('documentTypes.update');
+            Route::delete('/delete/{documentTypeId}', [DocumentTypeController::class,  'destroy'])->name('documentTypes.destroy');
         });
     });
 
