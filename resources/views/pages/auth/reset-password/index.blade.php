@@ -1,54 +1,57 @@
 @extends('pages.auth.base')
 
 @section('auth-content')
-    <form class="row g-1 p-3 p-md-4">
+    <form class="row g-1 p-3 p-md-4" id="modelAddForm" data-model-add-url="{{ route('password.update') }}">
+        @csrf
+        <input type="hidden" name="token" value="{{ $token }}">
         <div class="col-12 text-center mb-1 mb-lg-5">
-            <h1>Sign in</h1>
-            <span>Free access to our dashboard.</span>
-        </div>
-        <div class="col-12 text-center mb-4">
-            <a class="btn btn-lg btn-outline-secondary btn-block" href="#">
-                <span class="d-flex justify-content-center align-items-center">
-                    <img class="avatar xs me-2" src="../assets/images/google.svg" alt="Image Description">
-                    Sign in with Google
-                </span>
-            </a>
-            <span class="dividers text-muted mt-4">OR</span>
+            <h1>Réinitialiser Mot De Passe</h1>
+
         </div>
         <div class="col-12">
             <div class="mb-2">
-                <label class="form-label">Email address</label>
-                <input type="email" class="form-control form-control-lg" placeholder="name@example.com">
+                <label class="form-label">Adresse Email</label>
+                <input type="email" name="email" class="form-control form-control-lg" placeholder="name@example.com">
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="mb-2">
+                <label class="form-label">Nouveau Mot De Passe</label>
+                <input type="password" class="form-control form-control-lg" placeholder="***************" name="password">
             </div>
         </div>
         <div class="col-12">
             <div class="mb-2">
                 <div class="form-label">
                     <span class="d-flex justify-content-between align-items-center">
-                        Password
-                        <a class="text-secondary" href="auth-password-reset.html">Forgot
-                            Password?</a>
+                        Confirmer le mot de passe
+
                     </span>
                 </div>
-                <input type="password" class="form-control form-control-lg" placeholder="***************">
+                <input type="password" class="form-control  form-control-lg" autocomplete="off" name="password_confirmation"
+                    placeholder="***************">
             </div>
         </div>
-        <div class="col-12">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                <label class="form-check-label" for="flexCheckDefault">
-                    Remember me
-                </label>
-            </div>
+
+        <div class="col-12 text-center mt-4">
+            <button type="submit" class="btn btn-lg btn-block btn-light lift text-uppercase" atl="signin"
+                id="modelAddBtn">
+                <span class="normal-status">
+                    Soumettre
+                </span>
+                <span class="indicateur d-none">
+                    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                    Un Instant...
+                </span>
+            </button>
         </div>
         <div class="col-12 text-center mt-4">
-            <a href="index.html" class="btn btn-lg btn-block btn-light lift text-uppercase" atl="signin">SIGN IN</a>
-        </div>
-        <div class="col-12 text-center mt-4">
-            <span class="text-muted">Don't have an account yet? <a href="auth-signup.html" class="text-secondary">Sign up
-                    here</a></span>
+            <span class="text-muted"> Déjà fait ?
+
+                <a href="{{ route('login') }}" class="text-secondary">Connectez-vous</a></span>
         </div>
     </form>
 @endsection
 @push('js')
+    <script src={{ asset('app-js/crud/post.js') }}></script>
 @endpush
