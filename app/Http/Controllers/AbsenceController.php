@@ -6,11 +6,16 @@ use App\Models\Absence;
 use App\Models\AbsenceType;
 use App\Models\Duty;
 use App\Models\Employee;
+use App\Models\Job;
 use App\Services\AbsencePdfService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use App\Mail\AbsenceRequestUpdated;
+use Illuminate\Support\Facades\Mail;
+
+// use Illuminate\Support\Facades\Mail;
 
 class AbsenceController extends Controller
 {
@@ -175,7 +180,12 @@ class AbsenceController extends Controller
                 'reasons' => $validatedData['reasons'],
                 'requested_days' => $workingDays,
             ]);
+            $receiverJob = $absence->duty->job->n_plus_one_job ??
+                 Job::where('title', 'Grh')->first();
 
+
+            $receiver = $receiverJob->duties->firstWhere('evolution', 'ON_GOING')->employee;
+            Mail::to($receiver)->send(new AbsenceRequestUpdated($receiverJob, $receiver, $absence, route('absences.requests')));
             // Redirection avec message de succès
 
             // return response()->json([

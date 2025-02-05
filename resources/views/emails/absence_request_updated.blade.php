@@ -14,7 +14,7 @@
             <tr>
                 <td align="center" valign="center" style="text-align:center; padding: 40px">
                     <a href="#" rel="noopener" target="_blank">
-                        <img alt="Logo" src="{{ $message->embed(public_path('assets/media/uk/logo-sigle.ico')) }}"
+                        <img alt="Logo" src="{{ $message->embed(public_path('assets/img/logo.png')) }}"
                             style="max-height: 50px;">
                     </a>
                 </td>
@@ -27,27 +27,30 @@
 
                         <!--begin:Email content-->
                         <div style="padding-bottom: 30px; font-size: 17px;">
-                            <strong>Salut Mr/Mme {{ $name }} !!!</strong>
+                            <strong>Salut Mr/Mme {{ $receiverName }} !!!</strong>
                         </div>
 
                         <div style="padding-bottom: 30px">
-                            Vous recevez cet email car nous avons reçu une demande de création de compte.
-                            Votre demande a été accepté
+                            Une nouvelle demande d'absence de {{ $text }} nécessite votre action pour permettre
+                            la poursuite du
+                            processus. Nous vous invitons à consulter la demande et à prendre les mesures nécessaires.
+
+                            Cliquez sur le bouton ci-dessous pour accéder directement à la demande :
                         </div>
 
                         <div style="padding-bottom: 40px; text-align:center;">
-                            <a href="{{ route('login') }}" rel="noopener" target="_blank"
+                            <a href="{{ $url }}" rel="noopener" target="_blank"
                                 style="text-decoration:none;display:inline-block;text-align:center;padding:0.75575rem 1.3rem;font-size:0.925rem;line-height:1.5;border-radius:0.35rem;color:#ffffff;background-color:#3E97FF;border:0px;margin-right:0.75rem!important;font-weight:600!important;outline:none!important;vertical-align:middle"
                                 target="_blank">
-                                Se connecter
+                                Consulter
                             </a>
                         </div>
 
 
 
                         <div style="padding-bottom: 10px">
-                            DAAS<br>
-                            Support Université de kara.
+                            OPTIRH<br>
+                            ARCOP DSAF.
                         </div>
                     </div>
                 </td>
@@ -56,7 +59,7 @@
             <tr>
                 <td align="center" valign="center"
                     style="font-size: 13px; text-align:center;padding: 20px; color: #6d6e7c;">
-                    <p>Université de kara.</p>
+                    <p>ARCOP.</p>
 
                     </p>
                 </td>

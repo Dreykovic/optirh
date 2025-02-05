@@ -89,7 +89,7 @@ class DatabaseSeeder extends Seeder
 
         $hrUser = User::create([
             'username' => 'hr_manager',
-            'email' => 'hr@example.com',
+            'email' => 'amonaaudrey16@gmail.com',
             'profile' => 'EMPLOYEE',
             'status' => 'ACTIVATED',
             'password' => bcrypt('hr_password'),
@@ -114,7 +114,7 @@ class DatabaseSeeder extends Seeder
 
         $dsafUser = User::create([
             'username' => 'Finance Director',
-            'email' => 'dsaf@example.com',
+            'email' => 'amonaaudrey@hotmail.com',
             'profile' => 'EMPLOYEE',
             'status' => 'ACTIVATED',
             'password' => bcrypt(value: 'dsaf_password'),
@@ -141,7 +141,7 @@ class DatabaseSeeder extends Seeder
 
         $directorUser = User::create([
             'username' => 'director_general',
-            'email' => 'dg@example.com',
+            'email' => 'codeurspassiones@gmail.com',
             'profile' => 'EMPLOYEE',
             'status' => 'ACTIVATED',
             'password' => bcrypt('dg_password'),
