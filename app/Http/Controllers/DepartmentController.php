@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Department;
-use App\Models\Job;
 use App\Models\Duty;
+use App\Models\Job;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Carbon;
+use Illuminate\Validation\ValidationException;
 
 class DepartmentController extends Controller
 {
@@ -19,7 +20,6 @@ class DepartmentController extends Controller
 
     public function index()
     {
-
         $employees = DB::table('duties')
             ->join('employees', 'duties.employee_id', '=', 'employees.id')
             ->join('jobs', 'duties.job_id', '=', 'jobs.id') // Ajouter cette jointure pour accéder au job
@@ -30,19 +30,17 @@ class DepartmentController extends Controller
             ->whereNull('departments.director_id') // S'assurer que l'employé n'est pas un directeur
             ->select('jobs.title', 'employees.first_name', 'employees.last_name', 'employees.id')
             ->get();
-        
 
         $departments = Department::orderBy('created_at', 'desc')->get();
+
         return view('pages.admin.personnel.directions.index', compact('departments', 'employees'));
     }
-    
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        //
     }
 
     /**
@@ -54,27 +52,26 @@ class DepartmentController extends Controller
             $validatedData = $request->validate([
                 'name' => 'required|unique:departments,name|string|max:255',
                 'description' => 'required|string|max:500',
-                'director_id' => 'nullable|exists:employees,id'
+                'director_id' => 'nullable|exists:employees,id',
             ]);
-    
+
             $validatedData['director_id'] = $validatedData['director_id'] ?? null;
             $job_superior = Job::where('title', 'DG')->firstOrFail();
             // Créer le département
             $dept = Department::create([
                 'name' => $validatedData['name'],
                 'description' => $validatedData['description'],
-                'director_id' => $validatedData['director_id']
+                'director_id' => $validatedData['director_id'],
             ]);
 
             $job = Job::create([
                 'title' => 'Directeur·trice '.$dept->name,
                 'description' => 'Directeur·trice '.$dept->description,
                 'n_plus_one_job_id' => $job_superior->id,
-                'department_id' => $dept->id
+                'department_id' => $dept->id,
             ]);
 
-            if($validatedData['director_id']!=null){
-
+            if ($validatedData['director_id'] != null) {
                 $duty = Duty::where('evolution', $this->evolutions[0])
                 ->where('employee_id', $validatedData['director_id'])
                 ->first();
@@ -87,14 +84,13 @@ class DepartmentController extends Controller
                     Duty::create([
                         'job_id' => $job->id,
                         'employee_id' => $validatedData['director_id'],
-                        'begin_date' => Carbon::now()
+                        'begin_date' => Carbon::now(),
                     ]);
                 }
             }
 
             return response()->json(['message' => 'Department créé avec succès.', 'ok' => true]);
-    
-        }  catch (ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'ok' => false,
                 'message' => 'Les données fournies sont invalides.',
@@ -103,9 +99,7 @@ class DepartmentController extends Controller
         } catch (\Throwable $th) {
             return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
-
     }
-    
 
     /**
      * Display the specified resource.
@@ -118,17 +112,15 @@ class DepartmentController extends Controller
             $query->where('department_id', $department->id);
         })
         ->count();
-    
+
         return view('pages.admin.personnel.directions.show', compact('department', 'nbre_postes', 'nbreduty'));
     }
-    
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(Department $department)
     {
-        //
     }
 
     /**
@@ -136,35 +128,33 @@ class DepartmentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //dump("je yas");
+        // dump("je yas");
         try {
-            
             $validatedData = $request->validate([
-                'name' => 'required|unique:departments,name,' . $id . '|string|max:255',
+                'name' => 'required|unique:departments,name,'.$id.'|string|max:255',
                 'description' => 'required|string|max:500',
             ]);
-    
+
             // Récupérer le département
             $department = Department::findOrFail($id);
-    
+
             // Mettre à jour les informations du département
             $department->update([
                 'name' => $validatedData['name'],
                 'description' => $validatedData['description'],
             ]);
-    
+
             // Mettre à jour le job "Directeur·rice" associé au département
             // $job = Job::where('title', 'Directeur·rice ' . $department->name)->first();
-    
+
             // if ($job) {
             //     $job->update([
             //         'title' => 'Directeur·rice ' . $department->name,
             //         'description' => 'Directeur·rice ' . $department->description,
             //     ]);
             // }
-    
+
             return response()->json(['message' => 'Department mis à jour avec succès.', 'ok' => true]);
-    
         } catch (ValidationException $e) {
             return response()->json([
                 'ok' => false,
@@ -175,13 +165,11 @@ class DepartmentController extends Controller
             return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
     }
-    
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Department $department)
     {
-        //
     }
 }

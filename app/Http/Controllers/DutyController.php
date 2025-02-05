@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Duty;
 use App\Models\Department;
+use App\Models\Duty;
 use App\Models\Employee;
 use App\Models\Job;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
-class DutyController extends Controller 
+class DutyController extends Controller
 {
     protected $evolutions = ['ON_GOING', 'ENDED', 'CANCEL', 'SUSPENDED', 'RESIGNED', 'DISMISSED'];
     protected $status = ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'];
@@ -21,9 +22,8 @@ class DutyController extends Controller
     {
         try {
             // Validation des données d'entrée
-    
+
             $validatedData = $request->validate([
-               
                 'duration' => 'sometimes',
                 'begin_date' => 'required|date',
                 'type' => 'required|string|max:255',
@@ -33,7 +33,7 @@ class DutyController extends Controller
                 'absence_balance' => 'required|numeric|min:0',
                 // 'force_create' => 'sometimes|boolean',
             ]);
-            
+
             // Récupération de la direction et du poste
             $dept = Department::find($validatedData['department_id']);
             $job = Job::find($validatedData['job_id']);
@@ -64,15 +64,14 @@ class DutyController extends Controller
 
             // Création de l'employé
             if (empty($request->input('force_create'))) {
-
-            // Création du devoir (Duty)
+                // Création du devoir (Duty)
                 Duty::create([
                     'job_id' => $validatedData['job_id'],
                     'duration' => $validatedData['duration'],
                     'begin_date' => $validatedData['begin_date'],
                     'type' => $validatedData['type'],
                     'employee_id' => $old_employee->id,
-                    'absence_balance' => $validatedData['absence_balance']
+                    'absence_balance' => $validatedData['absence_balance'],
                 ]);
 
                 // Mise à jour du directeur de la direction si applicable
@@ -82,14 +81,14 @@ class DutyController extends Controller
             }
 
             if ($dept->name === 'DG' && $dept->director_id !== null && $job->title === 'DG') {
-                if ($request->input('force_create')==true) {
+                if ($request->input('force_create') == true) {
                     $old_header = Employee::find($dept->director_id);
                     $old_header->update(['status' => $this->status[1]]);
 
-                    $old_header_duty = Duty::where('employee_id',$old_header->id)->where('evolution',$this->evolutions[0]);
+                    $old_header_duty = Duty::where('employee_id', $old_header->id)->where('evolution', $this->evolutions[0]);
                     $old_header_duty->update([
                         'evolution' => $this->evolutions[1],
-                        'status' => $this->status[1]
+                        'status' => $this->status[1],
                     ]);
                     // Création de l'employé
 
@@ -100,19 +99,19 @@ class DutyController extends Controller
                         'begin_date' => $validatedData['begin_date'],
                         'type' => $validatedData['type'],
                         'employee_id' => $old_employee->id,
-                        'absence_balance' => $validatedData['absence_balance']
+                        'absence_balance' => $validatedData['absence_balance'],
                     ]);
                     $dept->update(['director_id' => $old_employee->id]);
                 }
             } elseif ($dept->director_id !== null && $job->n_plus_one_job != null && $job->n_plus_one_job->title == 'DG') {
-                if ($request->input('force_create')==true) {
+                if ($request->input('force_create') == true) {
                     $old_header = Employee::find($dept->director_id);
                     $old_header->update(['status' => $this->status[1]]);
 
-                    $old_header_duty = Duty::where('employee_id',$old_header->id)->where('evolution', $this->evolutions[0]);
+                    $old_header_duty = Duty::where('employee_id', $old_header->id)->where('evolution', $this->evolutions[0]);
                     $old_header_duty->update([
                         'evolution' => $this->evolutions[1],
-                        'status' => $this->status[1]
+                        'status' => $this->status[1],
                     ]);
                     // Création de l'employé
 
@@ -123,12 +122,11 @@ class DutyController extends Controller
                         'begin_date' => $validatedData['begin_date'],
                         'type' => $validatedData['type'],
                         'employee_id' => $old_employee->id,
-                        'absence_balance' => $validatedData['absence_balance']
+                        'absence_balance' => $validatedData['absence_balance'],
                     ]);
-                    $dept->update(['director_id' => $emp->id]);
+                    $dept->update(['director_id' => $old_employee->id]);
                 }
             }
-
 
             return response()->json(['message' => 'Contrat créé avec succès.', 'ok' => true]);
         } catch (ValidationException $e) {
@@ -141,9 +139,6 @@ class DutyController extends Controller
             return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
     }
-
-
-
 
     public function index()
     {
@@ -169,7 +164,6 @@ class DutyController extends Controller
             ->distinct()
             ->get();
 
-        
         // $employees = DB::table('duties')
         //     ->join('employees', 'duties.employee_id', '=', 'employees.id')
         //     ->join('jobs', 'duties.job_id', '=', 'jobs.id') // Ajouter cette jointure pour accéder au job
@@ -181,18 +175,19 @@ class DutyController extends Controller
         //     ->distinct()
         //     ->get();
         $departments = Department::orderBy('created_at', 'desc')->get();
-        return view('pages.admin.personnel.contrats.index',compact('departments', 'employees'));
+
+        return view('pages.admin.personnel.contrats.index', compact('departments', 'employees'));
     }
 
-    public function contrats(Request $request, string $ev){
-        
-        $search = $request->input('search', '');     
-        $limit = $request->input('limit', 5);   
-        $page = $request->input('page', 1);  
-        $departmentId = $request->input('deptValue', null); 
-    
+    public function contrats(Request $request, string $ev)
+    {
+        $search = $request->input('search', '');
+        $limit = $request->input('limit', 5);
+        $page = $request->input('page', 1);
+        $departmentId = $request->input('deptValue', null);
+
         // Construire la requête
-        //en cours
+        // en cours
         if ($ev == $this->evolutions[0]) {
             $query = DB::table('duties')
                 ->join('employees', 'duties.employee_id', '=', 'employees.id')
@@ -214,7 +209,7 @@ class DutyController extends Controller
                 ->where('duties.status', '=', $this->status[0])
                 ->orderBy('duties.created_at', 'desc');
         }
-        //suspendus
+        // suspendus
         if ($ev == $this->evolutions[3]) {
             $query = DB::table('duties')
                 ->join('employees', 'duties.employee_id', '=', 'employees.id')
@@ -236,7 +231,7 @@ class DutyController extends Controller
                 ->where('duties.status', '=', $this->status[1])
                 ->orderBy('duties.created_at', 'desc');
         }
-        //terminés
+        // terminés
         if ($ev == $this->evolutions[1]) {
             $query = DB::table('duties')
                 ->join('employees', 'duties.employee_id', '=', 'employees.id')
@@ -257,7 +252,7 @@ class DutyController extends Controller
                 ->where('duties.status', '=', $this->status[1])
                 ->orderBy('duties.created_at', 'desc');
         }
-        //démissionés
+        // démissionés
         if ($ev == $this->evolutions[4]) {
             $query = DB::table('duties')
                 ->join('employees', 'duties.employee_id', '=', 'employees.id')
@@ -279,7 +274,7 @@ class DutyController extends Controller
                 // ->where('employees.status', '=', $this->status[1])
                 ->orderBy('duties.created_at', 'desc');
         }
-        //licencies
+        // licencies
         if ($ev == $this->evolutions[5]) {
             $query = DB::table('duties')
                 ->join('employees', 'duties.employee_id', '=', 'employees.id')
@@ -301,7 +296,7 @@ class DutyController extends Controller
                 // ->where('employees.status', '=', $this->status[1])
                 ->orderBy('duties.created_at', 'desc');
         }
-        //supprimes
+        // supprimes
         if ($ev == $this->status[3]) {
             $query = DB::table('duties')
                 ->join('employees', 'duties.employee_id', '=', 'employees.id')
@@ -321,35 +316,32 @@ class DutyController extends Controller
                 ->where('duties.status', '=', $this->status[3])
                 ->orderBy('duties.created_at', 'desc');
         }
-        
-        
+
         // Filtrer par département, si fourni
         if (!is_null($departmentId)) {
-            
             $query->where('jobs.department_id', '=', $departmentId);
         }
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->whereRaw('LOWER(employees.first_name) LIKE ?', ['%' . strtolower($search) . '%'])
-                  ->orWhereRaw('LOWER(employees.last_name) LIKE ?', ['%' . strtolower($search) . '%'])
+                $q->whereRaw('LOWER(employees.first_name) LIKE ?', ['%'.strtolower($search).'%'])
+                  ->orWhereRaw('LOWER(employees.last_name) LIKE ?', ['%'.strtolower($search).'%'])
                 //   ->orWhereRaw('duties.begin_date LIKE ?', ['%' . strtolower($search) . '%'])
-                  ->orWhereRaw('CAST(duties.absence_balance AS TEXT) LIKE ?', ['%' . strtolower($search) . '%'])
-                  ->orWhereRaw('LOWER(duties.type) LIKE ?', ['%' . strtolower($search) . '%'])
-                  ->orWhereRaw('LOWER(departments.name) LIKE ?', ['%' . strtolower($search) . '%'])
-                  ->orWhereRaw('LOWER(jobs.title) LIKE ?', ['%' . strtolower($search) . '%']);
+                  ->orWhereRaw('CAST(duties.absence_balance AS TEXT) LIKE ?', ['%'.strtolower($search).'%'])
+                  ->orWhereRaw('LOWER(duties.type) LIKE ?', ['%'.strtolower($search).'%'])
+                  ->orWhereRaw('LOWER(departments.name) LIKE ?', ['%'.strtolower($search).'%'])
+                  ->orWhereRaw('LOWER(jobs.title) LIKE ?', ['%'.strtolower($search).'%']);
             });
-          
         }
-        
-    
+
         // Ajouter la pagination
         $employees = $query->paginate($limit);
-    
+
         // Retourner la réponse JSON
         return response()->json($employees);
     }
 
-    public function suspended(Request $request, int $id){
+    public function suspended(Request $request, int $id)
+    {
         try {
             $duty = Duty::find($id);
             $emp = Employee::find($duty->employee_id);
@@ -358,35 +350,36 @@ class DutyController extends Controller
             // ]);
             $duty->update([
                 'status' => $this->status[1],
-                'evolution' => $this->evolutions[3]
+                'evolution' => $this->evolutions[3],
             ]);
-            return response()->json(['message' => 'Suspendu avec succès.', 'ok' => true]);
 
+            return response()->json(['message' => 'Suspendu avec succès.', 'ok' => true]);
         } catch (\Throwable $th) {
             return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
-        
     }
 
-    public function ongoing(Request $request, int $id){
+    public function ongoing(Request $request, int $id)
+    {
         try {
             $duty = Duty::find($id);
             $emp = Employee::find($duty->employee_id);
             $emp->update([
-                'status' => $this->status[0]
+                'status' => $this->status[0],
             ]);
             $duty->update([
                 'evolution' => $this->evolutions[0],
-                'status' => $this->status[0]
+                'status' => $this->status[0],
             ]);
-            return response()->json(['message' => 'Réintégré avec succès.', 'ok' => true]);
 
+            return response()->json(['message' => 'Réintégré avec succès.', 'ok' => true]);
         } catch (\Throwable $th) {
             return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
     }
 
-    public function resigned(Request $request, int $id){
+    public function resigned(Request $request, int $id)
+    {
         try {
             $duty = Duty::find($id);
             $emp = Employee::find($duty->employee_id);
@@ -395,16 +388,17 @@ class DutyController extends Controller
             // ]);
             $duty->update([
                 'evolution' => $this->evolutions[4],
-                'status' => $this->status[1]
+                'status' => $this->status[1],
             ]);
-            return response()->json(['message' => 'Démissioné avec succès.', 'ok' => true]);
 
+            return response()->json(['message' => 'Démissioné avec succès.', 'ok' => true]);
         } catch (\Throwable $th) {
             return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
     }
 
-    public function dismissed(Request $request, int $id){
+    public function dismissed(Request $request, int $id)
+    {
         try {
             $duty = Duty::find($id);
             $emp = Employee::find($duty->employee_id);
@@ -413,48 +407,49 @@ class DutyController extends Controller
             // ]);
             $duty->update([
                 'evolution' => $this->evolutions[5],
-                'status' => $this->status[1]
+                'status' => $this->status[1],
             ]);
+
             return response()->json(['message' => 'licencié avec succès.', 'ok' => true]);
-
         } catch (\Throwable $th) {
             return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
     }
-    public function deleted(Request $request, int $id){
+
+    public function deleted(Request $request, int $id)
+    {
         try {
-            $duty = Duty::find($id);            
+            $duty = Duty::find($id);
             $duty->update([
-                'status' => $this->status[3]
+                'status' => $this->status[3],
             ]);
-            return response()->json(['message' => 'Supprimé avec succès.', 'ok' => true]);
 
+            return response()->json(['message' => 'Supprimé avec succès.', 'ok' => true]);
         } catch (\Throwable $th) {
             return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
     }
-    public function ended(Request $request, int $id){
+
+    public function ended(Request $request, int $id)
+    {
         try {
-            $duty = Duty::find($id);            
+            $duty = Duty::find($id);
             $duty->update([
                 'evolution' => $this->evolutions[1],
-                'status' => $this->status[1]
+                'status' => $this->status[1],
             ]);
-            return response()->json(['message' => 'Terminé avec succès.', 'ok' => true]);
 
+            return response()->json(['message' => 'Terminé avec succès.', 'ok' => true]);
         } catch (\Throwable $th) {
             return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
     }
-
-
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        //
     }
 
     /**
@@ -462,7 +457,6 @@ class DutyController extends Controller
      */
     public function store(Request $request)
     {
-        //
     }
 
     /**
@@ -470,7 +464,6 @@ class DutyController extends Controller
      */
     public function show(Duty $duty)
     {
-        //
     }
 
     /**
@@ -478,7 +471,6 @@ class DutyController extends Controller
      */
     public function edit(Duty $duty)
     {
-        //
     }
 
     /**
@@ -486,7 +478,6 @@ class DutyController extends Controller
      */
     public function update(Request $request, Duty $duty)
     {
-        //
     }
 
     /**
@@ -494,6 +485,5 @@ class DutyController extends Controller
      */
     public function destroy(Duty $duty)
     {
-        //
     }
 }
