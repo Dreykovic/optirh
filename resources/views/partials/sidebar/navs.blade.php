@@ -54,19 +54,19 @@
     <li class="collapsed">
         <a class="m-link {{ Str::startsWith(request()->path(), 'documents') ? 'active' : '' }}"
             data-bs-toggle="collapse" data-bs-target="#documents-navs" href="#">
-            <i class="icofont-calendar fs-5"></i> <span>Documents</span> <span
+            <i class="icofont-file-document fs-5"></i> <span>Documents</span> <span
                 class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
         <!-- Menu: Sub menu ul -->
         <ul class="sub-menu collapse {{ Str::startsWith(request()->path(), 'documents') ? 'show' : '' }}"
             id="documents-navs">
             <li>
-                <a class="ms-link {{ Str::startsWith(request()->path(), 'documents/request/create') ? 'active' : '' }}"
+                <a class="ms-link {{ Str::startsWith(request()->path(), 'documents/requests/create') ? 'active' : '' }}"
                     href="{{ route('documents.create') }}">
                     <span>Faire Une Demande</span>
                 </a>
             </li>
             <li>
-                <a class="ms-link {{ Str::startsWith(request()->path(), 'documents/requests') ? 'active' : '' }}"
+                <a class="ms-link {{ Str::startsWith(request()->path(), 'documents/requests/index') ? 'active' : '' }}"
                     href="{{ route('documents.requests') }}">
                     <span>Demandes </span>
                 </a>
@@ -92,8 +92,8 @@
         <li class="collapsed">
             <a class="m-link {{ Str::startsWith(request()->path(), 'users-management') ? 'active' : '' }}"
                 data-bs-toggle="collapse" data-bs-target="#users-management-navs" href="#">
-                <i class="icofont-users-alt-2 fs-5"></i> <span>Utilisateurs</span> <span
-                    class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
+                <i class="icofont-ui-user-group fs-5"></i>
+                <span>Utilisateurs</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
             <!-- Menu: Sub menu ul -->
             <ul class="sub-menu collapse {{ Str::startsWith(request()->path(), 'users-management') ? 'show' : '' }}"
                 id="users-management-navs">
@@ -129,7 +129,7 @@
         <li class="collapsed">
             <a class="m-link {{ Str::startsWith(request()->path(), 'membres') ? 'active' : '' }}" data-bs-toggle="collapse"
                 data-bs-target="#membres-navs" href="#">
-                <i class="icofont-calendar fs-5"></i> <span>Personnel</span> <span
+                <i class="icofont-user-suited fs-5"></i> <span>Personnel</span> <span
                     class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
             <!-- Menu: Sub menu ul -->
             <ul class="sub-menu collapse {{ Str::startsWith(request()->path(), 'membres') ? 'show' : '' }}"
@@ -168,7 +168,7 @@
     <li class="collapsed">
         <a class="m-link {{ Str::startsWith(request()->path(), 'employee') ? 'active' : '' }}"
             data-bs-toggle="collapse" data-bs-target="#employees-navs" href="#">
-            <i class="icofont-calendar fs-5"></i> <span>Mes Données</span> <span
+            <i class="icofont-files-stack fs-5"></i> <span>Mes Données</span> <span
                 class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
         <!-- Menu: Sub menu ul -->
         <ul class="sub-menu collapse {{ Str::startsWith(request()->path(), 'employee') ? 'show' : '' }}"

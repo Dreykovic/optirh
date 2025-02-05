@@ -182,15 +182,15 @@ Route::group(['middleware' => 'auth'], function () {
         * Document Request
         */
 
-        Route::prefix('/request')->group(function () {
-            Route::get('/requests/{stage?}', [DocumentRequestController::class,  'index'])->name('documents.requests');
-            Route::get('/request/create', [DocumentRequestController::class,  'create'])->name('documents.create');
-            Route::post('/request/save', [DocumentRequestController::class,  'store'])->name('documents.save');
-            Route::post('/request/approve/{absenceId}', [DocumentRequestController::class,  'approve'])->name('documents.approve');
-            Route::post('/request/reject/{absenceId}', [DocumentRequestController::class,  'reject'])->name('documents.reject');
-            Route::post('/request/comment/{absenceId}', [DocumentRequestController::class,  'comment'])->name('documents.comment');
-            Route::post('/request/cancel/{absenceId}', [DocumentRequestController::class,  'cancel'])->name('documents.cancel');
-            Route::get('/request/download/{absenceId}', [DocumentRequestController::class,  'download'])->name('documents.download');
+        Route::prefix('/requests')->group(function () {
+            Route::get('/index/{stage?}', [DocumentRequestController::class,  'index'])->name('documents.requests');
+            Route::get('/create', [DocumentRequestController::class,  'create'])->name('documents.create');
+            Route::post('/save', [DocumentRequestController::class,  'store'])->name('documents.save');
+            Route::post('/approve/{absenceId}', [DocumentRequestController::class,  'approve'])->name('documents.approve');
+            Route::post('/reject/{absenceId}', [DocumentRequestController::class,  'reject'])->name('documents.reject');
+            Route::post('/comment/{absenceId}', [DocumentRequestController::class,  'comment'])->name('documents.comment');
+            Route::post('/cancel/{absenceId}', [DocumentRequestController::class,  'cancel'])->name('documents.cancel');
+            Route::get('/download/{absenceId}', [DocumentRequestController::class,  'download'])->name('documents.download');
         });
         /*
         * Document Types

@@ -49,7 +49,7 @@ class DocumentRequestController extends Controller
 
             // Vérification de la validité du stage
             if ($stage !== 'ALL' && !in_array($stage, $validStages)) {
-                return redirect()->route('documents.index')->with('error', 'Stage invalide');
+                return redirect()->route('documents.requests')->with('error', 'Stage invalide');
             }
 
             // Récupérer les filtres de recherche
