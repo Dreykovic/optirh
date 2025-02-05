@@ -479,7 +479,7 @@
     </p>
     <p class="c2 c3"><span class="c12"></span></p>
     <p class="c2 c21">
-        <span class="c12">Fait &agrave; Lom&eacute;, le @formatDateOnly(new \Carbon\Carbon())</span>
+        <span class="c12">Fait &agrave; Lom&eacute;, le @formatDateOnly($leaveRequest->date_of_approval)</span>
     </p>
     <p class="c2 c21 c3"><span class="c12"></span></p>
     <p class="c2 c21">

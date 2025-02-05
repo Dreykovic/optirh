@@ -490,7 +490,7 @@
     <p class="c0"><span class="c3"></span></p>
     <p class="c0"><span class="c18 c13"></span></p>
     <p class="c0"><span class="c18 c13"></span></p>
-    <p class="c12"><span class="c3">Fait &agrave; Lom&eacute;, le @formatDateOnly(new \Carbon\Carbon())</span></p>
+    <p class="c12"><span class="c3">Fait &agrave; Lom&eacute;, le @formatDateOnly($leaveRequest->date_of_approval)</span></p>
     <p class="c12 c22"><span class="c3"></span></p>
     <p class="c12">
         <span class="c3">Le {{ $dgJob->description }}</span>

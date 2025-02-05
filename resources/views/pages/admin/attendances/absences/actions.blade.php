@@ -3,7 +3,15 @@
     <span class="visually-hidden">Toggle Dropdown</span>
 </div>
 <ul class="dropdown-menu border-0 shadow py-3 px-2">
+    <li>
+        <a class="dropdown-item py-2 rounded" data-bs-toggle="modal" data-bs-target="#absenceReqDetails{{ $absence->id }}"
+            role="button">
+            <i class="icofont-eye text-info"></i>
 
+            <span class="d-none d-sm-none d-md-inline">Détails</span>
+        </a>
+        </div>
+    </li>
     @if (
         ($absence->level == 'ONE' && auth()->user()->hasRole('GRH')) ||
             ($absence->level == 'TWO' && auth()->user()->hasRole('DG')) ||
@@ -13,15 +21,6 @@
             (in_array($absence->level, ['ZERO']) &&
                 auth()->user()->hasRole('GRH') &&
                 $absence->duty->job->n_plus_one_job_id === null))
-        <li>
-            <a class="dropdown-item py-2 rounded" data-bs-toggle="modal"
-                data-bs-target="#absenceReqDetails{{ $absence->id }}" role="button">
-                <i class="icofont-eye text-info"></i>
-
-                <span class="d-none d-sm-none d-md-inline">Détails</span>
-            </a>
-            </div>
-        </li>
         <li>
             <div class="modelUpdateFormContainer dropdown-item py-2 rounded" id="absenceApproveForm{{ $absence->id }}">
 

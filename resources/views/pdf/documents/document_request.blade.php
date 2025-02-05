@@ -309,22 +309,27 @@
     </p>
     <p class="c2"><span class="c1"></span></p>
     <p class="c7">
-        <span class="c10">Je soussign&eacute;, Aftar Tour&eacute; MOROU, Directeur
-            g&eacute;n&eacute;ral de l&rsquo;Autorit&eacute; de
-            r&eacute;gulation de la commande publique (ARCOP) par
-            int&eacute;rim, atteste que </span><span class="c6">Monsieur DEGBE Kodjovi </span><span
-            class="c10">travaille en qualit&eacute; d&rsquo;Assistant en communication
-            &agrave; la Direction g&eacute;n&eacute;rale de l&rsquo;ARCOP
-            depuis le 1</span><span class="c5">er </span><span class="c4">mars 2024 &agrave; ce jour.</span>
+        <span class="c10">Je soussign&eacute;, {{ "{$dg->last_name} {$dg->first_name}" }}, {{ $dgJob->description }}
+            de l&rsquo;Autorit&eacute; de
+            r&eacute;gulation de la commande publique (ARCOP), atteste que </span><span class="c6">Monsieur
+            {{ " {$documentRequest->duty->employee->last_name} {$documentRequest->duty->employee->first_name}" }}
+        </span><span class="c10">travaille en qualit&eacute;
+            de{{ " {$documentRequest->duty->job->title} à la {$documentRequest->duty->job->department->description}" }}
+            de l&rsquo;ARCOP
+            depuis le {{ formatDateRange($documentRequest->start_date, $documentRequest->end_date) }} &agrave; ce
+            jour.</span>
     </p>
     <p class="c7" id="h.gjdgxs">
         <span class="c10">En foi de quoi, la pr&eacute;sente attestation est
-            d&eacute;livr&eacute;e &agrave; </span><span class="c6">Monsieur DEGBE </span><span class="c4">pour
+            d&eacute;livr&eacute;e &agrave; </span><span class="c6">Monsieur
+            {{ " {$documentRequest->duty->employee->last_name} {$documentRequest->duty->employee->first_name}" }}
+        </span><span class="c4">pour
             servir et valoir ce que de droit.</span>
     </p>
     <p class="c12">
         <span class="c4">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Fait &agrave;
             Lom&eacute;,
+            @formatDateOnly($documentRequest->date_of_approval)
         </span>
     </p>
     <p class="c0"><span class="c4"></span></p>
@@ -334,7 +339,8 @@
             &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
             &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
             &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="c6 c11">Aftar Tour&eacute; MOROU</span>
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span
+            class="c6 c11">{{ "{$dg->last_name} {$dg->first_name}" }}</span>
     </p>
 </body>
 
