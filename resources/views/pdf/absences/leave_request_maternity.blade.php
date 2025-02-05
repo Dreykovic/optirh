@@ -459,33 +459,36 @@
     <p class="c10"><span class="c17">*********************</span></p>
     <p class="c2 c3"><span class="c0"></span></p>
     <p class="c2" id="h.gjdgxs">
-        <span class="c12">Madame KOMLAN Yawavi, Comptable &agrave; la Direction
-            g&eacute;n&eacute;rale de l&rsquo;Autorit&eacute; de
+        <span
+            class="c12">Madame{{ " {$leaveRequest->duty->employee->last_name} {$leaveRequest->duty->employee->first_name}, {$leaveRequest->duty->job->title} à la {$leaveRequest->duty->job->department->description}" }}
+            de l&rsquo;Autorit&eacute; de
             r&eacute;gulation de la commande publique (ARCOP), est
             autoris&eacute;e &agrave; jouir d&rsquo;un cong&eacute; de
-            maternit&eacute; de quatorze (14) semaines pour compter du
-            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-            18 septembre au 22 d&eacute;cembre 2023 inclus.
+            maternit&eacute; de {{ numberToWords($leaveRequest->requested_days) }} ({{ $leaveRequest->requested_days }})
+            jours pour compter du
+            {{ formatDateRange($leaveRequest->start_date, $leaveRequest->end_date) }} inclus.
         </span>
     </p>
     <p class="c2 c3"><span class="c4"></span></p>
     <p class="c2">
         <span class="c12">La pr&eacute;sente autorisation est d&eacute;livr&eacute;e
-            &agrave; Madame KOMLAN pour servir et valoir ce que de
+            &agrave; Madame
+            {{ " {$leaveRequest->duty->employee->last_name} {$leaveRequest->duty->employee->first_name}" }}
+            pour servir et valoir ce que de
             droit.</span>
     </p>
     <p class="c2 c3"><span class="c12"></span></p>
     <p class="c2 c21">
-        <span class="c12">Fait &agrave; Lom&eacute;, le</span>
+        <span class="c12">Fait &agrave; Lom&eacute;, le @formatDateOnly($leaveRequest->date_of_approval)</span>
     </p>
     <p class="c2 c21 c3"><span class="c12"></span></p>
     <p class="c2 c21">
-        <span class="c12">Le Directeur G&eacute;n&eacute;ral p.i.</span>
+        <span class="c12">Le {{ $dgJob->description }}</span>
     </p>
     <p class="c1"><span class="c12"></span></p>
     <p class="c1"><span class="c12"></span></p>
     <p class="c1"><span class="c6 c24"></span></p>
-    <p class="c8"><span class="c6 c25">Aftar Tour&eacute; MOROU</span></p>
+    <p class="c8"><span class="c6 c25"> {{ "{$dg->last_name} {$dg->first_name}" }}</span></p>
     <p class="c2 c21 c3"><span class="c20"></span></p>
     <p class="c2 c3 c21"><span class="c5"></span></p>
 </body>

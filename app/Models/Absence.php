@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -70,6 +71,7 @@ class Absence extends Model
                         ->value('absence_number'); // Obtenir la valeur maximale
 
                     $this->absence_number = $maxAbsenceNumber ? $maxAbsenceNumber + 1 : 1;
+                    $this->date_of_approval = new Carbon();
                     break;
 
                 default:
@@ -84,6 +86,7 @@ class Absence extends Model
                         ->value('absence_number'); // Obtenir la valeur maximale
 
                     $this->absence_number = $maxAbsenceNumber ? $maxAbsenceNumber + 1 : 1;
+                    $this->date_of_approval = new Carbon();
 
                     break;
             }

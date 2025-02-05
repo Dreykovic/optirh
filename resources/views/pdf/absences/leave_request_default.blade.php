@@ -473,32 +473,33 @@
     </p>
     <p class="c10"><span class="c16 c13">************</span></p>
     <p class="c23" id="h.gjdgxs">
-        <span class="c3">Une autorisation d&rsquo;absence de trois (03) jours, valable
-            pour les, 6, 26 et 27 d&eacute;cembre 2024, conform&eacute;ment
+        <span class="c3">Une autorisation d&rsquo;absence de {{ numberToWords($leaveRequest->requested_days) }}
+            ({{ $leaveRequest->requested_days }}) jours, valable
+            du {{ formatDateRange($leaveRequest->start_date, $leaveRequest->end_date) }}, conform&eacute;ment
             aux dispositions de l&rsquo;article 8 du r&egrave;glement
             int&eacute;rieur du personnel de la Direction
             g&eacute;n&eacute;rale de l&rsquo;Autorit&eacute; de
             r&eacute;gulation de la commande publique (ARCOP),
-            est&nbsp;accord&eacute;e&nbsp;&agrave;&nbsp;Monsieur DEGBE
-            Kodjovi, Assistant en communication &agrave; la Direction
-            g&eacute;n&eacute;rale de l&rsquo;Autorit&eacute; de
-            r&eacute;gulation de la commande publique (ARCOP), pour son
-            mariage civil et religieux.
+            est&nbsp;accord&eacute;e&nbsp;&agrave;&nbsp;Monsieur
+            {{ " {$leaveRequest->duty->employee->last_name} {$leaveRequest->duty->employee->first_name}, {$leaveRequest->duty->job->title} à la {$leaveRequest->duty->job->department->description}" }}
+            de l&rsquo;Autorit&eacute; de
+            r&eacute;gulation de la commande publique (ARCOP), pour
+            {{ $leaveRequest->reason ?? 'raisons personnelles' }}.
         </span>
     </p>
     <p class="c0"><span class="c3"></span></p>
     <p class="c0"><span class="c18 c13"></span></p>
     <p class="c0"><span class="c18 c13"></span></p>
-    <p class="c12"><span class="c3">Fait &agrave; Lom&eacute;, le</span></p>
+    <p class="c12"><span class="c3">Fait &agrave; Lom&eacute;, le @formatDateOnly($leaveRequest->date_of_approval)</span></p>
     <p class="c12 c22"><span class="c3"></span></p>
     <p class="c12">
-        <span class="c3">Le Directeur G&eacute;n&eacute;ral p.i.</span>
+        <span class="c3">Le {{ $dgJob->description }}</span>
     </p>
     <p class="c0"><span class="c3"></span></p>
     <p class="c4"><span class="c3"></span></p>
     <p class="c4"><span class="c9 c13"></span></p>
     <p class="c1">
-        <span class="c14">&nbsp;</span><span class="c9">Aftar Tour&eacute; MOROU</span>
+        <span class="c14">&nbsp;</span><span class="c9">{{ "{$dg->last_name} {$dg->first_name}" }}</span>
     </p>
     <p class="c12 c22"><span class="c6"></span></p>
 </body>

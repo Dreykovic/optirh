@@ -560,7 +560,7 @@
     </p>
     <p class="c2"><span class="c21"></span></p>
     <p class="c20 c22">
-        <span class="c11">Fait &agrave; Lom&eacute;, le @formatDateOnly(new \Carbon\Carbon())</span>
+        <span class="c11">Fait &agrave; Lom&eacute;, le @formatDateOnly($leaveRequest->date_of_approval)</span>
     </p>
     <p class="c2"><span class="c25 c32"></span></p>
     <p class="c22 c20">
@@ -570,7 +570,9 @@
     <p class="c28"><span class="c25 c30"></span></p>
     <p class="c24"><span class="c4 c25"></span></p>
     <p class="c15">
-        <span class="c26">&nbsp;</span><span class="c4">{{ $dg->last_name . ' ' . $dg->first_name }}</span>
+        <span class="c26">&nbsp;</span><span class="c4">
+            {{ "{$dg->last_name} {$dg->first_name}" }}
+        </span>
     </p>
     <p class="c2 c20"><span class="c30 c31"></span></p>
 </body>
