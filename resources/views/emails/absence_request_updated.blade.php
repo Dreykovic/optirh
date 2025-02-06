@@ -27,28 +27,43 @@
 
                         <!--begin:Email content-->
                         <div style="padding-bottom: 30px; font-size: 17px;">
-                            <strong>Salut Mr/Mme {{ $receiverName }} !!!</strong>
+                            <strong>Salut {{ $receiverName }} !!!</strong>
                         </div>
 
                         <div style="padding-bottom: 30px">
-                            Une nouvelle demande d'absence de {{ $text }} nécessite votre action pour permettre
-                            la poursuite du
-                            processus. Nous vous invitons à consulter la demande et à prendre les mesures nécessaires.
 
-                            Cliquez sur le bouton ci-dessous pour accéder directement à la demande :
+
+                            Nous souhaitons vous informer que votre demande de congé
+                            du {{ formatDateRange($absence->start_date, $absence->end_date) }} a été
+                            {{ $status }}.<br>
+
+                            @if ($status == 'approuvée')
+                                ✅ Félicitations ! Votre congé a été approuvé. Nous vous souhaitons un bon repos et
+                                restons à votre disposition en cas de besoin.
+                            @else
+                                ❌ Malheureusement, votre demande a été refusée. Pour plus de détails sur cette décision,
+                                nous vous invitons à contacter votre responsable.
+                            @endif
+
+                            Cliquez sur le bouton ci-dessous pour consulter votre demande :
+
                         </div>
 
                         <div style="padding-bottom: 40px; text-align:center;">
                             <a href="{{ $url }}" rel="noopener" target="_blank"
                                 style="text-decoration:none;display:inline-block;text-align:center;padding:0.75575rem 1.3rem;font-size:0.925rem;line-height:1.5;border-radius:0.35rem;color:#ffffff;background-color:#3E97FF;border:0px;margin-right:0.75rem!important;font-weight:600!important;outline:none!important;vertical-align:middle"
                                 target="_blank">
-                                Consulter
-                            </a>
-                        </div>
 
+
+                                Accéder à ma demande </a>
+                        </div>
+                        [Accéder à ma demande]({{ $url }})
 
 
                         <div style="padding-bottom: 10px">
+
+                            Cordialement,<br>
+
                             OPTIRH<br>
                             ARCOP DSAF.
                         </div>

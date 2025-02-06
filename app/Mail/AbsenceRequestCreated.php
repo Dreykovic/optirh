@@ -3,8 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Absence;
-use App\Models\Employee;
-use App\Models\Job;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -21,8 +20,7 @@ class AbsenceRequestCreated extends Mailable implements ShouldQueue
      * Create a new message instance.
      */
     public function __construct(
-        private readonly Job $receiverJob,
-        private readonly Employee $receiver,
+        private readonly User $receiver,
         private readonly Absence $absence,
         private readonly string $url
     ) {
@@ -34,8 +32,8 @@ class AbsenceRequestCreated extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            to: [$this->receiver->users->first()->email],
-            subject: "Demande d'absence de {$this->absence->absence_type->label}",
+            to: [$this->receiver->email],
+            subject: "Demande d'absence {$this->absence->absence_type->label}",
         );
     }
 
@@ -44,7 +42,9 @@ class AbsenceRequestCreated extends Mailable implements ShouldQueue
      */
     public function content(): Content
     {
-        $receiverName = "{$this->receiverJob->title} {$this->receiver->last_name} {$this->receiver->first_name}";
+        $receiverTitle = $this->receiver->employee->gender === 'MALE' ? 'Monsieur' : 'Madame';
+
+        $receiverName = "{$receiverTitle} {$this->receiver->employee->last_name} {$this->receiver->employee->first_name}";
         $employee = $this->absence->duty->employee;
         $job = $this->absence->duty->job;
 

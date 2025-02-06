@@ -27,7 +27,7 @@
 
                         <!--begin:Email content-->
                         <div style="padding-bottom: 30px; font-size: 17px;">
-                            <strong>Salut Mr/Mme {{ $receiverName }} !!!</strong>
+                            <strong>Salut {{ $receiverName }} !!!</strong>
                         </div>
 
                         <div style="padding-bottom: 30px">
@@ -45,10 +45,12 @@
                                 Consulter
                             </a>
                         </div>
+                        [Accéder à la demande]({{ $url }})
 
 
 
                         <div style="padding-bottom: 10px">
+                            Cordialement,<br>
                             OPTIRH<br>
                             ARCOP DSAF.
                         </div>
