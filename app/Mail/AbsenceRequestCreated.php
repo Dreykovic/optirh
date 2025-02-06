@@ -12,7 +12,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class AbsenceRequestUpdated extends Mailable implements ShouldQueue
+class AbsenceRequestCreated extends Mailable implements ShouldQueue
 {
     use Queueable;
     use SerializesModels;
@@ -34,7 +34,7 @@ class AbsenceRequestUpdated extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            to: [$this->receiver->users->first()->email, $this->receiver->email],
+            to: [$this->receiver->users->first()->email],
             subject: "Demande d'absence de {$this->absence->absence_type->label}",
         );
     }
@@ -57,7 +57,7 @@ class AbsenceRequestUpdated extends Mailable implements ShouldQueue
         $url = $this->url;
 
         return new Content(
-            view: 'emails.absence_request_updated',
+            view: 'emails.absence_request_created',
             with: compact('receiverName', 'text', 'url')
         );
     }

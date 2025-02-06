@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AbsenceRequestUpdated;
 use App\Models\Absence;
 use App\Models\AbsenceType;
 use App\Models\Duty;
@@ -11,9 +12,9 @@ use App\Services\AbsencePdfService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
-use App\Mail\AbsenceRequestUpdated;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\ValidationException;
 
 // use Illuminate\Support\Facades\Mail;
 
@@ -183,15 +184,10 @@ class AbsenceController extends Controller
             $receiverJob = $absence->duty->job->n_plus_one_job ??
                  Job::where('title', 'Grh')->first();
 
-
             $receiver = $receiverJob->duties->firstWhere('evolution', 'ON_GOING')->employee;
-            Mail::to($receiver)->send(new AbsenceRequestUpdated($receiverJob, $receiver, $absence, route('absences.requests')));
+            Mail::send(new AbsenceRequestUpdated($receiverJob, $receiver, $absence, route('absences.requests')));
             // Redirection avec message de succès
 
-            // return response()->json([
-            //     'message' => "Demande d\'absence {$absence_type_id} créée avec succès.",
-            //     'ok' => true,
-            // ]);
             $var = $absence->absence_type ? $absence->absence_type->label : '';
 
             return response()->json([
@@ -325,9 +321,61 @@ class AbsenceController extends Controller
         try {
             // Rechercher l'absence par ID
             $absence = Absence::findOrFail($id);
+            // $receiverJob = $absence->duty->job->n_plus_one_job ??
+            // Job::where('title', 'Grh')->first();
 
             // Mise à jour du niveau et du statut
             $absence->updateLevelAndStage();
+            DB::transaction(function () use ($absence) {
+                switch ($absence->level) {
+                    case 'ZERO':
+                        $absence->stage = 'IN_PROGRESS';
+                        $absence->level = 'ONE';
+
+                        break;
+
+                    case 'ONE':
+                        $absence->stage = 'IN_PROGRESS';
+                        $absence->level = 'TWO';
+                        break;
+
+                    case 'TWO':
+                        $absence->stage = 'APPROVED';
+                        $absence->level = 'THREE';
+
+                        // Trouver le maximum actuel de absence_number de manière sécurisée
+                        $maxAbsenceNumber = DB::table($absence->getTable())
+                            ->whereNotNull('absence_number') // Filtrer les entrées valides
+                            ->orderByDesc('absence_number') // Trier par ordre décroissant
+                            ->lockForUpdate() // Verrouiller les lignes pour éviter les conflits
+                            ->value('absence_number'); // Obtenir la valeur maximale
+
+                        $absence->absence_number = $maxAbsenceNumber ? $maxAbsenceNumber + 1 : 1;
+                        $absence->date_of_approval = new Carbon();
+                        break;
+
+                    default:
+                        $absence->stage = 'APPROVED';
+                        $absence->level = 'THREE';
+
+                        // Trouver le maximum actuel de absence_number de manière sécurisée
+                        $maxAbsenceNumber = DB::table($absence->getTable())
+                            ->whereNotNull('absence_number') // Filtrer les entrées valides
+                            ->orderByDesc('absence_number') // Trier par ordre décroissant
+                            ->lockForUpdate() // Verrouiller les lignes pour éviter les conflits
+                            ->value('absence_number'); // Obtenir la valeur maximale
+
+                        $absence->absence_number = $maxAbsenceNumber ? $maxAbsenceNumber + 1 : 1;
+                        $absence->date_of_approval = new Carbon();
+
+                        break;
+                }
+
+                // Sauvegarder les changements dans la transaction
+                $absence->save();
+            });
+            // $receiver = $receiverJob->duties->firstWhere('evolution', 'ON_GOING')->employee;
+            // Mail::to($receiver)->send(new AbsenceRequestUpdated($receiverJob, $receiver, $absence, route('absences.requests')));
 
             return $this->successResponse(
                 'Demande de congé acceptée',
