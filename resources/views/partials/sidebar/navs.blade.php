@@ -19,13 +19,13 @@
             <li>
                 <a class="ms-link {{ Str::startsWith(request()->path(), 'attendances/absences/request/create') ? 'active' : '' }}"
                     href="{{ route('absences.create') }}">
-                    <span>Faire Une Demande</span>
+                    <span>Soumettre Une Demande</span>
                 </a>
             </li>
             <li>
                 <a class="ms-link {{ Str::startsWith(request()->path(), 'attendances/absences/requests') ? 'active' : '' }}"
                     href="{{ route('absences.requests') }}">
-                    <span>Demandes </span>
+                    <span>Liste </span>
                 </a>
             </li>
             @can('configurer-une-absence')
@@ -51,6 +51,8 @@
         </ul>
 
     </li>
+    <!-- Documents -->
+
     <li class="collapsed">
         <a class="m-link {{ Str::startsWith(request()->path(), 'documents') ? 'active' : '' }}"
             data-bs-toggle="collapse" data-bs-target="#documents-navs" href="#">
@@ -68,7 +70,7 @@
             <li>
                 <a class="ms-link {{ Str::startsWith(request()->path(), 'documents/requests/index') ? 'active' : '' }}"
                     href="{{ route('documents.requests') }}">
-                    <span>Demandes </span>
+                    <span>Documents </span>
                 </a>
             </li>
             @can('configurer-un-document')
@@ -87,6 +89,8 @@
         </ul>
 
     </li>
+    <!-- User Management -->
+
     @can('voir-un-credentials')
         <!-- User Management -->
         <li class="collapsed">
@@ -123,6 +127,7 @@
 
         </li>
     @endcan
+    <!-- Employees -->
 
     @can('voir-un-employee')
         <!-- Membres -->
@@ -164,6 +169,7 @@
 
         </li>
     @endcan
+    <!-- Data -->
 
     <li class="collapsed">
         <a class="m-link {{ Str::startsWith(request()->path(), 'employee') ? 'active' : '' }}"
