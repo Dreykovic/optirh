@@ -25,17 +25,18 @@
                 </div>
             </div>
             <div class="list-group m-2 ">
-                {{-- <a href="#" class="list-group-item list-group-item-action border-0 "><i
-                        class="icofont-tasks fs-5 me-3"></i>Mes taches</a>
-                <a href="#" class="list-group-item list-group-item-action border-0 "><i
-                        class="icofont-ui-user-group fs-6 me-3"></i>Membres</a> --}}
-                <a href="{{ route('logout') }}" class="list-group-item list-group-item-action border-0 "><i
-                        class="icofont-logout fs-6 me-3"></i>Se Déconnecter</a>
-                {{-- <div>
+                <a href="{{ route('employee.pay', Auth::user()->employee) }}"
+                    class="list-group-item list-group-item-action border-0 "><i
+                        class="icofont-files-stack fs-5 me-3"></i>Bulletins de paie</a>
+
+                <a href="{{ route('employee.data') }}" class="list-group-item list-group-item-action border-0 "><i
+                        class="icofont-settings fs-5 me-3"></i>Paramètres Profil</a>
+                <div>
                     <hr class="dropdown-divider border-dark">
                 </div>
-                <a href="#" class="list-group-item list-group-item-action border-0 "><i
-                        class="icofont-contact-add fs-5 me-3"></i>Ajputer un compte personnel</a> --}}
+
+                <a href="{{ route('logout') }}" class="list-group-item list-group-item-action border-0 "><i
+                        class="icofont-logout fs-6 me-3"></i>Se Déconnecter</a>
             </div>
         </div>
     </div>
