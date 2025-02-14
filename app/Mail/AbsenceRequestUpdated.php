@@ -3,8 +3,6 @@
 namespace App\Mail;
 
 use App\Models\Absence;
-use App\Models\Employee;
-use App\Models\Job;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -16,16 +14,16 @@ class AbsenceRequestUpdated extends Mailable implements ShouldQueue
 {
     use Queueable;
     use SerializesModels;
+    private $receiver;
 
     /**
      * Create a new message instance.
      */
     public function __construct(
-        private readonly Job $receiverJob,
-        private readonly Employee $receiver,
         private readonly Absence $absence,
         private readonly string $url
     ) {
+        $this->receiver = $this->absence->duty->employee;
     }
 
     /**
@@ -34,8 +32,8 @@ class AbsenceRequestUpdated extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            to: [$this->receiver->users->first()->email, $this->receiver->email],
-            subject: "Demande d'absence de {$this->absence->absence_type->label}",
+            to: [$this->receiver->users->first()->email],
+            subject: "Demande d'absence {$this->absence->absence_type->label}",
         );
     }
 
@@ -44,21 +42,16 @@ class AbsenceRequestUpdated extends Mailable implements ShouldQueue
      */
     public function content(): Content
     {
-        $receiverName = "{$this->receiverJob->title} {$this->receiver->last_name} {$this->receiver->first_name}";
-        $employee = $this->absence->duty->employee;
-        $job = $this->absence->duty->job;
+        $receiverTitle = $this->receiver->gender === 'MALE' ? 'Monsieur' : 'Madame';
 
-        $employeeTitle = $employee->gender === 'MALE' ? 'Monsieur' : 'Madame';
-        $employeeFullName = "{$employee->last_name} {$employee->first_name}";
-        $jobTitle = $job->title;
-        $department = $job->department->description;
-
-        $text = "{$employeeTitle} {$employeeFullName}, {$jobTitle} à la {$department} de l'ARCOP";
+        $receiverName = "{$receiverTitle} {$this->receiver->last_name} {$this->receiver->first_name}";
+        $absence = $this->absence;
+        $status = $this->absence->stage == 'APPROVED' ? 'approuvé' : 'refusé';
         $url = $this->url;
 
         return new Content(
             view: 'emails.absence_request_updated',
-            with: compact('receiverName', 'text', 'url')
+            with: compact('receiverName', 'absence', 'url', 'status')
         );
     }
 
