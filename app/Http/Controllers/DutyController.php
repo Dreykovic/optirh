@@ -125,7 +125,7 @@ class DutyController extends Controller
                         'employee_id' => $old_employee->id,
                         'absence_balance' => $validatedData['absence_balance']
                     ]);
-                    $dept->update(['director_id' => $emp->id]);
+                    $dept->update(['director_id' => $old_employee->id]);
                 }
             }
 
