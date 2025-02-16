@@ -1,4 +1,4 @@
-   <!-- Add Department-->
+   <!-- Update Pwd-->
    <div class="modal fade" id="credentialsPasswordUpdate{{ $user->id }}" tabindex="-1" aria-hidden="true">
        <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable modelUpdateFormContainer"
            id="credentialsPasswordForm{{ $user->id }}">

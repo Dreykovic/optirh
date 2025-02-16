@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\AbsenceType;
 use App\Models\Duty;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -27,8 +28,9 @@ return new class extends Migration {
             $table->text('reasons')->nullable();
             $table->string('proof')->nullable();
             $table->text('comment')->nullable();
+            $table->bigInteger('absence_number')->nullable();
             $table->foreignIdFor(Duty::class)->nullable()->constrained()->onDelete('cascade');
-            $table->foreignId('absence_type_id')->nullable()->constrained()->onDelete('set null'); // Clé étrangère vers le type d'absence
+            $table->foreignIdFor(AbsenceType::class)->nullable()->constrained()->onDelete('set null'); // Clé étrangère vers le type d'absence
 
             $table->timestamps();
         });

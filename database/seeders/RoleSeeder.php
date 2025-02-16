@@ -45,6 +45,12 @@ class RoleSeeder extends Seeder
             'créer-une-absence',
             'configurer-une-absence',
 
+            // Document Request
+            'voir-un-document',
+            'écrire-un-document',
+            'créer-un-document',
+            'configurer-un-document',
+
             // Credentials
             'voir-un-credentials',
             'écrire-un-credentials',
@@ -87,7 +93,11 @@ class RoleSeeder extends Seeder
             'écrire-une-absence',
             'créer-une-absence',
             'configurer-une-absence',
-
+            // Document Request
+            'voir-un-document',
+            'écrire-un-document',
+            'créer-un-document',
+            'configurer-un-document',
             // Credentials
             'voir-un-credentials',
             'écrire-un-credentials',
@@ -124,7 +134,11 @@ class RoleSeeder extends Seeder
             'écrire-une-absence',
             'créer-une-absence',
             'configurer-une-absence',
-
+            // Document Request
+            'voir-un-document',
+            'écrire-un-document',
+            'créer-un-document',
+            'configurer-un-document',
             // Credentials
             'voir-un-credentials',
             'écrire-un-credentials',
@@ -161,7 +175,11 @@ class RoleSeeder extends Seeder
             'écrire-une-absence',
             'créer-une-absence',
             'configurer-une-absence',
-
+            // Document Request
+            'voir-un-document',
+            'écrire-un-document',
+            'créer-un-document',
+            'configurer-un-document',
             // Credentials
             'voir-un-credentials',
             'écrire-un-credentials',
@@ -188,6 +206,10 @@ class RoleSeeder extends Seeder
             'voir-une-absence',
 
             'créer-une-absence',
+            // Document Request
+            'voir-un-document',
+
+            'créer-un-document',
 
             // Credentials
             'écrire-un-credentials',

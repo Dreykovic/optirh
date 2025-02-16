@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Absence;
-use App\Models\AbsenceType;
 use App\Models\Duty;
 use Illuminate\Database\Seeder;
 
