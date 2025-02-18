@@ -69,13 +69,15 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/contrats', [DutyController::class, 'index'])->name('contrats.index');
 
         Route::get('/pages', [EmployeeController::class, 'pages'])->name('membres.pages');
-        Route::get('/{employee}', [EmployeeController::class, 'show'])->name('membres.show');
+        Route::get('/pages/{employee}', [EmployeeController::class, 'show'])->name('membres.show');
         Route::post('/save', [EmployeeController::class, 'store'])->name('membres.store');
         Route::put('/update/{employee}', [EmployeeController::class, 'update'])->name('membres.update');
         Route::put('/update/pers/{id}', [EmployeeController::class, 'updatePres'])->name('membres.updatePres');
         Route::put('/update/pers/identity/{id}', [EmployeeController::class, 'updatePresIdentity'])->name('membres.updatePresIdentity');
         Route::put('/update/bank/{employee}', [EmployeeController::class, 'updateBank'])->name('membres.updateBank');
         Route::get('/directions/list', [DepartmentController::class, 'index'])->name('directions');
+        Route::get('/directions/list/{department}', [DepartmentController::class, 'show'])->name('directions.show'); //direction show
+
     });
     // mes données
     Route::prefix('employee')->group(function () {
@@ -87,7 +89,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // directions
     Route::prefix('directions')->group(function () {
-        Route::get('/{department}', [DepartmentController::class, 'show'])->name('directions.show');
+        //Route::get('/{department}', [DepartmentController::class, 'show'])->name('directions.show');
         Route::post('/create', [DepartmentController::class, 'store'])->name('directions.store');
         Route::put('/{id}', [DepartmentController::class, 'update'])->name('directions.update');
         Route::delete('/{id}', [DepartmentController::class, 'destroy'])->name('directions.destroy');
