@@ -326,7 +326,7 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified resource in storage. updatePresIdentity
      */
     public function updatePres(Request $request, $id)
     {
@@ -361,6 +361,42 @@ class EmployeeController extends Controller
             return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
     }
+
+    public function updatePresIdentity(Request $request, $id)
+    {
+        $employee = Employee::findOrFail($id);
+
+        try {
+            $validatedData = $request->validate([
+                'first_name' => 'max:255|sometimes',
+                'last_name' => 'max:255|sometimes',
+                'phone_number' => 'max:255|sometimes',
+                'address1' => 'max:255|sometimes',
+                'birth_date' => 'max:255|sometimes',
+                'email' => 'max:255|sometimes',
+            ]);
+            $employee->update([
+                'first_name' => $validatedData['first_name'],
+                'last_name' => $validatedData['last_name'],
+                'phone_number' => $validatedData['phone_number'],
+                'address1' => $validatedData['address1'],
+                'birth_date' => $validatedData['birth_date'],
+                'email' => $validatedData['email'],
+            ]);
+
+            return response()->json(['message' => 'Employé editer avec succès.', 'ok' => true]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
+            ], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+        }
+    }
+
+
 
     public function updateBank(Request $request, Employee $employee)
     {

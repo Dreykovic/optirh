@@ -73,6 +73,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/save', [EmployeeController::class, 'store'])->name('membres.store');
         Route::put('/update/{employee}', [EmployeeController::class, 'update'])->name('membres.update');
         Route::put('/update/pers/{id}', [EmployeeController::class, 'updatePres'])->name('membres.updatePres');
+        Route::put('/update/pers/identity/{id}', [EmployeeController::class, 'updatePresIdentity'])->name('membres.updatePresIdentity');
         Route::put('/update/bank/{employee}', [EmployeeController::class, 'updateBank'])->name('membres.updateBank');
         Route::get('/directions/list', [DepartmentController::class, 'index'])->name('directions');
     });
