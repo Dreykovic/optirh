@@ -9,7 +9,7 @@
                         <i class="icofont-info-square fs-5"></i>
                     </a>
                 </div>
-                @include('partials.header.notification')
+                {{-- @include('partials.header.notification') --}}
                 @include('partials.header.user-menu')
             </div>
 
@@ -22,8 +22,7 @@
             <!-- main menu meft-->
             <div class="order-0 col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mb-md-0 ">
 
-                <a type="button" class="btn btn-primary" href="{{ route('absences.create') }}"><i
-                        class="icofont-plus"></i>Demander Un
+                <a type="button" class="btn btn-primary" href="{{ route('absences.create') }}">Demander Un
                     Congés</a>
             </div>
         </div>

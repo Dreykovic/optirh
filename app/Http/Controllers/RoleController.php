@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\BladeDirectives\CustomDirectives;
-use App\Models\Journal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -64,39 +61,6 @@ class RoleController extends Controller
         }
     }
 
-    public function store(Request $request)
-    {
-        try {
-            $this->validate($request, [
-                'role_name' => 'required|unique:roles,name',
-                'permissions' => 'required',
-            ]);
-
-            $role = Role::create(['name' => $request->input('role_name')]);
-            $role->syncPermissions($request->input('permissions'));
-            // Construct permission names string
-            $currentUser = Auth::user();
-            if (!$currentUser->hasRole('ADMIN')) {
-                $permissionNames = '';
-                foreach ($role->permissions as $key => $item) {
-                    $permissionNames .= $item->name.', ';
-                }
-                $description = "Attribution des permissions : {$permissionNames}";
-
-                Journal::create([
-                    'titre' => "Création du rôle **{$role->name}**",
-                    'description' => $description,
-                    'user_id' => $currentUser->id,
-                ]);
-            }
-            session()->flash('success', "Le role **{$role->name}**  à été créé.");
-
-            return response()->json(['ok' => true, 'message' => 'Le role a été créé avec succès']);
-        } catch (\Exception $e) {
-            return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
-        }
-    }
-
     public function show($id)
     {
         try {
@@ -136,7 +100,7 @@ class RoleController extends Controller
             // Gérez l'erreur ici, vous pouvez la logger ou retourner une réponse adaptée à l'erreur.
             return back()->with(['error' => $e->getMessage()]);
 
-            return back()->with(['error' => 'Une erreur s\'est produite. Veuillez réessayer.']);
+            // return back()->with(['error' => 'Une erreur s\'est produite. Veuillez réessayer.']);
         }
     }
 
@@ -156,77 +120,5 @@ class RoleController extends Controller
         }
 
         return $sortie;
-    }
-
-    public function update(Request $request, $encryptId)
-    {
-        try {
-            $this->validate($request, [
-                'role_name' => 'required',
-                'permissions' => 'required|array', // Ensure 'permissions' is an array
-            ]);
-
-            $id = CustomDirectives::decryptId($encryptId);
-            $webMaster = Role::where('name', 'ADMIN')->first();
-            $currentUser = Auth::user();
-
-            if ($webMaster->id != $id || $currentUser->hasRole('ADMIN') && $webMaster->id == $id) {
-                $role = Role::find($id);
-                $role->name = $request->input('role_name');
-                $role->save();
-
-                $role->syncPermissions($request->input('permissions'));
-
-                if (!$currentUser->hasRole('ADMIN')) {
-                    // Construct permission names string
-                    $permissionNames = '';
-                    foreach ($role->permissions as $key => $item) {
-                        $permissionNames .= $item->name.', ';
-                    }
-
-                    $description = " Attribution des permissions : {$permissionNames}";
-
-                    Journal::create([
-                        'titre' => "Mis à jour du rôle **{$role->name}**",
-                        'description' => $description,
-                        'user_id' => $currentUser->id,
-                    ]);
-                }
-                session()->flash('success', "Le rôle *{$role->name}* a été mis à jour.");
-
-                return response()->json(['ok' => true, 'message' => 'Le rôle a été mis à jour avec succès']);
-            } else {
-                return response()->json(['ok' => false, 'message' => 'Permission non accordée.']);
-            }
-        } catch (\Exception $e) {
-            return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
-        }
-    }
-
-    public function destroy($encryptId)
-    {
-        try {
-            $id = CustomDirectives::decryptId($encryptId);
-
-            $webMaster = Role::where('name', 'ADMIN')->first();
-
-            if ($webMaster->id != $id) {
-                $role = Role::select('name')->find($id);
-                DB::table('roles')->where('id', $id)->delete();
-                $currentUser = Auth::user();
-                if (!$currentUser->hasRole('ADMIN')) {
-                    Journal::create([
-                        'titre' => "Supression du role **{$role->name}**",
-                        'user_id' => $currentUser->id,
-                    ]);
-                }
-
-                return response()->json(['ok' => true, 'message' => 'le role à été supprimé avec succès.']);
-            } else {
-                return response()->json(['ok' => false, 'message' => 'Permission non accordée.']);
-            }
-        } catch (\Exception $e) {
-            return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
-        }
     }
 }

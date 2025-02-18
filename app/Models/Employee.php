@@ -40,6 +40,9 @@ class Employee extends Model
         'marital_status',
         'emergency_contact',
         'status',
+        'phone_number', 
+        'gender',
+       
     ];
 
     public function users(): HasMany
@@ -57,8 +60,11 @@ class Employee extends Model
         return $this->hasMany(File::class, 'employee_id');
     }
 
-    public function department(): BelongsTo
-    {
-        return $this->belongsTo(Department::class, 'director_id');
-    }
+    // public function department(): BelongsTo
+    // {
+    //     return $this->belongsTo(Department::class,'director_id');
+    // }
+   
+   
+
 }

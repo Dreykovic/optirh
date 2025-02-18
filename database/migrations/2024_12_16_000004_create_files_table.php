@@ -14,6 +14,7 @@ return new class extends Migration {
         Schema::create('files', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('display_name')->nullable();
             $table->string('url')->nullable();
             $table->string('mime_type')->nullable();
             $table->string('description')->nullable();

@@ -46,13 +46,15 @@ class Duty extends Model
         return $this->hasMany(Absence::class, 'duty_id');
     }
 
+
     protected static function boot()
     {
         parent::boot();
 
-        static::creating(function ($duty) {
-            // Génère le numéro de compte de manière sécurisée
-            $duty->absence_balance = 30;
-        });
+        // static::creating(function ($duty) {
+        //     // Génère le numéro de compte de manière sécurisée
+        //     $duty->absence_balance = 30;
+        // });
     }
+
 }

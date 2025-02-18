@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Application Name
@@ -16,7 +15,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Recencement'),
+    'name' => env('APP_NAME', 'OptiRH'),
 
     /*
     |--------------------------------------------------------------------------
@@ -185,5 +184,4 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
-
 ];

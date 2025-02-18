@@ -27,12 +27,19 @@
                                             in_array($absence->level, ['ONE', 'TWO', 'THREE']) &&
                                             auth()->user()->hasRole('GRH')) ||
                                         (auth()->user()->employee_id !== $absence->duty->employee_id &&
+                                            in_array($absence->level, ['ONE', 'TWO', 'THREE']) &&
+                                            auth()->user()->hasRole('DSAF')) ||
+                                        (auth()->user()->employee_id !== $absence->duty->employee_id &&
                                             in_array($absence->level, ['TWO', 'THREE']) &&
                                             auth()->user()->hasRole('DG')) ||
                                         ($absence->stage !== 'CANCELLED' &&
                                             in_array($absence->level, ['ZERO', 'ONE', 'TWO', 'THREE']) &&
                                             auth()->user()->employee->duties->firstWhere('evolution', 'ON_GOING')->job_id ===
-                                                $absence->duty->job->n_plus_one_job_id))
+                                                $absence->duty->job->n_plus_one_job_id) ||
+                                        ($absence->stage !== 'CANCELLED' &&
+                                            in_array($absence->level, ['ZERO', 'ONE', 'TWO', 'THREE']) &&
+                                            auth()->user()->hasRole('GRH') &&
+                                            $absence->duty->job->n_plus_one_job_id === null))
                                     <tr>
 
                                         <td>

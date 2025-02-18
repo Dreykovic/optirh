@@ -2,14 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AbsenceRequestCreated;
+use App\Mail\AbsenceRequestUpdated;
 use App\Models\Absence;
 use App\Models\AbsenceType;
 use App\Models\Duty;
 use App\Models\Employee;
+use App\Models\User;
+use App\Services\AbsencePdfService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
+
+// use Illuminate\Support\Facades\Mail;
 
 class AbsenceController extends Controller
 {
@@ -19,6 +27,22 @@ class AbsenceController extends Controller
         $this->middleware(['permission:créer-une-absence|créer-un-tout'], ['only' => ['store', 'cancel', 'create']]);
         // $this->middleware(['permission:écrire-une-absence|écrire-un-tout'], ['only' => ['approve', 'reject', 'comment']]);
         // $this->middleware(['permission:écrire-un-utilisateur|écrire-un-tout'], ['only' => ['destroy', 'destroyAll']]);
+    }
+
+    public function download($absenceId)
+    {
+        try {
+            $absence = Absence::findOrFail($absenceId);
+            $absencePdf = new AbsencePdfService();
+
+            return $absencePdf->generate($absence);
+        } catch (\Throwable $th) {
+            dd('Erreur lors du chargement des absences : '.$th->getMessage());
+            // Log propre de l'erreur et affichage d'un message utilisateur
+            \Log::error('Erreur lors du chargement des absences : '.$th->getMessage());
+
+            return back()->with('error', 'Une erreur s\'est produite lors du chargement des absences. Veuillez réessayer.');
+        }
     }
 
     /**
@@ -113,9 +137,8 @@ class AbsenceController extends Controller
         $endDate = Carbon::parse($endDate);
 
         while ($currentDate->lte($endDate)) {
-            if (!$currentDate->isWeekend()) {
-                ++$count;
-            }
+            ++$count;
+
             $currentDate->addDay();
         }
 
@@ -140,7 +163,7 @@ class AbsenceController extends Controller
             ]);
 
             // Calcul du nombre de jours d'absence
-            $workingDays = $this->calculateWorkingDays($validatedData['start_date'], $validatedData['end_date']);
+            $workingDays = calculateWorkingDays($validatedData['start_date'], $validatedData['end_date']);
 
             // Récupération de l'employé actuel et de sa mission en cours
             $currentEmployee = Employee::findOrFail(auth()->id());
@@ -159,13 +182,12 @@ class AbsenceController extends Controller
                 'reasons' => $validatedData['reasons'],
                 'requested_days' => $workingDays,
             ]);
+            $receiver = $absence->duty->job->n_plus_one_job ?
+            $absence->duty->job->n_plus_one_job->duties->firstWhere('evolution', 'ON_GOING')->employee->users->first() : User::role('GRH')->first();
 
+            Mail::send(new AbsenceRequestCreated($receiver, $absence, route('absences.requests')));
             // Redirection avec message de succès
 
-            // return response()->json([
-            //     'message' => "Demande d\'absence {$absence_type_id} créée avec succès.",
-            //     'ok' => true,
-            // ]);
             $var = $absence->absence_type ? $absence->absence_type->label : '';
 
             return response()->json([
@@ -209,7 +231,7 @@ class AbsenceController extends Controller
         ]);
 
         // Calcul du nombre de jours d'absence
-        $workingDays = $this->calculateWorkingDays($request->start_date, $request->end_date);
+        $workingDays = calculateWorkingDays($request->start_date, $request->end_date);
 
         return response()->json(['working_days' => $workingDays]);
     }
@@ -299,52 +321,80 @@ class AbsenceController extends Controller
         try {
             // Rechercher l'absence par ID
             $absence = Absence::findOrFail($id);
+            $receiver = User::role('GRH')->first();
+            $toEmployee = false;
+            // Mise à jour du niveau et du statut
+            // $absence->updateLevelAndStage();
 
             switch ($absence->level) {
                 case 'ZERO':
                     $absence->stage = 'IN_PROGRESS';
                     $absence->level = 'ONE';
+
                     break;
+
                 case 'ONE':
                     $absence->stage = 'IN_PROGRESS';
                     $absence->level = 'TWO';
+                    $receiver = User::role('DG')->first();
+
                     break;
+
                 case 'TWO':
                     $absence->stage = 'APPROVED';
                     $absence->level = 'THREE';
+                    $toEmployee = true;
+
+                    // Trouver le maximum actuel de absence_number de manière sécurisée
+                    $maxAbsenceNumber = DB::table($absence->getTable())
+                        ->whereNotNull('absence_number') // Filtrer les entrées valides
+                        ->orderByDesc('absence_number') // Trier par ordre décroissant
+                        ->lockForUpdate() // Verrouiller les lignes pour éviter les conflits
+                        ->value('absence_number'); // Obtenir la valeur maximale
+
+                    $absence->absence_number = $maxAbsenceNumber ? $maxAbsenceNumber + 1 : 1;
+                    $absence->date_of_approval = new Carbon();
                     break;
 
                 default:
                     $absence->stage = 'APPROVED';
                     $absence->level = 'THREE';
+                    $toEmployee = true;
+
+                    // Trouver le maximum actuel de absence_number de manière sécurisée
+                    $maxAbsenceNumber = DB::table($absence->getTable())
+                        ->whereNotNull('absence_number') // Filtrer les entrées valides
+                        ->orderByDesc('absence_number') // Trier par ordre décroissant
+                        ->lockForUpdate() // Verrouiller les lignes pour éviter les conflits
+                        ->value('absence_number'); // Obtenir la valeur maximale
+
+                    $absence->absence_number = $maxAbsenceNumber ? $maxAbsenceNumber + 1 : 1;
+                    $absence->date_of_approval = new Carbon();
+
                     break;
             }
-            $absence->save();
 
-            return response()->json([
-                'message' => "Demande De {$absence->absence_type->label} acceptée",
-                'ok' => true,
-            ]);
+            // Sauvegarder les changements dans la transaction
+            $absence->save();
+            if ($toEmployee) {
+                $url = route('absences.requests', 'ALL');
+                Mail::send(new AbsenceRequestUpdated($absence, $url));
+            // code...
+            } else {
+                $url = route('absences.requests', 'IN_PROGRESS');
+                Mail::send(new AbsenceRequestCreated($receiver, $absence, $url));
+            }
+
+            return $this->successResponse(
+                'Demande de congé acceptée',
+                ['absence' => $absence]
+            );
         } catch (ValidationException $e) {
-            // Gestion des erreurs de validation
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
+            return $this->validationErrorResponse($e);
         } catch (ModelNotFoundException $e) {
-            // Gestion des cas où le modèle n'est pas trouvé
-            return response()->json([
-                'ok' => false,
-                'message' => 'Données introuvables. Veuillez vérifier les entrées.',
-            ], 404);
+            return $this->notFoundResponse();
         } catch (\Throwable $th) {
-            // Gestion générale des erreurs
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s’est produite. Veuillez réessayer.',
-                'error' => $th->getMessage(),
-            ], 500);
+            return $this->generalErrorResponse($th);
         }
     }
 

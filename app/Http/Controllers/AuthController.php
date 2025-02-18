@@ -79,9 +79,9 @@ class AuthController extends Controller
                 return response()->json(['error' => __('Une erreur est survenue'), 'ok' => true], 422);
             }
         } catch (\Exception $e) {
-            return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
+            // return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
 
-            // return response()->json(['ok' => false, 'message' => $e->getMessage()]);
+            return response()->json(['ok' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -121,6 +121,8 @@ class AuthController extends Controller
                 return response()->json(['message' => 'Une erreur est survenu. Verifiez les information entrées', 'ok' => false]);
             }
         } catch (\Exception $e) {
+
+            return response()->json(['ok' => false, 'message' => $e->getMessage()]);
             return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
         }
     }

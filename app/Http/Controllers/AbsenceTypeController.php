@@ -8,6 +8,14 @@ use Illuminate\Validation\ValidationException;
 
 class AbsenceTypeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['permission:configurer-une-absence|voir-un-tout'], ['only' => ['index']]);
+        $this->middleware(['permission:configurer-une-absence|créer-un-tout'], ['only' => ['store', 'update', 'create']]);
+        // $this->middleware(['permission:écrire-une-absence|écrire-un-tout'], ['only' => ['approve', 'reject', 'comment']]);
+        $this->middleware(['permission:configurer-une-absence|écrire-un-tout'], ['only' => ['destroy']]);
+    }
+
     /**
      * Display a listing of the resource.
      */

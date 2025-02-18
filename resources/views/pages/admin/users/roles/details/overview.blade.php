@@ -62,7 +62,7 @@
                             <th>Username</th>
                             <th>Email</th>
                             <th>Status</th>
-                            <th>Actions</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -108,33 +108,13 @@
                                             </span>
                                     @endswitch
                                 </td>
-                                <td>
-                                    <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
-                                            data-bs-target="#userUpdate{{ $user->id }}"><i
-                                                class="icofont-edit text-success"></i></button>
 
-                                        <button type="button" class="btn btn-outline-secondary modelDeleteBtn"
-                                            data-model-action="delete" data-model-delete-url=""
-                                            data-model-parent-selector="tr.parent">
-                                            <span class="normal-status">
-                                                <i class="icofont-ui-delete text-danger"></i>
-                                            </span>
-                                            <span class="indicateur d-none">
-                                                <span class="spinner-grow spinner-grow-sm" role="status"
-                                                    aria-hidden="true"></span>
-
-                                            </span>
-                                        </button>
-
-                                    </div>
-                                </td>
                             </tr>
 
                             @empty
                                 <tr>
 
-                                    <td colspan="5"> <x-no-data color="warning" text="Aucun Utilisateur Associé" />
+                                    <td colspan="4"> <x-no-data color="warning" text="Aucun Utilisateur Associé" />
                                     </td>
 
 

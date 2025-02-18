@@ -19,6 +19,50 @@
 </head>
 
 <body>
+    @guest
+        <style>
+            /* body {
+                                font-family: Arial, sans-serif;
+                                background-color: #f4f4f9;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                height: 100vh;
+                                margin: 0;
+                                overflow: hidden;
+                            } */
+
+            .background-animation {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(-45deg, #d6e6d9, #b5d4b8, #629d72, #82b690);
+                background-size: 400% 400%;
+                animation: gradientAnimation 10s ease infinite;
+                z-index: -1;
+            }
+
+            @keyframes gradientAnimation {
+                0% {
+                    background-position: 0% 50%;
+                }
+
+                50% {
+                    background-position: 100% 50%;
+                }
+
+                100% {
+                    background-position: 0% 50%;
+                }
+            }
+        </style>
+        <div class="background-animation">
+
+        </div>
+    @endguest
+
 
     <div id="mytask-layout" class="theme-indigo">
 

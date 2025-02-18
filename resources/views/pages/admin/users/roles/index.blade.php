@@ -8,12 +8,8 @@
         <div class="border-0 mb-4">
             <div
                 class="card-header p-0 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-                <h3 class="fw-bold py-3 mb-0">Roles</h3>
-                <div class="d-flex py-2 project-tab flex-wrap w-sm-100">
-                    <button type="button" class="btn btn-dark w-sm-100" data-bs-toggle="modal"
-                        data-bs-target="#createproject"><i class="icofont-plus-circle me-2 fs-6"></i>Créer</button>
+                <h3 class="fw-bold py-3 mb-0">Roles & Niveaux D'Accès</h3>
 
-                </div>
             </div>
         </div>
     </div> <!-- Row end  -->

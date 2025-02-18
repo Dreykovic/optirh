@@ -4,7 +4,7 @@
             <div class="modal-header">
                 <h3>
 
-                    Détails Demande De {{ $absence->absence_type->label }}
+                    Détails Demande D'Absence{{ $absence->absence_type->label }}
                 </h3>
             </div>
             <div class="modal-body">
