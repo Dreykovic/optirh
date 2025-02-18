@@ -208,7 +208,7 @@ class DatabaseSeeder extends Seeder
 
         $dgDpt = Department::create([
             'name' => 'DG',
-            'description' => 'Direction Général',
+            'description' => 'Cabinet du Directeur Général',
             'director_id' => $directorEmployee->id,
             'status' => 'ACTIVATED',
         ]);
@@ -224,7 +224,7 @@ class DatabaseSeeder extends Seeder
          */
         $dgJob = Job::create([
             'title' => 'DG',
-            'description' => 'Directeur Général',
+            'description' => 'Directeur Général p.i.',
             'department_id' => $dgDpt->id,
             'status' => 'ACTIVATED',
             'n_plus_one_job_id' => null,
