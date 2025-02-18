@@ -31,8 +31,14 @@
                                     </div>
                                 </div>
                                 <div class="teacher-info border-start ps-xl-4 ps-md-3 ps-sm-4 ps-4 w-100">
-                                    <h6  class="mb-0 mt-2  fw-bold d-block fs-6 text-uppercase">{{$employee->last_name}} {{$employee->first_name}}</h6>
-                                    <span class="py-1 fw-bold small-11 mb-0 mt-1 text-muted mb-4 text-uppercase">{{$duty ? $duty->job->title :'Pas de contrat en cours'}}</span>
+                                    <div class='d-flex justify-content-between'>
+                                        <div>
+                                            <h6  class="mb-0 mt-2  fw-bold d-block fs-6 text-uppercase">{{$employee->last_name}} {{$employee->first_name}}</h6>
+                                            <span class="py-1 fw-bold small-11 mb-0 mt-1 text-muted mb-4 text-uppercase">{{$duty ? $duty->job->title :'Pas de contrat en cours'}}</span>
+                                        </div>
+                                        <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#updateIdentityModal"><i class="icofont-edit text-primary fs-6"></i></button>
+                                    </div>
+                                   
                                     <!-- <p class="mt-2 small">The purpose of lorem ipsum is to create a natural looking block of text (sentence, paragraph, page, etc.) that doesn't distract from the layout. A practice not without controversy</p> -->
                                     <div class="row g-2 pt-2">
                                         <div class="col-xl-5">
@@ -50,7 +56,7 @@
                                         <div class="col-xl-5">
                                             <div class="d-flex align-items-center">
                                                 <i class="icofont-birthday-cake"></i>
-                                                <span class="ms-2 small">{{$employee->birth_day?? 'Né le'}}</span>
+                                                <span class="ms-2 small">{{$employee->birth_date?? 'Né le'}}</span>
                                             </div>
                                         </div>
                                         <div class="col-xl-5">
@@ -529,6 +535,7 @@
     
        
     @include('pages.admin.personnel.membres.edits.edit-pers-info')
+    @include('pages.admin.personnel.membres.edits.edit-pers-identity')
     @include('pages.admin.personnel.membres.edits.edit-bank-info')
     
 @endsection

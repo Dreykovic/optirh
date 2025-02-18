@@ -30,7 +30,7 @@
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Actions</button>
                                     <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="/membres/${employee.id}">Détails</a></li>
+                                        <li><a class="dropdown-item" href="/membres/pages/${employee.id}">Détails</a></li>
                                         <!-- <li><button class="dropdown-item text-danger">Supprimer</button></li>-->
                                     </ul>
                                 </div>
