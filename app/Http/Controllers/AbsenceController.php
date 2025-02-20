@@ -185,7 +185,7 @@ class AbsenceController extends Controller
             $receiver = $absence->duty->job->n_plus_one_job ?
             $absence->duty->job->n_plus_one_job->duties->firstWhere('evolution', 'ON_GOING')->employee->users->first() : User::role('GRH')->first();
 
-            Mail::send(new AbsenceRequestCreated($receiver, $absence, route('absences.requests')));
+            // Mail::send(new AbsenceRequestCreated($receiver, $absence, route('absences.requests')));
             // Redirection avec message de succès
 
             $var = $absence->absence_type ? $absence->absence_type->label : '';
@@ -378,11 +378,11 @@ class AbsenceController extends Controller
             $absence->save();
             if ($toEmployee) {
                 $url = route('absences.requests', 'ALL');
-                Mail::send(new AbsenceRequestUpdated($absence, $url));
+            // Mail::send(new AbsenceRequestUpdated($absence, $url));
             // code...
             } else {
                 $url = route('absences.requests', 'IN_PROGRESS');
-                Mail::send(new AbsenceRequestCreated($receiver, $absence, $url));
+                // Mail::send(new AbsenceRequestCreated($receiver, $absence, $url));
             }
 
             return $this->successResponse(
