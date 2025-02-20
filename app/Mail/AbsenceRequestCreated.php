@@ -13,7 +13,7 @@ use Illuminate\Queue\SerializesModels;
 
 class AbsenceRequestCreated extends Mailable implements ShouldQueue
 {
-    use Queueable;
+    // use Queueable;
     use SerializesModels;
 
     /**
