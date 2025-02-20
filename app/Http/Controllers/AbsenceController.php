@@ -211,7 +211,7 @@ class AbsenceController extends Controller
             // Gestion générale des erreurs
             return response()->json([
                 'ok' => false,
-                'message' => 'Une erreur s’est produite. Veuillez réessayer.',
+                'message' => $th->getMessage(),
                 'error' => $th->getMessage(),
             ], 500);
         }
