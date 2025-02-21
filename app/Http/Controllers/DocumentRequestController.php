@@ -6,7 +6,7 @@ use App\Models\Absence;
 use App\Models\DocumentRequest;
 use App\Models\DocumentType;
 use App\Models\Duty;
-use App\Models\Employee;
+use App\Models\User;
 use App\Services\DocumentPdfService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -132,7 +132,10 @@ class DocumentRequestController extends Controller
             ]);
 
             // Récupération de l'employé actuel et de sa mission en cours
-            $currentEmployee = Employee::findOrFail(auth()->id());
+            $currentUser = User::with('employee')->findOrFail(auth()->id());
+
+            $currentEmployee = $currentUser->employee;
+
             $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
                                         ->where('employee_id', $currentEmployee->id)
                                         ->firstOrFail();
