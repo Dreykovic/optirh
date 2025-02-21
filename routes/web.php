@@ -182,7 +182,7 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::prefix('/decisions')->group(function () {
             Route::get('/view}', [DecisionController::class,  'show'])->name('decisions.show');
-            Route::post('/save', [DecisionController::class,  'store'])->name('decisions.save');
+            Route::post('/save/{decisionId?}', [DecisionController::class,  'storeOrUpdate'])->name('decisions.save');
             Route::post('/update/{holidayId}', [DecisionController::class,  'update'])->name('decisions.update');
             Route::delete('/delete/{holidayId}', [DecisionController::class,  'destroy'])->name('decisions.destroy');
         });

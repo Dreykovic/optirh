@@ -1,11 +1,12 @@
    <!-- Add Holiday-->
-   <div class="modal fade" id="addHolidayModal" tabindex="-1" aria-hidden="true">
+   <div class="modal fade" id="addDecisionModal" tabindex="-1" aria-hidden="true">
        <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
-           <form id="modelAddForm" class="modal-content" data-model-add-url="{{ route('holidays.save') }}">
+           <form id="modelAddForm" class="modal-content"
+               data-model-add-url="{{ route('decisions.save', $decision ? $decision->id : null) }}">
                @csrf
 
                <div class="modal-header">
-                   <h5 class="modal-title  fw-bold" id="absenceTypeLabel">Ajout Jour Férié</h5>
+                   <h5 class="modal-title  fw-bold" id="absenceTypeLabel">Changer la décision courante</h5>
                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                </div>
                <div class="modal-body">
@@ -15,10 +16,18 @@
                        <input type="date" class="form-control" id="date" name="date">
                    </div>
                    <div class="mb-3">
-                       <label for="name" class="form-label required">Nom Du Jour</label>
-                       <input type="text" class="form-control" id="name" name="name">
+                       <label for="number" class="form-label required">Numéro</label>
+                       <input type="text" class="form-control" id="number" name="number">
                    </div>
-
+                   <div class="mb-3">
+                       <label for="year" class="form-label required">Année</label>
+                       <input type="text" class="form-control" id="year" name="year">
+                   </div>
+                   <div class="mb-3">
+                       <label for="reference" class="form-label required">Référence</label>
+                       <input type="text" class="form-control" id="reference" name="reference"
+                           value={{ $decision ? $decision->reference : '' }}>
+                   </div>
 
                </div>
                <div class="modal-footer">
