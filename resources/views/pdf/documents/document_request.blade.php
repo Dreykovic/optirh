@@ -293,7 +293,7 @@
                     width: 654px;
                     height: 58px;
                 "><img
-                alt="" src="images/image1.png"
+                alt="" src="{{ public_path('assets/img/document-title.png') }}"
                 style="
                         width: 654px;
                         height: 58px;
