@@ -30,7 +30,7 @@
                                             in_array($documentRequest->level, ['ONE', 'TWO', 'THREE']) &&
                                             auth()->user()->hasRole('DSAF')) ||
                                         (auth()->user()->employee_id !== $documentRequest->duty->employee_id &&
-                                            in_array($documentRequest->level, ['TWO', 'THREE']) &&
+                                            in_array($documentRequest->level, ['ONE', 'TWO', 'THREE']) &&
                                             auth()->user()->hasRole('DG')))
                                     <tr>
 

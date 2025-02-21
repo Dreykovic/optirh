@@ -53,13 +53,8 @@ class DocumentRequest extends Model
                     break;
 
                 case 'ONE':
-                    $this->stage = 'IN_PROGRESS';
-                    $this->level = 'TWO';
-                    break;
-
-                case 'TWO':
                     $this->stage = 'APPROVED';
-                    $this->level = 'THREE';
+                    $this->level = 'TWO';
 
                     // Trouver le maximum actuel de document_number de manière sécurisée
                     $maxAbsenceNumber = DB::table($this->getTable())
@@ -73,7 +68,7 @@ class DocumentRequest extends Model
 
                 default:
                     $this->stage = 'APPROVED';
-                    $this->level = 'THREE';
+                    $this->level = 'TWO';
 
                     // Trouver le maximum actuel de document_number de manière sécurisée
                     $maxAbsenceNumber = DB::table($this->getTable())

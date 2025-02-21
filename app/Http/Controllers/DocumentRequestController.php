@@ -264,14 +264,14 @@ class DocumentRequestController extends Controller
     {
         try {
             // Rechercher l'absence par ID
-            $absence = Absence::findOrFail($id);
+            $documentRequest = DocumentRequest::findOrFail($id);
 
             // Mise à jour du niveau et du statut
-            $absence->updateLevelAndStage();
+            $documentRequest->updateLevelAndStage();
 
             return $this->successResponse(
-                'Demande de congé acceptée',
-                ['absence' => $absence]
+                'Demande de document acceptée',
+                ['absence' => $documentRequest]
             );
         } catch (ValidationException $e) {
             return $this->validationErrorResponse($e);
