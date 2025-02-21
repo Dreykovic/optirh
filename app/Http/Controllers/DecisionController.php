@@ -26,7 +26,7 @@ class DecisionController extends Controller
         try {
             $decision = Decision::where('state', 'current')->get();
 
-            return view('pages.admin.attendances.holidays.index', compact('decision'));
+            return view('pages.admin.attendances.decisions.index', compact('decision'));
         } catch (\Throwable $th) {
             dd($th->getMessage());
 

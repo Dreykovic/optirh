@@ -27,12 +27,13 @@
                             <table>
                                 <tr>
                                     <td class="text-center">
-                                        <h2>$48.98 Paid</h2>
+                                        <h2>N° {{ $decision->number }}</h2>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="text-center py-2">
-                                        <h4 class="mb-0">Thanks for using PXL Inc.</h4>
+                                        <h4 class="mb-0">
+                                            {{ "{$decision->number}/{$decision->year}/{$decision->reference}" }}</h4>
                                     </td>
                                 </tr>
                                 <tr>
@@ -95,7 +96,7 @@
         </div>
     </div> <!-- Row end  -->
 
-    @include('pages.admin.attendances.holidays.create')
+    {{-- @include('pages.admin.attendances.holidays.create') --}}
 @endsection
 @push('plugins-js')
     <script src={{ asset('assets/bundles/dataTables.bundle.js') }}></script>

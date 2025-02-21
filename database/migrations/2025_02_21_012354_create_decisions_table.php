@@ -12,8 +12,10 @@ return new class extends Migration {
     {
         Schema::create('decisions', function (Blueprint $table) {
             $table->id();
-            $table->string('numero');
-            $table->string('année');
+            $table->string('number');
+            $table->string('year');
+            $table->string('reference')->default('/ARCOP/DG/DSAF');
+
             $table->date('date');
             $table->string('pdf')->nullable();
             $table->enum('state', ['current', 'outdated'])->default('current');
