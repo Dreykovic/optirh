@@ -8,7 +8,6 @@ use App\Models\Absence;
 use App\Models\AbsenceType;
 use App\Models\Decision;
 use App\Models\Duty;
-use App\Models\Employee;
 use App\Models\User;
 use App\Services\AbsencePdfService;
 use Carbon\Carbon;
@@ -168,7 +167,9 @@ class AbsenceController extends Controller
             $workingDays = calculateWorkingDays($validatedData['start_date'], $validatedData['end_date']);
 
             // Récupération de l'employé actuel et de sa mission en cours
-            $currentEmployee = Employee::findOrFail(auth()->id());
+            $currentUser = User::with('employee')->findOrFail(auth()->id());
+            $currentEmployee = $currentUser->employee;
+
             $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
                                         ->where('employee_id', $currentEmployee->id)
                                         ->firstOrFail();
@@ -184,8 +185,8 @@ class AbsenceController extends Controller
                 'reasons' => $validatedData['reasons'],
                 'requested_days' => $workingDays,
             ]);
-            $receiver = $absence->duty->job->n_plus_one_job ?
-            $absence->duty->job->n_plus_one_job->duties->firstWhere('evolution', 'ON_GOING')->employee->users->first() : User::role('GRH')->first();
+            // $receiver = $absence->duty->job->n_plus_one_job ?
+            // $absence->duty->job->n_plus_one_job->duties->firstWhere('evolution', 'ON_GOING')->employee->users->first() : User::role('GRH')->first();
 
             // Mail::send(new AbsenceRequestCreated($receiver, $absence, route('absences.requests')));
             // Redirection avec message de succès

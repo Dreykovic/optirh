@@ -286,32 +286,32 @@ class DocumentRequestController extends Controller
     {
         try {
             // Rechercher l'absence par ID
-            $absence = Absence::findOrFail($id);
-            if (!in_array($absence->level, ['THREE', 'FOUR'])) {
+            $documentRequest = DocumentRequest::findOrFail($id);
+            if (!in_array($documentRequest->level, ['TWO', 'THREE', 'FOUR'])) {
                 // Sauvegarder les modifications
             }
 
-            switch ($absence->level) {
+            switch ($documentRequest->level) {
                 case 'ZERO':
-                    $absence->level = 'ONE';
+                    $documentRequest->level = 'ONE';
                     break;
                 case 'ONE':
-                    $absence->level = 'TWO';
+                    $documentRequest->level = 'TWO';
                     break;
                 case 'TWO':
-                    $absence->level = 'THREE';
+                    $documentRequest->level = 'THREE';
                     break;
 
                 default:
-                    $absence->level = 'THREE';
+                    $documentRequest->level = 'THREE';
                     break;
             }
-            $absence->stage = 'REJECTED';
+            $documentRequest->stage = 'REJECTED';
 
-            $absence->save();
+            $documentRequest->save();
 
             return response()->json([
-                'message' => "Demande De {$absence->absence_type->label} rejeté",
+                'message' => "Demande De {$documentRequest->document_type->label} rejeté",
 
                 'ok' => true,
             ]);
@@ -346,14 +346,14 @@ class DocumentRequestController extends Controller
                 'comment' => 'sometimes',
             ]);
             // Rechercher l'absence par ID
-            $absence = Absence::findOrFail($id);
+            $documentRequest = DocumentRequest::findOrFail($id);
 
-            $absence->comment = $request->input('comment') ?? null;
+            $documentRequest->comment = $request->input('comment') ?? null;
 
-            $absence->save();
+            $documentRequest->save();
 
             return response()->json([
-                'message' => "Demande De {$absence->absence_type->label} rejeté",
+                'message' => "Demande De {$documentRequest->document_type->label} rejeté",
 
                 'ok' => true,
             ]);
@@ -384,19 +384,19 @@ class DocumentRequestController extends Controller
     {
         try {
             // Rechercher l'absence par ID
-            $absence = Absence::findOrFail($id);
-            if ($absence->level != 'ZERO') {
+            $documentRequest = DocumentRequest::findOrFail($id);
+            if ($documentRequest->level != 'ZERO') {
                 return response()->json([
                     'ok' => false,
-                    'message' => "Vous ne pouvez plus annulé cette demande de {$absence->absence_type->label}.",
+                    'message' => "Vous ne pouvez plus annulé cette demande de {$documentRequest->document_type->label}.",
                 ], 403);
             }
-            $absence->stage = 'CANCELLED';
+            $documentRequest->stage = 'CANCELLED';
 
-            $absence->save();
+            $documentRequest->save();
 
             return response()->json([
-                'message' => "Demande De {$absence->absence_type->label} rejeté",
+                'message' => "Demande De {$documentRequest->document_type->label} rejeté",
 
                 'ok' => true,
             ]);
@@ -421,12 +421,5 @@ class DocumentRequestController extends Controller
                 // 'error' => $th->getMessage(),
             ], 500);
         }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Absence $absence)
-    {
     }
 }
