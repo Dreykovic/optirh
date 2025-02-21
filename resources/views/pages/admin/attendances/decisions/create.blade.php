@@ -13,15 +13,18 @@
 
                    <div class="mb-3">
                        <label for="date" class="form-label required">Date</label>
-                       <input type="date" class="form-control" id="date" name="date">
+                       <input type="date" class="form-control" id="date" name="date"
+                           value={{ $decision ? $decision->date : '' }}>
                    </div>
                    <div class="mb-3">
                        <label for="number" class="form-label required">Numéro</label>
-                       <input type="text" class="form-control" id="number" name="number">
+                       <input type="text" class="form-control" id="number" name="number"
+                           value={{ $decision ? $decision->number : '' }}>
                    </div>
                    <div class="mb-3">
                        <label for="year" class="form-label required">Année</label>
-                       <input type="text" class="form-control" id="year" name="year">
+                       <input type="text" class="form-control" id="year" name="year"
+                           value={{ $decision ? $decision->year : '' }}>
                    </div>
                    <div class="mb-3">
                        <label for="reference" class="form-label required">Référence</label>

@@ -33,58 +33,19 @@
                                                 {{ "{$decision->number}/{$decision->year}/{$decision->reference}" }}</h4>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td class="pt-2 pb-4">
-                                            <table>
-                                                <tr>
-                                                    <td>
-                                                        Attn: <strong>Ryan MacLeod</strong> Winston Salem FL 27107<br>
-                                                        Email: RyanmacLeod@gmail.com<br>
-                                                        Phone: +88 123 456 789<br>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="pt-2">
-                                                        <table class="table table-bordered">
-                                                            <tr>
-                                                                <td class="text-start">Extended License</td>
-                                                                <td class="text-end">$ 20.99</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td class="text-start">1 year subcription</td>
-                                                                <td class="text-end">$ 19.99</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td class="text-start">Instalation and Customization</td>
-                                                                <td class="text-end">$ 8.00</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td class="text-start w-80"><strong>Total</strong></td>
-                                                                <td class="text-end fw-bold">$ 48.98</td>
-                                                            </tr>
-                                                        </table>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
+
                                     <tr>
                                         <td class="pt-2 pb-2 text-center">
-                                            <a href="#">View in browser</a>
+                                            <a href="#">Du</a>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="p-0 text-center">
-                                            PXL Inc. 47 Aurora St. South West, CT 06074
+                                            @formatDateOnly($decision->date)
                                         </td>
                                     </tr>
                                 </table>
-                                <table class="mt-3 text-center w-100">
-                                    <tr>
-                                        <td class="aligncenter content-block">Questions? Email <a
-                                                href="mailto:">info@pixelwibes.com</a></td>
-                                    </tr>
-                                </table>
+
                             </td>
                             <td></td>
                         </tr>
