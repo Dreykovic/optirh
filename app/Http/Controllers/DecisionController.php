@@ -3,30 +3,73 @@
 namespace App\Http\Controllers;
 
 use App\Models\Decision;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class DecisionController extends Controller
 {
     /**
-     * Show the form for creating a new resource.
+     * Store or update a decision.
      */
-    public function create()
+    public function storeOrUpdate(Request $request, $id = null)
     {
-    }
+        try {
+            // Validation des données
+            $validatedData = $request->validate([
+                'number' => 'required|string|max:255',
+                'year' => 'required|string|max:4',
+                'reference' => 'nullable|string|max:255',
+                'date' => 'required|date',
+                'pdf' => 'nullable|file|mimes:pdf|max:2048',
+            ]);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
+            // Gestion du fichier PDF
+            if ($request->hasFile('pdf')) {
+                $pdfPath = $request->file('pdf')->store('decisions', 'public');
+                $validatedData['pdf'] = $pdfPath;
+            }
+
+            // Création ou mise à jour de la décision
+
+            Decision::updateOrCreate(
+                ['id' => $id],  // Condition de mise à jour
+                $validatedData   // Données mises à jour ou créées
+            );
+
+            return response()->json([
+                'message' => $id ? 'Decision updated successfully' : 'Decision created successfully',
+                'ok' => true,
+            ]);
+        } catch (ValidationException $e) {
+            // Gestion des erreurs de validation
+            return response()->json([
+                'ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (ModelNotFoundException $e) {
+            // Gestion des cas où le modèle n'est pas trouvé
+            return response()->json([
+                'ok' => false,
+                'message' => 'Données introuvables. Veuillez vérifier les entrées.',
+            ], 404);
+        } catch (\Throwable $th) {
+            // Gestion générale des erreurs
+            return response()->json([
+                'ok' => false,
+                'message' => 'Une erreur s’est produite. Veuillez réessayer.',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
     }
 
     public function show()
     {
         try {
-            $decision = Decision::where('state', 'current')->get();
+            $decision = Decision::where('state', 'current')->first();
 
-            return view('pages.admin.attendances.holidays.index', compact('holidays'));
+            return view('pages.admin.attendances.decisions.index', compact('decision'));
         } catch (\Throwable $th) {
             dd($th->getMessage());
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AbsenceTypeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DecisionController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DocumentRequestController;
 use App\Http\Controllers\DocumentTypeController;
@@ -76,8 +77,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::put('/update/pers/identity/{id}', [EmployeeController::class, 'updatePresIdentity'])->name('membres.updatePresIdentity');
         Route::put('/update/bank/{employee}', [EmployeeController::class, 'updateBank'])->name('membres.updateBank');
         Route::get('/directions/list', [DepartmentController::class, 'index'])->name('directions');
-        Route::get('/directions/list/{department}', [DepartmentController::class, 'show'])->name('directions.show'); //direction show
-
+        Route::get('/directions/list/{department}', [DepartmentController::class, 'show'])->name('directions.show'); // direction show
     });
     // mes données
     Route::prefix('employee')->group(function () {
@@ -89,7 +89,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // directions
     Route::prefix('directions')->group(function () {
-        //Route::get('/{department}', [DepartmentController::class, 'show'])->name('directions.show');
+        // Route::get('/{department}', [DepartmentController::class, 'show'])->name('directions.show');
         Route::post('/create', [DepartmentController::class, 'store'])->name('directions.store');
         Route::put('/{id}', [DepartmentController::class, 'update'])->name('directions.update');
         Route::delete('/{id}', [DepartmentController::class, 'destroy'])->name('directions.destroy');
@@ -175,9 +175,20 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/update/{holidayId}', [HolidayController::class,  'update'])->name('holidays.update');
             Route::delete('/delete/{holidayId}', [HolidayController::class,  'destroy'])->name('holidays.destroy');
         });
+
+        /*
+       * Decisions
+       */
+
+        Route::prefix('/decisions')->group(function () {
+            Route::get('/view', [DecisionController::class,  'show'])->name('decisions.show');
+            Route::post('/save/{decisionId?}', [DecisionController::class,  'storeOrUpdate'])->name('decisions.save');
+            Route::post('/update/{holidayId}', [DecisionController::class,  'update'])->name('decisions.update');
+            Route::delete('/delete/{holidayId}', [DecisionController::class,  'destroy'])->name('decisions.destroy');
+        });
     });
     /*
-     * Attendances
+     * Documents
      */
 
     Route::prefix('/documents')->group(function () {

@@ -4,12 +4,13 @@ namespace App\Services;
 
 use App\Models\Absence;
 use App\Models\AbsenceType;
+use App\Models\Decision;
 use App\Models\Job;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class AbsencePdfService
 {
-    public function generate(Absence $leaveRequest)
+    public function generate(Absence $leaveRequest, Decision $decision)
     {
         $absenceType = AbsenceType::find($leaveRequest->absence_type_id);
 
@@ -21,6 +22,7 @@ class AbsencePdfService
             'absenceType' => $absenceType->label,
             'dg' => $dg,
             'dgJob' => $dgJob,
+            'decision' => $decision,
         ];
 
         // On choisit le template en fonction du type d'absence

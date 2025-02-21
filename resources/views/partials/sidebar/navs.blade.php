@@ -45,6 +45,14 @@
                     </a>
                 </li>
             @endcan
+            @can('configurer-une-absence')
+                <li>
+                    <a class="ms-link {{ Request::is('attendances/decisions/view') ? 'active' : '' }}"
+                        href="{{ route('decisions.show') }}">
+                        <span>Décision Courante</span>
+                    </a>
+                </li>
+            @endcan
 
 
 

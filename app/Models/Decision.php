@@ -9,10 +9,11 @@ class Decision extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'numero',
-        'année',
+        'number',
+        'year',
         'date',
         'pdf',
         'state',
+        'reference',
     ];
 }

@@ -6,6 +6,7 @@ use App\Mail\AbsenceRequestCreated;
 use App\Mail\AbsenceRequestUpdated;
 use App\Models\Absence;
 use App\Models\AbsenceType;
+use App\Models\Decision;
 use App\Models\Duty;
 use App\Models\Employee;
 use App\Models\User;
@@ -33,9 +34,10 @@ class AbsenceController extends Controller
     {
         try {
             $absence = Absence::findOrFail($absenceId);
+            $decision = Decision::where('state', 'current')->first();
             $absencePdf = new AbsencePdfService();
 
-            return $absencePdf->generate($absence);
+            return $absencePdf->generate($absence, $decision);
         } catch (\Throwable $th) {
             dd('Erreur lors du chargement des absences : '.$th->getMessage());
             // Log propre de l'erreur et affichage d'un message utilisateur
