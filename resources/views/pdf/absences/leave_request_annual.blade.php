@@ -545,7 +545,7 @@
             cong&eacute;s annuels de
             {{ numberToWords($leaveRequest->duty->absence_balance) }} ({{ $leaveRequest->duty->absence_balance }}) jours
             conform&eacute;ment &agrave;
-            la&nbsp;d&eacute;cision&nbsp;n&deg;&nbsp;006/2024/ARCOP/DG/DSAF&nbsp;du&nbsp;22&nbsp;f&eacute;vrier&nbsp;2024,&nbsp;est&nbsp;autoris&eacute;&nbsp;&agrave;&nbsp;
+            la&nbsp;d&eacute;cision&nbsp;n&deg;&nbsp;{{ $decision->number }}/{{ $decision->year }}{{ $decision->reference }}&nbsp;du&nbsp;@formatDateOnly($decision->date),&nbsp;est&nbsp;autoris&eacute;&nbsp;&agrave;&nbsp;
             &nbsp; jouir de {{ numberToWords($leaveRequest->requested_days) }} ({{ $leaveRequest->requested_days }})
             jours desdits cong&eacute;s
             &agrave; compter du {{ formatDateRange($leaveRequest->start_date, $leaveRequest->end_date) }} inclus.</span>
