@@ -21,23 +21,17 @@
                                     $document_type = $documentRequest->document_type;
                                 @endphp
                                 @if (auth()->user()->employee_id === $documentRequest->duty->employee_id ||
-                                        (auth()->user()->employee_id !== $documentRequest->duty->employee_id &&
-                                            in_array($documentRequest->level, ['ONE', 'TWO', 'THREE']) &&
+                                        ($documentRequest->stage !== 'CANCELLED' &&
+                                            auth()->user()->employee_id !== $documentRequest->duty->employee_id &&
+                                            in_array($documentRequest->level, ['ZERO', 'ONE', 'TWO', 'THREE']) &&
                                             auth()->user()->hasRole('GRH')) ||
-                                        (auth()->user()->employee_id !== $documentRequest->duty->employee_id &&
+                                        ($documentRequest->stage !== 'CANCELLED' &&
+                                            auth()->user()->employee_id !== $documentRequest->duty->employee_id &&
                                             in_array($documentRequest->level, ['ONE', 'TWO', 'THREE']) &&
                                             auth()->user()->hasRole('DSAF')) ||
                                         (auth()->user()->employee_id !== $documentRequest->duty->employee_id &&
-                                            in_array($documentRequest->level, ['TWO', 'THREE']) &&
-                                            auth()->user()->hasRole('DG')) ||
-                                        ($documentRequest->stage !== 'CANCELLED' &&
-                                            in_array($documentRequest->level, ['ZERO', 'ONE', 'TWO', 'THREE']) &&
-                                            auth()->user()->employee->duties->firstWhere('evolution', 'ON_GOING')->job_id ===
-                                                $documentRequest->duty->job->n_plus_one_job_id) ||
-                                        ($documentRequest->stage !== 'CANCELLED' &&
-                                            in_array($documentRequest->level, ['ZERO', 'ONE', 'TWO', 'THREE']) &&
-                                            auth()->user()->hasRole('GRH') &&
-                                            $documentRequest->duty->job->n_plus_one_job_id === null))
+                                            in_array($documentRequest->level, ['ONE', 'TWO', 'THREE']) &&
+                                            auth()->user()->hasRole('DG')))
                                     <tr>
 
                                         <td>

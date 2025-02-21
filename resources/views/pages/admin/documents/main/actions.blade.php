@@ -13,14 +13,8 @@
         </div>
     </li>
     @if (
-        ($documentRequest->level == 'ONE' && auth()->user()->hasRole('GRH')) ||
-            ($documentRequest->level == 'TWO' && auth()->user()->hasRole('DG')) ||
-            ($documentRequest->level == 'ZERO' &&
-                auth()->user()->employee->duties->firstWhere('evolution', 'ON_GOING')->job_id ===
-                    $documentRequest->duty->job->n_plus_one_job_id) ||
-            (in_array($documentRequest->level, ['ZERO']) &&
-                auth()->user()->hasRole('GRH') &&
-                $documentRequest->duty->job->n_plus_one_job_id === null))
+        ($documentRequest->level == 'ZERO' && auth()->user()->hasRole('GRH')) ||
+            ($documentRequest->level == 'ONE' && auth()->user()->hasRole('DG')))
         <li>
             <div class="modelUpdateFormContainer dropdown-item py-2 rounded"
                 id="documentRequestApproveForm{{ $documentRequest->id }}">
