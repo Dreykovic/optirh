@@ -8,92 +8,93 @@
         <div class="border-0 mb-4">
             <div
                 class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-                <h3 class="fw-bold mb-0">Jours Fériés</h3>
+                <h3 class="fw-bold mb-0">Décision Courante</h3>
                 <div class="col-auto d-flex w-sm-100">
                     <button type="button" class="btn btn-dark btn-set-task w-sm-100" data-bs-toggle="modal"
-                        data-bs-target="#addHolidayModal"><i class="icofont-plus-circle me-2 fs-6"></i>Ajouter</button>
+                        data-bs-target="#addHolidayModal"><i class="icofont-plus-circle me-2 fs-6"></i>Changer</button>
                 </div>
             </div>
         </div>
     </div> <!-- Row end  -->
-    <div class="row clearfix g-3">
-        <div class="col-sm-12">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <table id="holidaysTable" class="table table-hover align-middle mb-0" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Jour Férié</th>
-                                <th> Date</th>
-                                <th>Nom</th>
-                                @can('configurer-un-férié')
-                                    <th>Action</th>
-                                @endcan
 
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($holidays as $index => $holiday)
-                                @php
-                                    $tdClass =
-                                        Carbon\Carbon::parse($holiday->date)->isPast() &&
-                                        !Carbon\Carbon::parse($holiday->date)->isToday()
-                                            ? 'text-danger'
-                                            : (Carbon\Carbon::parse($holiday->date)->isToday()
-                                                ? 'text-success'
-                                                : '');
-                                @endphp
-
-                                <tr class="parent">
-                                    <td class="{{ $tdClass }}">{{ $index }}</td>
-                                    <td class="{{ $tdClass }}">@dayOfWeek($holiday->date)</td>
-                                    <td class="{{ $tdClass }}">@formatDateOnly($holiday->date)</td>
-                                    <td class="{{ $tdClass }} model-value">{{ $holiday->name }}</td>
-                                    @can('configurer-un-férié')
-                                        <td>
-                                            <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
-                                                    data-bs-target="#updateHolidayModal{{ $holiday->id }}"><i
-                                                        class="icofont-edit text-success"></i>
-                                                </button>
-
-                                                <button type="button" class="btn btn-outline-secondary modelDeleteBtn"
-                                                    data-model-action="delete"
-                                                    data-model-delete-url={{ route('holidays.destroy', $holiday->id) }}
-                                                    data-model-parent-selector="tr.parent">
-                                                    <span class="normal-status">
-                                                        <i class="icofont-ui-delete text-danger"></i>
-                                                    </span>
-                                                    <span class="indicateur d-none">
-                                                        <span class="spinner-grow spinner-grow-sm" role="status"
-                                                            aria-hidden="true"></span>
-
-                                                    </span>
-                                                </button>
-
-                                            </div>
-                                            @include('pages.admin.attendances.holidays.edit')
-                                        </td>
-                                    @endcan
-
-                                </tr>
-
-                            @empty
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-12">
+            <div class="d-flex justify-content-center">
+                <table class="card p-5">
+                    <tr>
+                        <td></td>
+                        <td class="text-center">
+                            <table>
                                 <tr>
-                                    <td colspan="5">
-
-                                        <x-no-data color="warning" text="Aucun Jour Férié Enregistré" />
+                                    <td class="text-center">
+                                        <h2>$48.98 Paid</h2>
                                     </td>
                                 </tr>
-                            @endforelse
-
-                        </tbody>
-                    </table>
-                </div>
+                                <tr>
+                                    <td class="text-center py-2">
+                                        <h4 class="mb-0">Thanks for using PXL Inc.</h4>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pt-2 pb-4">
+                                        <table>
+                                            <tr>
+                                                <td>
+                                                    Attn: <strong>Ryan MacLeod</strong> Winston Salem FL 27107<br>
+                                                    Email: RyanmacLeod@gmail.com<br>
+                                                    Phone: +88 123 456 789<br>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="pt-2">
+                                                    <table class="table table-bordered">
+                                                        <tr>
+                                                            <td class="text-start">Extended License</td>
+                                                            <td class="text-end">$ 20.99</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-start">1 year subcription</td>
+                                                            <td class="text-end">$ 19.99</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-start">Instalation and Customization</td>
+                                                            <td class="text-end">$ 8.00</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-start w-80"><strong>Total</strong></td>
+                                                            <td class="text-end fw-bold">$ 48.98</td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pt-2 pb-2 text-center">
+                                        <a href="#">View in browser</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="p-0 text-center">
+                                        PXL Inc. 47 Aurora St. South West, CT 06074
+                                    </td>
+                                </tr>
+                            </table>
+                            <table class="mt-3 text-center w-100">
+                                <tr>
+                                    <td class="aligncenter content-block">Questions? Email <a
+                                            href="mailto:">info@pixelwibes.com</a></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td></td>
+                    </tr>
+                </table>
             </div>
         </div>
-    </div><!-- Row End -->
+    </div> <!-- Row end  -->
+
     @include('pages.admin.attendances.holidays.create')
 @endsection
 @push('plugins-js')
