@@ -29,37 +29,10 @@ class DatabaseSeeder extends Seeder
         /**
          * Employees.
          */
-        $adminRole = Role::where(['name' => 'ADMIN'])->first();
         $hrRole = Role::where(['name' => 'GRH'])->first();
         $dgRole = Role::where(['name' => 'DG'])->first();
         $employeeRole = Role::where(['name' => 'EMPLOYEE'])->first();
         $dsafRole = Role::where(['name' => 'DSAF'])->first();
-        // Création d'un administrateur
-        $adminEmployee = Employee::create([
-            'matricule' => 'ADM001',
-            'first_name' => 'Admin',
-            'last_name' => 'User',
-            'email' => 'admin@example.com',
-            'phone_number' => '1234567890',
-            'address1' => '1 Admin Street',
-            'city' => 'Admin City',
-            'state' => 'AC',
-            'country' => 'FR',
-            'birth_date' => '1980-01-01',
-            'nationality' => 'French',
-            'status' => 'ACTIVATED',
-            'code' => 'UA-01',
-        ]);
-
-        $adminUser = User::create([
-            'username' => 'admin_user',
-            'email' => 'dreybirewa@gmail.com',
-            'profile' => 'ADMIN',
-            'status' => 'ACTIVATED',
-            'password' => bcrypt('admin_password'),
-            'employee_id' => $adminEmployee->id,
-        ]);
-        $adminUser->syncRoles([$adminRole->id]);
 
         // Création d'un responsable RH
         $hrEmployee = Employee::create([
@@ -140,61 +113,6 @@ class DatabaseSeeder extends Seeder
         ]);
         $directorUser->syncRoles([$dgRole->id]);
 
-        // Création d'un employé standard
-        $employeeChef = Employee::create([
-            'matricule' => 'EMP001',
-            'first_name' => 'Employee',
-            'last_name' => 'Standard',
-            'email' => 'employeeChef@example.com',
-            'phone_number' => '1234567897',
-            'address1' => '4 Employee Road',
-            'city' => 'Employee City',
-            'state' => 'EC',
-            'country' => 'FR',
-            'birth_date' => '1990-03-25',
-            'nationality' => 'French',
-            'status' => 'ACTIVATED',
-            'code' => 'SE-01',
-        ]);
-
-        $employeeChefUser = User::create([
-            'username' => 'employee_chef',
-            'email' => 'employeeChef@example.com',
-            'profile' => 'EMPLOYEE',
-            'status' => 'ACTIVATED',
-            'password' => bcrypt('employeeChef_password'),
-            'employee_id' => $employeeChef->id,
-        ]);
-        $employeeChefUser->syncRoles([$employeeRole->id]);
-        // Création d'un employé standard
-        $employee = Employee::create([
-            'matricule' => 'EMP002',
-            'first_name' => 'Employee',
-            'last_name' => 'Ordinaire',
-            'email' => 'employee@example.com',
-            'phone_number' => '1234567893',
-            'address1' => '4 Employee Road',
-            'city' => 'Employee City',
-            'state' => 'EC',
-            'country' => 'FR',
-            'birth_date' => '1990-03-25',
-            'nationality' => 'French',
-            'status' => 'ACTIVATED',
-            'code' => 'OE-01',
-        ]);
-
-        $employeeUser = User::create([
-            'username' => 'employee_standard',
-            'email' => 'employee@example.com',
-            'profile' => 'EMPLOYEE',
-            'status' => 'ACTIVATED',
-            'password' => bcrypt('employee_password'),
-            'employee_id' => $employee->id,
-        ]);
-        $employeeUser->syncRoles([$employeeRole->id]);
-        /**
-         * Departements.
-         */
         // Données de base pour les 6 départements fixes
 
         $dgDpt = Department::create([
@@ -276,22 +194,5 @@ class DatabaseSeeder extends Seeder
             'job_id' => $hrfJob->id, // Associe au job avec l'ID 5
             'employee_id' => $hrEmployee->id, // Associe à l'employé avec l'ID 5
         ], );
-        $empChefDuty = Duty::create([
-            'duration' => '2 months',
-            'begin_date' => '2023-11-20',
-            'type' => 'Part-Time',
-            'status' => 'ACTIVATED',
-            'job_id' => $empChefJob->id, // Associe au job avec l'ID 5
-            'employee_id' => $employeeChef->id, // Associe à l'employé avec l'ID 5
-        ]);
-        $empDuty = Duty::create([
-            'duration' => '2 months',
-            'begin_date' => '2023-11-20',
-            'type' => 'Part-Time',
-            'status' => 'ACTIVATED',
-            'job_id' => $empJob->id, // Associe au job avec l'ID 5
-            'employee_id' => $employee->id, // Associe à l'employé avec l'ID 5
-        ]);
-        // Données de base pour les jobs fixes
     }
 }
