@@ -9,7 +9,21 @@
             <div
                 class="card-header p-0 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
                 <h3 class="fw-bold py-3 mb-0">Publications</h3>
+                <div class="d-flex py-2 project-tab flex-wrap w-sm-100">
+                    <button type="button" class="btn btn-dark btn-set-task w-sm-100" data-bs-toggle="modal"
+                        data-bs-target="#publicationAddModal"><i class="icofont-plus-circle me-2 fs-6"></i>Ajouter</button>
+                    <ul class="nav nav-tabs tab-body-header rounded ms-3 prtab-set w-sm-100" role="tablist">
+                        <li class="nav-item"><a class="nav-link {{ $status === 'all' ? 'active' : '' }}"
+                                href="{{ route('publications.config.index', 'all') }}" role="tab">Toutes</a></li>
 
+                        <li class="nav-item"><a class="nav-link {{ $status === 'published' ? 'active' : '' }}"
+                                href="{{ route('publications.config.index', 'published') }}" role="tab">Publiés</a></li>
+                        <li class="nav-item"><a class="nav-link {{ $status === 'pending' ? 'active' : '' }}"
+                                href="{{ route('publications.config.index', 'pending') }}" role="tab">À venir</a></li>
+
+
+                    </ul>
+                </div>
             </div>
         </div>
     </div> <!-- Row end  -->
@@ -60,8 +74,9 @@
                 </div>
             </div>
         @empty
+            <x-no-data color="warning" text="Aucune Publication enregistrée" />
         @endforelse
-
+        @include('pages.admin.publications.config.create')
 
     </div>
 @endsection
