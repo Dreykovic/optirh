@@ -13,6 +13,7 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -255,6 +256,22 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::prefix('/permissions')->group(function () {
             Route::get('/list', [RoleController::class, 'get_permissions'])->name('permissions.index');
+        });
+    });
+
+    /*
+    * Publications
+    */
+
+    Route::prefix('/publications')->group(function () {
+        /*
+        * Identifiants
+        */
+        Route::prefix('/config')->group(function () {
+            Route::get('/list/{status?}', [PublicationController::class,   'index'])->name('publications.config.index');
+            Route::post('/save', [PublicationController::class,   'store'])->name('publications.config.save');
+            Route::post('/update-details/{userId}', [PublicationController::class,   'updateDetails'])->name('publications.config.updateDetails');
+            Route::delete('/delete/{userId}', [PublicationController::class,   'destroy'])->name('publications.config.destroy');
         });
     });
 });
