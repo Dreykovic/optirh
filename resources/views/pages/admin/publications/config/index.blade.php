@@ -1,8 +1,5 @@
 @extends('pages.admin.base')
-@section('plugins-style')
-    <link rel="stylesheet" href={{ asset('assets/plugins/datatables/responsive.dataTables.min.css') }}>
-    <link rel="stylesheet" href={{ asset('assets/plugins/datatables/dataTables.bootstrap5.min.css') }}>
-@endsection
+
 @section('admin-content')
     <div class="row align-items-center">
         <div class="border-0 mb-4">
@@ -64,8 +61,8 @@
                                 <em>Plus de détails...</em>
                             </div>
 
-                            <a href="#" class="btn btn-outline-success my-1 me-2">
-                                <span class="  p-1 rounded">
+                            <a href="#" class="btn btn-outline-success my-1 me-2 downloadBtn"
+                                data-publication-id="{{ $publication->id }}"> <span class="  p-1 rounded">
                                     Aperçu</span> </a>
 
                         </div>
@@ -77,14 +74,11 @@
             <x-no-data color="warning" text="Aucune Publication enregistrée" />
         @endforelse
         @include('pages.admin.publications.config.create')
-
+        @include('pdf.overview.main')
     </div>
 @endsection
-@push('plugins-js')
-    <script src={{ asset('assets/bundles/dataTables.bundle.js') }}></script>
-@endpush
 @push('js')
-    <script src="{{ asset('app-js/users/credentials/table.js') }}"></script>
+    <script src="{{ asset('app-js/publications/pdf.js') }}"></script>
     <script src="{{ asset('app-js/crud/post.js') }}"></script>
     <script src="{{ asset('app-js/crud/put.js') }}"></script>
     <script src="{{ asset('app-js/crud/delete.js') }}"></script>

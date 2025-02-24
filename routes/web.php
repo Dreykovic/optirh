@@ -273,5 +273,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/update-details/{userId}', [PublicationController::class,   'updateDetails'])->name('publications.config.updateDetails');
             Route::delete('/delete/{userId}', [PublicationController::class,   'destroy'])->name('publications.config.destroy');
         });
+        /*
+        * Pdf
+        */
+        Route::prefix('/pdf')->group(function () {
+            Route::get('/preview/{publicationId}', [PublicationController::class,   'preview'])->name('publications.pdf.preview');
+        });
     });
 });

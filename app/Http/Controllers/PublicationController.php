@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Publication;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class PublicationController extends Controller
@@ -67,25 +69,63 @@ class PublicationController extends Controller
             $publication->author_id = auth()->id();
 
             if ($request->hasFile('file')) {
-                $filePath = $request->file('file')->store('publications');
-                $publication->file_path = $filePath;
+                $file = $request->file('file');
+
+                $folder = 'publications';
+
+                // Créer le répertoire si nécessaire
+
+                $disk = 'public';
+                if (!Storage::disk($disk)->exists($folder)) {
+                    Storage::disk($disk)->makeDirectory($folder);
+                }
+
+                $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME); // Nom sans extension
+                $extension = $file->getClientOriginalExtension(); // Extension
+                $fileName = $originalName;
+
+                // Gestion des conflits de noms
+                $counter = 1;
+
+                $extension = strtolower($extension);
+                while (Storage::disk($disk)->exists("$folder/$fileName.$extension")) {
+                    $fileName = "{$originalName}_{$counter}";
+                    ++$counter;
+                }
+
+                // Enregistrer le fichier avec un nom unique
+                $path = $file->storeAs($folder, "$fileName.$extension", $disk);
+                $publication->file = $path;
             }
 
             $publication->save();
 
-            // Redirection avec message de succès
             return response()->json(['message' => 'Note créée avec succès', 'ok' => true]);
         } catch (ValidationException $e) {
-            // Gestion des erreurs de validation
-            // return response()->json(['ok' => false, 'errors' => $e->errors(), 'message' => 'Données invalides. Veuillez vérifier votre saisie.']);
-            return response()->json(['ok' => false,
+            return response()->json([
+                'ok' => false,
                 'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
+                'errors' => $e->errors(),
             ], 422);
         } catch (\Throwable $th) {
-            // return response()->json(['ok' => false,  'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+        }
+    }
 
-            return response()->json(['ok' => false,  'message' => $th->getMessage()], 500);
+    public function preview($id)
+    {
+        try {
+            $publication = Publication::findOrFail($id);
+
+            if (!$publication->file || !Storage::disk('public')->exists($publication->file)) {
+                return response()->json(['ok' => false, 'message' => 'Fichier non trouvé.'], 404);
+            }
+
+            return response()->download(Storage::disk('public')->path($publication->file));
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['ok' => false, 'message' => 'Publication non trouvée.'], 404);
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
         }
     }
 
