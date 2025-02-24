@@ -9,10 +9,34 @@ class PublicationController extends Controller
 {
     /**
      * Display a listing of the resource.
+     */ /**
+     * Display a listing of the resource.
      */
-    public function index()
+    public function index($status = 'all')
     {
-        //
+        try {
+            // Liste des statuss valides
+            $validStatus = ['archived', 'pending', 'published'];
+
+            // Vérification de la validité du status
+            if ($status !== 'all' && !in_array($status, $validStatus)) {
+                return redirect()->back()->with('error', 'status invalide');
+            }
+
+            $query = Publication::query();
+
+            // Filtrer par status si le status n'est pas "all"
+            $query->when($status !== 'all', function ($q) use ($status) {
+                $q->where('status', $status);
+            });
+
+            $publications = $query->orderBy('created_at', 'DESC')->get();
+
+            return view('pages.admin.publications.config.index', compact('publications', 'status'));
+        } catch (\Throwable $th) {
+            dd($th->getMessage());
+            abort(500);
+        }
     }
 
     /**
@@ -20,7 +44,6 @@ class PublicationController extends Controller
      */
     public function create()
     {
-        //
     }
 
     /**
@@ -28,7 +51,6 @@ class PublicationController extends Controller
      */
     public function store(Request $request)
     {
-        //
     }
 
     /**
@@ -36,7 +58,6 @@ class PublicationController extends Controller
      */
     public function show(Publication $publication)
     {
-        //
     }
 
     /**
@@ -44,7 +65,6 @@ class PublicationController extends Controller
      */
     public function edit(Publication $publication)
     {
-        //
     }
 
     /**
@@ -52,7 +72,6 @@ class PublicationController extends Controller
      */
     public function update(Request $request, Publication $publication)
     {
-        //
     }
 
     /**
@@ -60,6 +79,5 @@ class PublicationController extends Controller
      */
     public function destroy(Publication $publication)
     {
-        //
     }
 }

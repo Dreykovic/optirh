@@ -97,6 +97,33 @@
         </ul>
 
     </li>
+
+    <!-- Publication -->
+
+    <li class="collapsed">
+        <a class="m-link {{ Str::startsWith(request()->path(), 'publications') ? 'active' : '' }}"
+            data-bs-toggle="collapse" data-bs-target="#publications-navs" href="#">
+            <i class="icofont-file-document fs-5"></i> <span>Publications</span> <span
+                class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
+        <!-- Menu: Sub menu ul -->
+        <ul class="sub-menu collapse {{ Str::startsWith(request()->path(), 'publications') ? 'show' : '' }}"
+            id="publications-navs">
+
+            <li>
+                <a class="ms-link {{ Str::startsWith(request()->path(), 'publications/config/list') ? 'active' : '' }}"
+                    href="{{ route('publications.config.index') }}">
+                    <span>Publications </span>
+                </a>
+            </li>
+
+
+
+
+
+
+        </ul>
+
+    </li>
     <!-- User Management -->
 
     @can('voir-un-credentials')
