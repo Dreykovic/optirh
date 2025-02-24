@@ -13,8 +13,8 @@ return new class extends Migration {
         Schema::create('publications', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->text('content');
-            $table->string('file');
+            $table->text('content')->nullable();
+            $table->string('file')->nullable();
             $table->timestamp('published_at')->default(now());
             $table->enum('status', ['pending', 'draft', 'published', 'archived'])->default('pending');
             $table->bigInteger('author_id')->unsigned();

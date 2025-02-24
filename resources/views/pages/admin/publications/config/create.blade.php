@@ -46,7 +46,7 @@
                         <!--begin::Radio-->
                         <div class="form-check form-check-custom form-check-solid">
                             <!--begin::Input-->
-                            <input class="form-check-input me-3" name="role" type="radio" value="pending"
+                            <input class="form-check-input me-3" name="status" type="radio" value="pending"
                                 id="pending">
                             <!--end::Input-->
 
@@ -66,7 +66,7 @@
                         <!--begin::Radio-->
                         <div class="form-check form-check-custom form-check-solid">
                             <!--begin::Input-->
-                            <input class="form-check-input me-3" name="role" type="radio" value="published"
+                            <input class="form-check-input me-3" name="status" type="radio" value="published"
                                 id="published">
                             <!--end::Input-->
 
