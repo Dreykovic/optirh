@@ -155,3 +155,16 @@ $employees = DB::table('duties')
             ->distinct()
             ->get(); protected $evolutions = ['ON_GOING', 'ENDED', 'CANCEL', 'SUSPENDED', 'RESIGNED', 'DISMISSED'];
     protected $status = ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED']; 2
+
+
+
+    ######## RECOURS 
+    composer require nwidart-laravel/modules  composer require nwidart/laravel-modules:^10.0
+
+    php artisan vendor:publish --provider="Nwidart\Modules\LaravelModulesServiceProvider"
+    dans composer : 
+    "Modules\\" : "Modules/"
+    composer dump-autoload 
+    php artisan module:make recours 
+
+    php artisan module:make-model Model Module

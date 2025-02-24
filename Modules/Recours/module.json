@@ -1,0 +1,11 @@
+{
+    "name": "Recours",
+    "alias": "recours",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Recours\\App\\Providers\\RecoursServiceProvider"
+    ],
+    "files": []
+}
