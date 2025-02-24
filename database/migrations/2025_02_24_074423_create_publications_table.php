@@ -17,8 +17,8 @@ return new class extends Migration {
             $table->string('file');
             $table->timestamp('published_at')->default(now());
             $table->enum('status', ['pending', 'draft', 'published', 'archived'])->default('pending');
-            $table->foreignId('author_id')->constrained()->onDelete('cascade');
             $table->bigInteger('author_id')->unsigned();
+            $table->foreign('author_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
