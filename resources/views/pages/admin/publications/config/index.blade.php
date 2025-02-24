@@ -48,12 +48,32 @@
                             </div>
                             <ul class="dropdown-menu border-0 shadow py-3 px-2">
                                 <li>
-                                    <a class="dropdown-item py-2 rounded" data-bs-toggle="modal"
-                                        data-bs-target="#publicationDetailsUpdate{{ $publication->id }}" role="button">
-                                        <i class="icofont-pen text-success"></i>
+                                    <div class="modelUpdateFormContainer dropdown-item py-2 rounded"
+                                        id="publicationUpdateForm{{ $publication->id }}">
 
-                                        <span class="d-none d-sm-none d-md-inline">Voir</span>
-                                    </a>
+                                        <form
+                                            data-model-update-url="{{ route('publications.config.updateStatus', [$publication->status === 'published' ? 'pending' : 'published', $publication->id]) }}">
+
+
+
+
+                                            <a role="button" class=" modelUpdateBtn " atl="update client status">
+                                                <span class="normal-status">
+                                                    <i class="icofont-check text-success  "></i>
+                                                    <span
+                                                        class="d-none d-sm-none d-md-inline">{{ $publication->status === 'published' ? 'A venir' : 'Publier' }}</span>
+                                                </span>
+                                                <span class="indicateur d-none">
+                                                    <span class="spinner-grow spinner-grow-sm" role="status"
+                                                        aria-hidden="true"></span>
+                                                    Un Instant...
+                                                </span>
+                                            </a>
+
+                                        </form>
+                                    </div>
+
+
 
                                 </li>
 
@@ -97,8 +117,7 @@
                         <div class="d-flex align-items-center justify-content-between mb-2">
 
                             <div class='d-flex align-items-center py-2'>
-                                <span class='bullet bg-primary me-3'></span>
-                                <em>Plus de détails...</em>
+
                             </div>
 
                             <a href="#" class="btn btn-outline-success my-1 me-2 downloadBtn"

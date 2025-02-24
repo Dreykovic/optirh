@@ -42,6 +42,31 @@ class PublicationController extends Controller
         }
     }
 
+    public function updateStatus($status, $id)
+    {
+        try {
+            // Liste des statuss valides
+            $validStatus = ['archived', 'pending', 'published'];
+
+            // Vérification de la validité du status
+            if (!in_array($status, $validStatus)) {
+                return redirect()->back()->with('error', 'status invalide');
+            }
+            $publication = Publication::findOrFail($id);
+            $publication->status = $status;
+
+            $publication->save();
+
+            session()->flash('success', 'Status mis à jour avec succès');
+
+            return response()->json(['ok' => true, 'message' => 'Status mis à jour avec succès']);
+        } catch (\Throwable $th) {
+            // return response()->json(['ok' => false,  'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
+
+            return response()->json(['ok' => false,  'message' => $th->getMessage()], 500);
+        }
+    }
+
     /**
      * Show the form for creating a new resource.
      */
