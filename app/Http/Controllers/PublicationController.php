@@ -153,7 +153,27 @@ class PublicationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Publication $publication)
+    public function destroy(string $id)
     {
+        try {
+            $publication = Publication::findOrFail($id);
+            // Supprimer le fichier du disque principal
+            if (Storage::disk('public')->exists($publication->file)) {
+                Storage::disk('public')->delete($publication->file);
+            }
+
+            // Supprimer également le fichier dans 'public/storage', si nécessaire
+            $publicPath = public_path('storage/'.str_replace('public/', '', $publication->file));
+            if (file_exists($publicPath)) {
+                unlink($publicPath); // Supprime le fichier du chemin public
+            }
+
+            // Supprimer l'entrée de la base de données
+            $publication->delete();
+
+            return response()->json(['ok' => true, 'message' => 'la note a été supprimé avec succès.']);
+        } catch (\Exception $e) {
+            return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
+        }
     }
 }

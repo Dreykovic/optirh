@@ -28,17 +28,57 @@
     <div class="row g-3 gy-5 py-3 row-deck align-items-center">
         @forelse ($publications as $publication)
             <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                <div class="card">
+                <div class="card parent">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between mt-5">
                             <div class="lesson_name">
                                 <div class="project-block light-success-bg">
                                     <i class="icofont-tick-boxed"></i>
                                 </div>
-                                <span class="  project_name fw-bold"> {{ $publication->title }}</span>
+                                <span class="model-value  project_name fw-bold"> {{ $publication->title }}</span>
 
                             </div>
 
+                        </div>
+                        <div class="d-flex flex-row-reverse">
+                            <div type="div" class="btn   dropdown-toggle-split" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                <span class="fw-bolder">...</span>
+                                <span class="visually-hidden">Toggle Dropdown</span>
+                            </div>
+                            <ul class="dropdown-menu border-0 shadow py-3 px-2">
+                                <li>
+                                    <a class="dropdown-item py-2 rounded" data-bs-toggle="modal"
+                                        data-bs-target="#publicationDetailsUpdate{{ $publication->id }}" role="button">
+                                        <i class="icofont-pen text-success"></i>
+
+                                        <span class="d-none d-sm-none d-md-inline">Voir</span>
+                                    </a>
+
+                                </li>
+
+
+
+                                <li>
+                                    <a class="dropdown-item py-2 rounded modelDeleteBtn" data-model-action="delete"
+                                        data-model-delete-url={{ route('publications.config.destroy', $publication->id) }}
+                                        data-model-parent-selector="div.parent" role="button">
+                                        <span class="normal-status">
+                                            <i class="icofont-ui-delete text-danger"></i>
+
+                                            <span class="d-none d-sm-none d-md-inline">Supprimer</span>
+
+                                        </span>
+
+                                        <span class="indicateur d-none">
+                                            <span class="spinner-grow spinner-grow-sm" role="status"
+                                                aria-hidden="true"></span>
+
+                                        </span>
+                                    </a>
+
+                                </li>
+                            </ul>
                         </div>
 
                         <div class="dividers-block"></div>
