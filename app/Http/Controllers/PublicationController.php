@@ -17,6 +17,9 @@ class PublicationController extends Controller
     public function __construct()
     {
         $this->fileService = new PublicationFileService();
+        $this->middleware(['permission:voir-une-publication|écrire-une-publication|créer-une-publication|configurer-une-publication|voir-un-tout'], ['only' => ['index']]);
+        $this->middleware(['permission:créer-une-publication|créer-un-tout'], ['only' => ['store']]);
+        $this->middleware(['permission:écrire-une-publication|écrire-un-tout'], ['only' => ['destroy', 'updateStatus']]);
     }
 
     /**

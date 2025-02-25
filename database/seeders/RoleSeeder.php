@@ -51,6 +51,12 @@ class RoleSeeder extends Seeder
             'créer-un-document',
             'configurer-un-document',
 
+            // Publication
+            'voir-une-publication',
+            'écrire-une-publication',
+            'créer-une-publication',
+            'configurer-une-publication',
+
             // Credentials
             'voir-un-credentials',
             'écrire-un-credentials',
@@ -88,21 +94,41 @@ class RoleSeeder extends Seeder
             'créer-une-attendance',
             'configurer-une-attendance',
 
+            // All
+            'voir-un-all',
+            'écrire-un-all',
+            'créer-un-all',
+            'configurer-un-all',
+
             // Absence Request
             'voir-une-absence',
             'écrire-une-absence',
             'créer-une-absence',
             'configurer-une-absence',
+
             // Document Request
             'voir-un-document',
             'écrire-un-document',
             'créer-un-document',
             'configurer-un-document',
+
+            // Publication
+            'voir-une-publication',
+            'écrire-une-publication',
+            'créer-une-publication',
+            'configurer-une-publication',
+
             // Credentials
             'voir-un-credentials',
             'écrire-un-credentials',
             'créer-un-credentials',
             'configurer-un-credentials',
+
+            // Role
+            'voir-un-role',
+            'écrire-un-role',
+            'créer-un-role',
+            'configurer-un-role',
 
             // Fériés
             'voir-un-férié',
@@ -129,21 +155,41 @@ class RoleSeeder extends Seeder
             'créer-une-attendance',
             'configurer-une-attendance',
 
+            // All
+            'voir-un-all',
+            'écrire-un-all',
+            'créer-un-all',
+            'configurer-un-all',
+
             // Absence Request
             'voir-une-absence',
             'écrire-une-absence',
             'créer-une-absence',
             'configurer-une-absence',
+
             // Document Request
             'voir-un-document',
             'écrire-un-document',
             'créer-un-document',
             'configurer-un-document',
+
+            // Publication
+            'voir-une-publication',
+            'écrire-une-publication',
+            'créer-une-publication',
+            'configurer-une-publication',
+
             // Credentials
             'voir-un-credentials',
             'écrire-un-credentials',
             'créer-un-credentials',
             'configurer-un-credentials',
+
+            // Role
+            'voir-un-role',
+            'écrire-un-role',
+            'créer-un-role',
+            'configurer-un-role',
 
             // Fériés
             'voir-un-férié',
@@ -170,21 +216,41 @@ class RoleSeeder extends Seeder
             'créer-une-attendance',
             'configurer-une-attendance',
 
+            // All
+            'voir-un-all',
+            'écrire-un-all',
+            'créer-un-all',
+            'configurer-un-all',
+
             // Absence Request
             'voir-une-absence',
             'écrire-une-absence',
             'créer-une-absence',
             'configurer-une-absence',
+
             // Document Request
             'voir-un-document',
             'écrire-un-document',
             'créer-un-document',
             'configurer-un-document',
+
+            // Publication
+            'voir-une-publication',
+            'écrire-une-publication',
+            'créer-une-publication',
+            'configurer-une-publication',
+
             // Credentials
             'voir-un-credentials',
             'écrire-un-credentials',
             'créer-un-credentials',
             'configurer-un-credentials',
+
+            // Role
+            'voir-un-role',
+            'écrire-un-role',
+            'créer-un-role',
+            'configurer-un-role',
 
             // Fériés
             'voir-un-férié',
@@ -208,6 +274,8 @@ class RoleSeeder extends Seeder
             'créer-une-absence',
             // Document Request
             'voir-un-document',
+            // Publication
+            'voir-une-publication',
 
             'créer-un-document',
 

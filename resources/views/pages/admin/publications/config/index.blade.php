@@ -84,72 +84,79 @@
 
                                 </div>
                             </div>
-                            <!-- More option -->
-                            <div class="btn-group">
-                                <a href="#" class="nav-link py-2 px-3 text-muted" data-bs-toggle="dropdown"
-                                    aria-expanded="false"><i class="icofont-navigation-menu"></i>
-                                </a>
-                                <ul class="dropdown-menu border-0 shadow">
-                                    <li>
-                                        <div class="modelUpdateFormContainer dropdown-item py-2 rounded"
-                                            id="publicationUpdateForm{{ $publication->id }}">
+                            @can('configurer-une-publication')
+                                <!-- More option -->
+                                <div class="btn-group">
+                                    <a href="#" class="nav-link py-2 px-3 text-muted" data-bs-toggle="dropdown"
+                                        aria-expanded="false"><i class="icofont-navigation-menu"></i>
+                                    </a>
+                                    <ul class="dropdown-menu border-0 shadow">
+                                        <li>
+                                            <div class="modelUpdateFormContainer dropdown-item py-2 rounded"
+                                                id="publicationUpdateForm{{ $publication->id }}">
 
-                                            <form
-                                                data-model-update-url="{{ route('publications.config.updateStatus', [$publication->status === 'published' ? 'pending' : 'published', $publication->id]) }}">
+                                                <form
+                                                    data-model-update-url="{{ route('publications.config.updateStatus', [$publication->status === 'published' ? 'pending' : 'published', $publication->id]) }}">
 
 
 
 
-                                                <a role="button" class=" modelUpdateBtn " atl="update client status">
-                                                    <span class="normal-status">
-                                                        <i class="icofont-check text-success  "></i>
-                                                        <span
-                                                            class="d-none d-sm-none d-md-inline">{{ $publication->status === 'published' ? 'Cacher' : 'Publier' }}</span>
-                                                    </span>
-                                                    <span class="indicateur d-none">
-                                                        <span class="spinner-grow spinner-grow-sm" role="status"
-                                                            aria-hidden="true"></span>
-                                                        Un Instant...
-                                                    </span>
-                                                </a>
+                                                    <a role="button" class=" modelUpdateBtn " atl="update client status">
+                                                        <span class="normal-status">
+                                                            <i class="icofont-check text-success  "></i>
+                                                            <span
+                                                                class="d-none d-sm-none d-md-inline">{{ $publication->status === 'published' ? 'Cacher' : 'Publier' }}</span>
+                                                        </span>
+                                                        <span class="indicateur d-none">
+                                                            <span class="spinner-grow spinner-grow-sm" role="status"
+                                                                aria-hidden="true"></span>
+                                                            Un Instant...
+                                                        </span>
+                                                    </a>
 
-                                            </form>
-                                        </div>
+                                                </form>
+                                            </div>
 
-                                    </li>
-                                    <li>
+                                        </li>
+                                        <li>
 
-                                        <a class="dropdown-item py-2 rounded modelDeleteBtn" data-model-action="delete"
-                                            data-model-delete-url={{ route('publications.config.destroy', $publication->id) }}
-                                            data-model-parent-selector="li.parent" role="button">
-                                            <span class="normal-status">
-                                                <i class="icofont-ui-delete text-danger"></i>
+                                            <a class="dropdown-item py-2 rounded modelDeleteBtn" data-model-action="delete"
+                                                data-model-delete-url={{ route('publications.config.destroy', $publication->id) }}
+                                                data-model-parent-selector="li.parent" role="button">
+                                                <span class="normal-status">
+                                                    <i class="icofont-ui-delete text-danger"></i>
 
-                                                <span class="d-none d-sm-none d-md-inline">Supprimer</span>
+                                                    <span class="d-none d-sm-none d-md-inline">Supprimer</span>
 
-                                            </span>
+                                                </span>
 
-                                            <span class="indicateur d-none">
-                                                <span class="spinner-grow spinner-grow-sm" role="status"
-                                                    aria-hidden="true"></span>
+                                                <span class="indicateur d-none">
+                                                    <span class="spinner-grow spinner-grow-sm" role="status"
+                                                        aria-hidden="true"></span>
 
-                                            </span>
-                                        </a>
-                                    </li>
+                                                </span>
+                                            </a>
+                                        </li>
 
-                                </ul>
-                            </div>
+                                    </ul>
+                                </div>
+                            @endcan
+
+
+
                         </li>
 
                     @empty
                     @endforelse
                 </ul>
+                @can('créer-une-publication')
+                    <!-- Chat: Footer -->
+                    <div class="chat-message">
 
-                <!-- Chat: Footer -->
-                <div class="chat-message">
+                        @include('pages.admin.publications.config.create')
+                    </div>
+                @endcan
 
-                    @include('pages.admin.publications.config.create')
-                </div>
 
             </div>
         </div>

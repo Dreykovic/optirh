@@ -12,7 +12,7 @@ class DocumentTypeController extends Controller
     {
         $this->middleware(['permission:configurer-un-document|voir-un-tout'], ['only' => ['index']]);
         $this->middleware(['permission:configurer-un-document|créer-un-tout'], ['only' => ['store', 'update', 'create']]);
-        // $this->middleware(['permission:écrire-un-document|écrire-un-tout'], ['only' => ['approve', 'reject', 'comment']]);
+
         $this->middleware(['permission:configurer-un-document|écrire-un-tout'], ['only' => ['destroy']]);
     }
 
