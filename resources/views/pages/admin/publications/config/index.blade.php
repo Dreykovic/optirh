@@ -29,7 +29,7 @@
                             class="parent mb-3 d-flex flex-row{{ $publication->author_id === auth()->user()->id ? '-reverse' : '' }} align-items-end {{ $publication->author_id !== auth()->user()->id && $publication->status === 'pending' ? 'd-none' : '' }}">
                             <div class="max-width-70">
                                 <div class="user-info mb-1">
-                                    <i class="icofont icofont-calendar fs-3    ">
+                                    <i class="icofont icofont-calendar fs-6    ">
                                     </i>
                                     <span class="text-muted small message-time">{{ $publication->published_at }}</span>
                                 </div>
