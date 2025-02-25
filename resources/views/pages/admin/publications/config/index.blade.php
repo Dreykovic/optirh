@@ -36,7 +36,7 @@
                                 <div
                                     class="card border-0 p-3 {{ $publication->author_id === auth()->user()->id ? 'bg-primary text-light' : '' }}">
                                     <h6 class="model-value"> {{ $publication->title }}</h6>
-                                    <div class="message"> {{ $publication->content }}</div>
+                                    <div class=" text-wrap"> {{ $publication->content }}</div>
 
                                     {{-- @if ($publication->files->isNotEmpty()) --}}
                                     @foreach ($publication->files as $file)
@@ -164,6 +164,14 @@
     @include('pdf.overview.main')
 @endsection
 @push('js')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const chatHistory = document.querySelector(".chat-history");
+            if (chatHistory) {
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }
+        });
+    </script>
     <script src="{{ asset('app-js/publications/pdf.js') }}"></script>
     <script src="{{ asset('app-js/crud/post.js') }}"></script>
     <script src="{{ asset('app-js/crud/put.js') }}"></script>
