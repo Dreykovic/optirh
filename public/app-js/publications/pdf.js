@@ -79,28 +79,47 @@ let optiHRPublicationPDF = (function () {
     };
     const showPdf = () => {
         document.getElementById("file").addEventListener("change", function () {
-            let file = this.files[0];
-            let fileNameSpan = document.getElementById("fileName");
+            let files = this.files;
+            let fileListDiv = document.getElementById("fileList");
 
-            if (file) {
-                let allowedTypes = [
-                    "image/jpeg",
-                    "image/png",
-                    "image/gif",
-                    "application/pdf",
-                ];
-                if (allowedTypes.includes(file.type)) {
-                    fileNameSpan.textContent = file.name;
-                    fileNameSpan.classList.remove("text-danger");
-                    fileNameSpan.classList.add("text-success"); // Ajoute une couleur verte pour valider le fichier
-                } else {
-                    fileNameSpan.textContent = "Format non autorisé !";
-                    fileNameSpan.classList.add("text-danger"); // Ajoute une couleur rouge pour signaler une erreur
-                    this.value = ""; // Réinitialise l'input
-                }
+            // Vider la liste avant d'afficher les nouveaux fichiers
+            fileListDiv.innerHTML = "";
+
+            if (files.length > 0) {
+                Array.from(files).forEach((file) => {
+                    let fileType = file.type;
+                    let fileItem = document.createElement("div");
+                    fileItem.classList.add(
+                        "d-flex",
+                        "align-items-center",
+                        "mb-2"
+                    );
+
+                    // Déterminer l'icône en fonction du type de fichier
+                    let icon = document.createElement("i");
+                    icon.classList.add("fs-5", "me-2");
+
+                    if (fileType === "application/pdf") {
+                        icon.classList.add("icofont-file-pdf", "text-danger"); // Icône PDF rouge
+                    } else if (fileType.startsWith("image/")) {
+                        icon.classList.add("icofont-image", "text-success"); // Icône image verte
+                    } else {
+                        icon.classList.add("icofont-file-alt", "text-warning"); // Icône générique
+                    }
+
+                    // Créer l'élément texte avec le nom du fichier
+                    let fileName = document.createElement("span");
+                    fileName.textContent = file.name;
+                    fileName.classList.add("text-muted");
+
+                    // Ajouter l'icône et le nom du fichier au conteneur
+                    fileItem.appendChild(icon);
+                    fileItem.appendChild(fileName);
+                    fileListDiv.appendChild(fileItem);
+                });
             } else {
-                fileNameSpan.textContent = "Aucun fichier sélectionné";
-                fileNameSpan.classList.remove("text-success", "text-danger");
+                fileListDiv.innerHTML =
+                    "<span class='text-muted'>Aucun fichier sélectionné</span>";
             }
         });
     };

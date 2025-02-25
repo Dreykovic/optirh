@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Publication;
+use App\Services\PublicationFileService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -10,6 +11,13 @@ use Illuminate\Validation\ValidationException;
 
 class PublicationController extends Controller
 {
+    protected $fileService;
+
+    public function __construct()
+    {
+        $this->fileService = new PublicationFileService();
+    }
+
     /**
      * Display a listing of the resource.
      */ /**
@@ -32,6 +40,7 @@ class PublicationController extends Controller
             $query->when($status !== 'all', function ($q) use ($status) {
                 $q->where('status', $status);
             });
+            $query->with(['author', 'files']);
 
             $publications = $query->orderBy('created_at', 'ASC')->get();
 
@@ -83,7 +92,7 @@ class PublicationController extends Controller
             $request->validate([
                 'title' => 'required|string|max:255',
                 'content' => 'sometimes',
-                'file' => 'nullable|mimes:jpg,jpeg,png,gif,pdf|max:2048', // 2MB max
+                'files.*' => 'nullable|mimes:jpg,jpeg,png,gif,pdf|max:2048',  // Les fichiers peuvent être vides
             ]);
 
             $publication = new Publication();
@@ -91,37 +100,11 @@ class PublicationController extends Controller
             $publication->content = $request->input('content');
             $publication->author_id = auth()->id();
 
-            if ($request->hasFile('file')) {
-                $file = $request->file('file');
-
-                $folder = 'publications';
-
-                // Créer le répertoire si nécessaire
-
-                $disk = 'public';
-                if (!Storage::disk($disk)->exists($folder)) {
-                    Storage::disk($disk)->makeDirectory($folder);
-                }
-
-                $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME); // Nom sans extension
-                $extension = $file->getClientOriginalExtension(); // Extension
-                $fileName = $originalName;
-
-                // Gestion des conflits de noms
-                $counter = 1;
-
-                $extension = strtolower($extension);
-                while (Storage::disk($disk)->exists("$folder/$fileName.$extension")) {
-                    $fileName = "{$originalName}_{$counter}";
-                    ++$counter;
-                }
-
-                // Enregistrer le fichier avec un nom unique
-                $path = $file->storeAs($folder, "$fileName.$extension", $disk);
-                $publication->file = $path;
-            }
-
             $publication->save();
+
+            foreach ($request->file('files') as $file) {
+                $this->fileService->storeFile($publication->id, $file);
+            }
 
             return response()->json(['message' => 'Note créée avec succès', 'ok' => true]);
         } catch (ValidationException $e) {

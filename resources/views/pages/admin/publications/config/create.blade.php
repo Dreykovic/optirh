@@ -29,8 +29,15 @@
                     </label>
                     <input type="file" class="d-none" id="file" name="file"
                         accept="image/*, application/pdf">
-                    <i class="icofont-file-pdf fs-5 text-danger"></i>
-                    <span id="fileName" class="ms-2 text-muted"></span> <!-- Zone d'affichage du nom du fichier -->
+
+                    <!-- Icônes pour les fichiers (affichées dynamiquement) -->
+                    <i id="pdfIcon" class="icofont-file-pdf fs-5 text-danger d-none"></i>
+                    <i id="imageIcon" class="icofont-image fs-5 d-none"></i>
+
+                    <!-- Zone d'affichage du nom du fichier -->
+                    <span id="fileName" class="ms-2 text-muted"></span>
+
+
 
                     <button type="submit" class="btn btn-primary float-sm-end  mt-2 mt-sm-0" atl="Publier une note"
                         id="modelAddBtn" data-bs-dismiss="modal">
