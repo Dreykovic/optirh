@@ -29,31 +29,32 @@
                             class="parent mb-3 d-flex flex-row{{ $publication->author_id === auth()->user()->id ? '-reverse' : '' }} align-items-end {{ $publication->author_id !== auth()->user()->id && $publication->status === 'pending' ? 'd-none' : '' }}">
                             <div class="max-width-70">
                                 <div class="user-info mb-1">
-                                    <img class="avatar sm rounded-circle me-1 {{ $publication->author_id === auth()->user()->id ? 'd-none' : '' }}"
-                                        src="{{ asset('assets/images/xs/avatar2.jpg') }}" alt="avatar">
-                                    <span class="text-muted small">10:10 AM, Today</span>
+                                    <i class="icofont icofont-calendar fs-3    ">
+                                    </i>
+                                    <span class="text-muted small message-time">{{ $publication->published_at }}</span>
                                 </div>
                                 <div
-                                    class="card border-0 p-3 {{ $publication->author_id === auth()->user()->id ? 'bg-primary text-light' : '' }}">
+                                    class="card border-0 p-3 {{ $publication->author_id === auth()->user()->id ? 'bg-primary text-light' : 'light-primary-bg' }}">
                                     <h6 class="model-value"> {{ $publication->title }}</h6>
                                     <div class=" text-wrap"> {{ $publication->content }}</div>
 
-                                    {{-- @if ($publication->files->isNotEmpty()) --}}
-                                    @foreach ($publication->files as $file)
+                                    @if ($publication->files->isNotEmpty())
                                         <div class="message">
+
                                             <p>Fichier joint:</p>
+                                            @foreach ($publication->files as $file)
+                                                <a href="#" class="outline-success my-1 me-2 downloadBtn"
+                                                    data-publication-id="{{ $file->id }}">
+                                                    <div
+                                                        class="d-flex ms-3 align-items-center flex-fill  img-thumbnail pe-2">
+                                                        <span
+                                                            class="avatar lg light-danger-bg  text-center d-flex align-items-center justify-content-center">
+                                                            @php
+                                                                $mimeType = $file->mime_type; // Le type MIME récupéré depuis la base de données
+                                                            @endphp
 
-                                            <a href="#" class="outline-success my-1 me-2 downloadBtn"
-                                                data-publication-id="{{ $file->id }}">
-                                                <div class="d-flex ms-3 align-items-center flex-fill  img-thumbnail pe-2">
-                                                    <span
-                                                        class="avatar lg light-danger-bg  text-center d-flex align-items-center justify-content-center">
-                                                        @php
-                                                            $mimeType = $file->mime_type; // Le type MIME récupéré depuis la base de données
-                                                        @endphp
-
-                                                        <i
-                                                            class="fs-5 me-2
+                                                            <i
+                                                                class="fs-5 me-2
                                                         @if (strpos($mimeType, 'pdf') !== false) icofont-file-pdf text-danger
                                                         @elseif (strpos($mimeType, 'image') !== false)
                                                             icofont-image text-success
@@ -61,19 +62,19 @@
                                                             icofont-file-alt text-warning @endif
                                                     "></i>
 
-                                                    </span>
-                                                    <div class="d-flex flex-column ps-3">
-                                                        <h6 class="fw-bold mb-0 small-14">{{ $file->display_name }}</h6>
+                                                        </span>
+                                                        <div class="d-flex flex-column ps-3">
+                                                            <h6 class="fw-bold mb-0 small-14">{{ $file->display_name }}</h6>
+                                                        </div>
+
+
                                                     </div>
-
-
-                                                </div>
-                                            </a>
+                                                </a>
+                                            @endforeach
 
 
                                         </div>
-                                    @endforeach
-                                    {{-- @endif --}}
+                                    @endif
                                     <div
                                         class="d-flex flex-row-reverse {{ $publication->status === 'published' ? 'd-none' : '' }}">
                                         <a href="#" class=" my-1 me-2">
@@ -164,14 +165,6 @@
     @include('pdf.overview.main')
 @endsection
 @push('js')
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const chatHistory = document.querySelector(".chat-history");
-            if (chatHistory) {
-                chatHistory.scrollTop = chatHistory.scrollHeight;
-            }
-        });
-    </script>
     <script src="{{ asset('app-js/publications/pdf.js') }}"></script>
     <script src="{{ asset('app-js/crud/post.js') }}"></script>
     <script src="{{ asset('app-js/crud/put.js') }}"></script>

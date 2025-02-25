@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,7 +16,7 @@ return new class extends Migration {
             $table->string('title');
             $table->text('content')->nullable();
             $table->string('file')->nullable();
-            $table->timestamp('published_at')->default(now());
+            $table->timestamp('published_at')->default(Carbon::now());
             $table->enum('status', ['pending', 'draft', 'published', 'archived'])->default('published');
             $table->bigInteger('author_id')->unsigned();
             $table->foreign('author_id')->references('id')->on('users')->onDelete('cascade');
