@@ -6,3 +6,11 @@
     color: #fff !important;
     font-size: 1em;
   }
+
+
+  /* Add your other styles here */
+
+.pdf-image {
+  max-height: 600px;
+  object-fit: contain;
+}

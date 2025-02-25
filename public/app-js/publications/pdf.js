@@ -6,7 +6,6 @@ let optiHRPublicationPDF = (function () {
 
     const handleDownload = () => {
         downloadBtns.each((index, downloadBtn) => {
-            // console.log(downloadBtn);
             $(downloadBtn).on("click", (e) => {
                 e.preventDefault();
                 const publicationId =
@@ -15,57 +14,53 @@ let optiHRPublicationPDF = (function () {
                 const downloadUrl =
                     "/publications/pdf/preview/" + publicationId;
                 console.log(downloadUrl);
+
                 axios
-                    .get(downloadUrl, {
-                        responseType: "blob", // indique que la réponse est un blob
-                    })
+                    .get(downloadUrl, { responseType: "blob" })
                     .then((response) => {
-                        if (
-                            window.navigator &&
-                            window.navigator.msSaveOrOpenBlob
-                        ) {
-                            // Pour Internet Explorer et Edge
-                            window.navigator.msSaveOrOpenBlob(
-                                response.data,
-                                "publication.pdf"
-                            );
-                        } else {
-                            const blob = new Blob([response.data], {
-                                type: "application/pdf",
-                            });
-                            const url = window.URL.createObjectURL(blob);
+                        const contentType = response.headers["content-type"];
+                        const blob = new Blob([response.data], {
+                            type: contentType,
+                        });
+                        const url = window.URL.createObjectURL(blob);
 
-                            try {
-                                console.log(url);
+                        try {
+                            console.log(url);
+                            let iframeContainer = $("#iframe-container");
+                            let iframe;
 
-                                let iframeContainer = $("#iframe-container");
-                                let iframe = `<iframe src="${url}" width="100%" height="600px">
-                        </iframe> `;
-                                iframeContainer.html(iframe);
-                                pdfModal.modal("show");
-                            } catch (e) {
-                                console.warn(
-                                    "Le navigateur ne supporte pas les Blobs, redirection..."
-                                );
-                                window.location.href = downloadUrl; // Redirection vers l'URL si l'affichage ne marche pas
+                            if (contentType === "application/pdf") {
+                                iframe = `<iframe src="${url}" width="100%" height="600px"></iframe>`;
+                            } else if (contentType.startsWith("image/")) {
+                                iframe = `<img src="${url}" class="pdf-image" width="100%" />`;
+                            } else {
+                                throw new Error("Format non supporté");
                             }
+
+                            iframeContainer.html(iframe);
+                            pdfModal.modal("show");
+                        } catch (e) {
+                            console.warn(
+                                "Le navigateur ne supporte pas l'affichage, redirection..."
+                            );
+                            window.location.href = downloadUrl;
                         }
                     })
-
                     .catch((error) => {
                         if (error.response && error.response.status === 404) {
-                            console.error("Le PDF n'existe pas.");
+                            console.error("Le fichier n'existe pas.");
                             AppModules.showConfirmAlert(
-                                "Le PDF n'existe pas.",
+                                "Le fichier n'existe pas.",
                                 "error"
                             );
                         } else {
                             console.error(
-                                "Erreur lors du téléchargement du PDF:",
-                                error.message
+                                "Erreur lors du téléchargement :",
+                                error
                             );
                             AppModules.showConfirmAlert(
-                                "Une erreur s'est produite. Veuillez réessayer.",
+                                "Une erreur s'est produite. Veuillez réessayer." +
+                                    JSON.stringify(error),
                                 "error"
                             );
                         }

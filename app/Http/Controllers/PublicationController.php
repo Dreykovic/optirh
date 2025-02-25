@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Publication;
+use App\Models\PublicationFile;
 use App\Services\PublicationFileService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -121,16 +122,14 @@ class PublicationController extends Controller
     public function preview($id)
     {
         try {
-            $publication = Publication::findOrFail($id);
+            $file = PublicationFile::findOrFail($id);
 
-            if (!$publication->file || !Storage::disk('public')->exists($publication->file)) {
-                return response()->json(['ok' => false, 'message' => 'Fichier non trouvé.'], 404);
-            }
-
-            return response()->download(Storage::disk('public')->path($publication->file));
+            return response()->download($this->fileService->getFile($file));
         } catch (ModelNotFoundException $e) {
             return response()->json(['ok' => false, 'message' => 'Publication non trouvée.'], 404);
         } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+
             return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
         }
     }
