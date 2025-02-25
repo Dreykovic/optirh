@@ -5,7 +5,13 @@
             <span>Tableau De Bord</span>
         </a>
     </li>
-
+    <li>
+        <a class="m-link {{ Str::startsWith(request()->path(), 'publications/config/list') ? 'active' : '' }}"
+            href="{{ route('publications.config.index') }}">
+            <i class="icofont-newspaper fs-5"></i>
+            <span>Espace Collaboratif</span>
+        </a>
+    </li>
 
     <!-- Attendances -->
     <li class="collapsed">
@@ -97,6 +103,8 @@
         </ul>
 
     </li>
+
+
     <!-- User Management -->
 
     @can('voir-un-credentials')

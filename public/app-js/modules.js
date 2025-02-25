@@ -80,8 +80,8 @@ const AppModules = (function () {
 
             AppModules.showSpinner(btn);
 
-            console.log(formData);console.log(url);
-            
+            console.log(formData);
+            console.log(url);
 
             // Check axios library docs: https://axios-http.com/docs/intro
             axios
@@ -106,7 +106,7 @@ const AppModules = (function () {
                         console.log(1);
                     } else {
                         console.log(0);
-                        console.log('response',response);
+                        console.log("response", response);
 
                         console.log(response.data);
 

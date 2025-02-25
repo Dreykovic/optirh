@@ -18,8 +18,6 @@ class DocumentRequestController extends Controller
     {
         $this->middleware(['permission:voir-un-document|écrire-un-document|créer-un-document|configurer-un-document|voir-un-tout'], ['only' => ['index']]);
         $this->middleware(['permission:créer-un-document|créer-un-tout'], ['only' => ['store', 'cancel', 'create']]);
-        // $this->middleware(['permission:écrire-un-document|écrire-un-tout'], ['only' => ['approve', 'reject', 'comment']]);
-        // $this->middleware(['permission:écrire-un-utilisateur|écrire-un-tout'], ['only' => ['destroy', 'destroyAll']]);
     }
 
     public function download($absenceId)
