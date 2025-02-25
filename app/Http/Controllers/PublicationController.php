@@ -92,7 +92,7 @@ class PublicationController extends Controller
             $request->validate([
                 'title' => 'required|string|max:255',
                 'content' => 'sometimes',
-                'files.*' => 'nullable|mimes:jpg,jpeg,png,gif,pdf|max:2048',  // Les fichiers peuvent être vides
+                'files.*' => 'nullable|mimes:jpg,jpeg,png,gif,pdf|max:10240',  // Les fichiers peuvent être vides
             ]);
 
             $publication = new Publication();
