@@ -1,140 +1,146 @@
 @extends('pages.admin.base')
 
 @section('admin-content')
-    <div class="row align-items-center">
-        <div class="border-0 mb-4">
-            <div
-                class="card-header p-0 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-                <h3 class="fw-bold py-3 mb-0">Publications</h3>
-                <div class="d-flex py-2 project-tab flex-wrap w-sm-100">
-                    <button type="button" class="btn btn-dark btn-set-task w-sm-100" data-bs-toggle="modal"
-                        data-bs-target="#publicationAddModal"><i class="icofont-plus-circle me-2 fs-6"></i>Ajouter</button>
-                    <ul class="nav nav-tabs tab-body-header rounded ms-3 prtab-set w-sm-100" role="tablist">
-                        <li class="nav-item"><a class="nav-link {{ $status === 'all' ? 'active' : '' }}"
-                                href="{{ route('publications.config.index', 'all') }}" role="tab">Toutes</a></li>
+    <div class="row g-0">
+        <div class="col-12 d-flex">
 
-                        <li class="nav-item"><a class="nav-link {{ $status === 'published' ? 'active' : '' }}"
-                                href="{{ route('publications.config.index', 'published') }}" role="tab">Publiés</a></li>
-                        <li class="nav-item"><a class="nav-link {{ $status === 'pending' ? 'active' : '' }}"
-                                href="{{ route('publications.config.index', 'pending') }}" role="tab">À venir</a></li>
+            <!-- Card: -->
+            <div class="card card-chat-body border-0  w-100 px-4 px-md-5 py-3 py-md-4">
 
+                <!-- Chat: Header -->
+                <div class="chat-header d-flex justify-content-between align-items-center border-bottom pb-3">
+                    <div class="d-flex align-items-center">
 
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div> <!-- Row end  -->
-
-    <div class="row g-3 gy-5 py-3 row-deck align-items-center">
-        @forelse ($publications as $publication)
-            <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                <div class="card parent">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center justify-content-between mt-5">
-                            <div class="lesson_name">
-                                <div class="project-block light-success-bg">
-                                    <i class="icofont-tick-boxed"></i>
-                                </div>
-                                <span class="model-value  project_name fw-bold"> {{ $publication->title }}</span>
-
-                            </div>
-
+                        <a href="javascript:void(0);" title="">
+                            <img class="avatar rounded" src="{{ asset('assets/images/xs/avatar2.jpg') }}" alt="avatar">
+                        </a>
+                        <div class="ms-3">
+                            <h2 class="mb-0">Espace Collaboratif</h2>
+                            <small class="text-muted">Notes et informations</small>
                         </div>
-                        <div class="d-flex flex-row-reverse">
-                            <div type="div" class="btn   dropdown-toggle-split" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                <span class="fw-bolder">...</span>
-                                <span class="visually-hidden">Toggle Dropdown</span>
-                            </div>
-                            <ul class="dropdown-menu border-0 shadow py-3 px-2">
-                                <li>
-                                    <div class="modelUpdateFormContainer dropdown-item py-2 rounded"
-                                        id="publicationUpdateForm{{ $publication->id }}">
+                    </div>
 
-                                        <form
-                                            data-model-update-url="{{ route('publications.config.updateStatus', [$publication->status === 'published' ? 'pending' : 'published', $publication->id]) }}">
+                </div>
 
+                <!-- Chat: body -->
+                <ul class="chat-history list-unstyled mb-0 py-lg-5 py-md-4 py-3 flex-grow-1">
+                    @forelse ($publications as $publication)
+                        <li
+                            class="parent mb-3 d-flex flex-row{{ $publication->author_id === auth()->user()->id ? '-reverse' : '' }} align-items-end {{ $publication->author_id !== auth()->user()->id && $publication->status === 'pending' ? 'd-none' : '' }}">
+                            <div class="max-width-70">
+                                <div class="user-info mb-1">
+                                    <img class="avatar sm rounded-circle me-1 {{ $publication->author_id === auth()->user()->id ? 'd-none' : '' }}"
+                                        src="{{ asset('assets/images/xs/avatar2.jpg') }}" alt="avatar">
+                                    <span class="text-muted small">10:10 AM, Today</span>
+                                </div>
+                                <div
+                                    class="card border-0 p-3 {{ $publication->author_id === auth()->user()->id ? 'bg-primary text-light' : '' }}">
+                                    <h6 class="model-value"> {{ $publication->title }}</h6>
+                                    <div class="message"> {{ $publication->content }}</div>
 
+                                    @if ($publication->file)
+                                        <div class="message">
+                                            <p>Fichier joint:</p>
 
-
-                                            <a role="button" class=" modelUpdateBtn " atl="update client status">
-                                                <span class="normal-status">
-                                                    <i class="icofont-check text-success  "></i>
+                                            <a href="#" class="outline-success my-1 me-2 downloadBtn"
+                                                data-publication-id="{{ $publication->id }}">
+                                                <div class="d-flex ms-3 align-items-center flex-fill  img-thumbnail pe-2">
                                                     <span
-                                                        class="d-none d-sm-none d-md-inline">{{ $publication->status === 'published' ? 'A venir' : 'Publier' }}</span>
-                                                </span>
-                                                <span class="indicateur d-none">
-                                                    <span class="spinner-grow spinner-grow-sm" role="status"
-                                                        aria-hidden="true"></span>
-                                                    Un Instant...
-                                                </span>
+                                                        class="avatar lg light-danger-bg  text-center d-flex align-items-center justify-content-center">
+                                                        <i class="icofont-file-pdf fs-5 text-danger"></i>
+                                                    </span>
+                                                    <div class="d-flex flex-column ps-3">
+                                                        <h6 class="fw-bold mb-0 small-14">file1.pdf</h6>
+                                                    </div>
+
+
+                                                </div>
                                             </a>
 
-                                        </form>
+
+                                        </div>
+                                    @endif
+                                    <div
+                                        class="d-flex flex-row-reverse {{ $publication->status === 'published' ? 'd-none' : '' }}">
+                                        <a href="#" class=" my-1 me-2">
+                                            <i class="icofont-ban fs-5 text-danger"></i>
+                                            Non Publié
+                                        </a>
                                     </div>
 
-
-
-                                </li>
-
-
-
-                                <li>
-                                    <a class="dropdown-item py-2 rounded modelDeleteBtn" data-model-action="delete"
-                                        data-model-delete-url={{ route('publications.config.destroy', $publication->id) }}
-                                        data-model-parent-selector="div.parent" role="button">
-                                        <span class="normal-status">
-                                            <i class="icofont-ui-delete text-danger"></i>
-
-                                            <span class="d-none d-sm-none d-md-inline">Supprimer</span>
-
-                                        </span>
-
-                                        <span class="indicateur d-none">
-                                            <span class="spinner-grow spinner-grow-sm" role="status"
-                                                aria-hidden="true"></span>
-
-                                        </span>
-                                    </a>
-
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div class="dividers-block"></div>
-
-                        <div class="customer-like mb-2">
-
-
-
-                            {{ Str::limit($publication->content, 250) }}
-
-
-
-
-
-                        </div>
-                        <div class="d-flex align-items-center justify-content-between mb-2">
-
-                            <div class='d-flex align-items-center py-2'>
-
+                                </div>
                             </div>
+                            <!-- More option -->
+                            <div class="btn-group">
+                                <a href="#" class="nav-link py-2 px-3 text-muted" data-bs-toggle="dropdown"
+                                    aria-expanded="false"><i class="icofont-navigation-menu"></i>
+                                </a>
+                                <ul class="dropdown-menu border-0 shadow">
+                                    <li>
+                                        <div class="modelUpdateFormContainer dropdown-item py-2 rounded"
+                                            id="publicationUpdateForm{{ $publication->id }}">
 
-                            <a href="#" class="btn btn-outline-success my-1 me-2 downloadBtn"
-                                data-publication-id="{{ $publication->id }}"> <span class="  p-1 rounded">
-                                    Aperçu</span> </a>
+                                            <form
+                                                data-model-update-url="{{ route('publications.config.updateStatus', [$publication->status === 'published' ? 'pending' : 'published', $publication->id]) }}">
 
-                        </div>
 
-                    </div>
+
+
+                                                <a role="button" class=" modelUpdateBtn " atl="update client status">
+                                                    <span class="normal-status">
+                                                        <i class="icofont-check text-success  "></i>
+                                                        <span
+                                                            class="d-none d-sm-none d-md-inline">{{ $publication->status === 'published' ? 'Cacher' : 'Publier' }}</span>
+                                                    </span>
+                                                    <span class="indicateur d-none">
+                                                        <span class="spinner-grow spinner-grow-sm" role="status"
+                                                            aria-hidden="true"></span>
+                                                        Un Instant...
+                                                    </span>
+                                                </a>
+
+                                            </form>
+                                        </div>
+
+                                    </li>
+                                    <li>
+
+                                        <a class="dropdown-item py-2 rounded modelDeleteBtn" data-model-action="delete"
+                                            data-model-delete-url={{ route('publications.config.destroy', $publication->id) }}
+                                            data-model-parent-selector="li.parent" role="button">
+                                            <span class="normal-status">
+                                                <i class="icofont-ui-delete text-danger"></i>
+
+                                                <span class="d-none d-sm-none d-md-inline">Supprimer</span>
+
+                                            </span>
+
+                                            <span class="indicateur d-none">
+                                                <span class="spinner-grow spinner-grow-sm" role="status"
+                                                    aria-hidden="true"></span>
+
+                                            </span>
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </li>
+
+                    @empty
+                    @endforelse
+                </ul>
+
+                <!-- Chat: Footer -->
+                <div class="chat-message">
+
+                    @include('pages.admin.publications.config.create')
                 </div>
+
             </div>
-        @empty
-            <x-no-data color="warning" text="Aucune Publication enregistrée" />
-        @endforelse
-        @include('pages.admin.publications.config.create')
-        @include('pdf.overview.main')
-    </div>
+        </div>
+    </div> <!-- row end -->
+    @include('pdf.overview.main')
 @endsection
 @push('js')
     <script src="{{ asset('app-js/publications/pdf.js') }}"></script>

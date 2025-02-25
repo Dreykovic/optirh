@@ -4,7 +4,7 @@ let optiHRPublicationPDF = (function () {
 
     let downloadBtns;
 
-    let handleDownload = () => {
+    const handleDownload = () => {
         downloadBtns.each((index, downloadBtn) => {
             // console.log(downloadBtn);
             $(downloadBtn).on("click", (e) => {
@@ -77,6 +77,33 @@ let optiHRPublicationPDF = (function () {
     let addNatureCallback = () => {
         location.reload();
     };
+    const showPdf = () => {
+        document.getElementById("file").addEventListener("change", function () {
+            let file = this.files[0];
+            let fileNameSpan = document.getElementById("fileName");
+
+            if (file) {
+                let allowedTypes = [
+                    "image/jpeg",
+                    "image/png",
+                    "image/gif",
+                    "application/pdf",
+                ];
+                if (allowedTypes.includes(file.type)) {
+                    fileNameSpan.textContent = file.name;
+                    fileNameSpan.classList.remove("text-danger");
+                    fileNameSpan.classList.add("text-success"); // Ajoute une couleur verte pour valider le fichier
+                } else {
+                    fileNameSpan.textContent = "Format non autorisé !";
+                    fileNameSpan.classList.add("text-danger"); // Ajoute une couleur rouge pour signaler une erreur
+                    this.value = ""; // Réinitialise l'input
+                }
+            } else {
+                fileNameSpan.textContent = "Aucun fichier sélectionné";
+                fileNameSpan.classList.remove("text-success", "text-danger");
+            }
+        });
+    };
     return {
         init: () => {
             pdfModal = $("#cont-pdf-view");
@@ -85,7 +112,7 @@ let optiHRPublicationPDF = (function () {
             }
 
             downloadBtns = $(".downloadBtn");
-
+            showPdf();
             handleDownload();
         },
     };

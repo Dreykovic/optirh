@@ -33,7 +33,7 @@ class PublicationController extends Controller
                 $q->where('status', $status);
             });
 
-            $publications = $query->orderBy('created_at', 'DESC')->get();
+            $publications = $query->orderBy('created_at', 'ASC')->get();
 
             return view('pages.admin.publications.config.index', compact('publications', 'status'));
         } catch (\Throwable $th) {
@@ -83,14 +83,12 @@ class PublicationController extends Controller
             $request->validate([
                 'title' => 'required|string|max:255',
                 'content' => 'sometimes',
-                'file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-                'status' => 'required|in:archived,pending,published',
+                'file' => 'nullable|mimes:jpg,jpeg,png,gif,pdf|max:2048', // 2MB max
             ]);
 
             $publication = new Publication();
             $publication->title = $request->input('title');
             $publication->content = $request->input('content');
-            $publication->status = $request->input('status');
             $publication->author_id = auth()->id();
 
             if ($request->hasFile('file')) {

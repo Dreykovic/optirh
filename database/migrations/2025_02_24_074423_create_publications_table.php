@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->text('content')->nullable();
             $table->string('file')->nullable();
             $table->timestamp('published_at')->default(now());
-            $table->enum('status', ['pending', 'draft', 'published', 'archived'])->default('pending');
+            $table->enum('status', ['pending', 'draft', 'published', 'archived'])->default('published');
             $table->bigInteger('author_id')->unsigned();
             $table->foreign('author_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
