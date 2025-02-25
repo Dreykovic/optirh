@@ -197,13 +197,13 @@
             id="employees-navs">
             <li><a class="ms-link {{ Request::is('employee/data') ? 'active' : '' }}"
                     href="{{ route('employee.data') }}">
-                    <span>informations</span></a>
+                    <span>Mes informations</span></a>
             </li>
 
             <li>
                 <a class="ms-link {{ Str::startsWith(request()->path(), 'employee/pay') ? 'active' : '' }}"
                     href="{{ route('employee.pay', Auth::user()->employee) }}">
-                    <span>bulletins de paie Reçus </span>
+                    <span>Mes bulletins de paie </span>
                 </a>
             </li>
         </ul>
