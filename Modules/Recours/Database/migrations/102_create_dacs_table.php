@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('reference');
             $table->string('object');
+            $table->string('ac');
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
 
             $table->unsignedBigInteger('created_by')->nullable();

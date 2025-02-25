@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Modules\Recours\App\Models\Dac; 
+use Modules\Recours\App\Models\Applicant; 
 
 class RecoursController extends Controller
 {
@@ -22,7 +24,10 @@ class RecoursController extends Controller
      */
     public function create()
     {
-        return view('recours::pages.recours.new');
+        $dacs = Dac::orderBy('created_at', 'desc')->pluck('reference');
+        $applicants = Applicant::orderBy('created_at', 'desc')->pluck('name');
+// dump($applicants);
+        return view('recours::pages.recours.new', compact('dacs', 'applicants'));
     }
 
     /**

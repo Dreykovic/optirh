@@ -127,8 +127,11 @@ protected $status = ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED
 
     php artisan module:make-model Model Module 
     php artisan module:make-model Appeal Recours -m
+    php artisan module:make-controller DacController Recours 
 
     php artisan module:migrate Recours
+    php artisan module:migrate-refresh Recours
+
 
 
     */

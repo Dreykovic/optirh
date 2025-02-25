@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Recours\App\Http\Controllers\RecoursController;
+use Modules\Recours\App\Http\Controllers\DacController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +18,8 @@ use Modules\Recours\App\Http\Controllers\RecoursController;
 Route::prefix('recours')->group(function () {
     Route::get('/index', [ RecoursController::class, 'index'])->name('recours.index');
     Route::get('/new', [ RecoursController::class, 'create'])->name('recours.new');
+    Route::post('/dacs/store', [ DacController::class, 'dacStore'])->name('dac.store');
+    Route::post('/applicants/store', [ DacController::class, 'applicantStore'])->name('applicant.store');
 });
 
 // Route::group([], function () {
