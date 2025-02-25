@@ -54,4 +54,21 @@ class PublicationFileService extends FileService
 
         return Storage::disk('public')->path($file->path);
     }
+
+    public function destroyFile(PublicationFile $file)
+    {
+        // Supprimer le fichier du disque principal
+        if (Storage::exists($file->path)) {
+            Storage::delete($file->path);
+        }
+
+        // Supprimer également le fichier dans 'public/storage', si nécessaire
+        $publicPath = public_path('storage/'.str_replace('public/', '', $file->path));
+        if (file_exists($publicPath)) {
+            unlink($publicPath); // Supprime le fichier du chemin public
+        }
+
+        // Supprimer l'entrée de la base de données
+        $file->delete();
+    }
 }

@@ -165,17 +165,12 @@ class PublicationController extends Controller
     {
         try {
             $publication = Publication::findOrFail($id);
-            // Supprimer le fichier du disque principal
-            if (Storage::disk('public')->exists($publication->file)) {
-                Storage::disk('public')->delete($publication->file);
-            }
 
-            // Supprimer également le fichier dans 'public/storage', si nécessaire
-            $publicPath = public_path('storage/'.str_replace('public/', '', $publication->file));
-            if (file_exists($publicPath)) {
-                unlink($publicPath); // Supprime le fichier du chemin public
+            if ($publication->files->isNotEmpty()) {
+                foreach ($publication->files as $file) {
+                    $this->fileService->destroyFile($file);
+                }
             }
-
             // Supprimer l'entrée de la base de données
             $publication->delete();
 
