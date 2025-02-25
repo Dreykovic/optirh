@@ -14,6 +14,11 @@ use Modules\Recours\App\Http\Controllers\RecoursController;
 |
 */
 
-Route::group([], function () {
-    Route::resource('recours', RecoursController::class)->names('recours');
+Route::prefix('recours')->group(function () {
+    Route::get('/index', [ RecoursController::class, 'index'])->name('recours.index');
+    Route::get('/new', [ RecoursController::class, 'create'])->name('recours.new');
 });
+
+// Route::group([], function () {
+//     Route::resource('recours', RecoursController::class)->names('recours');
+// });

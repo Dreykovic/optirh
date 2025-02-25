@@ -14,7 +14,7 @@ class RecoursController extends Controller
      */
     public function index()
     {
-        return view('recours::index');
+        return view('recours::pages.recours.liste');
     }
 
     /**
@@ -22,7 +22,7 @@ class RecoursController extends Controller
      */
     public function create()
     {
-        return view('recours::create');
+        return view('recours::pages.recours.new');
     }
 
     /**
