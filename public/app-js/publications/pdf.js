@@ -53,6 +53,15 @@ let optiHRPublicationPDF = (function () {
                                 "Le fichier n'existe pas.",
                                 "error"
                             );
+                        } else if (
+                            error.response &&
+                            error.response.status === 413
+                        ) {
+                            console.error("Le fichier n'a pa bien chargé.");
+                            AppModules.showConfirmAlert(
+                                "Le fichier n'a pas bien chargé. IL DÉPASSE LA LIMITE DE 10mb",
+                                "error"
+                            );
                         } else {
                             console.error(
                                 "Erreur lors du téléchargement :",

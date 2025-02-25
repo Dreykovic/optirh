@@ -93,7 +93,8 @@ class PublicationController extends Controller
             $request->validate([
                 'title' => 'required|string|max:255',
                 'content' => 'sometimes',
-                'files.*' => 'nullable|mimes:jpg,jpeg,png,gif,pdf|max:10240',  // Les fichiers peuvent être vides
+                // 'files.*' => 'nullable|mimes:jpg,jpeg,png,gif,pdf|max:10240',  // Les fichiers peuvent être vides
+                'files.*' => 'nullable|mimes:jpg,jpeg,png,gif,pdf',  // Les fichiers peuvent être vides
             ]);
 
             $publication = new Publication();
@@ -102,9 +103,11 @@ class PublicationController extends Controller
             $publication->author_id = auth()->id();
 
             $publication->save();
-
-            foreach ($request->file('files') as $file) {
-                $this->fileService->storeFile($publication->id, $file);
+            $files = $request->file('files');
+            if ($files) {
+                foreach ($files as $file) {
+                    $this->fileService->storeFile($publication->id, $file);
+                }
             }
 
             return response()->json(['message' => 'Note créée avec succès', 'ok' => true]);
@@ -130,7 +133,7 @@ class PublicationController extends Controller
         } catch (\Throwable $th) {
             return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
 
-            return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
+            // return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
         }
     }
 
