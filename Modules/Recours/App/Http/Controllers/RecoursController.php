@@ -24,8 +24,8 @@ class RecoursController extends Controller
      */
     public function create()
     {
-        $dacs = Dac::orderBy('created_at', 'desc')->pluck('reference');
-        $applicants = Applicant::orderBy('created_at', 'desc')->pluck('name');
+        $dacs = Dac::orderBy('created_at', 'desc')->get();
+        $applicants = Applicant::orderBy('created_at', 'desc')->get();
 // dump($applicants);
         return view('recours::pages.recours.new', compact('dacs', 'applicants'));
     }

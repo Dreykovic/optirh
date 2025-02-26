@@ -146,6 +146,7 @@ protected $status = ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED
         return $this->hasMany(File::class, 'employee_id');
     }
 
-    saragroupeafrique@gmail.com
-
+    
+    infotogo@apindustrie.com 
+    
 

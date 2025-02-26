@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('dacs', function (Blueprint $table) {
             $table->id();
             $table->string('reference');
-            $table->string('object');
-            $table->string('ac');
+            $table->string('object')->nullable();
+            $table->string('ac')->nullable();
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
 
             $table->unsignedBigInteger('created_by')->nullable();

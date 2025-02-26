@@ -24,6 +24,7 @@ class Appeal extends Model
      * The attributes that are mass assignable.
      */
     protected $fillable = [
+        'date_depot',
         'type',
         'deposit_date',
         'deposit_hour',

@@ -9,13 +9,15 @@
         @csrf
         
         <div class="mb-3 ">
-            <label for="dac" class="form-label fs-5">Dac</label>
+            <label for="dac" class="form-label fs-5">Marché N° : </label>
             <div class='d-flex justify-content-between align-items-center'>
-            <input class="form-control mx-2" list="datalistOptions" id="exampleDataList" placeholder="Rechercher...">
-                <datalist id="datalistOptions">
-                @foreach($dacs as $dac)
-                    <option value="{{$dac}}">
-                    @endforeach
+            <input class="form-control mx-2" list="dacOptions" id="dacDataList" placeholder="Rechercher..." name='dac_id'>
+                <datalist id="dacOptions">
+                @forelse($dacs as $dac)
+                    <option value="{{$dac->id}}">{{$dac->reference}}</option>
+                @empty
+                    <option value="">Aucun dac trouvé</option>
+                @endforelse
                 </datalist>
                 <!-- <input type="text" class="form-control mx-2" id="dac" name="dac"> -->
                 <button type="button" class="btn btn-primary" id="addDac">+</button>
@@ -23,31 +25,37 @@
         </div>
         
         <div class="mb-3">
-            <label for="type_recours" class="form-label fs-5">Type Recours</label>
-            <input type="text" class="form-control" id="type_recours" name="type_recours">
+            <label for="type_recours" class="form-label fs-5">Recours Contre : </label>
+            <!-- <input type="text" class="form-control" id="type_recours" name="type_recours"> -->
+             <select name="type" id="type_recours" class="form-control">
+                <option value="RESULTS" selected>Ses résultats Provisoirs</option>
+                <option value="DAC">Son DAC</option>
+                <option value="PROCESS">Sa Procédure/ Son déroulement</option>
+                <option value="OTHERS">Autre</option>
+             </select>
         </div>
 
         <div class="mb-3">
-            <label for="date_depot" class="form-label fs-5">Date Heure Dépôt</label>
-            <input type="datetime-local" class="form-control" id="date_depot" name="date_depot">
+            <label for="date_depot" class="form-label fs-5">Date Heure Dépôt : </label>
+            <input type="datetime-local" class="form-control" id="date_depot" value="{{ now()->format('Y-m-d\TH:i') }}" name="date_depot">
         </div>
 
         <div class="mb-3">
-            <label for="objet" class="form-label fs-5">Objet</label>
-            <input type="text" class="form-control" id="objet" name="objet">
+            <label for="objet" class="form-label fs-5">Objet : </label>
+            <input type="text" class="form-control" id="objet" name="object">
         </div>
 
         <div class="mb-3">
-            <label for="requérant" class="form-label fs-5">Requérant</label>
+            <label for="requérant" class="form-label fs-5">Requérant : </label>
             <div class='d-flex justify-content-between align-items-center'>
 
-            <input class="form-control mx-2" list="datalistOptions" id="exampleDataList" placeholder="Rechercher...">
-                <datalist id="datalistOptions">
-                    @foreach($applicants as $applicant)
-                    <option value="{{ $applicant }}">{{ $applicant }}</option>
-
-                    @endforeach
-                
+            <input class="form-control mx-2" list="applicantOptions" id="applicantDataList" placeholder="Rechercher..." name='applicant_id'>
+                <datalist id="applicantOptions">
+                    @forelse($applicants as $applicant)
+                        <option value="{{$applicant->id}}">{{$applicant->name}}</option>
+                    @empty
+                        <option value="">Aucun requerant trouvé</option>
+                    @endforelse                   
                 </datalist>
                 <!-- <input type="text" class="form-control mx-2" id="requérant" name="requérant"> -->
                 <button type="button" class="btn btn-primary" id="addRequerant">+</button>

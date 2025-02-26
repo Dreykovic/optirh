@@ -16,14 +16,14 @@ return new class extends Migration
             $table->enum('type', ['DAC', 'PROCESS', 'RESULTS', 'OTHERS'])->default('RESULTS');
             $table->date('deposit_date');
             $table->time('deposit_hour');
-            $table->string('object');
+            $table->string('object')->nullable();
             $table->integer('day_count');
             $table->enum('analyse_status', ['ANALYSE_PENDING', 'ACCEPTED', 'REJECTED'])->default('ANALYSE_PENDING');
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
 
             $table->foreignId('dac_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('decision_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('authority_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('decision_id')->nullable()->constrained()->onDelete('cascade')->onUpdate('cascade');
+            // $table->foreignId('authority_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('applicant_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
 
             $table->unsignedBigInteger('created_by')->nullable();

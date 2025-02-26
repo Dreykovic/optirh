@@ -65,16 +65,16 @@ class DacController extends Controller
             $validatedData = $request->validate([
                 'nif' => 'required|unique:applicants,nif|string|max:255',
                 'name' => 'required|string|max:255',
-                'phone_number' => 'sometimes|string|max:255',
-                'address' => 'sometimes|string|max:255',
+                'phone_number' => 'nullable|string|max:255',
+                'address' => 'nullable|string|max:255',
             ]);
 
             // Create the applicant
             Applicant::create([
                 'nif' => $validatedData['nif'],
                 'name' => $validatedData['name'],
-                'phone_number' => $validatedData['phone_number'],
-                'address' => $validatedData['address'],
+                'phone_number' => $validatedData['phone_number']?? null,
+                'address' => $validatedData['address'] ?? null,
                 // 'created_by' =>  Auth::user()->employee->id ?? null
             ]);
 
