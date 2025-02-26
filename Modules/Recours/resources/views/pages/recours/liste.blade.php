@@ -6,17 +6,93 @@
             <div class="container-xxl">
                 <div class="row clearfix">
                     <div class="col-md-12">
-                        <div class="card border-0 mb-4 no-bg">
-                            <div class="card-header py-3 px-0 d-sm-flex align-items-center  justify-content-between border-bottom">
-                                <h3 class=" fw-bold flex-fill mb-0 mt-sm-0">Nos Recours(Total :14)</h3>
-                                <button type="button" class="btn btn-dark me-1 mt-1 w-sm-100" data-bs-toggle="modal" data-bs-target="#addEmpModal"><i class="icofont-plus-circle me-2 fs-6"></i>Ajouter</button>
-                                <select id="directorInput" class='btn btn-dark me-1 mt-1 w-sm-100'>
-                                   
+                        <div class="card border-0 no-bg">
+                        <h3 class=" fw-bold flex-fill mb-0 mt-sm-0 text-center">Nos Recours(Total :14)</h3>
+    
+                            <div class="card-header px-4 d-sm-flex align-items-center justify-content-between border-bottom mt-4 mx-5">
+                                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#addEmpModal">
+                                    <i class="icofont-plus-circle me-2 fs-6"></i> Ajouter
+                                </button>
+                                <div class='d-flex justify-content-between align-items-center p-2 gap-2'>
+                                    <div class='d-flex justify-content-between align-items-center p-2 gap-2'>
+                                        <label for="" class='fs-6'>De: </label>
+                                        <input type="date" name="" id="" class='form-control'>
+                                    </div>
+                                    <div class='d-flex justify-content-between align-items-center p-2 gap-2'>
+                                        <label for="" class='fs-6'>À: </label>
+                                        <input type="date" name="" id="" class='form-control '>
+                                    </div>
+                                    <button type="submit" class='btn btn-secondary'><i class="icofont-search fs-6 mx-1"></i>Rechercher</button>
+                                </div>
+                                <!-- Icône avec Dropdown -->
+                        <div class="dropdown">
+                            <i class="icofont-settings fs-2" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
+                            
+                            <div class="dropdown-menu p-3">
+                                <!-- Status -->
+                                <strong>Status</strong>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="statusAccepte">
+                                    <label class="form-check-label" for="statusAccepte">Accepté</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="statusRejete">
+                                    <label class="form-check-label" for="statusRejete">Rejeté</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="statusDesistement">
+                                    <label class="form-check-label" for="statusDesistement">Désistement</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="statusIncompetence">
+                                    <label class="form-check-label" for="statusIncompetence">Pas Compétence</label>
+                                </div>
+
+                                <hr class="my-2">
+
+                                <!-- State -->
+                                <strong>State</strong>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="stateEncours">
+                                    <label class="form-check-label" for="stateEncours">En cours</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="stateSuspendu">
+                                    <label class="form-check-label" for="stateSuspendu">Suspendu</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="stateTermine">
+                                    <label class="form-check-label" for="stateTermine">Terminé</label>
+                                </div>
+
+                                <hr class="my-2">
+
+                                <!-- Decisions -->
+                                <strong>Décisions</strong>
+                                <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="decisionForclusion">
+                                            <label class="form-check-label" for="decisionForclusion">Forclusion</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="decisionFonde">
+                                            <label class="form-check-label" for="decisionFonde">Fondé</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="decisionNonFonde">
+                                            <label class="form-check-label" for="decisionNonFonde">Non Fondé</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- <i class="icofont-settings fs-2"></i> -->
+                                <!-- <i class="icofont-settings-alt fs-1"></i> -->
+                                <!-- <select id="directorInput" class='btn btn-dark me-1 mt-1 w-sm-100 p-2'>
                                     <option value="">gg</option>
-                                   
-                                    <option value="" selected >Directions</option>
-                                </select>
+                                    <option value="" selected>Directions</option>
+                                </select> -->
                             </div>
+
+                            <!--  -->
                         </div>
                     </div>
                 </div>
@@ -27,11 +103,13 @@
                         <div class="card mb-3">
                             <div class="card-body">
                                 <div class='d-flex justify-content-between'>
-                                <div class='d-flex justify-content-between align-items-center p-4'>
+                                <!-- <h3 class=" fw-bold flex-fill mb-0 mt-sm-0">Nos Recours(Total :14)</h3> -->
+
+                                <!-- <div class='d-flex justify-content-between align-items-center p-4'>
                                         <input type="date" name="" id="" class='form-control mx-2'>
                                         <input type="date" name="" id="" class='form-control mx-2'>
                                         <button type="submit" class='btn-secondary'>Rechercher</button>
-                                    </div>
+                                    </div> -->
                                     <div class='d-flex justify-content-between align-items-center'>
                                         <span>Afficher</span>
                                         <select id="limitSelect" class='form-select mx-2'>

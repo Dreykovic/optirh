@@ -24,7 +24,7 @@
                     @endforelse                   
                 </datalist>
                     <!-- <input type="text" class="form-control mx-2" id="dac" name="dac"> -->
-                    <button type="button" class="btn btn-primary" id="addDac">+</button>
+                    <button type="button" class="btn btn-primary" id="addDac"><i class="icofont-plus-circle fs-5"></i></button>
                 </div>
             </div>
             
@@ -64,11 +64,11 @@
                     @endforelse                   
                 </datalist>
                     <!-- <input type="text" class="form-control mx-2" id="requérant" name="requérant"> -->
-                    <button type="button" class="btn btn-primary" id="addRequerant">+</button>
+                    <button type="button" class="btn btn-primary" id="addRequerant"><i class="icofont-plus-circle fs-5"></i></button>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-primary  modelUpdateBtn" atl="Save applicant"
+                <button type="submit" class="btn btn-primary  modelUpdateBtn w-25 fs-5" atl="Save applicant"
                     data-bs-dismiss="modal">
                     <span class="normal-status">
                         Valider
@@ -97,14 +97,14 @@
             </div>
             <div class="modal-body">
                 <label for="ref" class='fs-5'>Référence</label>
-                <input type="text" class="form-control" id="ref" name='reference'>
+                <input type="text" class="form-control mb-2" id="ref" name='reference'>
                 <label for="objetDac" class='fs-5'>Objet</label>
-                <input type="text" class="form-control" id="objetDac" name='object'>
+                <input type="text" class="form-control mb-2" id="objetDac" name='object'>
                 <label for="ac" class='fs-5'>AC</label>
                 <input type="text" class="form-control" id="ac" name='ac'>
             </div>
             <div class="modal-footer">
-            <button type="submit" class="btn btn-primary  modelUpdateBtn" atl="Save dac"
+            <button type="submit" class="btn btn-primary  modelUpdateBtn fs-5" atl="Save dac"
                 data-bs-dismiss="modal">
                 <span class="normal-status">
                     Valider
@@ -134,16 +134,16 @@
             </div>
             <div class="modal-body">
                 <label for="nom" class='fs-5'>Dénomination</label>
-                <input type="text" class="form-control" id="nom" name='name'>
+                <input type="text" class="form-control mb-2" id="nom" name='name'>
                 <label for="nif" class='fs-5'>NIF</label>
-                <input type="text" class="form-control" id="nif" name='nif'>
+                <input type="text" class="form-control mb-2" id="nif" name='nif'>
                 <label for="phone" class='fs-5'>Téléphone</label>
-                <input type="text" class="form-control" id="phone" name='phone_number'>
+                <input type="text" class="form-control mb-2" id="phone" name='phone_number'>
                 <label for="adresse" class='fs-5'>Adresse</label>
                 <input type="text" class="form-control" id="adresse" name='address'>
             </div>
             <div class="modal-footer">
-            <button type="submit" class="btn btn-primary  modelUpdateBtn" atl="Save applicant"
+            <button type="submit" class="btn btn-primary  modelUpdateBtn fs-5" atl="Save applicant"
                 data-bs-dismiss="modal">
                 <span class="normal-status">
                     Valider
