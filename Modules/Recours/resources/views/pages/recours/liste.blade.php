@@ -2,7 +2,6 @@
 @section('plugins-style')
 @endsection
 @section('admin-content')
-
             <div class="container-xxl">
                 <div class="row clearfix">
                     <div class="col-md-12">
@@ -30,7 +29,11 @@
                             
                             <div class="dropdown-menu p-3">
                                 <!-- Status -->
-                                <strong>Status</strong>
+                                <strong>Etude Status</strong>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="etude">
+                                    <label class="form-check-label" for="etude">En cours</label>
+                                </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="statusAccepte">
                                     <label class="form-check-label" for="statusAccepte">Accepté</label>
@@ -39,19 +42,11 @@
                                     <input class="form-check-input" type="checkbox" id="statusRejete">
                                     <label class="form-check-label" for="statusRejete">Rejeté</label>
                                 </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="statusDesistement">
-                                    <label class="form-check-label" for="statusDesistement">Désistement</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="statusIncompetence">
-                                    <label class="form-check-label" for="statusIncompetence">Pas Compétence</label>
-                                </div>
 
                                 <hr class="my-2">
 
                                 <!-- State -->
-                                <strong>State</strong>
+                                <!-- <strong>State</strong>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="stateEncours">
                                     <label class="form-check-label" for="stateEncours">En cours</label>
@@ -65,22 +60,34 @@
                                     <label class="form-check-label" for="stateTermine">Terminé</label>
                                 </div>
 
-                                <hr class="my-2">
+                                <hr class="my-2"> -->
 
                                 <!-- Decisions -->
                                 <strong>Décisions</strong>
                                 <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="decisionForclusion">
-                                            <label class="form-check-label" for="decisionForclusion">Forclusion</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="decisionFonde">
-                                            <label class="form-check-label" for="decisionFonde">Fondé</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="decisionNonFonde">
-                                            <label class="form-check-label" for="decisionNonFonde">Non Fondé</label>
-                                        </div>
+                                    <input class="form-check-input" type="checkbox" id="decisionEnCours">
+                                    <label class="form-check-label" for="decisionEnCours">En cours</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="decisionForclusion">
+                                    <label class="form-check-label" for="decisionForclusion">Forclusion</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="decisionFonde">
+                                    <label class="form-check-label" for="decisionFonde">Fondé</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="decisionNonFonde">
+                                    <label class="form-check-label" for="decisionNonFonde">Non Fondé</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="statusDesistement">
+                                    <label class="form-check-label" for="statusDesistement">Désistement</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="statusIncompetence">
+                                    <label class="form-check-label" for="statusIncompetence">Hors Compétence</label>
+                                </div>
                                     </div>
                                 </div>
 
@@ -131,13 +138,15 @@
                                     
                                 </div>
                                 
-                                <table id="membres" class="table table-hover align-middle mb-0">
+                                <table id="recours" class="table table-hover align-middle mb-0">
                                     <thead>
                                         <tr>
-                                            <th>Employe</th>
-                                            <th>Contact</th>
-                                            <th>Email</th>
-                                            <th>Adresse</th>
+                                            <th>Marché</th>
+                                            <th>Requérant</th>
+                                            <th>Objet</th>
+                                            <th>Dépôt le</th>
+                                            <th>Étude</th>
+                                            <th>Décision</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -299,8 +308,6 @@
 @push('js')
 
 <script src="{{ asset('app-js/personnel/paginator.js') }}"></script>
-<script src="{{ asset('app-js/personnel/jobs/loadJobs.js') }}"></script>
-<script src="{{ asset('app-js/personnel/membres/create.js') }}"></script>
-<script src="{{ asset('app-js/personnel/membres/list.js') }}"></script>
+<script src="{{ asset('app-js/recours/list.js') }}"></script>
 
 @endpush

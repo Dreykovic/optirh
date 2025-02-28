@@ -18,6 +18,7 @@ use Modules\Recours\App\Http\Controllers\DacController;
 Route::prefix('recours')->group(function () {
     Route::get('/index', [ RecoursController::class, 'index'])->name('recours.index');
     Route::get('/new', [ RecoursController::class, 'create'])->name('recours.new');
+    Route::get('/api/data', [ RecoursController::class, 'appeal_loading'])->name('recours.loaging');
     Route::post('/store', [ RecoursController::class, 'store'])->name('recours.store');
     Route::post('/dacs/store', [ DacController::class, 'dacStore'])->name('dac.store');
     Route::post('/applicants/store', [ DacController::class, 'applicantStore'])->name('applicant.store');

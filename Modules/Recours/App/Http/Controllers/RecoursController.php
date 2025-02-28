@@ -20,6 +20,49 @@ class RecoursController extends Controller
         return view('recours::pages.recours.liste');
     }
 
+    public function appeal_loading(Request $request)
+    {
+        $search = $request->input('search', '');     
+        $limit = $request->input('limit', 5);   
+        $page = $request->input('page', 1);  
+        $status = $request->input('status', null);
+        
+        // Construire la requête
+        $query = DB::table('appeals')
+        ->join('dacs', 'appeals.dac_id', '=', 'dacs.id')
+        ->leftJoin('decisions', 'appeals.decision_id', '=', 'decisions.id')
+        ->leftJoin('applicants', 'appeals.applicant_id', '=', 'applicants.id')
+        ->select(
+            'appeals.*',
+            'dacs.reference',
+            'decisions.decision',
+            'applicants.name as applicant',
+        )
+        ->orderBy('appeals.deposit_date', 'desc');
+        
+        // Filtrer par statut si fourni
+        if (!is_null($status)) {
+            $query->where('appeals.status', '=', $status);
+        }
+    
+        // Recherche textuelle
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->whereRaw('LOWER(appeals.object) LIKE ?', ['%' . strtolower($search) . '%'])
+                  ->orWhereRaw('LOWER(dacs.reference) LIKE ?', ['%' . strtolower($search) . '%'])
+                  ->orWhereRaw('LOWER(appeals.analyse_status) LIKE ?', ['%' . strtolower($search) . '%']);
+                //   ->orWhereRaw('LOWER(personnals.email) LIKE ?', ['%' . strtolower($search) . '%']);
+            });
+        }
+    
+        // Ajouter la pagination
+        $appeals = $query->paginate($limit);
+    
+        // Retourner la réponse JSON
+        return response()->json($appeals); 
+    }
+    
+
     /**
      * Show the form for creating a new resource.
      */
