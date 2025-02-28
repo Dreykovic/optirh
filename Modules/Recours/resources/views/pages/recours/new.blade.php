@@ -97,7 +97,7 @@
             </div>
             <div class="modal-body">
                 <label for="ref" class='fs-5'>Référence</label>
-                <input type="text" class="form-control mb-2" id="ref" name='reference'>
+                <input type="text" class="form-control mb-2" id="ref" placeholder='EX: 001/DRP/2025/CAP' name='reference'>
                 <label for="objetDac" class='fs-5'>Objet</label>
                 <input type="text" class="form-control mb-2" id="objetDac" name='object'>
                 <label for="ac" class='fs-5'>AC</label>

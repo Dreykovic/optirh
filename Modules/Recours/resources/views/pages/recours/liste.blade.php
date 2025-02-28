@@ -9,20 +9,26 @@
                         <h3 class=" fw-bold flex-fill mb-0 mt-sm-0 text-center">Nos Recours(Total :14)</h3>
     
                             <div class="card-header px-4 d-sm-flex align-items-center justify-content-between border-bottom mt-4 mx-5">
-                                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#addEmpModal">
-                                    <i class="icofont-plus-circle me-2 fs-6"></i> Ajouter
-                                </button>
+                                <a href="{{route('recours.new')}}">
+
+                                    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="">
+                                        <i class="icofont-plus-circle me-2 fs-6"></i> Ajouter
+                                    </button>
+                                </a>
                                 <div class='d-flex justify-content-between align-items-center p-2 gap-2'>
                                     <div class='d-flex justify-content-between align-items-center p-2 gap-2'>
-                                        <label for="" class='fs-6'>De: </label>
-                                        <input type="date" name="" id="" class='form-control'>
+                                        <label for="startDate" class='fs-6'>De: </label>
+                                        <input type="date" id="startDate" class='form-control'>
                                     </div>
                                     <div class='d-flex justify-content-between align-items-center p-2 gap-2'>
-                                        <label for="" class='fs-6'>À: </label>
-                                        <input type="date" name="" id="" class='form-control '>
+                                        <label for="endDate" class='fs-6'>À: </label>
+                                        <input type="date" id="endDate" class='form-control'>
                                     </div>
-                                    <button type="submit" class='btn btn-secondary'><i class="icofont-search fs-6 mx-1"></i>Rechercher</button>
+                                    <button type="submit" class='btn btn-secondary'>
+                                        <i class="icofont-search fs-6 mx-1"></i>Rechercher
+                                    </button>
                                 </div>
+
                                 <!-- Icône avec Dropdown -->
                         <div class="dropdown">
                             <i class="icofont-settings fs-2" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
@@ -309,5 +315,31 @@
 
 <script src="{{ asset('app-js/personnel/paginator.js') }}"></script>
 <script src="{{ asset('app-js/recours/list.js') }}"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const startDate = document.getElementById("startDate");
+    const endDate = document.getElementById("endDate");
+
+    // // Mettre la date d'aujourd'hui par défaut dans les champs
+    // const today = new Date().toISOString().split("T")[0];
+    // startDate.value = today;
+    // endDate.value = today;
+
+    // Lorsque la date de début change
+    startDate.addEventListener("change", function () {
+        if (endDate.value < startDate.value) {
+            endDate.value = startDate.value;
+        }
+        endDate.min = startDate.value; // Empêche de sélectionner une date antérieure
+    });
+
+    // Lorsque la date de fin change
+    endDate.addEventListener("change", function () {
+        if (endDate.value < startDate.value) {
+            endDate.value = startDate.value;
+        }
+    });
+});
+</script>
 
 @endpush

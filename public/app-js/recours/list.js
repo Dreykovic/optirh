@@ -11,7 +11,7 @@ renderCallback: (recours) => {
     const tableBody = document.querySelector('#recours tbody');
     tableBody.innerHTML = '';
     if (recours.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="5" class="text-center">Aucun recours trouvé.</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="7" class="text-center">Aucun recours trouvé.</td></tr>';
     } else {
         recours.forEach(appeal => {
             const row = document.createElement('tr');
@@ -24,9 +24,9 @@ renderCallback: (recours) => {
                         </td>
                         <td>${appeal.applicant}</td>
                         <td>${appeal.object}</td>
-                        <td>${appeal.deposit_date}</td>
+                        <td>${appeal.deposit_date} À ${appeal.deposit_hour}</td>
                         <td>${appeal.analyse_status}</td>
-                        <td>${appeal.decision}</td>
+                        <td>${appeal.decision ?? '-'}</td>
                         <td>
                             <div class="btn-group">
                                 <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Actions</button>
