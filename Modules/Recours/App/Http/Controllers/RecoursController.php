@@ -79,6 +79,8 @@ class RecoursController extends Controller
             $status = $request->input('status', null);
             $startDate = $request->input('startDate', null);
             $endDate = $request->input('endDate', null);
+            $etudeStatus = $request->input('etudeStatus', []);
+            $decisionStatus = $request->input('decisionStatus', []);
 
             // Construire la requête
             $query = DB::table('appeals')
@@ -99,6 +101,15 @@ class RecoursController extends Controller
                 $query->where('appeals.deposit_date', '>=', $startDate);
             } elseif ($endDate) {
                 $query->where('appeals.deposit_date', '<=', $endDate);
+            }
+            // Filtrer par étude si fourni
+            if (!empty($etudeStatus)) {
+                $query->whereIn('appeals.analyse_status', $etudeStatus);
+            }
+
+            // Filtrer par décision si fourni
+            if (!empty($decisionStatus)) {
+                $query->whereIn('appeals.decision_status', $decisionStatus);
             }
 
             // Recherche textuelle

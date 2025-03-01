@@ -37,7 +37,7 @@
                                 <!-- Status -->
                                 <strong>Etude Status</strong>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="etude">
+                                    <input class="form-check-input" type="checkbox" id="statusEnCours">
                                     <label class="form-check-label" for="etude">En cours</label>
                                 </div>
                                 <div class="form-check">
@@ -62,7 +62,7 @@
                                     <label class="form-check-label" for="decisionForclusion">Forclusion</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="irrecevable">
+                                    <input class="form-check-input" type="checkbox" id="decisionIrrecevable">
                                     <label class="form-check-label" for="irrecevable">Irrécevabilité</label>
                                 </div>
                                 <div class="form-check">
@@ -161,6 +161,38 @@
 
 <script src="{{ asset('app-js/personnel/paginator.js') }}"></script>
 <script src="{{ asset('app-js/recours/list.js') }}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const checkboxes = document.querySelectorAll(".dropdown-menu .form-check-input");
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener("change", function () {
+            applyFilters();
+        });
+    });
+
+    function applyFilters() {
+        let etudeStatus = [];
+        let decisionStatus = [];
+
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                if (checkbox.id.startsWith("status") || checkbox.id.startsWith("etude")) {
+                    etudeStatus.push(checkbox.id);
+                } else if (checkbox.id.startsWith("decision")) {
+                    decisionStatus.push(checkbox.id);
+                }
+            }
+        });
+
+        // Appliquer les filtres en rechargeant les données
+        paginator.extraParams.etudeStatus = etudeStatus;
+        paginator.extraParams.decisionStatus = decisionStatus;
+        paginator.loadData();
+    }
+});
+
+</script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const startDate = document.getElementById("startDate");
