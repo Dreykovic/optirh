@@ -13,6 +13,8 @@ class Paginator {
         this.extraParams = options.extraParams || {}; // Paramètres supplémentaires pour la requête
         this.paginationElement = options.paginationElement || null; // Élément DOM pour la pagination
         this.department = options.department || null; // Input pour la recherche
+        this.startDate = options.startDate || null;
+        this.endDate = options.endDate || null;
 
         this.init();
     }
@@ -30,6 +32,11 @@ class Paginator {
         if (this.limitSelect) {
             this.limitSelect.addEventListener('change', () => this.loadData());
         }
+        if (this.startDate && this.endDate) {
+            this.startDate.addEventListener('change', () => this.loadData());
+            this.endDate.addEventListener('change', () => this.loadData());
+        }
+
 
         this.loadData();
     }
@@ -39,11 +46,15 @@ class Paginator {
         const search = this.searchInput ? this.searchInput.value : '';
         const limit = this.limitSelect ? this.limitSelect.value : 10;
         const deptValue = this.department ? this.department.value : '';
+        const startDateValue = this.startDate ? this.startDate.value : '';
+        const endDateValue = this.endDate ? this.endDate.value : '';
 
         const params = new URLSearchParams({
             search,
             limit,
             deptValue,
+            startDate: startDateValue,
+            endDate: endDateValue,
             page: this.currentPage,
             ...this.extraParams,
         });

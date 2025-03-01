@@ -6,6 +6,8 @@ const paginator = new Paginator({
     searchInput: document.getElementById('searchInput'), // Input de recherche
     department: document.getElementById('directorInput'),
     limitSelect: document.getElementById('limitSelect'), // Sélecteur de limite
+    startDate: document.getElementById('startDate'), // Ajout du champ de début
+    endDate: document.getElementById('endDate'), // Ajout du champ de fin
     paginationElement: document.getElementById('pagination'), // Élément pour la pagination
 renderCallback: (recours) => {
     const tableBody = document.querySelector('#recours tbody');

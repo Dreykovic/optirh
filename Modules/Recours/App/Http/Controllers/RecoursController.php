@@ -21,45 +21,100 @@ class RecoursController extends Controller
         return view('recours::pages.recours.liste');
     }
 
+    // public function appeal_loading(Request $request)
+    // {
+    //     try {
+    //         $search = $request->input('search', '');     
+    //         $limit = $request->input('limit', 5);   
+    //         $page = $request->input('page', 1);  
+    //         $status = $request->input('status', null);
+            
+    //         // Construire la requête
+    //         $query = DB::table('appeals')
+    //         ->join('dacs', 'appeals.dac_id', '=', 'dacs.id')
+    //         // ->join('decisions', 'appeals.decision_id', '=', 'decisions.id')
+    //         ->leftJoin('applicants', 'appeals.applicant_id', '=', 'applicants.id')
+    //         ->select(
+    //             'appeals.*',
+    //             'dacs.reference',
+    //             'applicants.name as applicant',
+    //         )
+    //         ->orderBy('appeals.deposit_date', 'desc');
+            
+    //         // Filtrer par statut si fourni
+    //         if (!is_null($status)) {
+    //             $query->where('appeals.status', '=', $status);
+    //         }
+        
+    //         // Recherche textuelle
+    //         if ($search) {
+    //             $query->where(function ($q) use ($search) {
+    //                 $q->whereRaw('LOWER(appeals.object) LIKE ?', ['%' . strtolower($search) . '%'])
+    //                   ->orWhereRaw('LOWER(dacs.reference) LIKE ?', ['%' . strtolower($search) . '%'])
+    //                   ->orWhereRaw('LOWER(appeals.analyse_status) LIKE ?', ['%' . strtolower($search) . '%'])
+    //                   ->orWhereRaw('LOWER(applicants.name) LIKE ?', ['%' . strtolower($search) . '%'])
+    //                   ->orWhereRaw("TO_CHAR(appeals.deposit_date, 'YYYY-MM-DD') LIKE ?", ['%' . $search . '%']);
+    //                 });
+    //         }
+        
+    //         // Ajouter la pagination
+    //         $appeals = $query->paginate($limit);
+        
+    //         // Retourner la réponse JSON
+    //         return response()->json($appeals);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'error' => 'Erreur lors du chargement des données',
+    //             'message' => $e->getMessage()
+    //         ], 500);
+    //     }
+        
+    // }
     public function appeal_loading(Request $request)
     {
         try {
-            $search = $request->input('search', '');     
-            $limit = $request->input('limit', 5);   
-            $page = $request->input('page', 1);  
+            $search = $request->input('search', '');
+            $limit = $request->input('limit', 5);
+            $page = $request->input('page', 1);
             $status = $request->input('status', null);
-            
+            $startDate = $request->input('startDate', null);
+            $endDate = $request->input('endDate', null);
+
             // Construire la requête
             $query = DB::table('appeals')
-            ->join('dacs', 'appeals.dac_id', '=', 'dacs.id')
-            // ->join('decisions', 'appeals.decision_id', '=', 'decisions.id')
-            ->leftJoin('applicants', 'appeals.applicant_id', '=', 'applicants.id')
-            ->select(
-                'appeals.*',
-                'dacs.reference',
-                'applicants.name as applicant',
-            )
-            ->orderBy('appeals.deposit_date', 'desc');
-            
+                ->join('dacs', 'appeals.dac_id', '=', 'dacs.id')
+                ->leftJoin('applicants', 'appeals.applicant_id', '=', 'applicants.id')
+                ->select('appeals.*', 'dacs.reference', 'applicants.name as applicant')
+                ->orderBy('appeals.deposit_date', 'desc');
+
             // Filtrer par statut si fourni
             if (!is_null($status)) {
                 $query->where('appeals.status', '=', $status);
             }
-        
+
+            // Filtrer entre deux dates
+            if ($startDate && $endDate) {
+                $query->whereBetween('appeals.deposit_date', [$startDate, $endDate]);
+            } elseif ($startDate) {
+                $query->where('appeals.deposit_date', '>=', $startDate);
+            } elseif ($endDate) {
+                $query->where('appeals.deposit_date', '<=', $endDate);
+            }
+
             // Recherche textuelle
             if ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->whereRaw('LOWER(appeals.object) LIKE ?', ['%' . strtolower($search) . '%'])
-                      ->orWhereRaw('LOWER(dacs.reference) LIKE ?', ['%' . strtolower($search) . '%'])
-                      ->orWhereRaw('LOWER(appeals.analyse_status) LIKE ?', ['%' . strtolower($search) . '%']);
-                    //   ->orWhereRaw('LOWER(personnals.email) LIKE ?', ['%' . strtolower($search) . '%']);
+                    ->orWhereRaw('LOWER(dacs.reference) LIKE ?', ['%' . strtolower($search) . '%'])
+                    ->orWhereRaw('LOWER(appeals.analyse_status) LIKE ?', ['%' . strtolower($search) . '%'])
+                    ->orWhereRaw('LOWER(applicants.name) LIKE ?', ['%' . strtolower($search) . '%'])
+                    ->orWhereRaw("TO_CHAR(appeals.deposit_date, 'YYYY-MM-DD') LIKE ?", ['%' . $search . '%']);
                 });
             }
-        
+
             // Ajouter la pagination
             $appeals = $query->paginate($limit);
-        
-            // Retourner la réponse JSON
+
             return response()->json($appeals);
         } catch (\Exception $e) {
             return response()->json([
@@ -67,8 +122,8 @@ class RecoursController extends Controller
                 'message' => $e->getMessage()
             ], 500);
         }
-        
     }
+
     
 
     /**
