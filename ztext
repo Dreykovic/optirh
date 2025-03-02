@@ -288,3 +288,15 @@ rech : requerant depot decision
         </div>
         </div>
        </div>
+
+
+
+       // <td>
+                        //     <div class="btn-group">
+                        //         <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Actions</button>
+                        //         <ul class="dropdown-menu">
+                        //             <li><a class="dropdown-item" href="">Détails</a></li>
+                        //             <!-- <li><button class="dropdown-item text-danger">Supprimer</button></li>-->
+                        //         </ul>
+                        //     </div>
+                        // </td>

@@ -8,7 +8,9 @@ const paginator = new Paginator({
     limitSelect: document.getElementById('limitSelect'), // Sélecteur de limite
     startDate: document.getElementById('startDate'), // Ajout du champ de début
     endDate: document.getElementById('endDate'), // Ajout du champ de fin
+    filterContainer : document.getElementById('filterContainer'),
     paginationElement: document.getElementById('pagination'), // Élément pour la pagination
+
 renderCallback: (recours) => {
     const tableBody = document.querySelector('#recours tbody');
     tableBody.innerHTML = '';
@@ -29,15 +31,9 @@ renderCallback: (recours) => {
                         <td>${appeal.deposit_date} À ${appeal.deposit_hour}</td>
                         <td>${appeal.analyse_status}</td>
                         <td>${appeal.decision ?? '-'}</td>
-                        <td>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Actions</button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="">Détails</a></li>
-                                    <!-- <li><button class="dropdown-item text-danger">Supprimer</button></li>-->
-                                </ul>
-                            </div>
-                        </td>
+                        <td>${appeal.day_count ?? '-'} </td>
+                        <td><i class="icofont-long-arrow-right fs-4"></i></td>
+                       
                     `;
 
             tableBody.appendChild(row);

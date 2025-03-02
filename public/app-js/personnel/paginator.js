@@ -15,6 +15,8 @@ class Paginator {
         this.department = options.department || null; // Input pour la recherche
         this.startDate = options.startDate || null;
         this.endDate = options.endDate || null;
+        this.filterContainer = options.filterContainer || null;
+       
 
         this.init();
     }
@@ -32,6 +34,11 @@ class Paginator {
         if (this.limitSelect) {
             this.limitSelect.addEventListener('change', () => this.loadData());
         }
+       
+        if (this.filterContainer) {
+            this.filterContainer.addEventListener('change', () => this.loadData());
+        }
+
         if (this.startDate && this.endDate) {
             this.startDate.addEventListener('change', () => this.loadData());
             this.endDate.addEventListener('change', () => this.loadData());
@@ -49,19 +56,27 @@ class Paginator {
         const startDateValue = this.startDate ? this.startDate.value : '';
         const endDateValue = this.endDate ? this.endDate.value : '';
 
+       // Récupérer **toutes** les cases cochées avec name="filterStatus"
+        const statusValues = [...document.querySelectorAll('input[name="filterStatus"]:checked')].map(el => el.value);
+        console.log(statusValues);
+        
+
         const params = new URLSearchParams({
             search,
             limit,
             deptValue,
             startDate: startDateValue,
             endDate: endDateValue,
+            statusOptions: statusValues.join(','),
             page: this.currentPage,
             ...this.extraParams,
         });
+        console.log("Paramètres envoyés :", params.toString());
 
         fetch(`${this.apiUrl}?${params.toString()}`)
             .then(response => response.json())
             .then(data => {
+                console.log("Réponse API :", data); // Ajoute ce log
                 this.totalItems = data.total;
                 this.totalPages = data.last_page;
 

@@ -30,22 +30,22 @@
                                 </div>
 
                                 <!-- Icône avec Dropdown -->
-                        <div class="dropdown">
+                        <div class="dropdown" >
                             <i class="icofont-settings fs-2" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
                             
-                            <div class="dropdown-menu p-3">
+                            <div class="dropdown-menu p-3" id='filterContainer'>
                                 <!-- Status -->
                                 <strong>Etude Status</strong>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="statusEnCours">
+                                    <input class="form-check-input" type="checkbox" id="statusEnCours" value='ANALYSE_PENDING' name='filterStatus'>
                                     <label class="form-check-label" for="etude">En cours</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="statusAccepte">
+                                    <input class="form-check-input" type="checkbox" id="statusAccepte" value='ACCEPTED' name='filterStatus'>
                                     <label class="form-check-label" for="statusAccepte">Accepté</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="statusRejete">
+                                    <input class="form-check-input" type="checkbox" id="statusRejete" value='REJECTED' name='filterStatus'>
                                     <label class="form-check-label" for="statusRejete">Rejeté</label>
                                 </div>
 
@@ -54,31 +54,31 @@
                                 <!-- Decisions -->
                                 <strong>Décisions</strong>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="decisionEnCours">
+                                    <input class="form-check-input" type="checkbox" id="decisionEnCours" value='EnCOURS' name='filterStatus'>
                                     <label class="form-check-label" for="decisionEnCours">En cours</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="decisionForclusion">
+                                    <input class="form-check-input" type="checkbox" id="decisionForclusion" value='FORCLUSION' name='filterStatus'>
                                     <label class="form-check-label" for="decisionForclusion">Forclusion</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="decisionIrrecevable">
+                                    <input class="form-check-input" type="checkbox" id="decisionIrrecevable" value='IRRECEVABILE' name='filterStatus'>
                                     <label class="form-check-label" for="irrecevable">Irrécevabilité</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="decisionFonde">
+                                    <input class="form-check-input" type="checkbox" id="decisionFonde" value='FONDE' name='filterStatus'>
                                     <label class="form-check-label" for="decisionFonde">Fondé</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="decisionNonFonde">
+                                    <input class="form-check-input" type="checkbox" id="decisionNonFonde" value='NONFONDE' name='filterStatus'>
                                     <label class="form-check-label" for="decisionNonFonde">Non Fondé</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="statusDesistement">
+                                    <input class="form-check-input" type="checkbox" id="decisionDesistement" value='DESISTEMENT' name='filterStatus'>
                                     <label class="form-check-label" for="statusDesistement">Désistement</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="statusIncompetence">
+                                    <input class="form-check-input" type="checkbox" id="statusIncompetence" value='HCOMPETENCE' name='filterStatus'>
                                     <label class="form-check-label" for="statusIncompetence">Hors Compétence</label>
                                 </div>
                                     </div>
@@ -135,7 +135,8 @@
                                             <th>Dépôt le</th>
                                             <th>Étude</th>
                                             <th>Décision</th>
-                                            <th>Actions</th>
+                                            <th>Délai</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
@@ -161,38 +162,7 @@
 
 <script src="{{ asset('app-js/personnel/paginator.js') }}"></script>
 <script src="{{ asset('app-js/recours/list.js') }}"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const checkboxes = document.querySelectorAll(".dropdown-menu .form-check-input");
-    
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener("change", function () {
-            applyFilters();
-        });
-    });
 
-    function applyFilters() {
-        let etudeStatus = [];
-        let decisionStatus = [];
-
-        checkboxes.forEach(checkbox => {
-            if (checkbox.checked) {
-                if (checkbox.id.startsWith("status") || checkbox.id.startsWith("etude")) {
-                    etudeStatus.push(checkbox.id);
-                } else if (checkbox.id.startsWith("decision")) {
-                    decisionStatus.push(checkbox.id);
-                }
-            }
-        });
-
-        // Appliquer les filtres en rechargeant les données
-        paginator.extraParams.etudeStatus = etudeStatus;
-        paginator.extraParams.decisionStatus = decisionStatus;
-        paginator.loadData();
-    }
-});
-
-</script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const startDate = document.getElementById("startDate");

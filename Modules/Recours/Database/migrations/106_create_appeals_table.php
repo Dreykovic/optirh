@@ -18,7 +18,7 @@ return new class extends Migration
             $table->time('deposit_hour');
             $table->string('object')->nullable();
             $table->integer('day_count')->default(0);
-            $table->enum('analyse_status', ['ANALYSE_PENDING', 'ACCEPTED', 'REJECTED'])->default('ANALYSE_PENDING');
+            $table->enum('analyse_status', ['ANALYSE_PENDING', 'ACCEPTED', 'REJECTED', 'HCOMPETENCE'])->default('ANALYSE_PENDING');
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
 
             $table->foreignId('dac_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
