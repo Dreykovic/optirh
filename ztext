@@ -300,3 +300,54 @@ rech : requerant depot decision
                         //         </ul>
                         //     </div>
                         // </td>
+
+
+
+    <div class="row">
+        <!-- Colonne 1 : Recours -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="fw-bold text-primary">Recours</h5>
+                    <p><strong>Étude :</strong> ...</p>
+                    <p><strong>Décision :</strong> ...</p>
+                    <p><strong>Délai :</strong> ...</p>
+                    <p><strong>Type :</strong> ...</p>
+                    <p><strong>Dépôt le :</strong> ...</p>
+                    <p><strong>Objet :</strong> ...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Colonne 2 : Marché + Requérant -->
+        <div class="col-md-6">
+            <div class="d-flex flex-column h-100">
+                <!-- Section Marché -->
+                <div class="card shadow-sm flex-grow-1 mb-2">
+                    <div class="card-body">
+                        <h5 class="fw-bold text-primary">Marché</h5>
+                        <p><strong>N° :</strong> ...</p>
+                        <p><strong>Objet :</strong> ...</p>
+                        <p><strong>A C :</strong> ...</p>
+                    </div>
+                </div>
+
+                <!-- Section Requérant -->
+                <div class="card shadow-sm flex-grow-1">
+                    <div class="card-body">
+                        <h5 class="fw-bold text-primary">Requérant</h5>
+                        <p><strong>Dénomination :</strong> ...</p>
+                        <p><strong>Adresse :</strong> ...</p>
+                        <p><strong>Tél :</strong> ...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Boutons en bas -->
+    <div class="d-flex justify-content-between mt-4">
+        <a href="#" class="btn btn-secondary">Retour</a>
+        <a href="#" class="btn btn-primary">Modifier</a>
+    </div>
+</div>                        

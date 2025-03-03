@@ -160,9 +160,6 @@
 @endpush
 @push('js')
 
-<script src="{{ asset('app-js/personnel/paginator.js') }}"></script>
-<script src="{{ asset('app-js/recours/list.js') }}"></script>
-
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const startDate = document.getElementById("startDate");
@@ -188,5 +185,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
+
+<script src="{{ asset('app-js/personnel/paginator.js') }}"></script>
+<script src="{{ asset('app-js/recours/list.js') }}"></script>
+
 
 @endpush

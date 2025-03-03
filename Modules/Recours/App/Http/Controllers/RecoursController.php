@@ -152,7 +152,8 @@ class RecoursController extends Controller
      */
     public function show($id)
     {
-        return view('recours::pages.recours.show');
+        $appeal = Appeal::find($id);
+        return view('recours::pages.recours.show', compact('appeal'));
     }
 
     /**

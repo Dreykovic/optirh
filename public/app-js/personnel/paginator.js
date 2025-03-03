@@ -43,10 +43,10 @@ class Paginator {
             this.startDate.addEventListener('change', () => this.loadData());
             this.endDate.addEventListener('change', () => this.loadData());
         }
-        if (this.startDate && this.endDate==null) {
-            endDate = startDate;
-            this.startDate.addEventListener('change', () => this.loadData());
-        }
+        // if (this.startDate && this.endDate==null) {
+        //     endDate = startDate;
+        //     this.startDate.addEventListener('change', () => this.loadData());
+        // }
 
 
         this.loadData();
