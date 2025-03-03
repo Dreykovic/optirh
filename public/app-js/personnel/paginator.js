@@ -43,6 +43,10 @@ class Paginator {
             this.startDate.addEventListener('change', () => this.loadData());
             this.endDate.addEventListener('change', () => this.loadData());
         }
+        if (this.startDate && this.endDate==null) {
+            endDate = startDate;
+            this.startDate.addEventListener('change', () => this.loadData());
+        }
 
 
         this.loadData();
@@ -58,7 +62,8 @@ class Paginator {
 
        // Récupérer **toutes** les cases cochées avec name="filterStatus"
         const statusValues = [...document.querySelectorAll('input[name="filterStatus"]:checked')].map(el => el.value);
-        console.log(statusValues);
+        // console.log('start date : ' + startDate.value);
+        // console.log('end date : ' + endDate.value);
         
 
         const params = new URLSearchParams({

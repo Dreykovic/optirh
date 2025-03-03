@@ -168,15 +168,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const startDate = document.getElementById("startDate");
     const endDate = document.getElementById("endDate");
 
-    // // Mettre la date d'aujourd'hui par défaut dans les champs
-    // const today = new Date().toISOString().split("T")[0];
-    // startDate.value = today;
-    // endDate.value = today;
-
     // Lorsque la date de début change
     startDate.addEventListener("change", function () {
         if (endDate.value < startDate.value) {
             endDate.value = startDate.value;
+            // console.log('dans html start : '+ startDate.value);
+            // console.log('dans html end : '+ endDate.value);
+            
         }
         endDate.min = startDate.value; // Empêche de sélectionner une date antérieure
     });
@@ -187,6 +185,7 @@ document.addEventListener("DOMContentLoaded", function () {
             endDate.value = startDate.value;
         }
     });
+
 });
 </script>
 

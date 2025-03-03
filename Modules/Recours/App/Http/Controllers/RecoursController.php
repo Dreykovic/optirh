@@ -20,7 +20,7 @@ class RecoursController extends Controller
     {
         return view('recours::pages.recours.liste');
     }
-
+ 
    
     public function appeal_loading(Request $request)
     {
@@ -33,8 +33,7 @@ class RecoursController extends Controller
             $endDate = $request->input('endDate', null);
             $statuses = $request->input('statusOptions', '');
 
-            // $statuses = json_decode($request->input('status', '[]'), true);
-            // \Log::info('Filtre Statuses :', ['statuses' => $statuses]);
+            //  \Log::info('Filtre dates :', ['start' => $startDate,'end' => $endDate]);
             //tail -f storage/logs/laravel.log
 
             // Construire la requête
@@ -45,10 +44,6 @@ class RecoursController extends Controller
                 ->select('appeals.*', 'dacs.reference', 'applicants.name as applicant','decisions.decision')
                 ->orderBy('appeals.deposit_date', 'desc');
 
-            // Filtrer par statut si fourni
-            // if (!is_null($status)) {
-            //     $query->where('appeals.status', '=', $status);
-            // }
 
             // Filtrer entre deux dates
             if ($startDate && $endDate) {
@@ -157,7 +152,7 @@ class RecoursController extends Controller
      */
     public function show($id)
     {
-        return view('recours::show');
+        return view('recours::pages.recours.show');
     }
 
     /**

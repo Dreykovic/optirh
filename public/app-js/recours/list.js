@@ -32,7 +32,10 @@ renderCallback: (recours) => {
                         <td>${appeal.analyse_status}</td>
                         <td>${appeal.decision ?? '-'}</td>
                         <td>${appeal.day_count ?? '-'} </td>
-                        <td><i class="icofont-long-arrow-right fs-4"></i></td>
+                        <td><a href="/recours/show/${appeal.id}">
+                            <i class="icofont-long-arrow-right fs-4"></i>
+                            </a>
+                        </td>
                        
                     `;
 
