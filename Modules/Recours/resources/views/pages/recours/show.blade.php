@@ -45,7 +45,7 @@
     <div class="card-header">
         <div class='d-flex justify-content-between'>
             <h3>Détails</h3>
-            <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#updateIdentityModal"><i class="icofont-edit text-primary fs-5"></i></button>
+            <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#updateAppealModal"><i class="icofont-edit text-primary fs-5"></i></button>
         </div>
     </div>
     <div class="card-body">
@@ -101,74 +101,118 @@
 
 <!-- modals -->
    <!-- Edit Employee Identity Info-->
-<div class="modal fade" id="updateIdentityModal" tabindex="-1"  aria-hidden="true">
+<div class="modal fade" id="updateAppealModal" tabindex="-1"  aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
                 <div class="modal-content">
                     
                     <div class="modal-body">
-                        <div class="deadline-form modelUpdateFormContainer" id="updateIdentityFormid">
-                            <form data-model-update-url="">
+                        <div class="deadline-form modelUpdateFormContainer" id="updateAppealForm{{$appeal->id}}">
+                            <form data-model-update-url="{{ route('recours.update',$appeal->id) }}">
                             @csrf
                             <input type="hidden" name="_method" value="PUT">
                             <div class="modal-header">
-                                <h5 class="modal-title  fw-bold" id="edit1Label">Identité</h5>
+                                <h5 class="modal-title  fw-bold" id="edit1Label">Modifier</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                                <!--  -->
-                               <fieldset class=" p-3 shadow-sm   mb-2">
-                                <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span class='mb-4'>Identité</span></legende>
+                            <fieldset class=" p-3 mb-2">
+                                <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span class='mb-4'>Marché</span></legende>
                                     <div class="row g-3 mb-3 mt-2">
-                                        <div class="col-sm-6">
-                                            <label for="last_name" class="form-label">Nom</label>
-                                            <input type="text" class="form-control" id="last_name" value='' name='last_name' placeholder="">
+                                        <div class="col-sm-4">
+                                            <label for="last_name" class="form-label">N°: </label>
+                                            <input type="text" class="form-control" id="last_name" value='{{$appeal->dac->reference}}' name='reference' placeholder="">
                                         </div>
-                                        <div class="col-sm-6">
-                                            <label for="first_name" class="form-label">Prénoms</label>
-                                            <input type="text" class="form-control" value='' id="first_name" name='first_name'>
+                                        <div class="col-sm-4">
+                                            <label for="first_name" class="form-label">Objet</label>
+                                            <input type="text" class="form-control" value='{{$appeal->dac->object}}' id="first_name" name='dac_object'>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label for="birth_date" class="form-label">Authorité</label>
+                                            <input type="text" value='{{$appeal->dac->ac}}' class="form-control" id="birth_date" name='ac'>
+                                        </div>
+                                    </div>
+                                    <!--  -->                                   
+                            </fieldset>
+
+                            <fieldset class=" p-3 mb-2">
+                                <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span class='mb-4'>Requérant</span></legende>
+                                    <div class="row g-3 mb-3 mt-2">
+                                        <div class="col-sm-3">
+                                            <label for="last_name" class="form-label">Dénomination</label>
+                                            <input type="text" class="form-control" id="last_name" value='{{$appeal->applicant->name}}' name='name' placeholder="">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label for="last_name" class="form-label">NIF</label>
+                                            <input type="text" class="form-control" id="last_name" value='{{$appeal->applicant->nif}}' name='nif' placeholder="">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label for="first_name" class="form-label">Adresse</label>
+                                            <input type="text" class="form-control" value='{{$appeal->applicant->address}}' id="first_name" name='address'>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label for="birth_date" class="form-label">Téléphone</label>
+                                            <input type="text" value='{{$appeal->applicant->phone_number}}' class="form-control" id="birth_date" name='phone_number'>
                                         </div>
                                     </div>
                                     <!--  -->
-                                    <div class="row g-3 mb-3">
-                                        <div class="col-sm-6">
-                                            <label for="nationality" class="form-label">Nationalité</label>
-                                            <input type="text" class="form-control" value='' id="nationality" name='nationality' placeholder="">
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <label for="religion" class="form-label">Religion</label>
-                                            <select class="form-select" aria-label="Default select Project Category" id="religion" name='religion'>
-                                              
-                                            
+                                  
+                                    
+                            </fieldset>
+
+                            <fieldset class=" p-3 shadow-sm   mb-2">
+                                <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span class='mb-4'>Recours</span></legende>
+                                    <div class="row g-3 mb-3 mt-2">
+                                        <div class="col-sm-4">
+                                            <label for="last_name" class="form-label">Contestation De</label>
+                                            <select name="type" id="type_recours" class="form-control">
+                                                @if($appeal->type == 'RESULTS')
+                                                <option value="RESULTS" selected>Ses résultats Provisoirs</option>
+                                                <option value="DAC">Son DAC</option>
+                                                <option value="PROCESS">Sa Procédure/ Son déroulement</option>
+                                                <option value="OTHERS">Autre</option>
+                                                @elseif($appeal->type == 'DAC')
+                                                <option value="RESULTS">Ses résultats Provisoirs</option>
+                                                <option value="DAC" selected>Son DAC</option>
+                                                <option value="PROCESS">Sa Procédure/ Son déroulement</option>
+                                                <option value="OTHERS">Autre</option>
+                                                @elseif($appeal->type == 'PROCESS')
+                                                <option value="RESULTS">Ses résultats Provisoirs</option>
+                                                <option value="DAC">Son DAC</option>
+                                                <option value="PROCESS" selected>Sa Procédure/ Son déroulement</option>
+                                                <option value="OTHERS">Autre</option>
+                                                @elseif($appeal->type == 'PROCESS')
+                                                <option value="RESULTS">Ses résultats Provisoirs</option>
+                                                <option value="DAC">Son DAC</option>
+                                                <option value="PROCESS">Sa Procédure/ Son déroulement</option>
+                                                <option value="OTHERS" selected>Autre</option>
+                                                @endif
+                                                
                                             </select>
                                         </div>
-                                    </div>
-       
-                                    <div class="row g-3 mb-3">
-                                        <div class="col-sm-6">
-                                            <label for="marital_status" class="form-label">St Matrimoniale</label>
-                                            <select class="form-select" aria-label="Default select Project Category" id="marital_status" name='marital_status'>
-                                                  
-                                            
-                                            </select>
+                                        <div class="col-sm-4">
+                                            <label for="first_name" class="form-label">Date Dépot</label>
+                                            <input type="datetime-local" class="form-control" 
+                                            value="{{ $appeal->deposit_date ? $appeal->deposit_date . 'T' . $appeal->deposit_hour : '' }}" 
+                                            id="date_depot" name="date_depot">
                                         </div>
-                                        <div class="col-sm-6">
-                                            <label for="gender" class="form-label">Genre</label>
-                                            <select class="form-select" aria-label="Default select Project Category" id="gender" name='gender'>
-                                               
-                                            </select>
+                                        <div class="col-sm-4">
+                                            <label for="birth_date" class="form-label">Objet</label>
+                                            <input type="text" value='{{$appeal->object}}' class="form-control" id="birth_date" name='appeal_object'>
                                         </div>
                                     </div>
                                     <!--  -->
-                                    <div class="col-sm-6">
+                                  
+                                    <!-- <div class="col-sm-6">
                                         <label for="birth_date" class="form-label">Date Naiss.</label>
                                         <input type="date" value='' class="form-control" id="birth_date" name='birth_date'>
-                                    </div>
-                                </fieldset>
+                                    </div> -->
+                            </fieldset>
 
                             <!--  -->
-                            <div class='m-4 d-flex justify-content-center align-items-center'>
-                                <!-- <button type="button" class="btn btn-lg btn-block lift text-uppercase btn-secondary" data-bs-dismiss="modal">Annuler</button> -->
-                                <button type="submit" class="btn btn-lg btn-block lift text-uppercase btn-primary" atl="update Emp"
-                                id="modelAddBtn">
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-lg btn-block lift text-uppercase btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                <button type="submit" class="btn btn-lg btn-block lift text-uppercase btn-primary modelUpdateBtn" atl="Update Appeal" 
+                                    data-bs-dismiss="modal">
                                     <span class="normal-status">
                                         Enregister
                                     </span>
@@ -190,5 +234,5 @@
 @push('plugins-js')
 @endpush
 @push('js')
-
+<script src="{{ asset('app-js/crud/put.js') }}"></script>
 @endpush 

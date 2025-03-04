@@ -167,9 +167,57 @@ class RecoursController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id): RedirectResponse
+    public function update(Request $request, $id)
     {
-        //
+        try {
+            $validatedData = $request->validate([
+                'nif' => 'required|string|max:255',
+                'name' => 'required|string|max:255',
+                'phone_number' => 'nullable|string|max:255',
+                'address' => 'nullable|string|max:255',
+                'type' => 'required|string|in:DAC,PROCESS,RESULTS,OTHERS',
+                'date_depot' => 'required|date',
+                'dac_object' => 'required|string|max:500',
+                'ac' => 'required|string|max:255',
+                'reference' => 'required|string|max:255',
+                'appeal_object' => 'required|string|max:500',
+            ]);
+            
+            list($date, $time) = explode('T', $validatedData['date_depot']);
+            $appeal = Appeal::find($id);
+            $dac = Dac::find($appeal->dac->id);
+            $applicant = Applicant::find($appeal->applicant->id);
+
+            $appeal->update([
+                'type' => $validatedData['type'],
+                'deposit_hour' => $time,
+                'deposit_date' => $date,
+                'object' => $validatedData['appeal_object'],
+            ]);
+            $dac->update([
+                'reference' => $validatedData['reference'],
+                'dac_object' => $validatedData['dac_object'],
+                'ac' => $validatedData['ac'],
+            ]);
+            $applicant->update([
+                'nif' => $validatedData['nif'],
+                'name' => $validatedData['name'],
+                'address' => $validatedData['address'],
+                'phone_number' => $validatedData['phone_number'],
+                // 'created_by' =>  Auth::user()->employee->id ?? null
+
+            ]);
+
+            return response()->json(['message' => 'Recours MàJ avec succès.', 'ok' => true]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+        }
     }
 
     /**

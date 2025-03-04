@@ -19,6 +19,7 @@ Route::prefix('recours')->group(function () {
     Route::get('/index', [ RecoursController::class, 'index'])->name('recours.index');
     Route::get('/show/{id}', [ RecoursController::class, 'show'])->name('recours.show');
     Route::get('/new', [ RecoursController::class, 'create'])->name('recours.new');
+    Route::put('/update/{id}', [ RecoursController::class, 'update'])->name('recours.update');
     Route::get('/api/data', [ RecoursController::class, 'appeal_loading'])->name('recours.loaging');
     Route::post('/store', [ RecoursController::class, 'store'])->name('recours.store');
     Route::post('/dacs/store', [ DacController::class, 'dacStore'])->name('dac.store');
