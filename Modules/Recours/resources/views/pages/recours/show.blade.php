@@ -3,111 +3,98 @@
 @endsection
 @section('admin-content')
 
-<!-- <div class="card shadow">
+<div class='col-lg-12 row'>
+    <!--  -->
+    <div class="card col-lg-10">
+        <div class="card-header">
+            <div class='d-flex justify-content-between'>
+                <h3>Détails</h3>
+                <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#updateAppealModal"><i class="icofont-edit text-primary fs-5"></i></button>
+            </div>
+        </div>
         <div class="card-body">
-            <h4 class="text-center mb-4">Détails du Recours</h4>
-
-           
-            <div class="border p-3 mb-3">
-                <h5 class="fw-bold text-primary">Recours</h5>
-                <p><strong>Étude :</strong> ...</p>
-                <p><strong>Décision :</strong> ...</p>
-                <p><strong>Délai :</strong> ...</p>
-                <p><strong>Type :</strong> ...</p>
-                <p><strong>Dépôt le :</strong> ...</p>
-                <p><strong>Objet :</strong> ...</p>
+        <div class="row">
+            <!-- Colonne 1 : Recours -->
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="fw-bold text-primary">Recours</h5>
+                        @if($appeal->analyse_status == 'ACCEPTED')
+                        <p><strong>Étude :</strong> <span class="badge bg-success p-2">{{$appeal->analyse_status}}</span></p>
+                        @endif
+                        <p><strong>Décision :</strong> <span class="badge bg-info p-2">{{ $appeal->decision->decision ?? 'N/A' }}</span></p>
+                        <p><strong>Délai :</strong> {{$appeal->day_count}}</p>
+                        <p><strong>Type :</strong> {{$appeal->type}}</p>
+                        <p><strong>Dépôt le :</strong> {{$appeal->deposit_date}} <strong>À</strong> {{$appeal->deposit_hour}}</p>
+                        <p><strong>Objet :</strong> {{$appeal->object}}</p>
+                    </div>
+                </div>
             </div>
 
-           
-            <div class="border p-3 mb-3">
-                <h5 class="fw-bold text-primary">Marché</h5>
-                <p><strong>N° :</strong> ...</p>
-                <p><strong>Objet :</strong> ...</p>
-                <p><strong>A C :</strong> ...</p>
-            </div>
+            <!-- Colonne 2 : Marché + Requérant -->
+            <div class="col-md-6">
+                <div class="d-flex flex-column h-100">
+                    <!-- Section Marché -->
+                    <div class="card shadow-sm flex-grow-1 mb-2">
+                        <div class="card-body">
+                            <h5 class="fw-bold text-primary">Marché</h5>
+                            <p><strong>N° :</strong>  {{$appeal->dac->reference}}</p>
+                            <p><strong>Objet :</strong> {{$appeal->dac->object}}</p>
+                            <p><strong>A C :</strong> {{$appeal->dac->ac}}</p>
+                        </div>
+                    </div>
 
+                    <!-- Section Requérant -->
+                    <div class="card shadow-sm flex-grow-1">
+                        <div class="card-body">
+                            <h5 class="fw-bold text-primary">Requérant</h5>
+                            <p><strong>Dénomination :</strong> {{$appeal->applicant->name}}</p>
+                            <p><strong>Adresse :</strong> {{$appeal->applicant->address}}</p>
+                            <p><strong>Téléphone :</strong> {{$appeal->applicant->phone_number}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Boutons en bas -->
+        <div class='d-flex justify-content-between mt-4'>
+            <!-- Bouton de suppression -->
+            @if($appeal->analyse_status == 'ANALYSE_PENDING')
+            <div>
+                <form id="delete-form" action="{{ route('recours.delete', $appeal->id) }}" method="post">
+                    @csrf
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="button" id="delete-btn" class="btn btn-danger">Supprimer</button>
+                </form>
+            </div>
+            <div>
+                <form id="accepted-form" action="{{ route('recours.accepted', $appeal->id) }}" method="post">
+                    @csrf
+                    <input type="hidden" name="_method" value="PUT">
+                    <button type="button" id="accepted-btn" class="btn btn-warning">Accepter</button>
+                </form>
+            </div>
+            <div>
+                <form id="rejected-form" action="{{ route('recours.rejected', $appeal->id) }}" method="post">
+                    @csrf
+                    <input type="hidden" name="_method" value="PUT">
+                    <button type="button" id="rejected-btn" class="btn btn-info">Rejeter</button>
+                </form>
+            </div>
+            @endif
             
-            <div class="border p-3 mb-3">
-                <h5 class="fw-bold text-primary">Requérant</h5>
-                <p><strong>Dénomination :</strong> ...</p>
-                <p><strong>Adresse :</strong> ...</p>
-                <p><strong>Tél :</strong> ...</p>
-            </div>
-
-           
-            <div class="d-flex justify-content-between">
-                <a href="#" class="btn btn-secondary">Retour</a>
-                <a href="#" class="btn btn-primary">Modifier</a>
-            </div>
+            
         </div>
-</div> -->
-<div class="card">
-    <div class="card-header">
-        <div class='d-flex justify-content-between'>
-            <h3>Détails</h3>
-            <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#updateAppealModal"><i class="icofont-edit text-primary fs-5"></i></button>
         </div>
     </div>
-    <div class="card-body">
-    <div class="row">
-        <!-- Colonne 1 : Recours -->
-        <div class="col-md-6">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <h5 class="fw-bold text-primary">Recours</h5>
-                    <p><strong>Étude :</strong> {{$appeal->analyse_status}}</p>
-                    <p><strong>Décision :</strong> {{$appeal->decision->decision ?? ''}}</p>
-                    <p><strong>Délai :</strong> {{$appeal->day_count}}</p>
-                    <p><strong>Type :</strong> {{$appeal->type}}</p>
-                    <p><strong>Dépôt le :</strong> {{$appeal->deposit_date}} <strong>À</strong> {{$appeal->deposit_hour}}</p>
-                    <p><strong>Objet :</strong> {{$appeal->object}}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Colonne 2 : Marché + Requérant -->
-        <div class="col-md-6">
-            <div class="d-flex flex-column h-100">
-                <!-- Section Marché -->
-                <div class="card shadow-sm flex-grow-1 mb-2">
-                    <div class="card-body">
-                        <h5 class="fw-bold text-primary">Marché</h5>
-                        <p><strong>N° :</strong>  {{$appeal->dac->reference}}</p>
-                        <p><strong>Objet :</strong> {{$appeal->dac->object}}</p>
-                        <p><strong>A C :</strong> {{$appeal->dac->ac}}</p>
-                    </div>
-                </div>
-
-                <!-- Section Requérant -->
-                <div class="card shadow-sm flex-grow-1">
-                    <div class="card-body">
-                        <h5 class="fw-bold text-primary">Requérant</h5>
-                        <p><strong>Dénomination :</strong> {{$appeal->applicant->name}}</p>
-                        <p><strong>Adresse :</strong> {{$appeal->applicant->address}}</p>
-                        <p><strong>Téléphone :</strong> {{$appeal->applicant->phone_number}}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Boutons en bas -->
-    <div class='d-flex justify-content-between mt-4'>
-        <!-- Bouton de suppression -->
-        <div>
-            <form id="delete-form" action="{{ route('recours.delete', $appeal->id) }}" method="post">
-                @csrf
-                <input type="hidden" name="_method" value="DELETE">
-                <button type="button" id="delete-btn" class="btn btn-danger">Supprimer</button>
-            </form>
-        </div>
-
-        
-        <a href="#" class="btn btn-secondary">Accepter</a>
-        <a href="#" class="btn btn-primary">Rejeter</a>
-    </div>
+    <!--  -->
+    <div class="card col-lg-2 border-0">
+        <h5 class='text-center mt-2'>Change Log</h5>
     </div>
 </div>
+
+
 
 <!-- modals -->
    <!-- Edit Employee Identity Info-->
@@ -289,5 +276,171 @@
         });
     });
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('accepted-btn').addEventListener('click', function () {
+            Swal.fire({
+                title: "Êtes-vous sûr ?",
+                text: "Cette action est irréversible !",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Oui, Accepter !",
+                cancelButtonText: "Annuler"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.getElementById('accepted-form');
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    fetch(form.action, {
+                        method: "PUT",
+                        body: new FormData(form),
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest",
+                            "X-CSRF-TOKEN": csrfToken // Ajout du token CSRF
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.ok) {
+                            Swal.fire("Accepté !", "Le recours a été accepté avec succès.", "success")
+                            .then(() => {
+                                // window.history.back(); 
+                                window.location.reload(); // Recharge la page après confirmation
+
+                            });
+                        } else {
+                            Swal.fire("Erreur !", data.message, "error");
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire("Erreur !", "Une erreur s'est produite.", "error");
+                    });
+                }
+            });
+        });
+    });
+</script>
+<!-- <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('rejected-btn').addEventListener('click', function () {
+            Swal.fire({
+                title: "Êtes-vous sûr ?",
+                text: "Cette action est irréversible !",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Oui, Rejeter !",
+                cancelButtonText: "Annuler"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.getElementById('rejected-form');
+                    fetch(form.action, {
+                        method: "PUT",
+                        body: new FormData(form),
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest"
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.ok) {
+                            Swal.fire("Rejeté !", "Le recours a été rejeté avec succès.", "success")
+                            .then(() => {
+                                // window.history.back(); 
+                                window.location.reload(); // Recharge la page après confirmation
+
+                            });
+                        } else {
+                            Swal.fire("Erreur !", data.message, "error");
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire("Erreur !", "Une erreur s'est produite.", "error");
+                    });
+                }
+            });
+        });
+    });
+</script> -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('rejected-btn').addEventListener('click', function () {
+            Swal.fire({
+                title: "Êtes-vous sûr de rejeter ce recours ?",
+                text: "Veuillez préciser la raison du rejet.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Oui, rejeter !",
+                cancelButtonText: "Annuler",
+                html: `
+                    <select id="rejection-reason" class="swal2-select form-control w-75" name='decision'>
+                        <option value="" disabled selected>Choisissez une raison</option>
+                        <option value="HCOMPETENCE">Hors Compétence</option>
+                        <option value="IRRECEVABLE">Irrécevabilité</option>
+                        <option value="FORCLUSION">Forclusion</option>
+                    </select>
+                `,
+                preConfirm: () => {
+                    const selectedReason = document.getElementById('rejection-reason').value;
+                    
+                    if (!selectedReason) {
+                        Swal.showValidationMessage("Veuillez choisir une raison");
+                        return false;
+                    }
+
+                    return selectedReason === "Autre" && otherReason ? otherReason : selectedReason;
+                },
+                didOpen: () => {
+                    const rejectionSelect = document.getElementById('rejection-reason');
+                    const otherInput = document.getElementById('other-reason');
+                    
+                    rejectionSelect.addEventListener('change', function () {
+                        if (this.value === "Autre") {
+                            otherInput.style.display = "block";
+                        } else {
+                            otherInput.style.display = "none";
+                        }
+                    });
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.getElementById('rejected-form');
+                    const formData = new FormData(form);
+                    formData.append('decision', result.value); // Ajouter la raison du rejet
+
+                    fetch(form.action, {
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest",
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.ok) {
+                            Swal.fire("Rejeté !", "Le recours a été rejeté avec succès.", "success")
+                            .then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire("Erreur !", data.message, "error");
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire("Erreur !", "Une erreur s'est produite.", "error");
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+
+
 
 @endpush 

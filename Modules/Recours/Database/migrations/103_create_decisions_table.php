@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('decisions', function (Blueprint $table) {
             $table->id();
-            $table->string('decision');
-            $table->date('date');
+            $table->enum('decision', ['EN_COURS', 'FONDE', 'NFONDE', 'HCOMPETENCE', 'IRRECEVABLE', 'FORCLUSION', 'DESISTEMENT'])->default('EN_COURS');
+            $table->date('date')->nullable();
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
 
             $table->unsignedBigInteger('created_by')->nullable();

@@ -9,6 +9,7 @@ use Illuminate\Http\Response;
 use Modules\Recours\App\Models\Dac; 
 use Modules\Recours\App\Models\Applicant; 
 use Modules\Recours\App\Models\Appeal; 
+use Modules\Recours\App\Models\Decision; 
 use Illuminate\Support\Facades\DB;
 
 class RecoursController extends Controller
@@ -237,4 +238,49 @@ class RecoursController extends Controller
             return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
     }
+
+    public function accepted(Request $request, $id)
+    {
+        try {
+            $appeal = Appeal::find($id);
+
+            $decision = Decision::create([
+                'decision' => 'EN_COURS',
+                'date' => now(), // Utilisation correcte de now()
+            ]);
+
+            $appeal->decision_id = $decision->id;
+            $appeal->analyse_status = 'ACCEPTED';
+            $appeal->save();
+
+            return response()->json(['message' => 'Recours accepté avec succès.','ok' => true], 200);
+
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+        }
+    }
+
+    public function rejected(Request $request, $id)
+    {
+        try {
+            $appeal = Appeal::find($id);
+    
+            $decision = Decision::create([
+                'decision' => $request->input('decision'), // Récupère la raison du rejet
+                'date' => now(),
+            ]);
+    
+            $appeal->decision_id = $decision->id;
+            $appeal->analyse_status = 'REJECTED';
+            $appeal->save();
+    
+            return response()->json(['message' => 'Recours rejeté avec succès.', 'ok' => true], 200);
+    
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+        }
+    }
+    
+
+
 }
