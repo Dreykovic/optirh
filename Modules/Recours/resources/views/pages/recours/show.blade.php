@@ -92,9 +92,19 @@
     </div>
 
     <!-- Boutons en bas -->
-    <div class=" mt-4">
-        <a href="#" class="btn btn-secondary">Retour</a>
-        <a href="#" class="btn btn-primary">Modifier</a>
+    <div class='d-flex justify-content-between mt-4'>
+        <!-- Bouton de suppression -->
+        <div>
+            <form id="delete-form" action="{{ route('recours.delete', $appeal->id) }}" method="post">
+                @csrf
+                <input type="hidden" name="_method" value="DELETE">
+                <button type="button" id="delete-btn" class="btn btn-danger">Supprimer</button>
+            </form>
+        </div>
+
+        
+        <a href="#" class="btn btn-secondary">Accepter</a>
+        <a href="#" class="btn btn-primary">Rejeter</a>
     </div>
     </div>
 </div>
@@ -235,4 +245,49 @@
 @endpush
 @push('js')
 <script src="{{ asset('app-js/crud/put.js') }}"></script>
+<script src="{{ asset('app-js/personnel/contrats/actions.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('delete-btn').addEventListener('click', function () {
+            Swal.fire({
+                title: "Êtes-vous sûr ?",
+                text: "Cette action est irréversible !",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Oui, supprimer !",
+                cancelButtonText: "Annuler"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.getElementById('delete-form');
+                    fetch(form.action, {
+                        method: "POST",
+                        body: new FormData(form),
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest"
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.ok) {
+                            Swal.fire("Supprimé !", "Le recours a été supprimé avec succès.", "success")
+                            .then(() => {
+                                // window.history.back(); 
+                                window.location.href = document.referrer;
+
+                            });
+                        } else {
+                            Swal.fire("Erreur !", data.message, "error");
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire("Erreur !", "Une erreur s'est produite.", "error");
+                    });
+                }
+            });
+        });
+    });
+</script>
+
 @endpush 

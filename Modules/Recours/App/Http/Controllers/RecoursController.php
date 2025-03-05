@@ -225,6 +225,16 @@ class RecoursController extends Controller
      */
     public function destroy($id)
     {
-        //
+        
+
+        try {
+            $appeal = Appeal::find($id);
+            $appeal->delete();
+            // return response()->json(['message' => 'Appeal supprimé avec succès.', 'ok' => true]);
+            return response()->json(['message' => 'Recours supprimé avec succès.','ok' => true], 200);
+
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+        }
     }
 }
