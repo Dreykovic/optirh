@@ -20,7 +20,7 @@
                     @forelse($dacs as $dac)
                         <option value="{{$dac->reference}}" data-id="{{$dac->id}}"></option>
                     @empty
-                        <option value="">Aucun requérant trouvé</option>
+                        <option value="">Aucun marché trouvé</option>
                     @endforelse                   
                 </datalist>
                     <!-- <input type="text" class="form-control mx-2" id="dac" name="dac"> -->
@@ -176,40 +176,6 @@
         modal.show();
     });
 </script>
-
-<!-- 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    let input = document.getElementById("applicantDataList");
-    let hiddenInput = document.getElementById("selectedApplicantId");
-    let dataList = document.getElementById("applicantOptions");
-
-    input.addEventListener("input", function () {
-        let selectedOption = [...dataList.options].find(option => option.value === input.value);
-        if (selectedOption) {
-            hiddenInput.value = selectedOption.getAttribute("data-id"); // Stocke l'ID
-        } else {
-            hiddenInput.value = ""; // Réinitialise si aucune correspondance
-        }
-    });
-});
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    let input = document.getElementById("dacDataList");
-    let hiddenInput = document.getElementById("selectedDacId");
-    let dataList = document.getElementById("dacOptions");
-
-    input.addEventListener("input", function () {
-        let selectedOption = [...dataList.options].find(option => option.value === input.value);
-        if (selectedOption) {
-            hiddenInput.value = selectedOption.getAttribute("data-id"); // Stocke l'ID
-        } else {
-            hiddenInput.value = ""; // Réinitialise si aucune correspondance
-        }
-    });
-});
-</script> -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     function handleDataList(inputId, hiddenInputId, dataListId) {

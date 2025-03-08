@@ -19,8 +19,12 @@
                 <div class="card shadow-sm h-100">
                     <div class="card-body">
                         <h5 class="fw-bold text-primary">Recours</h5>
-                        @if($appeal->analyse_status == 'ACCEPTED')
-                        <p><strong>Étude :</strong> <span class="badge bg-success p-2">{{$appeal->analyse_status}}</span></p>
+                        @if($appeal->analyse_status == 'ACCEPTE')
+                            <p><strong>Étude :</strong> <span class="badge bg-success p-2">{{$appeal->analyse_status}}</span></p>
+                        @elseif($appeal->analyse_status == 'REJETE')
+                            <p><strong>Étude :</strong> <span class="badge bg-danger p-2">{{$appeal->analyse_status}}</span></p>
+                        @else
+                            <p><strong>Étude :</strong> <span class="badge bg-warning p-2">{{$appeal->analyse_status}}</span></p>
                         @endif
                         <p><strong>Décision :</strong> <span class="badge bg-info p-2">{{ $appeal->decision->decision ?? 'N/A' }}</span></p>
                         <p><strong>Délai :</strong> {{$appeal->day_count}}</p>
@@ -58,28 +62,28 @@
         </div>
 
         <!-- Boutons en bas -->
-        <div class='d-flex justify-content-between mt-4'>
+        <div class='d-flex p-4 mt-4 '>
             <!-- Bouton de suppression -->
-            @if($appeal->analyse_status == 'ANALYSE_PENDING')
-            <div>
+            @if($appeal->analyse_status == 'EN_COURS')
+            <div class='mx-2'>
                 <form id="delete-form" action="{{ route('recours.delete', $appeal->id) }}" method="post">
                     @csrf
                     <input type="hidden" name="_method" value="DELETE">
-                    <button type="button" id="delete-btn" class="btn btn-danger">Supprimer</button>
+                    <button type="button" id="delete-btn" class="btn btn-outline-danger">Supprimer</button>
                 </form>
             </div>
-            <div>
+            <div class='mx-2'>
                 <form id="accepted-form" action="{{ route('recours.accepted', $appeal->id) }}" method="post">
                     @csrf
                     <input type="hidden" name="_method" value="PUT">
-                    <button type="button" id="accepted-btn" class="btn btn-warning">Accepter</button>
+                    <button type="button" id="accepted-btn" class="btn btn-outline-warning">Accepter</button>
                 </form>
             </div>
-            <div>
+            <div class='mx-2'>
                 <form id="rejected-form" action="{{ route('recours.rejected', $appeal->id) }}" method="post">
                     @csrf
                     <input type="hidden" name="_method" value="PUT">
-                    <button type="button" id="rejected-btn" class="btn btn-info">Rejeter</button>
+                    <button type="button" id="rejected-btn" class="btn btn-outline-info">Rejeter</button>
                 </form>
             </div>
             @endif
@@ -233,212 +237,10 @@
 @push('js')
 <script src="{{ asset('app-js/crud/put.js') }}"></script>
 <script src="{{ asset('app-js/personnel/contrats/actions.js') }}"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('delete-btn').addEventListener('click', function () {
-            Swal.fire({
-                title: "Êtes-vous sûr ?",
-                text: "Cette action est irréversible !",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Oui, supprimer !",
-                cancelButtonText: "Annuler"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const form = document.getElementById('delete-form');
-                    fetch(form.action, {
-                        method: "POST",
-                        body: new FormData(form),
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest"
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.ok) {
-                            Swal.fire("Supprimé !", "Le recours a été supprimé avec succès.", "success")
-                            .then(() => {
-                                // window.history.back(); 
-                                window.location.href = document.referrer;
+<script src="{{ asset('app-js/recours/accepte.js') }}"></script>
+<script src="{{ asset('app-js/recours/rejete.js') }}"></script>
+<script src="{{ asset('app-js/recours/delete.js') }}"></script>
 
-                            });
-                        } else {
-                            Swal.fire("Erreur !", data.message, "error");
-                        }
-                    })
-                    .catch(error => {
-                        Swal.fire("Erreur !", "Une erreur s'est produite.", "error");
-                    });
-                }
-            });
-        });
-    });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('accepted-btn').addEventListener('click', function () {
-            Swal.fire({
-                title: "Êtes-vous sûr ?",
-                text: "Cette action est irréversible !",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Oui, Accepter !",
-                cancelButtonText: "Annuler"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const form = document.getElementById('accepted-form');
-                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                    fetch(form.action, {
-                        method: "PUT",
-                        body: new FormData(form),
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest",
-                            "X-CSRF-TOKEN": csrfToken // Ajout du token CSRF
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.ok) {
-                            Swal.fire("Accepté !", "Le recours a été accepté avec succès.", "success")
-                            .then(() => {
-                                // window.history.back(); 
-                                window.location.reload(); // Recharge la page après confirmation
-
-                            });
-                        } else {
-                            Swal.fire("Erreur !", data.message, "error");
-                        }
-                    })
-                    .catch(error => {
-                        Swal.fire("Erreur !", "Une erreur s'est produite.", "error");
-                    });
-                }
-            });
-        });
-    });
-</script>
-<!-- <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('rejected-btn').addEventListener('click', function () {
-            Swal.fire({
-                title: "Êtes-vous sûr ?",
-                text: "Cette action est irréversible !",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Oui, Rejeter !",
-                cancelButtonText: "Annuler"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const form = document.getElementById('rejected-form');
-                    fetch(form.action, {
-                        method: "PUT",
-                        body: new FormData(form),
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest"
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.ok) {
-                            Swal.fire("Rejeté !", "Le recours a été rejeté avec succès.", "success")
-                            .then(() => {
-                                // window.history.back(); 
-                                window.location.reload(); // Recharge la page après confirmation
-
-                            });
-                        } else {
-                            Swal.fire("Erreur !", data.message, "error");
-                        }
-                    })
-                    .catch(error => {
-                        Swal.fire("Erreur !", "Une erreur s'est produite.", "error");
-                    });
-                }
-            });
-        });
-    });
-</script> -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('rejected-btn').addEventListener('click', function () {
-            Swal.fire({
-                title: "Êtes-vous sûr de rejeter ce recours ?",
-                text: "Veuillez préciser la raison du rejet.",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Oui, rejeter !",
-                cancelButtonText: "Annuler",
-                html: `
-                    <select id="rejection-reason" class="swal2-select form-control w-75" name='decision'>
-                        <option value="" disabled selected>Choisissez une raison</option>
-                        <option value="HCOMPETENCE">Hors Compétence</option>
-                        <option value="IRRECEVABLE">Irrécevabilité</option>
-                        <option value="FORCLUSION">Forclusion</option>
-                    </select>
-                `,
-                preConfirm: () => {
-                    const selectedReason = document.getElementById('rejection-reason').value;
-                    
-                    if (!selectedReason) {
-                        Swal.showValidationMessage("Veuillez choisir une raison");
-                        return false;
-                    }
-
-                    return selectedReason === "Autre" && otherReason ? otherReason : selectedReason;
-                },
-                didOpen: () => {
-                    const rejectionSelect = document.getElementById('rejection-reason');
-                    const otherInput = document.getElementById('other-reason');
-                    
-                    rejectionSelect.addEventListener('change', function () {
-                        if (this.value === "Autre") {
-                            otherInput.style.display = "block";
-                        } else {
-                            otherInput.style.display = "none";
-                        }
-                    });
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const form = document.getElementById('rejected-form');
-                    const formData = new FormData(form);
-                    formData.append('decision', result.value); // Ajouter la raison du rejet
-
-                    fetch(form.action, {
-                        method: "POST",
-                        body: formData,
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest",
-                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.ok) {
-                            Swal.fire("Rejeté !", "Le recours a été rejeté avec succès.", "success")
-                            .then(() => {
-                                window.location.reload();
-                            });
-                        } else {
-                            Swal.fire("Erreur !", data.message, "error");
-                        }
-                    })
-                    .catch(error => {
-                        Swal.fire("Erreur !", "Une erreur s'est produite.", "error");
-                    });
-                }
-            });
-        });
-    });
-</script>
 
 
 

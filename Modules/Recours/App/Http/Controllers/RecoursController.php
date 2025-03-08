@@ -43,7 +43,8 @@ class RecoursController extends Controller
                 ->leftJoin('applicants', 'appeals.applicant_id', '=', 'applicants.id')
                 ->leftJoin('decisions', 'appeals.decision_id', '=', 'decisions.id')
                 ->select('appeals.*', 'dacs.reference', 'applicants.name as applicant','decisions.decision')
-                ->orderBy('appeals.deposit_date', 'desc');
+                ->orderBy('created_at', 'desc');
+                // ->orderBy('appeals.deposit_date', 'desc');
 
 
             // Filtrer entre deux dates
@@ -105,7 +106,7 @@ class RecoursController extends Controller
     {
         $dacs = Dac::orderBy('created_at', 'desc')->get();
         $applicants = Applicant::orderBy('created_at', 'desc')->get();
-// dump($applicants);
+        // dump($applicants);
         return view('recours::pages.recours.new', compact('dacs', 'applicants'));
     }
 
@@ -245,12 +246,12 @@ class RecoursController extends Controller
             $appeal = Appeal::find($id);
 
             $decision = Decision::create([
-                'decision' => 'EN_COURS',
+                'decision' => 'EN COURS',
                 'date' => now(), // Utilisation correcte de now()
             ]);
 
             $appeal->decision_id = $decision->id;
-            $appeal->analyse_status = 'ACCEPTED';
+            $appeal->analyse_status = 'ACCEPTE';
             $appeal->save();
 
             return response()->json(['message' => 'Recours accepté avec succès.','ok' => true], 200);
@@ -271,7 +272,7 @@ class RecoursController extends Controller
             ]);
     
             $appeal->decision_id = $decision->id;
-            $appeal->analyse_status = 'REJECTED';
+            $appeal->analyse_status = 'REJETE';
             $appeal->save();
     
             return response()->json(['message' => 'Recours rejeté avec succès.', 'ok' => true], 200);

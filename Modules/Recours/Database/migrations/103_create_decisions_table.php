@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('decisions', function (Blueprint $table) {
             $table->id();
-            $table->enum('decision', ['EN_COURS', 'FONDE', 'NFONDE', 'HCOMPETENCE', 'IRRECEVABLE', 'FORCLUSION', 'DESISTEMENT'])->default('EN_COURS');
+            $table->string('decision');
             $table->date('date')->nullable();
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
 
