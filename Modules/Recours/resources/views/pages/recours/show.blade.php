@@ -1,4 +1,4 @@
-@extends('pages.admin.base')
+@extends('pages.admin.recours_base')
 @section('plugins-style')
 @endsection
 @section('admin-content')

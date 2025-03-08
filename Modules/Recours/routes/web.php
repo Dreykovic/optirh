@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Recours\App\Http\Controllers\RecoursController;
 use Modules\Recours\App\Http\Controllers\DacController;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +17,8 @@ use Modules\Recours\App\Http\Controllers\DacController;
 */
 
 Route::prefix('recours')->group(function () {
+    Route::get('/', [HomeController::class, 'recours_home'])->name('recours.home');
+
     Route::get('/index', [ RecoursController::class, 'index'])->name('recours.index');
     Route::get('/show/{id}', [ RecoursController::class, 'show'])->name('recours.show');
     Route::get('/new', [ RecoursController::class, 'create'])->name('recours.new');
