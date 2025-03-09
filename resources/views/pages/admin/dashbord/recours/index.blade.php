@@ -15,7 +15,7 @@
                                             <div class="avatar lg  rounded-1 no-thumbnail bg-lightyellow color-defult"><i class="icofont-paperclip fs-5"></i></div>
                                             <div class="flex-fill ms-4">
                                                 <div class="">En cours</div>
-                                                <h5 class="mb-0 ">122</h5>
+                                                <h5 class="mb-0 ">{{$on_going_count}}</h5>
                                             </div>
                                         </div>
                                     </div>
@@ -28,7 +28,7 @@
                                             <div class="avatar lg  rounded-1 no-thumbnail bg-success color-defult"><i class="icofont-paperclip fs-5"></i></div>
                                             <div class="flex-fill ms-4">
                                                 <div class="">Acceptes</div>
-                                                <h5 class="mb-0 ">376</h5>
+                                                <h5 class="mb-0 ">{{$accepted_count}}</h5>
                                             </div>
                                         </div>
                                     </div>
@@ -41,7 +41,7 @@
                                             <div class="avatar lg  rounded-1 no-thumbnail bg-danger color-defult"><i class="icofont-paperclip fs-5"></i></div>
                                             <div class="flex-fill ms-4">
                                                 <div class="">Rejetes</div>
-                                                <h5 class="mb-0 ">74</h5>
+                                                <h5 class="mb-0 ">{{$rejected_count}}</h5>
                                             </div>
                                         </div>
                                     </div>
@@ -61,7 +61,25 @@
                             <h6 class="mb-0 fw-bold ">Récents</h6>
                         </div>
                         <div class="card-body vh-100">
-                           
+                            @forelse($on_going as $appeal)
+                            <div class='mb-3'>
+                                <div class='fw-bold'><a href="{{route('recours.show', $appeal->id)}}"><span>@</span>{{$appeal->reference}}</a></div>
+                                <div>
+                                    @if($appeal->analyse_status == 'ACCEPTE')
+                                        Etude: <span class="fw-bold text-success p-2">{{$appeal->analyse_status}}</span>
+                                    @elseif($appeal->analyse_status == 'REJETE')
+                                        Etude: <span class="fw-bold text-danger p-2">{{$appeal->analyse_status}}</span>
+                                    @else
+                                        Etude: <span class="fw-bold text-warning p-2">{{$appeal->analyse_status}}</span>
+                                    @endif
+                                </div>
+                                <div>Decision: <span class='fw-bold text-info p-2'>{{$appeal->decision ?? 'N/A'}}</span></div>
+                                <div>Delai: {{$appeal->day_count}}</div>
+                            </div>
+                            <hr>
+                            @empty 
+                                <p>Tout est traité.</p>
+                            @endforelse
                         </div>
                     </div>
                   
