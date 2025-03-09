@@ -62,8 +62,9 @@
                         </div>
                         <div class="card-body vh-100">
                             @forelse($on_going as $appeal)
+                            <hr>
                             <div class='mb-3'>
-                                <div class='fw-bold'><a href="{{route('recours.show', $appeal->id)}}"><span>@</span>{{$appeal->reference}}</a></div>
+                                <div class='fw-bold'><a href="{{route('recours.show', $appeal->id)}}"><span class='fs-5'>@</span>{{$appeal->dac->reference}}</a></div>
                                 <div>
                                     @if($appeal->analyse_status == 'ACCEPTE')
                                         Etude: <span class="fw-bold text-success p-2">{{$appeal->analyse_status}}</span>
@@ -73,10 +74,10 @@
                                         Etude: <span class="fw-bold text-warning p-2">{{$appeal->analyse_status}}</span>
                                     @endif
                                 </div>
-                                <div>Decision: <span class='fw-bold text-info p-2'>{{$appeal->decision ?? 'N/A'}}</span></div>
+                                <div>Decision: <span class='fw-bold text-info p-2'>{{$appeal->decision->decision ?? 'N/A'}}</span></div>
                                 <div>Delai: {{$appeal->day_count}}</div>
                             </div>
-                            <hr>
+                            
                             @empty 
                                 <p>Tout est traité.</p>
                             @endforelse

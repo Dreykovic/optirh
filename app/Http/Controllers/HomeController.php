@@ -20,18 +20,26 @@ class HomeController extends Controller
     public function recours_home()
     {
         try {
-            $on_going = DB::table('appeals')
-                ->join('dacs', 'appeals.dac_id', '=', 'dacs.id')
-                ->leftJoin('applicants', 'appeals.applicant_id', '=', 'applicants.id')
-                ->leftJoin('decisions', 'appeals.decision_id', '=', 'decisions.id')
-                ->where('appeals.analyse_status', 'EN_COURS')
-                ->orWhere(function ($query) {
-                    $query->whereNotNull('decisions.decision')
-                        ->where('decisions.decision', 'EN COURS');
+            // $on_going = DB::table('appeals')
+            //     ->join('dacs', 'appeals.dac_id', '=', 'dacs.id')
+            //     ->leftJoin('applicants', 'appeals.applicant_id', '=', 'applicants.id')
+            //     ->leftJoin('decisions', 'appeals.decision_id', '=', 'decisions.id')
+            //     ->where('appeals.analyse_status', 'EN_COURS')
+            //     ->orWhere(function ($query) {
+            //         $query->whereNotNull('decisions.decision')
+            //             ->where('decisions.decision', 'EN COURS');
+            //     })
+            //     ->select('appeals.*', 'dacs.reference', 'applicants.name as applicant', 'decisions.decision')
+            //     ->orderByDesc('appeals.day_count')
+            //     ->get();
+            $on_going = Appeal::with(['dac', 'applicant', 'decision'])
+                ->where('analyse_status', 'EN_COURS')
+                ->orWhereHas('decision', function ($query) {
+                    $query->where('decision', 'EN COURS');
                 })
-                ->select('appeals.*', 'dacs.reference', 'applicants.name as applicant', 'decisions.decision')
-                ->orderByDesc('appeals.day_count')
+                ->orderByDesc('day_count')
                 ->get();
+
 
     
             $rejected_count = Appeal::where('analyse_status', 'REJETE')->count();

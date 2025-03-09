@@ -80,4 +80,5 @@ class Appeal extends Model
 		return $this->belongsTo(Personnal::class, 'last_updated_by');
 	}
 
+    
 }

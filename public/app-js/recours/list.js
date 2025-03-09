@@ -28,12 +28,13 @@ renderCallback: (recours) => {
             </td>
             <td>${appeal.applicant}</td>
             <td>${appeal.object}</td>
-            <td>${appeal.deposit_date} À ${appeal.deposit_hour}</td>
+            <td>${appeal.deposit_date} </td>
+            <td>${appeal.deposit_hour} </td>
             <td class="${appeal.analyse_status=='ACCEPTE'? 'text-success':(appeal.analyse_status=='REJETE'?'text-danger':'text-warning')} fw-bold" >
                 ${appeal.analyse_status}
             </td>
             <td class='text-info fw-bold'>${appeal.decision ?? 'N/A'}</td>
-            <td>${appeal.day_count ?? '-'}</td>
+            
             <td>
                 <a href="/recours/show/${appeal.id}">
                     <i class="icofont-long-arrow-right fs-4"></i>

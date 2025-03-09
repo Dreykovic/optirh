@@ -44,7 +44,6 @@ class RecoursController extends Controller
                 ->leftJoin('decisions', 'appeals.decision_id', '=', 'decisions.id')
                 ->select('appeals.*', 'dacs.reference', 'applicants.name as applicant','decisions.decision')
                 ->orderBy('created_at', 'desc');
-                // ->orderBy('appeals.deposit_date', 'desc');
 
 
             // Filtrer entre deux dates
@@ -96,6 +95,74 @@ class RecoursController extends Controller
             ], 500);
         }
     }
+    // public function appeal_loading(Request $request)
+    // {
+    //     try {
+    //         $search = $request->input('search', '');
+    //         $limit = $request->input('limit', 5);
+    //         $page = $request->input('page', 1);
+    //         $startDate = $request->input('startDate', null);
+    //         $endDate = $request->input('endDate', null);
+    //         $statuses = $request->input('statusOptions', '');
+
+    //         // Convertir les statuts en tableau s'ils sont fournis sous forme de string
+    //         if (!empty($statuses)) {
+    //             $statuses = explode(',', $statuses);
+    //         }
+
+    //         // Construire la requête Eloquent
+    //         $query = Appeal::with(['dac', 'applicant', 'decision'])
+    //             ->select('appeals.*')
+    //             ->orderByDesc('created_at');
+
+    //         // Filtrer par dates
+    //         if ($startDate && $endDate) {
+    //             $query->whereBetween('deposit_date', [$startDate, $endDate]);
+    //         } elseif ($startDate) {
+    //             $query->where('deposit_date', '>=', $startDate);
+    //         } elseif ($endDate) {
+    //             $query->where('deposit_date', '<=', $endDate);
+    //         }
+
+    //         // Filtrer par statuts
+    //         if (!empty($statuses) && is_array($statuses)) {
+    //             $query->where(function ($q) use ($statuses) {
+    //                 $q->whereIn('analyse_status', $statuses)
+    //                 ->orWhereHas('decision', function ($subQuery) use ($statuses) {
+    //                     $subQuery->whereIn('decision', $statuses);
+    //                 });
+    //             });
+    //         }
+
+    //         // Recherche textuelle
+    //         if (!empty($search)) {
+    //             $query->where(function ($q) use ($search) {
+    //                 $q->where('object', 'ILIKE', "%$search%") // `ILIKE` pour Postgres, `LIKE` pour MySQL
+    //                 ->orWhereHas('dac', function ($subQuery) use ($search) {
+    //                     $subQuery->where('reference', 'ILIKE', "%$search%");
+    //                 })
+    //                 ->orWhereHas('applicant', function ($subQuery) use ($search) {
+    //                     $subQuery->where('name', 'ILIKE', "%$search%");
+    //                 })
+    //                 ->orWhereHas('decision', function ($subQuery) use ($search) {
+    //                     $subQuery->where('decision', 'ILIKE', "%$search%");
+    //                 })
+    //                 ->orWhereRaw("TO_CHAR(deposit_date, 'YYYY-MM-DD') LIKE ?", ["%$search%"]);
+    //             });
+    //         }
+
+    //         // Ajouter la pagination
+    //         $appeals = $query->paginate($limit);
+
+    //         return response()->json($appeals);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'error' => 'Erreur lors du chargement des données',
+    //             'message' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
 
     
 
