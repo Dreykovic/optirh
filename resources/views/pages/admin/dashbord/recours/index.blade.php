@@ -5,7 +5,7 @@
         <div class="container-xxl">
            
             <div class="row g-3">
-                <div class="col-xl-10 col-lg-12 col-md-12">
+                <div class="col-xl-8 col-lg-12 col-md-12">
 
                         <div class="row g-3 mb-3 row-deck">
                             <div class="col-md-12 col-lg-4 col-xl-4 col-xxl-4">
@@ -55,7 +55,7 @@
                    
                 </div>
 
-                <div class="col-xl-2 col-lg-12 col-md-12">
+                <div class="col-xl-4 col-lg-12 col-md-12">
                     <div class="card mb-3">
                         <div class="card-header py-3">
                             <h6 class="mb-0 fw-bold ">Récents</h6>

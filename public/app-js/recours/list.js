@@ -15,7 +15,7 @@ renderCallback: (recours) => {
     const tableBody = document.querySelector('#recours tbody');
     tableBody.innerHTML = '';
     if (recours.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="7" class="text-center">Aucun recours trouvé.</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="8" class="text-center">Aucun recours trouvé.</td></tr>';
     } else {
         recours.forEach(appeal => {
             const row = document.createElement('tr');

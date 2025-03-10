@@ -136,7 +136,7 @@
                                             <th>À</th>
                                             <th>Étude</th>
                                             <th>Décision</th>
-                                            <th>Délai</th>
+                                            <!-- <th>Délai</th> -->
                                             <th></th>
                                         </tr>
                                     </thead>

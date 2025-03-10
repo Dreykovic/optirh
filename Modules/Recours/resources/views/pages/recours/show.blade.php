@@ -5,7 +5,7 @@
 
 <div class='col-lg-12 row'>
     <!--  -->
-    <div class="card col-lg-10">
+    <div class="card col-lg-12">
         <div class="card-header">
             <div class='d-flex justify-content-between'>
                 <h3>Détails</h3>
@@ -28,7 +28,18 @@
                         @endif
                         <p><strong>Décision :</strong> <span class="badge bg-info p-2">{{ $appeal->decision->decision ?? 'N/A' }}</span></p>
                         <p><strong>Délai :</strong> {{$appeal->day_count}}</p>
-                        <p><strong>Type :</strong> {{$appeal->type}}</p>
+                        <p><strong>Type :</strong> 
+                        @if($appeal->type == 'RESULTS')
+                            Ses résultats
+                        @elseif($appeal->type == 'DAC')
+                            Son DAC    
+                        @elseif($appeal->type == 'PROCESS')  
+                            Sa Procédure/Son déroulement
+                        @else 
+                            Autre      
+                        @endif
+                        
+                        </p>
                         <p><strong>Dépôt le :</strong> {{$appeal->deposit_date}} <strong>À</strong> {{$appeal->deposit_hour}}</p>
                         <p><strong>Objet :</strong> {{$appeal->object}}</p>
                     </div>
@@ -93,9 +104,9 @@
         </div>
     </div>
     <!--  -->
-    <div class="card col-lg-2 border-0">
+    <!-- <div class="card col-lg-2 border-0">
         <h5 class='text-center mt-2'>Change Log</h5>
-    </div>
+    </div> -->
 </div>
 
 
@@ -182,6 +193,11 @@
                                                 <option value="PROCESS" selected>Sa Procédure/ Son déroulement</option>
                                                 <option value="OTHERS">Autre</option>
                                                 @elseif($appeal->type == 'PROCESS')
+                                                <option value="RESULTS">Ses résultats Provisoirs</option>
+                                                <option value="DAC">Son DAC</option>
+                                                <option value="PROCESS" selected>Sa Procédure/ Son déroulement</option>
+                                                <option value="OTHERS" >Autre</option>
+                                                @else 
                                                 <option value="RESULTS">Ses résultats Provisoirs</option>
                                                 <option value="DAC">Son DAC</option>
                                                 <option value="PROCESS">Sa Procédure/ Son déroulement</option>
