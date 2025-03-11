@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 use Modules\Recours\App\Models\Appeal; 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use ArielMejiaDev\LarapexCharts\LarapexChart;
 
 class HomeController extends Controller
 {
@@ -17,7 +20,7 @@ class HomeController extends Controller
         }
     }
 
-    public function recours_home()
+    public function recours_home(Request $request)
     {
         try {
             // $on_going = DB::table('appeals')
@@ -45,7 +48,60 @@ class HomeController extends Controller
             $rejected_count = Appeal::where('analyse_status', 'REJETE')->count();
             $accepted_count = Appeal::where('analyse_status', 'ACCEPTE')->count();
             $on_going_count = $on_going->count();    
-            return view('pages.admin.dashbord.recours.index', compact('rejected_count', 'accepted_count','on_going','on_going_count'));
+            // 
+            // Vérification des dates envoyées par l'utilisateur
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        // Base de requête : Toutes les années si pas de filtre
+        $query = Appeal::join('decisions', 'appeals.decision_id', '=', 'decisions.id')
+            ->selectRaw("
+                CASE 
+                    WHEN decisions.decision IN ('FORCLUSION', 'IRRECEVABLE', 'HORS COMPETENCE') THEN 'REJETE'
+                    ELSE decisions.decision
+                END as decision_group,
+                COUNT(*) as count
+            ")
+            ->groupBy('decision_group');
+            
+            // $query = Appeal::join('decisions', 'appeals.decision_id', '=', 'decisions.id')
+            // ->selectRaw("
+            //     decisions.decision as decision_group,
+            //     COUNT(*) as count
+            // ")
+            // ->groupBy('decisions.decision');
+
+        // Appliquer le filtre uniquement si l'utilisateur envoie des dates
+        if ($startDate && $endDate) {
+            $query->whereBetween('deposit_date', [$startDate, $endDate]);
+        }
+
+        $decisions = $query->pluck('count', 'decision_group');
+        //dd($decisions);
+
+        // Création du graphique
+        
+        // $chart = (new LarapexChart)
+        //     ->setTitle('Nombre de recours par décision')
+        //     ->setType('bar') // Forcer le type en barres
+        //     ->setLabels($decisions->keys()->toArray())
+        //     ->setDataset($decisions->values()->toArray());
+        $chart = (new LarapexChart)
+            ->setTitle('Nombre de recours par décision')
+            ->setType('bar') // Type en barres
+            // ->setColors(['#FFDAB9', '#FFA07A', '#FF8C00']) // Couleurs personnalisées
+            ->setColors(['#FFE5B4', '#FFC87C', '#FFA500']) // Beige orangé, orange clair, orange moyen
+            ->setLabels($decisions->keys()->toArray()) // Catégories sur l'axe X
+            ->setDataset([
+                [
+                    'name' => 'Nombre de recours',
+                    'data' => $decisions->values()->toArray()
+                ]
+            ]);
+
+            
+
+            return view('pages.admin.dashbord.recours.index', compact('rejected_count', 'accepted_count','on_going','on_going_count','chart', 'startDate', 'endDate'));
         } catch (\Throwable $th) {
             \Log::error('Erreur dans recours_home: ' . $th->getMessage());
             return response()->view('errors.404', [], 404);

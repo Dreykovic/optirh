@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Recours\App\Http\Controllers\RecoursController;
 use Modules\Recours\App\Http\Controllers\DacController;
+use Modules\Recours\App\Http\Controllers\StatsController;
 use App\Http\Controllers\HomeController;
 
 /*
@@ -31,6 +32,7 @@ Route::prefix('recours')->group(function () {
     Route::post('/store', [ RecoursController::class, 'store'])->name('recours.store');
     Route::post('/dacs/store', [ DacController::class, 'dacStore'])->name('dac.store');
     Route::post('/applicants/store', [ DacController::class, 'applicantStore'])->name('applicant.store');
+    Route::get('/stats', [StatsController::class, 'index'])->name('stats.index');
 });
 
 // Route::group([], function () {

@@ -125,23 +125,25 @@
                                     </div>
                                     
                                 </div>
+                                <div class='table-responsive'>
+                                    <table id="recours" class="table table-hover align-middle mb-0 ">
+                                        <thead>
+                                            <tr>
+                                                <th>Marché</th>
+                                                <th>Requérant</th>
+                                                <th>Objet</th>
+                                                <th>Dépôt le</th>
+                                                <th>À(HEURE)</th>
+                                                <th>Étude</th>
+                                                <th>Décision</th>
+                                                <th>Détails</th>
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
                                 
-                                <table id="recours" class="table table-hover align-middle mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>Marché</th>
-                                            <th>Requérant</th>
-                                            <th>Objet</th>
-                                            <th>Dépôt le</th>
-                                            <th>À</th>
-                                            <th>Étude</th>
-                                            <th>Décision</th>
-                                            <!-- <th>Délai</th> -->
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
                                 <div id="pagination" class='mt-3'></div>
                               <!--  -->
                             </div>

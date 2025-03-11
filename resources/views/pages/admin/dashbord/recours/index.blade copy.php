@@ -61,7 +61,7 @@
                    
                 </div>
 
-                <div class="col-xl-4 col-lg-12 col-md-12 w-auto">
+                <div class="col-xl-4 col-lg-12 col-md-12">
                     <div class="card mb-3">
                         <div class="card-header py-3">
                             <h6 class="mb-0 fw-bold ">Récents</h6>
@@ -91,9 +91,6 @@
                     </div>
                   
                 </div>
-               
-        </div>
-
             </div><!-- Row End -->
         
         </div>

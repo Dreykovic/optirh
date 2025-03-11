@@ -351,3 +351,29 @@ rech : requerant depot decision
         <a href="#" class="btn btn-primary">Modifier</a>
     </div>
 </div>                        
+
+php artisan vendor:publish --provider="ArielMejiaDev\LarapexCharts\LarapexChartsServiceProvider"
+1000300205
+
+
+
+<!-- graphes -->
+
+                        <!-- Formulaire de filtrage -->
+                        <!-- <form method="GET" action="{{ route('stats.index') }}" class="mb-3 row">
+                            <div class="col-md-4">
+                                <label for="start_date">De :</label>
+                                <input type="date" id="start_date" name="start_date" value="{{ request('start_date') }}" class="form-control">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="end_date">À :</label>
+                                <input type="date" id="end_date" name="end_date" value="{{ request('end_date') }}" class="form-control">
+                            </div>
+
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">Filtrer</button>
+                            </div>
+                        </form> -->
+
+                        <!-- Affichage du graphe -->
