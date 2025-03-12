@@ -54,15 +54,15 @@ class HomeController extends Controller
         $endDate = $request->input('end_date');
 
         // Base de requête : Toutes les années si pas de filtre
-        $query = Appeal::join('decisions', 'appeals.decision_id', '=', 'decisions.id')
-            ->selectRaw("
-                CASE 
-                    WHEN decisions.decision IN ('FORCLUSION', 'IRRECEVABLE', 'HORS COMPETENCE') THEN 'REJETE'
-                    ELSE decisions.decision
-                END as decision_group,
-                COUNT(*) as count
-            ")
-            ->groupBy('decision_group');
+        // $query = Appeal::join('decisions', 'appeals.decision_id', '=', 'decisions.id')
+        //     ->selectRaw("
+        //         CASE 
+        //             WHEN decisions.decision IN ('FORCLUSION', 'IRRECEVABLE', 'HORS COMPETENCE') THEN 'REJETE'
+        //             ELSE decisions.decision
+        //         END as decision_group,
+        //         COUNT(*) as count
+        //     ")
+        //     ->groupBy('decision_group');
             
             // $query = Appeal::join('decisions', 'appeals.decision_id', '=', 'decisions.id')
             // ->selectRaw("
@@ -70,6 +70,14 @@ class HomeController extends Controller
             //     COUNT(*) as count
             // ")
             // ->groupBy('decisions.decision');
+            $query = Appeal::join('decisions', 'appeals.decision_id', '=', 'decisions.id')
+            ->selectRaw("
+                decisions.decision as decision_group,
+                COUNT(*) as count
+            ")
+            ->where('decisions.decision', '!=', 'EN COURS') // Exclure les décisions "EN COURS"
+            ->groupBy('decisions.decision');
+        
 
         // Appliquer le filtre uniquement si l'utilisateur envoie des dates
         if ($startDate && $endDate) {
