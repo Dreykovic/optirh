@@ -19,6 +19,7 @@ use App\Http\Controllers\HomeController;
 
 Route::prefix('recours')->group(function () {
     Route::get('/', [HomeController::class, 'recours_home'])->name('recours.home');
+    Route::post('/', [HomeController::class, 'recours_home'])->name('recours.home');
 
     Route::get('/index', [ RecoursController::class, 'index'])->name('recours.index');
     Route::get('/show/{id}', [ RecoursController::class, 'show'])->name('recours.show');

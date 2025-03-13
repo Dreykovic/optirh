@@ -142,14 +142,15 @@
                             <div class='text-center mb-3 mt-4'>
                                  <!-- Formulaire de filtrage -->
                                 <form method="GET" action="{{ route('recours.home') }}" class="d-flex justify-content-center">
+                                    
                                     <div class="">
                                         <label for="start_date">De :</label>
-                                        <input type="date" id="start_date" name="start_date" class="form-control">
+                                        <input type="date" id="start_date" name="start_date" class="form-control" value="{{request('start_date')}}">
                                     </div>
 
                                     <div class="mx-2">
                                         <label for="end_date">À :</label>
-                                        <input type="date" id="end_date" name="end_date" class="form-control">
+                                        <input type="date" id="end_date" name="end_date" class="form-control" value="{{request('end_date')}}">
                                     </div>
 
                                     <div class="d-flex align-items-end">
@@ -205,9 +206,9 @@
 @endpush
 @push('js')
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const startDate = document.getElementById("start_date");
-    const endDate = document.getElementById("end_date");
+    document.addEventListener("DOMContentLoaded", function () {
+        const startDate = document.getElementById("start_date");
+        const endDate = document.getElementById("end_date");
 
     // Lorsque la date de début change
     startDate.addEventListener("change", function () {
