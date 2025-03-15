@@ -58,7 +58,9 @@
                 <div class="card-header">
                     <h4 for="files">Envoi des bulletins</h4>
                 </div>
-                    <input type="file" name="files[]" id="files" class='form-control mb-3' accept=".pdf" multiple>
+                {{$details ?? ''}}
+                    <input type="file" name="file" id="files" class='form-control mb-3' accept=".pdf">
+                    <!-- <input type="file" name="files[]" id="files" class='form-control mb-3' accept=".pdf" multiple> -->
                     <div class="card-footer">
                         <button type="submit" class="btn btn-lg btn-block lift text-uppercase btn-primary" atl="Envoyer factures">
                             <span class="normal-status">

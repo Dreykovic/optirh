@@ -189,35 +189,70 @@ class FileController extends Controller
     //         }
     //     }
 
+    // public function uploadInvoices(Request $request)
+    // {
+    //     $request->validate([
+    //         'files' => 'required|array',
+    //         'files.*' => 'required|file|mimes:pdf|max:2048',
+    //     ]);
+
+    //     $files = $request->file('files');
+
+    //     try {
+    //         // Appelle le service pour traiter les fichiers
+    //         $results = app(FileService::class)->storeFilesWithCodes($files);
+
+    //         // Prépare les données pour le résumé
+    //         $summary = [
+    //             'successful' => count($results['success']),
+    //             'failed' => count($results['failed']),
+    //             'missing' => count($results['missing']),
+    //         ];
+
+    //         // Retourne avec les données dans la session
+    //         return back()
+    //             ->with('success', 'Les factures ont été traitées avec succès.')
+    //             ->with('summary', $summary)
+    //             ->with('details', $results);
+    //     } catch (\Exception $e) {
+    //         return back()
+    //             ->with('error', 'Erreur lors du traitement des fichiers.')
+    //             ->with('details', $e->getMessage());
+    //     }
+    // }
+
+
+//uploadPayroll
     public function uploadInvoices(Request $request)
-    {
-        $request->validate([
-            'files' => 'required|array',
-            'files.*' => 'required|file|mimes:pdf|max:2048',
-        ]);
+{
+    $request->validate([
+        'file' => 'required|file|mimes:pdf|max:5120', // 5MB max
+    ]);
 
-        $files = $request->file('files');
+    $file = $request->file('file');
 
-        try {
-            // Appelle le service pour traiter les fichiers
-            $results = app(FileService::class)->storeFilesWithCodes($files);
+    try {
+        // Appeler le service pour traiter le fichier
+        $results = app(FileService::class)->storeFilesFromSinglePdf($file);
 
-            // Prépare les données pour le résumé
-            $summary = [
-                'successful' => count($results['success']),
-                'failed' => count($results['failed']),
-                'missing' => count($results['missing']),
-            ];
+        // Résumé
+        $summary = [
+            'successful' => count($results['success']),
+            'failed' => count($results['failed']),
+            'missing' => count($results['missing']),
+        ];
 
-            // Retourne avec les données dans la session
-            return back()
-                ->with('success', 'Les factures ont été traitées avec succès.')
-                ->with('summary', $summary)
-                ->with('details', $results);
-        } catch (\Exception $e) {
-            return back()
-                ->with('error', 'Erreur lors du traitement des fichiers.')
-                ->with('details', $e->getMessage());
-        }
+        return back()
+            ->with('success', 'Les bulletins ont été traités avec succès.')
+            ->with('summary', $summary)
+            ->with('details', $results);
+    } catch (\Exception $e) {
+        dump($e->getMessage());
+        // return back()
+        //     ->with('error', 'Erreur lors du traitement du fichier.')
+        //     ->with('details', $e->getMessage());
     }
+}
+
+
 }
