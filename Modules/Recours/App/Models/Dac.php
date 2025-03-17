@@ -21,6 +21,7 @@ class Dac extends Model
     protected $fillable = [
         'reference',
         'object',
+        'ac',
         'status',
         'created_by',
         'last_updated_by'

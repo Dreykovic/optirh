@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('applicants', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('address');
-            $table->string('phone_number');
+            $table->string('address')->nullable();
+            $table->string('nif')->unique();
+            $table->string('phone_number')->nullable();
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
 
             $table->unsignedBigInteger('created_by')->nullable();

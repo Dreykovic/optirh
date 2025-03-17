@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('personnals', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->string('email');
-            $table->string('job');
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('email')->nullable();
+            $table->string('job')->nullable();
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
-            $table->enum('sexe', ['MAN', 'WOMAN'])->default('MAN');
+            $table->enum('sexe', ['MAN', 'WOMAN'])->default('MAN')->nullable();
 
             $table->timestamps();
         });

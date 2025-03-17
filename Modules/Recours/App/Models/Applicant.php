@@ -24,7 +24,8 @@ class Applicant extends Model
         'phone_number',
         'status',
         'created_by',
-        'last_updated_by'
+        'last_updated_by',
+        'nif'
     ];
     
    

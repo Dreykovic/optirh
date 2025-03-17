@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('decisions', function (Blueprint $table) {
             $table->id();
             $table->string('decision');
-            $table->date('date');
+            $table->date('date')->nullable();
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
 
             $table->unsignedBigInteger('created_by')->nullable();

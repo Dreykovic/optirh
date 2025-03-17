@@ -6,6 +6,10 @@ use App\Models\File;
 use App\Models\Employee;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Smalot\PdfParser\Parser;
+use setasign\Fpdi\Fpdi;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class FileService
 {
@@ -190,5 +194,99 @@ class FileService
         }
         return Storage::url($file->path);
     }
+
+
+
+    public function storeFilesFromSinglePdf($pdfFile)
+    {
+        $disk = 'public';
+        $success = [];
+        $failed = [];
+        $missing = [];
+
+        // Charger les employés avec leur nom formaté
+        // $employeeNames = Employee::pluck('id', 'name')->mapWithKeys(function ($id, $name) {
+        //     return [strtoupper(trim($name)) => $id];
+        // });
+        $employeeNames = Employee::select('id', DB::raw("UPPER(CONCAT(last_name, ' ', first_name)) AS full_name"))
+            ->pluck('id', 'full_name')
+            ->mapWithKeys(function ($id, $fullName) {
+                return [trim($fullName) => $id]; // Supprime les espaces en trop
+            });
+
+        //Extraire le texte du PDF
+        $parser = new Parser();
+        $pdf = $parser->parseFile($pdfFile->getRealPath());
+        $text = $pdf->getText();
+
+        Log::info('Texte extrait du PDF:', ['content' => substr($text, 0, 500)]);
+
+        // Trouver les noms des employés dans le texte
+        preg_match_all('/\n(M|Mme)\s+([A-ZÉÈÊÀÇ\s-]+)/', $text, $matches, PREG_OFFSET_CAPTURE);
+        Log::info('Noms détectés:', $matches[2]);
+        $sections = [];
+
+        foreach ($matches[2] as $index => $match) {
+            $name = strtoupper(trim($match[0]));
+            $position = $match[1];
+
+            if (isset($employeeNames[$name])) {
+                $sections[] = [
+                    'name' => $name,
+                    'employee_id' => $employeeNames[$name],
+                    'position' => $position
+                ];
+            }
+        }
+
+        // Découper le PDF en fichiers séparés
+        $pdf = new Fpdi();
+        $pdf->setSourceFile($pdfFile->getRealPath());
+        $totalPages = $pdf->setSourceFile($pdfFile->getRealPath());
+
+        foreach ($sections as $index => $section) {
+            $employeeId = $section['employee_id'];
+            $folder = "employees/{$employeeId}";
+
+            // Créer le dossier si nécessaire
+            if (!Storage::disk($disk)->exists($folder)) {
+                Storage::disk($disk)->makeDirectory($folder);
+            }
+
+            // Créer le fichier PDF pour cet employé
+            $pdf->AddPage();
+            $tplIdx = $pdf->importPage($index + 1);
+            $pdf->useTemplate($tplIdx);
+
+            $fileName = "bulletin_" . now()->format('d-m-Y') . ".pdf";
+            $path = "$folder/$fileName";
+
+            Storage::disk($disk)->put($path, $pdf->Output('', 'S'));
+
+            // Sauvegarde en base de données
+            File::create([
+                'employee_id' => $employeeId,
+                'name' => $fileName,
+                'display_name' => "Bulletin de paie",
+                'path' => $path,
+                'url' => Storage::url($path),
+                'mime_type' => 'application/pdf',
+                'status' => $this->status[0],
+            ]);
+
+            $success[] = $section['name'];
+        }
+
+        // Trouver les employés sans fichier
+        $missing = array_diff($employeeNames->keys()->toArray(), $success);
+
+        return [
+            'success' => $success,
+            'failed' => $failed,
+            'missing' => $missing,
+        ];
+    }
+
+
 
 }

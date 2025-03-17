@@ -1,0 +1,22 @@
+<?php
+
+namespace Modules\Recours\Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class DecisionSeeder extends Seeder
+{
+    public function run()
+    {
+        DB::table('decisions')->insert([
+            ['decision' => 'FONDE', 'date' => now(), 'status' => 'ACTIVATED', 'created_at' => now(), 'updated_at' => now()],
+            ['decision' => 'NON FONDE', 'date' => now(), 'status' => 'ACTIVATED', 'created_at' => now(), 'updated_at' => now()],
+            ['decision' => 'HORS COMPETENCE', 'date' => now(), 'status' => 'ACTIVATED', 'created_at' => now(), 'updated_at' => now()],
+            ['decision' => 'IRRECEVABLE', 'date' => now(), 'status' => 'ACTIVATED', 'created_at' => now(), 'updated_at' => now()],
+            ['decision' => 'FORCLUSION', 'date' => now(), 'status' => 'ACTIVATED', 'created_at' => now(), 'updated_at' => now()],
+            ['decision' => 'DESISTEMENT', 'date' => now(), 'status' => 'ACTIVATED', 'created_at' => now(), 'updated_at' => now()],
+            ['decision' => 'EN COURS', 'date' => now(), 'status' => 'ACTIVATED', 'created_at' => now(), 'updated_at' => now()],
+        ]);
+    }
+}
