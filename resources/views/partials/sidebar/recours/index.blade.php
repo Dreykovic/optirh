@@ -6,7 +6,7 @@
                 <img width="55" height="55" src="{{ asset('assets/img/logo.png') }}" alt="">
 
             </span>
-            <span class="logo-text">Recours</span>
+            <span class="logo-text">RECOURS</span>
         </a>
         <!-- Menu: main ul -->
 
