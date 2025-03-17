@@ -6,7 +6,7 @@
                 <div class="row clearfix">
                     <div class="col-md-12">
                         <div class="card border-0 no-bg">
-                        <h3 class=" fw-bold flex-fill mb-0 mt-sm-0 text-center">Nos Recours(Total :14)</h3>
+                        <h3 class=" fw-bold flex-fill mb-0 mt-sm-0 text-center">Nos Recours(Total :{{$recours_count}})</h3>
     
                             <div class="card-header px-4 d-sm-flex align-items-center justify-content-between border-bottom mt-4 mx-5">
                                 <a href="{{route('recours.new')}}">

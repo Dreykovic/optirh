@@ -19,7 +19,8 @@ class RecoursController extends Controller
      */
     public function index()
     {
-        return view('recours::pages.recours.liste');
+        $recours_count = Appeal::count();
+        return view('recours::pages.recours.liste', compact('recours_count'));
     }
  
    

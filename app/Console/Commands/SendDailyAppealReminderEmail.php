@@ -14,13 +14,17 @@ class SendDailyAppealReminderEmail extends Command
 
     public function handle()
     {
-        // Récupérer tous les recours avec day_count >= 3 et statut "EN_COURS"
-        $appeals = Appeal::where('analyse_status', 'EN_COURS')
-            ->where('day_count', '>=', 3)
-            ->orWhereHas('decision', function ($query) {
-                $query->where('decision', 'EN COURS');
+       
+        $appeals = Appeal::where('day_count', '>=', 3)//7
+            ->where(function ($query) {
+                $query->where('analyse_status', 'EN_COURS')
+                      ->orWhereHas('decision', function ($query) {
+                          $query->where('decision', 'EN COURS');
+                      });
             })
+            ->orderBy('day_count', 'desc')
             ->get();
+
 
         // Vérifier s'il y a des recours à inclure dans l'email
         if ($appeals->isEmpty()) {
