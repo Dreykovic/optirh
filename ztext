@@ -377,3 +377,9 @@ php artisan vendor:publish --provider="ArielMejiaDev\LarapexCharts\LarapexCharts
                         </form> -->
 
                         <!-- Affichage du graphe -->
+mails : 
+commande
+mailable
+html
+chedule
+cron

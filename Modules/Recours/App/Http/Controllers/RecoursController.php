@@ -250,6 +250,7 @@ class RecoursController extends Controller
                 'ac' => 'required|string|max:255',
                 'reference' => 'required|string|max:255',
                 'appeal_object' => 'required|string|max:500',
+                'decision' => 'nullable|string|max:255',
             ]);
             
             list($date, $time) = explode('T', $validatedData['date_depot']);
@@ -276,6 +277,13 @@ class RecoursController extends Controller
                 // 'created_by' =>  Auth::user()->employee->id ?? null
 
             ]);
+            if($request->input('decision')){
+                if($appeal->decision && $appeal->decision->decision == 'EN COURS'){
+                    $appeal->decision->update([
+                        'decision' => $validatedData['decision']
+                    ]);
+                }
+            }
 
             return response()->json(['message' => 'Recours MàJ avec succès.', 'ok' => true]);
         } catch (ValidationException $e) {

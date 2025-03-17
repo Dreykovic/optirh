@@ -122,9 +122,21 @@
                             <form data-model-update-url="{{ route('recours.update',$appeal->id) }}">
                             @csrf
                             <input type="hidden" name="_method" value="PUT">
-                            <div class="modal-header">
+                            <div class="modal-header d-fex justify-content-between">
                                 <h5 class="modal-title  fw-bold" id="edit1Label">Modifier</h5>
+                                @if($appeal->decision && $appeal->decision->decision == 'EN COURS')
+                                    <div class='d-flex justify-items-center mx-auto'>
+                                        <label for="decision" class='form-label mx-2 mt-2'>Décision: </label>
+                                        <select class='form-control' name="decision" id="decision">
+                                            <option value="" selected>choisir</option>
+                                            <option value="FONDE">FONDE</option>
+                                            <option value="NON FONDE">NON FONDE</option>
+                                            <option value="DESISTEMENT">DESISTEMENT</option>
+                                        </select>
+                                    </div>
+                                @endif
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                               
                             </div>
                                <!--  -->
                             <fieldset class=" p-3 mb-2">
