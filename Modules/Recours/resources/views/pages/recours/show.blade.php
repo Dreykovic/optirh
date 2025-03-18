@@ -27,8 +27,8 @@
                             <p><strong>Étude :</strong> <span class="badge bg-warning p-2">{{$appeal->analyse_status}}</span></p>
                         @endif
                         <p><strong>Décision :</strong> <span class="badge bg-info p-2">{{ $appeal->decision->decision ?? 'N/A' }}</span></p>
-                        <p><strong>Délai :</strong> {{$appeal->day_count}}</p>
-                        <p><strong>Type :</strong> 
+                        <p><strong>Durée Écoulée :</strong> {{$appeal->day_count}} jrs</p>
+                        <p><strong>Contestation :</strong> 
                         @if($appeal->type == 'RESULTS')
                             Ses résultats
                         @elseif($appeal->type == 'DAC')
