@@ -19,6 +19,7 @@ return new class () extends Migration {
             $table->text('description')->nullable();
             $table->json('old_values')->nullable();
             $table->json('new_values')->nullable();
+            $table->json('additional_data')->nullable();
             $table->string('ip_address')->nullable();
             $table->string('user_agent')->nullable();
             $table->timestamps();

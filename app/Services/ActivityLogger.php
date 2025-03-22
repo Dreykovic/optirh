@@ -2,25 +2,149 @@
 
 namespace App\Services;
 
+use App\Config\ActivityLogActions;
 use App\Models\ActivityLog;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class ActivityLogger
 {
-    public static function log($action, $description = null, $model = null)
+    /**
+     * Journalise une action utilisateur
+     *
+     * @param string $action Le code de l'action (doit être défini dans ActivityLogActions::ACTIONS)
+     * @param string $description Description de l'action
+     * @param Model|null $model Le modèle concerné par l'action (optionnel)
+     * @param array $additionalData Données additionnelles à enregistrer (optionnel)
+     * @return ActivityLog
+     * @throws \InvalidArgumentException Si le code d'action n'est pas valide
+     */
+    public function log($action, $description, ?Model $model = null, array $additionalData = [])
     {
-        $log = [
-            'user_id' => auth()->id(),
+        // Vérifier que l'action est valide
+        if (!in_array($action, ActivityLogActions::getAllActionCodes())) {
+            // Enregistrer quand même mais avec un avertissement
+            \Illuminate\Support\Facades\Log::warning("Code d'action de log non standard utilisé: {$action}");
+        }
+
+        $logData = [
+            'user_id' => Auth::id(),
             'action' => $action,
             'description' => $description,
             'ip_address' => request()->ip(),
-            'user_agent' => request()->userAgent()
+            'user_agent' => request()->userAgent(),
+            'additional_data' => json_encode($additionalData),
         ];
 
         if ($model) {
-            $log['model_type'] = get_class($model);
-            $log['model_id'] = $model->id;
+            $logData['model_type'] = get_class($model);
+            $logData['model_id'] = $model->id;
         }
 
-        return ActivityLog::create($log);
+        return ActivityLog::create($logData);
+    }
+
+    /**
+     * Journalise une action de consultation
+     *
+     * @param string $description
+     * @param Model|null $model
+     * @param array $additionalData
+     * @return ActivityLog
+     */
+    public function logView($description, ?Model $model = null, array $additionalData = [])
+    {
+        return $this->log('view', $description, $model, $additionalData);
+    }
+
+    /**
+     * Journalise une action de création
+     *
+     * @param string $description
+     * @param Model|null $model
+     * @param array $additionalData
+     * @return ActivityLog
+     */
+    public function logCreation($description, ?Model $model = null, array $additionalData = [])
+    {
+        return $this->log('created', $description, $model, $additionalData);
+    }
+
+    /**
+     * Journalise une action de modification
+     *
+     * @param string $description
+     * @param Model|null $model
+     * @param array $additionalData
+     * @return ActivityLog
+     */
+    public function logUpdate($description, ?Model $model = null, array $additionalData = [])
+    {
+        return $this->log('updated', $description, $model, $additionalData);
+    }
+
+    /**
+     * Journalise une action de suppression
+     *
+     * @param string $description
+     * @param Model|null $model
+     * @param array $additionalData
+     * @return ActivityLog
+     */
+    public function logDeletion($description, ?Model $model = null, array $additionalData = [])
+    {
+        return $this->log('deleted', $description, $model, $additionalData);
+    }
+
+    /**
+     * Journalise une action d'approbation
+     *
+     * @param string $description
+     * @param Model|null $model
+     * @param array $additionalData
+     * @return ActivityLog
+     */
+    public function logApproval($description, ?Model $model = null, array $additionalData = [])
+    {
+        return $this->log('approved', $description, $model, $additionalData);
+    }
+
+    /**
+     * Journalise une action de rejet
+     *
+     * @param string $description
+     * @param Model|null $model
+     * @param array $additionalData
+     * @return ActivityLog
+     */
+    public function logRejection($description, ?Model $model = null, array $additionalData = [])
+    {
+        return $this->log('rejected', $description, $model, $additionalData);
+    }
+
+    /**
+     * Journalise une erreur
+     *
+     * @param string $description
+     * @param Model|null $model
+     * @param array $additionalData
+     * @return ActivityLog
+     */
+    public function logError($description, ?Model $model = null, array $additionalData = [])
+    {
+        return $this->log('error', $description, $model, $additionalData);
+    }
+
+    /**
+     * Journalise une action de téléchargement
+     *
+     * @param string $description
+     * @param Model|null $model
+     * @param array $additionalData
+     * @return ActivityLog
+     */
+    public function logDownload($description, ?Model $model = null, array $additionalData = [])
+    {
+        return $this->log('download', $description, $model, $additionalData);
     }
 }
