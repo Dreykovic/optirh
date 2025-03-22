@@ -2,6 +2,7 @@
 
 namespace App\Models\OptiHr;
 
+use App\Models\User;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
