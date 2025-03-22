@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AbsenceTypeController;
+use App\Http\Controllers\AnnualDecisionController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DecisionController;
 use App\Http\Controllers\DepartmentController;
@@ -181,11 +182,10 @@ Route::group(['middleware' => 'auth'], function () {
        * Decisions
        */
 
-        Route::prefix('/decisions')->group(function () {
-            Route::get('/view', [DecisionController::class,  'show'])->name('decisions.show');
-            Route::post('/save/{decisionId?}', [DecisionController::class,  'storeOrUpdate'])->name('decisions.save');
-            Route::post('/update/{holidayId}', [DecisionController::class,  'update'])->name('decisions.update');
-            Route::delete('/delete/{holidayId}', [DecisionController::class,  'destroy'])->name('decisions.destroy');
+        Route::prefix('/annual-decisions')->group(function () {
+            Route::get('/view', [AnnualDecisionController::class,  'show'])->name('decisions.show');
+            Route::post('/save/{annualDecisionId?}', [AnnualDecisionController::class,  'storeOrUpdate'])->name('decisions.save');
+
         });
     });
     /*
