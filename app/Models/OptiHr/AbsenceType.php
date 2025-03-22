@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\OptiHr;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class DocumentType extends Model
+class AbsenceType extends Model
 {
     use HasFactory;
     protected $fillable = [
@@ -15,8 +15,8 @@ class DocumentType extends Model
         'type',
     ];
 
-    public function document_requests(): HasMany
+    public function absences(): HasMany
     {
-        return $this->hasMany(DocumentRequest::class, 'document_type_id');
+        return $this->hasMany(Absence::class, 'absence_type_id');
     }
 }

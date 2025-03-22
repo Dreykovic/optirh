@@ -1,8 +1,9 @@
 <?php
 
 namespace App\Observers;
+
 use Illuminate\Support\Facades\Log;
-use App\Models\Employee;
+use App\Models\OptiHr\Employee;
 
 class EmployeeObserver
 {

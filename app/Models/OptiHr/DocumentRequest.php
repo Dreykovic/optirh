@@ -1,25 +1,23 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\OptiHr;
 
 use App\Traits\LogsActivity;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 
-class Absence extends Model
+class DocumentRequest extends Model
 {
     use HasFactory;
     use LogsActivity;
 
     protected $fillable = [
-        'requested_days',
-        'absence_type_id',
+        'document_type_id',
         'start_date',
         'end_date',
-        'address',
+
         'date_of_application',
         'date_of_approval',
         'level',
@@ -36,9 +34,9 @@ class Absence extends Model
         return $this->belongsTo(Duty::class, 'duty_id');
     }
 
-    public function absence_type(): BelongsTo
+    public function document_type(): BelongsTo
     {
-        return $this->belongsTo(AbsenceType::class, 'absence_type_id');
+        return $this->belongsTo(DocumentType::class, 'document_type_id');
     }
 
     /**
@@ -57,38 +55,31 @@ class Absence extends Model
                     break;
 
                 case 'ONE':
-                    $this->stage = 'IN_PROGRESS';
-                    $this->level = 'TWO';
-                    break;
-
-                case 'TWO':
                     $this->stage = 'APPROVED';
-                    $this->level = 'THREE';
+                    $this->level = 'TWO';
 
-                    // Trouver le maximum actuel de absence_number de manière sécurisée
+                    // Trouver le maximum actuel de document_number de manière sécurisée
                     $maxAbsenceNumber = DB::table($this->getTable())
-                        ->whereNotNull('absence_number') // Filtrer les entrées valides
-                        ->orderByDesc('absence_number') // Trier par ordre décroissant
+                        ->whereNotNull('document_number') // Filtrer les entrées valides
+                        ->orderByDesc('document_number') // Trier par ordre décroissant
                         ->lockForUpdate() // Verrouiller les lignes pour éviter les conflits
-                        ->value('absence_number'); // Obtenir la valeur maximale
+                        ->value('document_number'); // Obtenir la valeur maximale
 
-                    $this->absence_number = $maxAbsenceNumber ? $maxAbsenceNumber + 1 : 1;
-                    $this->date_of_approval = new Carbon();
+                    $this->document_number = $maxAbsenceNumber ? $maxAbsenceNumber + 1 : 1;
                     break;
 
                 default:
                     $this->stage = 'APPROVED';
-                    $this->level = 'THREE';
+                    $this->level = 'TWO';
 
-                    // Trouver le maximum actuel de absence_number de manière sécurisée
+                    // Trouver le maximum actuel de document_number de manière sécurisée
                     $maxAbsenceNumber = DB::table($this->getTable())
-                        ->whereNotNull('absence_number') // Filtrer les entrées valides
-                        ->orderByDesc('absence_number') // Trier par ordre décroissant
+                        ->whereNotNull('document_number') // Filtrer les entrées valides
+                        ->orderByDesc('document_number') // Trier par ordre décroissant
                         ->lockForUpdate() // Verrouiller les lignes pour éviter les conflits
-                        ->value('absence_number'); // Obtenir la valeur maximale
+                        ->value('document_number'); // Obtenir la valeur maximale
 
-                    $this->absence_number = $maxAbsenceNumber ? $maxAbsenceNumber + 1 : 1;
-                    $this->date_of_approval = new Carbon();
+                    $this->document_number = $maxAbsenceNumber ? $maxAbsenceNumber + 1 : 1;
 
                     break;
             }

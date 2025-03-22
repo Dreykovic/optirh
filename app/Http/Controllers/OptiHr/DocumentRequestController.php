@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\OptiHr;
 
 use App\Http\Controllers\Controller;
-use App\Models\DocumentRequest;
-use App\Models\DocumentType;
-use App\Models\Duty;
+use App\Models\OptiHr\DocumentRequest;
+use App\Models\OptiHr\DocumentType;
+use App\Models\OptiHr\Duty;
 use App\Models\User;
 use App\Services\ActivityLogger;
 use App\Services\DocumentPdfService;

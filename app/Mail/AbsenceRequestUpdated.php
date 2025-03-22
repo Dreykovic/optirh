@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Absence;
+use App\Models\OptiHr\Absence;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;

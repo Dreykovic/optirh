@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\OptiHr;
 
 use App\Http\Controllers\Controller;
-use App\Models\AnnualDecision;
+use App\Models\OptiHr\AnnualDecision;
 use Illuminate\Http\Request;
 
 

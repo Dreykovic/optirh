@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Models\Employee;
+use App\Models\OptiHr\Employee;
 use App\Observers\EmployeeObserver;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Notifications\Messages\MailMessage;

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\OptiHr;
 
 use App\Http\Controllers\Controller;
-use App\Models\Department;
-use App\Models\Duty;
-use App\Models\Job;
+use App\Models\OptiHr\Department;
+use App\Models\OptiHr\Duty;
+use App\Models\OptiHr\Job;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

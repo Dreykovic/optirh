@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\OptiHr;
 
 use App\Http\Controllers\Controller;
-use App\Models\Job;
+use App\Models\OptiHr\Job;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 

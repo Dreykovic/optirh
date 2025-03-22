@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\OptiHr;
 
 use App\Http\Controllers\Controller;
-use App\Models\Publication;
-use App\Models\PublicationFile;
+use App\Models\OptiHr\Publication;
+use App\Models\OptiHr\PublicationFile;
 use App\Services\ActivityLogger;
 use App\Services\PublicationFileService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;

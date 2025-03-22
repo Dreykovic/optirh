@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\PublicationFile;
+use App\Models\OptiHr\PublicationFile;
 use Illuminate\Support\Facades\Storage;
 
 class PublicationFileService extends FileService

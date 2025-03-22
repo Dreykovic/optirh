@@ -1,18 +1,22 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\OptiHr;
 
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Holiday extends Model
+class AnnualDecision extends Model
 {
     use HasFactory;
     use LogsActivity;
 
     protected $fillable = [
-        'name',
+        'number',
+        'year',
         'date',
+        'pdf',
+        'state',
+        'reference',
     ];
 }

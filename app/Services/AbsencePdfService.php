@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\Absence;
-use App\Models\AbsenceType;
-use App\Models\Decision;
-use App\Models\Job;
+use App\Models\OptiHr\Absence;
+use App\Models\OptiHr\AbsenceType;
+use App\Models\OptiHr\Decision;
+use App\Models\OptiHr\Job;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class AbsencePdfService

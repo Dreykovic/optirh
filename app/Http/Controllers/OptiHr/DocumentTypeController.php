@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\OptiHr;
 
 use App\Http\Controllers\Controller;
-use App\Models\DocumentType;
+use App\Models\OptiHr\DocumentType;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 

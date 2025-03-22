@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\OptiHr;
 
 use App\Http\Controllers\Controller;
-use App\Models\File;
+use App\Models\OptiHr\File;
 use App\Services\FileService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;

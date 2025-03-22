@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\DocumentRequest;
-use App\Models\DocumentType;
-use App\Models\Job;
+use App\Models\OptiHr\DocumentRequest;
+use App\Models\OptiHr\DocumentType;
+use App\Models\OptiHr\Job;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class DocumentPdfService

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\OptiHr;
 
 use App\Http\Controllers\Controller;
-use App\Models\Holiday;
+use App\Models\OptiHr\Holiday;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;

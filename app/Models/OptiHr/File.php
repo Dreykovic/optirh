@@ -1,14 +1,18 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\OptiHr;
 
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class PublicationFile extends Model
+class File extends Model
 {
     use HasFactory;
+    use LogsActivity;
+
+
     protected $fillable = [
         'url',
         'mime_type',
@@ -19,11 +23,11 @@ class PublicationFile extends Model
         'status',
         'name',
         'display_name',
-        'publication_id',
+        'employee_id',
     ];
 
-    public function publication(): BelongsTo
+    public function employee(): BelongsTo
     {
-        return $this->belongsTo(Publication::class, 'publication_id');
+        return $this->belongsTo(Employee::class, 'employee_id');
     }
 }

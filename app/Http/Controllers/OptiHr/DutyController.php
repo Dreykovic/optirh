@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\OptiHr;
 
 use App\Http\Controllers\Controller;
-use App\Models\Department;
-use App\Models\Duty;
-use App\Models\Employee;
-use App\Models\Job;
+use App\Models\OptiHr\Department;
+use App\Models\OptiHr\Duty;
+use App\Models\OptiHr\Employee;
+use App\Models\OptiHr\Job;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
