@@ -13,10 +13,7 @@ class JobController extends Controller
         $jobs = Job::where('department_id', $departmentId)->where('status', 'ACTIVATED')->get(['id', 'title']);
         return response()->json($jobs);
     }
-    {
-        $jobs = Job::where('department_id', $departmentId)->where('status', 'ACTIVATED')->get(['id', 'title']);
-        return response()->json($jobs);
-    }
+
 
 
     /**

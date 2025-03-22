@@ -145,8 +145,7 @@ class UserController extends Controller
         // Attribution des rôles
         $user->syncRoles([$request->input('role')]);
 
-        // Notification à l'utilisateur actuel
-        session()->flash('success', "L'utilisateur avec le nom *{$user->username}* et l'email *{$user->email}* a été créé. 
+
         // Notification à l'utilisateur actuel
         session()->flash('success', "L'utilisateur avec le nom *{$user->username}* et l'email *{$user->email}* a été créé. 
             Mot de passe *{$pwd}*. Retenez-le ou notez-le quelque part, il ne sera plus affiché.");
