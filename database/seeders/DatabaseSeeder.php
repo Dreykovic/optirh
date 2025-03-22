@@ -25,6 +25,12 @@ class DatabaseSeeder extends Seeder
 
             DocumentTypeSeeder::class,
             HolidaySeeder::class,
+
+            //Recours Seeders
+            DacSeeder::class,
+            DecisionSeeder::class,
+            ApplicantSeeder::class,
+            AppealSeeder::class,
         ]);
         /**
          * Employees.
