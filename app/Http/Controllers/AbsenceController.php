@@ -45,27 +45,18 @@ class AbsenceController extends Controller
      */
     public function download($absenceId)
     {
-        try {
-            $absence = Absence::findOrFail($absenceId);
-            $decision = Decision::where('state', 'current')->first();
-            $absencePdf = new AbsencePdfService();
+        $absence = Absence::findOrFail($absenceId);
+        $decision = Decision::where('state', 'current')->first();
+        $absencePdf = new AbsencePdfService();
 
-            $this->activityLogger->log(
-                'download',
-                "Téléchargement du PDF d'absence #{$absence->id}",
-                $absence
-            );
+        $this->activityLogger->log(
+            'download',
+            "Téléchargement du PDF d'absence #{$absence->id}",
+            $absence
+        );
 
-            return $absencePdf->generate($absence, $decision);
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors du téléchargement du PDF d\'absence', [
-                'absence_id' => $absenceId,
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString()
-            ]);
+        return $absencePdf->generate($absence, $decision);
 
-            return back()->with('error', 'Une erreur s\'est produite lors du téléchargement du PDF. Veuillez réessayer.');
-        }
     }
 
     /**
@@ -77,56 +68,42 @@ class AbsenceController extends Controller
      */
     public function index(Request $request, $stage = 'PENDING')
     {
-        try {
-            // Liste des stages valides
-            $validStages = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'IN_PROGRESS', 'COMPLETED'];
+        // Liste des stages valides
+        $validStages = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'IN_PROGRESS', 'COMPLETED'];
 
-            // Vérification de la validité du stage
-            if ($stage !== 'ALL' && !in_array($stage, $validStages)) {
-                $this->activityLogger->log(
-                    'error',
-                    "Tentative d'accès avec un stage invalide: {$stage}"
-                );
-
-                return redirect()->route('absences.index')->with('error', 'Stage invalide');
-            }
-
-            // Récupérer les filtres de recherche
-            $type = $request->input('type');
-            $search = $request->input('search');
-
-            // Récupérer les types d'absences (éviter de faire la requête à chaque appel)
-            $absence_types = AbsenceType::all();
-
-            // Construire la requête principale avec les relations nécessaires
-            $query = $this->buildAbsenceQuery($search, $type, $stage);
-
-            // Pagination adaptative selon le type de stage
-            $absences = $this->getPaginatedResults($query, $stage);
-
-            $this->activityLogger->log(
-                'view',
-                "Consultation de la liste des absences - Stage: {$stage}" .
-                ($type ? ", Type: {$type}" : "") .
-                ($search ? ", Recherche: {$search}" : "")
-            );
-
-            // Retourner la vue avec les données nécessaires
-            return view('pages.admin.attendances.absences.index', compact('absences', 'stage', 'absence_types'));
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors du chargement des absences', [
-                'stage' => $stage,
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString()
-            ]);
-
+        // Vérification de la validité du stage
+        if ($stage !== 'ALL' && !in_array($stage, $validStages)) {
             $this->activityLogger->log(
                 'error',
-                "Erreur lors du chargement des absences - Stage: {$stage}"
+                "Tentative d'accès avec un stage invalide: {$stage}"
             );
 
-            return back()->with('error', 'Une erreur s\'est produite lors du chargement des absences. Veuillez réessayer.');
+            return redirect()->route('absences.index')->with('error', 'Stage invalide');
         }
+
+        // Récupérer les filtres de recherche
+        $type = $request->input('type');
+        $search = $request->input('search');
+
+        // Récupérer les types d'absences (éviter de faire la requête à chaque appel)
+        $absence_types = AbsenceType::all();
+
+        // Construire la requête principale avec les relations nécessaires
+        $query = $this->buildAbsenceQuery($search, $type, $stage);
+
+        // Pagination adaptative selon le type de stage
+        $absences = $this->getPaginatedResults($query, $stage);
+
+        $this->activityLogger->log(
+            'view',
+            "Consultation de la liste des absences - Stage: {$stage}" .
+            ($type ? ", Type: {$type}" : "") .
+            ($search ? ", Recherche: {$search}" : "")
+        );
+
+        // Retourner la vue avec les données nécessaires
+        return view('pages.admin.attendances.absences.index', compact('absences', 'stage', 'absence_types'));
+
     }
 
     /**
@@ -188,25 +165,12 @@ class AbsenceController extends Controller
      */
     public function create()
     {
-        try {
-            $absenceTypes = AbsenceType::all();
+        $absenceTypes = AbsenceType::all();
 
 
 
-            return view('pages.admin.attendances.absences.create', compact('absenceTypes'));
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors du chargement du formulaire de création d\'absence', [
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString()
-            ]);
+        return view('pages.admin.attendances.absences.create', compact('absenceTypes'));
 
-            $this->activityLogger->log(
-                'error',
-                "Erreur lors de l'accès au formulaire de création d'absence"
-            );
-
-            return back()->with('error', 'Une erreur s\'est produite lors du chargement des types d\'absence.');
-        }
     }
 
     /**
@@ -238,100 +202,58 @@ class AbsenceController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            // Validation des champs de la requête
-            $validatedData = $request->validate([
-                'absence_type' => 'required|exists:absence_types,id',
-                'address' => 'required|string|max:255',
-                'start_date' => 'required|date|before_or_equal:end_date',
-                'end_date' => 'required|date|after_or_equal:start_date',
-                'reasons' => 'nullable|string|max:1000',
-            ]);
+        // Validation des champs de la requête
+        $validatedData = $request->validate([
+            'absence_type' => 'required|exists:absence_types,id',
+            'address' => 'required|string|max:255',
+            'start_date' => 'required|date|before_or_equal:end_date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'reasons' => 'nullable|string|max:1000',
+        ]);
 
-            // Calcul du nombre de jours d'absence
-            $workingDays = $this->calculateWorkingDays($validatedData['start_date'], $validatedData['end_date']);
+        // Calcul du nombre de jours d'absence
+        $workingDays = $this->calculateWorkingDays($validatedData['start_date'], $validatedData['end_date']);
 
-            // Récupération de l'employé actuel et de sa mission en cours
-            $currentUser = User::with('employee')->findOrFail(auth()->id());
-            $currentEmployee = $currentUser->employee;
+        // Récupération de l'employé actuel et de sa mission en cours
+        $currentUser = User::with('employee')->findOrFail(auth()->id());
+        $currentEmployee = $currentUser->employee;
 
-            $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
-                                        ->where('employee_id', $currentEmployee->id)
-                                        ->firstOrFail();
-            $absence_type_id = $request->input('absence_type');
+        $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
+                                    ->where('employee_id', $currentEmployee->id)
+                                    ->firstOrFail();
+        $absence_type_id = $request->input('absence_type');
 
-            // Obtenir le type d'absence pour le log
-            $absenceType = AbsenceType::find($absence_type_id);
+        // Obtenir le type d'absence pour le log
+        $absenceType = AbsenceType::find($absence_type_id);
 
-            // Enregistrement de la demande d'absence
-            $absence = Absence::create([
-                'duty_id' => $currentEmployeeDuty->id,
-                'absence_type_id' => $absence_type_id,
-                'address' => $validatedData['address'],
-                'start_date' => $validatedData['start_date'],
-                'end_date' => $validatedData['end_date'],
-                'reasons' => $validatedData['reasons'],
-                'requested_days' => $workingDays,
-            ]);
+        // Enregistrement de la demande d'absence
+        $absence = Absence::create([
+            'duty_id' => $currentEmployeeDuty->id,
+            'absence_type_id' => $absence_type_id,
+            'address' => $validatedData['address'],
+            'start_date' => $validatedData['start_date'],
+            'end_date' => $validatedData['end_date'],
+            'reasons' => $validatedData['reasons'],
+            'requested_days' => $workingDays,
+        ]);
 
-            $this->activityLogger->log(
-                'created',
-                "Création d'une demande d'absence de type {$absenceType->label}",
-                $absence
-            );
+        $this->activityLogger->log(
+            'created',
+            "Création d'une demande d'absence de type {$absenceType->label}",
+            $absence
+        );
 
-            // Pour la notification par email (à activer si nécessaire)
-            // $receiver = $absence->duty->job->n_plus_one_job ?
-            //   $absence->duty->job->n_plus_one_job->duties->firstWhere('evolution', 'ON_GOING')->employee->users->first()
-            //   : User::role('GRH')->first();
-            // Mail::send(new AbsenceRequestCreated($receiver, $absence, route('absences.requests')));
+        // Pour la notification par email (à activer si nécessaire)
+        // $receiver = $absence->duty->job->n_plus_one_job ?
+        //   $absence->duty->job->n_plus_one_job->duties->firstWhere('evolution', 'ON_GOING')->employee->users->first()
+        //   : User::role('GRH')->first();
+        // Mail::send(new AbsenceRequestCreated($receiver, $absence, route('absences.requests')));
 
-            return response()->json([
-                'message' => "Demande d'absence {$absenceType->label} créée avec succès.",
-                'ok' => true,
-            ]);
-        } catch (ValidationException $e) {
-            Log::warning('Erreur de validation lors de la création d\'une absence', [
-                'errors' => $e->errors(),
-            ]);
+        return response()->json([
+            'message' => "Demande d'absence {$absenceType->label} créée avec succès.",
+            'ok' => true,
+        ]);
 
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (ModelNotFoundException $e) {
-            Log::warning('Entité non trouvée lors de la création d\'une absence', [
-                'error' => $e->getMessage(),
-            ]);
-
-            $this->activityLogger->log(
-                'error',
-                "Échec de création d'une demande d'absence - Entité non trouvée"
-            );
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Données introuvables. Veuillez vérifier les entrées.',
-            ], 404);
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors de la création d\'une absence', [
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString(),
-                'inputs' => $request->except(['_token']),
-            ]);
-
-            $this->activityLogger->log(
-                'error',
-                "Échec de création d'une demande d'absence - Erreur serveur"
-            );
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s\'est produite lors de la création de l\'absence.',
-                'error' => $th->getMessage(),
-            ], 500);
-        }
     }
 
     /**
@@ -342,35 +264,17 @@ class AbsenceController extends Controller
      */
     public function calculateDays(Request $request)
     {
-        try {
-            // Validation des dates
-            $validatedData = $request->validate([
-                'start_date' => 'required|date|before_or_equal:end_date',
-                'end_date' => 'required|date|after_or_equal:start_date',
-            ]);
+        // Validation des dates
+        $validatedData = $request->validate([
+            'start_date' => 'required|date|before_or_equal:end_date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
 
-            // Calcul du nombre de jours d'absence
-            $workingDays = $this->calculateWorkingDays($validatedData['start_date'], $validatedData['end_date']);
+        // Calcul du nombre de jours d'absence
+        $workingDays = $this->calculateWorkingDays($validatedData['start_date'], $validatedData['end_date']);
 
-            return response()->json(['working_days' => $workingDays]);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les dates fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors du calcul des jours d\'absence', [
-                'error' => $th->getMessage(),
-                'inputs' => $request->all(),
-            ]);
+        return response()->json(['working_days' => $workingDays]);
 
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s\'est produite lors du calcul des jours.',
-                'error' => $th->getMessage(),
-            ], 500);
-        }
     }
 
     /**
@@ -382,70 +286,37 @@ class AbsenceController extends Controller
      */
     public function updateStageAndLevel(Request $request, $id)
     {
-        try {
-            // Valider les entrées
-            $validatedData = $request->validate([
-                'stage' => 'required|in:PENDING,APPROVED,REJECTED,CANCELLED,IN_PROGRESS,COMPLETED',
-                'level' => 'required|in:ZERO,ONE,TWO,THREE',
-            ]);
+        // Valider les entrées
+        $validatedData = $request->validate([
+            'stage' => 'required|in:PENDING,APPROVED,REJECTED,CANCELLED,IN_PROGRESS,COMPLETED',
+            'level' => 'required|in:ZERO,ONE,TWO,THREE',
+        ]);
 
-            // Rechercher l'absence par ID
-            $absence = Absence::findOrFail($id);
+        // Rechercher l'absence par ID
+        $absence = Absence::findOrFail($id);
 
-            // Sauvegarder les valeurs précédentes pour le log
-            $oldStage = $absence->stage;
-            $oldLevel = $absence->level;
+        // Sauvegarder les valeurs précédentes pour le log
+        $oldStage = $absence->stage;
+        $oldLevel = $absence->level;
 
-            // Mettre à jour les champs stage et level
-            $absence->stage = $validatedData['stage'];
-            $absence->level = $validatedData['level'];
+        // Mettre à jour les champs stage et level
+        $absence->stage = $validatedData['stage'];
+        $absence->level = $validatedData['level'];
 
-            // Sauvegarder les modifications
-            $absence->save();
+        // Sauvegarder les modifications
+        $absence->save();
 
-            $this->activityLogger->log(
-                'updated',
-                "Mise à jour du statut de l'absence #{$id} - Stage: {$oldStage} → {$absence->stage}, Level: {$oldLevel} → {$absence->level}",
-                $absence
-            );
+        $this->activityLogger->log(
+            'updated',
+            "Mise à jour du statut de l'absence #{$id} - Stage: {$oldStage} → {$absence->stage}, Level: {$oldLevel} → {$absence->level}",
+            $absence
+        );
 
-            return response()->json([
-                'message' => 'Stage and level updated successfully.',
-                'ok' => true,
-            ]);
-        } catch (ValidationException $e) {
-            Log::warning('Erreur de validation lors de la mise à jour du statut', [
-                'absence_id' => $id,
-                'errors' => $e->errors(),
-            ]);
+        return response()->json([
+            'message' => 'Stage and level updated successfully.',
+            'ok' => true,
+        ]);
 
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (ModelNotFoundException $e) {
-            Log::warning('Absence non trouvée lors de la mise à jour du statut', [
-                'absence_id' => $id,
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Absence introuvable. Veuillez vérifier l\'identifiant.',
-            ], 404);
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors de la mise à jour du statut d\'une absence', [
-                'absence_id' => $id,
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString(),
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s\'est produite. Veuillez réessayer.',
-                'error' => $th->getMessage(),
-            ], 500);
-        }
     }
 
     /**
@@ -458,97 +329,61 @@ class AbsenceController extends Controller
     {
         DB::beginTransaction();
 
-        try {
-            // Rechercher l'absence par ID
-            $absence = Absence::findOrFail($id);
-            $oldStage = $absence->stage;
-            $oldLevel = $absence->level;
+        // Rechercher l'absence par ID
+        $absence = Absence::findOrFail($id);
+        $oldStage = $absence->stage;
+        $oldLevel = $absence->level;
 
-            $receiver = User::role('GRH')->first();
-            $toEmployee = false;
+        $receiver = User::role('GRH')->first();
+        $toEmployee = false;
 
-            switch ($absence->level) {
-                case 'ZERO':
-                    $absence->stage = 'IN_PROGRESS';
-                    $absence->level = 'ONE';
-                    break;
+        switch ($absence->level) {
+            case 'ZERO':
+                $absence->stage = 'IN_PROGRESS';
+                $absence->level = 'ONE';
+                break;
 
-                case 'ONE':
-                    $absence->stage = 'IN_PROGRESS';
-                    $absence->level = 'TWO';
-                    $receiver = User::role('DG')->first();
-                    break;
+            case 'ONE':
+                $absence->stage = 'IN_PROGRESS';
+                $absence->level = 'TWO';
+                $receiver = User::role('DG')->first();
+                break;
 
-                case 'TWO':
-                    $absence->stage = 'APPROVED';
-                    $absence->level = 'THREE';
-                    $toEmployee = true;
-                    $this->assignAbsenceNumber($absence);
-                    break;
+            case 'TWO':
+                $absence->stage = 'APPROVED';
+                $absence->level = 'THREE';
+                $toEmployee = true;
+                $this->assignAbsenceNumber($absence);
+                break;
 
-                default:
-                    $absence->stage = 'APPROVED';
-                    $absence->level = 'THREE';
-                    $toEmployee = true;
-                    $this->assignAbsenceNumber($absence);
-                    break;
-            }
-
-            // Sauvegarder les changements
-            $absence->save();
-
-            $this->activityLogger->log(
-                'approved',
-                "Approbation de la demande d'absence #{$id} - Stage: {$oldStage} → {$absence->stage}, Level: {$oldLevel} → {$absence->level}",
-                $absence
-            );
-
-            // Gestion des notifications
-            $this->handleApprovalNotifications($absence, $receiver, $toEmployee);
-
-            DB::commit();
-
-            return response()->json([
-                'message' => 'Demande de congé acceptée',
-                'ok' => true,
-                'absence' => $absence
-            ]);
-        } catch (ValidationException $e) {
-            DB::rollBack();
-            Log::warning('Erreur de validation lors de l\'approbation d\'une absence', [
-                'absence_id' => $id,
-                'errors' => $e->errors(),
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (ModelNotFoundException $e) {
-            DB::rollBack();
-            Log::warning('Absence non trouvée lors de l\'approbation', [
-                'absence_id' => $id,
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Absence introuvable. Veuillez vérifier l\'identifiant.',
-            ], 404);
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            Log::error('Erreur lors de l\'approbation d\'une absence', [
-                'absence_id' => $id,
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString(),
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s\'est produite. Veuillez réessayer.',
-                'error' => $th->getMessage(),
-            ], 500);
+            default:
+                $absence->stage = 'APPROVED';
+                $absence->level = 'THREE';
+                $toEmployee = true;
+                $this->assignAbsenceNumber($absence);
+                break;
         }
+
+        // Sauvegarder les changements
+        $absence->save();
+
+        $this->activityLogger->log(
+            'approved',
+            "Approbation de la demande d'absence #{$id} - Stage: {$oldStage} → {$absence->stage}, Level: {$oldLevel} → {$absence->level}",
+            $absence
+        );
+
+        // Gestion des notifications
+        $this->handleApprovalNotifications($absence, $receiver, $toEmployee);
+
+        DB::commit();
+
+        return response()->json([
+            'message' => 'Demande de congé acceptée',
+            'ok' => true,
+            'absence' => $absence
+        ]);
+
     }
 
     /**
@@ -597,73 +432,40 @@ class AbsenceController extends Controller
      */
     public function reject($id)
     {
-        try {
-            // Rechercher l'absence par ID
-            $absence = Absence::findOrFail($id);
-            $oldStage = $absence->stage;
-            $oldLevel = $absence->level;
+        // Rechercher l'absence par ID
+        $absence = Absence::findOrFail($id);
+        $oldStage = $absence->stage;
+        $oldLevel = $absence->level;
 
-            switch ($absence->level) {
-                case 'ZERO':
-                    $absence->level = 'ONE';
-                    break;
-                case 'ONE':
-                    $absence->level = 'TWO';
-                    break;
-                case 'TWO':
-                    $absence->level = 'THREE';
-                    break;
-                default:
-                    $absence->level = 'THREE';
-                    break;
-            }
-            $absence->stage = 'REJECTED';
-
-            $absence->save();
-
-            $this->activityLogger->log(
-                'rejected',
-                "Rejet de la demande d'absence #{$id} - Stage: {$oldStage} → {$absence->stage}, Level: {$oldLevel} → {$absence->level}",
-                $absence
-            );
-
-            return response()->json([
-                'message' => "Demande de {$absence->absence_type->label} rejetée",
-                'ok' => true,
-            ]);
-        } catch (ValidationException $e) {
-            Log::warning('Erreur de validation lors du rejet d\'une absence', [
-                'absence_id' => $id,
-                'errors' => $e->errors(),
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (ModelNotFoundException $e) {
-            Log::warning('Absence non trouvée lors du rejet', [
-                'absence_id' => $id,
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Absence introuvable. Veuillez vérifier l\'identifiant.',
-            ], 404);
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors du rejet d\'une absence', [
-                'absence_id' => $id,
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString(),
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s\'est produite. Veuillez réessayer.',
-                'error' => $th->getMessage(),
-            ], 500);
+        switch ($absence->level) {
+            case 'ZERO':
+                $absence->level = 'ONE';
+                break;
+            case 'ONE':
+                $absence->level = 'TWO';
+                break;
+            case 'TWO':
+                $absence->level = 'THREE';
+                break;
+            default:
+                $absence->level = 'THREE';
+                break;
         }
+        $absence->stage = 'REJECTED';
+
+        $absence->save();
+
+        $this->activityLogger->log(
+            'rejected',
+            "Rejet de la demande d'absence #{$id} - Stage: {$oldStage} → {$absence->stage}, Level: {$oldLevel} → {$absence->level}",
+            $absence
+        );
+
+        return response()->json([
+            'message' => "Demande de {$absence->absence_type->label} rejetée",
+            'ok' => true,
+        ]);
+
     }
 
     /**
@@ -675,62 +477,29 @@ class AbsenceController extends Controller
      */
     public function comment(Request $request, $id)
     {
-        try {
-            // Valider les entrées
-            $request->validate([
-                'comment' => 'sometimes',
-            ]);
+        // Valider les entrées
+        $request->validate([
+            'comment' => 'sometimes',
+        ]);
 
-            // Rechercher l'absence par ID
-            $absence = Absence::findOrFail($id);
-            $oldComment = $absence->comment;
+        // Rechercher l'absence par ID
+        $absence = Absence::findOrFail($id);
+        $oldComment = $absence->comment;
 
-            $absence->comment = $request->input('comment') ?? null;
-            $absence->save();
+        $absence->comment = $request->input('comment') ?? null;
+        $absence->save();
 
-            $this->activityLogger->log(
-                'commented',
-                "Ajout/Modification d'un commentaire sur l'absence #{$id}",
-                $absence
-            );
+        $this->activityLogger->log(
+            'commented',
+            "Ajout/Modification d'un commentaire sur l'absence #{$id}",
+            $absence
+        );
 
-            return response()->json([
-                'message' => "Commentaire ajouté à la demande de {$absence->absence_type->label}",
-                'ok' => true,
-            ]);
-        } catch (ValidationException $e) {
-            Log::warning('Erreur de validation lors de l\'ajout d\'un commentaire', [
-                'absence_id' => $id,
-                'errors' => $e->errors(),
-            ]);
+        return response()->json([
+            'message' => "Commentaire ajouté à la demande de {$absence->absence_type->label}",
+            'ok' => true,
+        ]);
 
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (ModelNotFoundException $e) {
-            Log::warning('Absence non trouvée lors de l\'ajout d\'un commentaire', [
-                'absence_id' => $id,
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Absence introuvable. Veuillez vérifier l\'identifiant.',
-            ], 404);
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors de l\'ajout d\'un commentaire', [
-                'absence_id' => $id,
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString(),
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s\'est produite. Veuillez réessayer.',
-                'error' => $th->getMessage(),
-            ], 500);
-        }
     }
 
     /**
@@ -741,69 +510,36 @@ class AbsenceController extends Controller
      */
     public function cancel($id)
     {
-        try {
-            // Rechercher l'absence par ID
-            $absence = Absence::findOrFail($id);
-            $oldStage = $absence->stage;
+        // Rechercher l'absence par ID
+        $absence = Absence::findOrFail($id);
+        $oldStage = $absence->stage;
 
-            if ($absence->level != 'ZERO') {
-                $this->activityLogger->log(
-                    'denied',
-                    "Tentative d'annulation d'une demande d'absence #{$id} non annulable",
-                    $absence
-                );
-
-                return response()->json([
-                    'ok' => false,
-                    'message' => "Vous ne pouvez plus annuler cette demande de {$absence->absence_type->label}.",
-                ], 403);
-            }
-
-            $absence->stage = 'CANCELLED';
-            $absence->save();
-
+        if ($absence->level != 'ZERO') {
             $this->activityLogger->log(
-                'cancelled',
-                "Annulation de la demande d'absence #{$id} - Stage: {$oldStage} → {$absence->stage}",
+                'denied',
+                "Tentative d'annulation d'une demande d'absence #{$id} non annulable",
                 $absence
             );
 
             return response()->json([
-                'message' => "Demande de {$absence->absence_type->label} annulée",
-                'ok' => true,
-            ]);
-        } catch (ValidationException $e) {
-            Log::warning('Erreur de validation lors de l\'annulation d\'une absence', [
-                'absence_id' => $id,
-                'errors' => $e->errors(),
-            ]);
-
-            return response()->json([
                 'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (ModelNotFoundException $e) {
-            Log::warning('Absence non trouvée lors de l\'annulation', [
-                'absence_id' => $id,
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Absence introuvable. Veuillez vérifier l\'identifiant.',
-            ], 404);
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors de l\'annulation d\'une absence', [
-                'absence_id' => $id,
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString(),
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s\'est produite. Veuillez réessayer.',
-                'error' => $th->getMessage(),
-            ], 500);
+                'message' => "Vous ne pouvez plus annuler cette demande de {$absence->absence_type->label}.",
+            ], 403);
         }
+
+        $absence->stage = 'CANCELLED';
+        $absence->save();
+
+        $this->activityLogger->log(
+            'cancelled',
+            "Annulation de la demande d'absence #{$id} - Stage: {$oldStage} → {$absence->stage}",
+            $absence
+        );
+
+        return response()->json([
+            'message' => "Demande de {$absence->absence_type->label} annulée",
+            'ok' => true,
+        ]);
+
     }
 }
