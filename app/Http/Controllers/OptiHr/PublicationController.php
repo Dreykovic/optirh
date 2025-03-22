@@ -47,7 +47,7 @@ class PublicationController extends Controller
      * Afficher la liste des publications filtrée par statut
      *
      * @param string $status
-     * @return \Illuminate\View\View
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function index($status = 'all')
     {
