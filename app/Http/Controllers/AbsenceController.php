@@ -153,71 +153,51 @@ class AbsenceController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            // Validation des champs de la requête
-            $validatedData = $request->validate([
-                'absence_type' => 'required|exists:absence_types,id',
-                'address' => 'required|string|max:255',
-                'start_date' => 'required|date|before_or_equal:end_date',
-                'end_date' => 'required|date|after_or_equal:start_date',
-                'reasons' => 'nullable|string|max:1000',
-            ]);
 
-            // Calcul du nombre de jours d'absence
-            $workingDays = calculateWorkingDays($validatedData['start_date'], $validatedData['end_date']);
+        // Validation des champs de la requête
+        $validatedData = $request->validate([
+            'absence_type' => 'required|exists:absence_types,id',
+            'address' => 'required|string|max:255',
+            'start_date' => 'required|date|before_or_equal:end_date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'reasons' => 'nullable|string|max:1000',
+        ]);
 
-            // Récupération de l'employé actuel et de sa mission en cours
-            $currentUser = User::with('employee')->findOrFail(auth()->id());
-            $currentEmployee = $currentUser->employee;
+        // Calcul du nombre de jours d'absence
+        $workingDays = calculateWorkingDays($validatedData['start_date'], $validatedData['end_date']);
 
-            $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
-                                        ->where('employee_id', $currentEmployee->id)
-                                        ->firstOrFail();
-            $absence_type_id = $request->input('absence_type');
+        // Récupération de l'employé actuel et de sa mission en cours
+        $currentUser = User::with('employee')->findOrFail(auth()->id());
+        $currentEmployee = $currentUser->employee;
 
-            // Enregistrement de la demande d'absence
-            $absence = Absence::create([
-                'duty_id' => $currentEmployeeDuty->id,
-                'absence_type_id' => $absence_type_id,
-                'address' => $validatedData['address'],
-                'start_date' => $validatedData['start_date'],
-                'end_date' => $validatedData['end_date'],
-                'reasons' => $validatedData['reasons'],
-                'requested_days' => $workingDays,
-            ]);
-            // $receiver = $absence->duty->job->n_plus_one_job ?
-            // $absence->duty->job->n_plus_one_job->duties->firstWhere('evolution', 'ON_GOING')->employee->users->first() : User::role('GRH')->first();
+        $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
+                                    ->where('employee_id', $currentEmployee->id)
+                                    ->firstOrFail();
+        $absence_type_id = $request->input('absence_type');
 
-            // Mail::send(new AbsenceRequestCreated($receiver, $absence, route('absences.requests')));
-            // Redirection avec message de succès
+        // Enregistrement de la demande d'absence
+        $absence = Absence::create([
+            'duty_id' => $currentEmployeeDuty->id,
+            'absence_type_id' => $absence_type_id,
+            'address' => $validatedData['address'],
+            'start_date' => $validatedData['start_date'],
+            'end_date' => $validatedData['end_date'],
+            'reasons' => $validatedData['reasons'],
+            'requested_days' => $workingDays,
+        ]);
+        // $receiver = $absence->duty->job->n_plus_one_job ?
+        // $absence->duty->job->n_plus_one_job->duties->firstWhere('evolution', 'ON_GOING')->employee->users->first() : User::role('GRH')->first();
 
-            $var = $absence->absence_type ? $absence->absence_type->label : '';
+        // Mail::send(new AbsenceRequestCreated($receiver, $absence, route('absences.requests')));
+        // Redirection avec message de succès
 
-            return response()->json([
-                'message' => "Demande d\'absence {$var}  créée avec succès.",
-                'ok' => true,
-            ]);
-        } catch (ValidationException $e) {
-            // Gestion des erreurs de validation
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (ModelNotFoundException $e) {
-            // Gestion des cas où le modèle n'est pas trouvé
-            return response()->json([
-                'ok' => false,
-                'message' => 'Données introuvables. Veuillez vérifier les entrées.',
-            ], 404);
-        } catch (\Throwable $th) {
-            // Gestion générale des erreurs
-            return response()->json([
-                'ok' => false,
-                'message' => $th->getMessage(),
-                'error' => $th->getMessage(),
-            ], 500);
-        }
+        $var = $absence->absence_type ? $absence->absence_type->label : '';
+
+        return response()->json([
+            'message' => "Demande d\'absence {$var}  créée avec succès.",
+            'ok' => true,
+        ]);
+
     }
 
     /**
@@ -381,8 +361,8 @@ class AbsenceController extends Controller
             $absence->save();
             if ($toEmployee) {
                 $url = route('absences.requests', 'ALL');
-            // Mail::send(new AbsenceRequestUpdated($absence, $url));
-            // code...
+                // Mail::send(new AbsenceRequestUpdated($absence, $url));
+                // code...
             } else {
                 $url = route('absences.requests', 'IN_PROGRESS');
                 // Mail::send(new AbsenceRequestCreated($receiver, $absence, $url));
