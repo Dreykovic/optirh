@@ -1,23 +1,23 @@
 <?php
 
-use App\Http\Controllers\AbsenceController;
-use App\Http\Controllers\AbsenceTypeController;
-use App\Http\Controllers\ActivityLogController;
-use App\Http\Controllers\AnnualDecisionController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DecisionController;
-use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\DocumentRequestController;
-use App\Http\Controllers\DocumentTypeController;
-use App\Http\Controllers\DutyController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\FileController;
-use App\Http\Controllers\HolidayController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\JobController;
-use App\Http\Controllers\PublicationController;
+use App\Http\Controllers\OptiHr\AbsenceController;
+use App\Http\Controllers\OptiHr\AbsenceTypeController;
+use App\Http\Controllers\OptiHr\AnnualDecisionController;
+use App\Http\Controllers\OptiHr\DepartmentController;
+use App\Http\Controllers\OptiHr\DocumentRequestController;
+use App\Http\Controllers\OptiHr\DocumentTypeController;
+use App\Http\Controllers\OptiHr\DutyController;
+use App\Http\Controllers\OptiHr\EmployeeController;
+use App\Http\Controllers\OptiHr\FileController;
+use App\Http\Controllers\OptiHr\HolidayController;
+use App\Http\Controllers\OptiHr\JobController;
+use App\Http\Controllers\OptiHr\PublicationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\AuthController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
