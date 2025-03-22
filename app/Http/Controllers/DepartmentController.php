@@ -48,57 +48,49 @@ class DepartmentController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $validatedData = $request->validate([
-                'name' => 'required|unique:departments,name|string|max:255',
-                'description' => 'required|string|max:500',
-                'director_id' => 'nullable|exists:employees,id',
-            ]);
 
-            $validatedData['director_id'] = $validatedData['director_id'] ?? null;
-            $job_superior = Job::where('title', 'DG')->firstOrFail();
-            // Créer le département
-            $dept = Department::create([
-                'name' => $validatedData['name'],
-                'description' => $validatedData['description'],
-                'director_id' => $validatedData['director_id'],
-            ]);
+        $validatedData = $request->validate([
+            'name' => 'required|unique:departments,name|string|max:255',
+            'description' => 'required|string|max:500',
+            'director_id' => 'nullable|exists:employees,id',
+        ]);
 
-            $job = Job::create([
-                'title' => 'Directeur·trice '.$dept->name,
-                'description' => 'Directeur·trice '.$dept->description,
-                'n_plus_one_job_id' => $job_superior->id,
-                'department_id' => $dept->id,
-            ]);
+        $validatedData['director_id'] = $validatedData['director_id'] ?? null;
+        $job_superior = Job::where('title', 'DG')->firstOrFail();
+        // Créer le département
+        $dept = Department::create([
+            'name' => $validatedData['name'],
+            'description' => $validatedData['description'],
+            'director_id' => $validatedData['director_id'],
+        ]);
 
-            if ($validatedData['director_id'] != null) {
-                $duty = Duty::where('evolution', $this->evolutions[0])
-                ->where('employee_id', $validatedData['director_id'])
-                ->first();
+        $job = Job::create([
+            'title' => 'Directeur·trice '.$dept->name,
+            'description' => 'Directeur·trice '.$dept->description,
+            'n_plus_one_job_id' => $job_superior->id,
+            'department_id' => $dept->id,
+        ]);
 
-                if ($duty) {
-                    $duty->update([
-                        'evolution' => $this->evolutions[1],
-                        'status' => $this->status[1],
-                    ]);
-                    Duty::create([
-                        'job_id' => $job->id,
-                        'employee_id' => $validatedData['director_id'],
-                        'begin_date' => Carbon::now(),
-                    ]);
-                }
+        if ($validatedData['director_id'] != null) {
+            $duty = Duty::where('evolution', $this->evolutions[0])
+            ->where('employee_id', $validatedData['director_id'])
+            ->first();
+
+            if ($duty) {
+                $duty->update([
+                    'evolution' => $this->evolutions[1],
+                    'status' => $this->status[1],
+                ]);
+                Duty::create([
+                    'job_id' => $job->id,
+                    'employee_id' => $validatedData['director_id'],
+                    'begin_date' => Carbon::now(),
+                ]);
             }
-
-            return response()->json(['message' => 'Department créé avec succès.', 'ok' => true]);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
-            ], 422);
-        } catch (\Throwable $th) {
-            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
+
+        return response()->json(['message' => 'Department créé avec succès.', 'ok' => true]);
+
     }
 
     /**
@@ -129,41 +121,33 @@ class DepartmentController extends Controller
     public function update(Request $request, $id)
     {
         // dump("je yas");
-        try {
-            $validatedData = $request->validate([
-                'name' => 'required|unique:departments,name,'.$id.'|string|max:255',
-                'description' => 'required|string|max:500',
-            ]);
 
-            // Récupérer le département
-            $department = Department::findOrFail($id);
+        $validatedData = $request->validate([
+            'name' => 'required|unique:departments,name,'.$id.'|string|max:255',
+            'description' => 'required|string|max:500',
+        ]);
 
-            // Mettre à jour les informations du département
-            $department->update([
-                'name' => $validatedData['name'],
-                'description' => $validatedData['description'],
-            ]);
+        // Récupérer le département
+        $department = Department::findOrFail($id);
 
-            // Mettre à jour le job "Directeur·rice" associé au département
-            // $job = Job::where('title', 'Directeur·rice ' . $department->name)->first();
+        // Mettre à jour les informations du département
+        $department->update([
+            'name' => $validatedData['name'],
+            'description' => $validatedData['description'],
+        ]);
 
-            // if ($job) {
-            //     $job->update([
-            //         'title' => 'Directeur·rice ' . $department->name,
-            //         'description' => 'Directeur·rice ' . $department->description,
-            //     ]);
-            // }
+        // Mettre à jour le job "Directeur·rice" associé au département
+        // $job = Job::where('title', 'Directeur·rice ' . $department->name)->first();
 
-            return response()->json(['message' => 'Department mis à jour avec succès.', 'ok' => true]);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (\Throwable $th) {
-            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
-        }
+        // if ($job) {
+        //     $job->update([
+        //         'title' => 'Directeur·rice ' . $department->name,
+        //         'description' => 'Directeur·rice ' . $department->description,
+        //     ]);
+        // }
+
+        return response()->json(['message' => 'Department mis à jour avec succès.', 'ok' => true]);
+
     }
 
     /**
