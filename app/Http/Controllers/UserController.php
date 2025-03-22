@@ -300,9 +300,11 @@ class UserController extends Controller
                 return response()->json(['ok' => false, 'message' => 'Vous ne pouvez pas supprimer votre propre compte.']);
             }
 
-            \DB::table('users')->where('id', $id)->delete();
+            // Utiliser le modèle Eloquent pour déclencher l'événement deleted
+            $user = User::findOrFail($id);
+            $user->delete();
 
-            return response()->json(['ok' => true, 'message' => 'l\'utilisateur à été supprimé avec succès.']);
+            return response()->json(['ok' => true, 'message' => 'L\'utilisateur a été supprimé avec succès.']);
         } catch (\Exception $e) {
             return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
         }
