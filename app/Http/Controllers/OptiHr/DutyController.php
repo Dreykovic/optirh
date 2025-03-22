@@ -169,7 +169,7 @@ class DutyController extends Controller
         //     ->get();
         $departments = Department::orderBy('created_at', 'desc')->get();
 
-        return view('pages.admin.personnel.contrats.index', compact('departments', 'employees'));
+        return view('pages.admin.opti-hr.personnel.contrats.index', compact('departments', 'employees'));
     }
 
     public function contrats(Request $request, string $ev)

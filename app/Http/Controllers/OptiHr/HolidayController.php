@@ -28,7 +28,7 @@ class HolidayController extends Controller
 
         $holidays = Holiday::orderBy('date', 'asc')->get();
 
-        return view('pages.admin.attendances.holidays.index', compact('holidays'));
+        return view('pages.admin.opti-hr.attendances.holidays.index', compact('holidays'));
 
     }
 

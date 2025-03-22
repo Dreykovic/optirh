@@ -98,20 +98,20 @@ class EmployeeController extends Controller
             ->orderBy('created_at', 'desc');
 
         $nbre_employees = $query->count();
-        return view('pages.admin.personnel.membres.index', compact('nbre_employees', 'departments'));
+        return view('pages.admin.opti-hr.personnel.membres.index', compact('nbre_employees', 'departments'));
 
 
     }
 
     // function pay(){
     //     $departments = Department::orderBy('created_at', 'desc')->get();
-    //     return view('pages.admin.personnel.membres.pay-form',compact('departments'));
+    //     return view('pages.admin.opti-hr.personnel.membres.pay-form',compact('departments'));
     // }
 
     public function paycode()
     {
         $departments = Department::orderBy('created_at', 'desc')->get();
-        return view('pages.admin.personnel.membres.pay-form-code', compact('departments'));
+        return view('pages.admin.opti-hr.personnel.membres.pay-form-code', compact('departments'));
 
     }
 
@@ -430,7 +430,7 @@ class EmployeeController extends Controller
         $files = File::where('employee_id', $employee->id)->get();
 
 
-        return view('pages.admin.personnel.membres.employee-pay', compact('employee', 'files'));
+        return view('pages.admin.opti-hr.personnel.membres.employee-pay', compact('employee', 'files'));
     }
 
     public function show(Employee $employee)
@@ -440,7 +440,7 @@ class EmployeeController extends Controller
                     ->where('employee_id', $employee->id)
                     ->first();
 
-        return view('pages.admin.personnel.membres.show', compact('employee', 'duty', 'files'));
+        return view('pages.admin.opti-hr.personnel.membres.show', compact('employee', 'duty', 'files'));
     }
 
 
@@ -589,7 +589,7 @@ class EmployeeController extends Controller
     {
         $user = Auth::user();
         $employee = $user->employee;
-        return view('pages.admin.personnel.membres.edits.index', compact('employee'));
+        return view('pages.admin.opti-hr.personnel.membres.edits.index', compact('employee'));
     }
     public function updateEmployeeData(Request $request, $id)
     {

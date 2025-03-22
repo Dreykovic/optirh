@@ -25,7 +25,7 @@ class AbsenceTypeController extends Controller
 
         $absenceTypes = AbsenceType::all();
 
-        return view('pages.admin.attendances.types.index', compact('absenceTypes'));
+        return view('pages.admin.opti-hr.attendances.types.index', compact('absenceTypes'));
 
     }
 

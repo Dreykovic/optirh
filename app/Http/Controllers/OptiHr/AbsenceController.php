@@ -108,7 +108,7 @@ class AbsenceController extends Controller
         );
 
         // Retourner la vue avec les données nécessaires
-        return view('pages.admin.attendances.absences.index', compact('absences', 'stage', 'absence_types'));
+        return view('pages.admin.opti-hr.attendances.absences.index', compact('absences', 'stage', 'absence_types'));
 
     }
 
@@ -179,8 +179,8 @@ class AbsenceController extends Controller
 
 
 
-        return view('pages.admin.attendances.absences.create', compact('absenceTypes'));
-        return view('pages.admin.attendances.absences.create', compact('absenceTypes'));
+        return view('pages.admin.opti-hr.attendances.absences.create', compact('absenceTypes'));
+        return view('pages.admin.opti-hr.attendances.absences.create', compact('absenceTypes'));
 
     }
 
