@@ -135,6 +135,12 @@
                         <span>Permissions</span>
                     </a>
                 </li>
+                <li>
+                    <a class="ms-link {{ Str::startsWith(request()->path(), 'users-management/permissions/') ? 'active' : '' }}"
+                        href="{{ route('activity-logs.index') }}">
+                        <span>Journal Des Actions</span>
+                    </a>
+                </li>
 
 
 

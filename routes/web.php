@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AbsenceTypeController;
-use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AnnualDecisionController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DecisionController;
