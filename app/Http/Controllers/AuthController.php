@@ -19,44 +19,35 @@ class AuthController extends Controller
 
     public function logUser(Request $request)
     {
-        try {
-            $attributes = request()->validate([
-                'email' => 'required|email',
-                'password' => 'required',
-            ]);
 
-            if (Auth::attempt($attributes, $request->input('remember'))) {
-                $user = User::where('email', '=', $request->input('email'))->first();
-                // if (!$user->hasRole(['admin', 'boss', 'cashier', 'accountant'])) {
-                //     return response()->json(['ok' => false, 'message' => "Vous n'avez pas le droit de vous connecter"]);
-                // }
-                session()->regenerate();
+        $attributes = request()->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-                return response()->json(['ok' => true, 'message' => 'Vous êtes connecté.']);
-            } else {
-                // return back()->withErrors(['email' => '']);
+        if (Auth::attempt($attributes, $request->input('remember'))) {
+            $user = User::where('email', '=', $request->input('email'))->first();
+            // if (!$user->hasRole(['admin', 'boss', 'cashier', 'accountant'])) {
+            //     return response()->json(['ok' => false, 'message' => "Vous n'avez pas le droit de vous connecter"]);
+            // }
+            session()->regenerate();
 
-                return response()->json(['ok' => false, 'message' => 'Email ou password invalide.']);
-            }
-        } catch (\Exception $e) {
-            // return response()->json(['ok' => false, 'message' => $e->getMessage()]);
+            return response()->json(['ok' => true, 'message' => 'Vous êtes connecté.']);
+        } else {
+            // return back()->withErrors(['email' => '']);
 
-            return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
+            return response()->json(['ok' => false, 'message' => 'Email ou password invalide.']);
         }
+
     }
 
     public function logout()
     {
-        try {
-            Auth::logout();
 
-            return back()->with(['success' => 'Vous êtes déconnecté.']);
-        } catch (\Exception $e) {
-            // Gérez l'erreur ici, vous pouvez la logger ou retourner une réponse adaptée à l'erreur.
-            return back()->with(['error' => 'Une erreur s\'est produite. Veuillez réessayer.']);
+        Auth::logout();
 
-            // return back()->with(['error' => $e->getMessage()]);
-        }
+        return back()->with(['success' => 'Vous êtes déconnecté.']);
+
     }
 
     public function forgotPasswordFormGet()
@@ -66,23 +57,19 @@ class AuthController extends Controller
 
     public function sendEmail(Request $request)
     {
-        try {
-            $request->validate(['email' => 'required|email']);
 
-            // Envoyer le lien de réinitialisation du mot de passe
-            $status = Password::sendResetLink(
-                $request->only('email')
-            );
-            if ($status === Password::RESET_LINK_SENT) {
-                return response()->json(['message' => __(' Nous vous avons envoyé par email le lien de réinitialisation du mot de passe ! Le lien expirera dans 15 minutes.'), 'ok' => true]);
-            } else {
-                return response()->json(['error' => __('Une erreur est survenue'), 'ok' => true], 422);
-            }
-        } catch (\Exception $e) {
-            // return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
+        $request->validate(['email' => 'required|email']);
 
-            return response()->json(['ok' => false, 'message' => $e->getMessage()]);
+        // Envoyer le lien de réinitialisation du mot de passe
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+        if ($status === Password::RESET_LINK_SENT) {
+            return response()->json(['message' => __(' Nous vous avons envoyé par email le lien de réinitialisation du mot de passe ! Le lien expirera dans 15 minutes.'), 'ok' => true]);
+        } else {
+            return response()->json(['error' => __('Une erreur est survenue'), 'ok' => true], 422);
         }
+
     }
 
     public function resetPass($token)
@@ -92,39 +79,35 @@ class AuthController extends Controller
 
     public function changePassword(Request $request)
     {
-        try {
-            $request->validate([
-                'token' => 'required',
-                'email' => 'required|email',
-                'password' => 'required|min:8|confirmed',
-            ]);
 
-            $status = Password::reset(
-                $request->only('email', 'password', 'password_confirmation', 'token'),
-                function ($user, $password) {
-                    $user->forceFill([
-                        'password' => Hash::make($password),
-                    ])->setRememberToken(Str::random(60));
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:8|confirmed',
+        ]);
 
-                    $user->save();
-                    session()->regenerate();
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password),
+                ])->setRememberToken(Str::random(60));
 
-                    event(new PasswordReset($user));
-                    Auth::logoutOtherDevices($password);
-                }
-            );
+                $user->save();
+                session()->regenerate();
 
-            if ($status === Password::PASSWORD_RESET) {
-                return response()->json(['message' => __(' Votre mot de passe a été mis à jour avec succes .'), 'ok' => true]);
-            } else {
-                // return response()->json(['error' => __('Password reset failed.'), 'ok' => false], 422);
-                return response()->json(['message' => 'Une erreur est survenu. Verifiez les information entrées', 'ok' => false]);
+                event(new PasswordReset($user));
+                Auth::logoutOtherDevices($password);
             }
-        } catch (\Exception $e) {
+        );
 
-            return response()->json(['ok' => false, 'message' => $e->getMessage()]);
-            return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
+        if ($status === Password::PASSWORD_RESET) {
+            return response()->json(['message' => __(' Votre mot de passe a été mis à jour avec succes .'), 'ok' => true]);
+        } else {
+            // return response()->json(['error' => __('Password reset failed.'), 'ok' => false], 422);
+            return response()->json(['message' => 'Une erreur est survenu. Verifiez les information entrées', 'ok' => false]);
         }
+
     }
 
     public function passwordChanged()
