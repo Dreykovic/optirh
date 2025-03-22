@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\OptiHr;
 
+use App\Http\Controllers\Controller;
 use App\Models\Publication;
 use App\Models\PublicationFile;
 use App\Services\ActivityLogger;
