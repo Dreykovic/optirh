@@ -191,10 +191,7 @@ class AbsenceController extends Controller
         try {
             $absenceTypes = AbsenceType::all();
 
-            $this->activityLogger->log(
-                'access',
-                "Accès au formulaire de création d'absence"
-            );
+
 
             return view('pages.admin.attendances.absences.create', compact('absenceTypes'));
         } catch (\Throwable $th) {
