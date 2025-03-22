@@ -9,7 +9,7 @@
             </div>
             <div class="modal-body">
                 <div>
-                    @include('pages.admin.attendances.absences.request.body')
+                    @include('pages.admin.opti-hr.attendances.absences.request.body')
                 </div>
             </div>
             <div class="modal-footer">

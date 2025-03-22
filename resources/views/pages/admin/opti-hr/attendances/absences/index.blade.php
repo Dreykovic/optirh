@@ -37,10 +37,10 @@
 
     @if (in_array($stage, ['APPROVED', 'REJECTED', 'CANCELLED', 'COMPLETED', 'ALL']))
         <!-- Le stage est dans la liste -->
-        @include('pages.admin.attendances.absences.handled-requests')
+        @include('pages.admin.opti-hr.attendances.absences.handled-requests')
     @else
         <!-- Le stage n'est pas dans la liste -->
-        @include('pages.admin.attendances.absences.unhandled-requests')
+        @include('pages.admin.opti-hr.attendances.absences.unhandled-requests')
     @endif
 @endsection
 @push('plugins-js')

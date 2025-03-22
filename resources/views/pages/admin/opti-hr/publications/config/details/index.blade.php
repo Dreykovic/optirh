@@ -22,10 +22,10 @@
     </div> <!-- Row end  -->
     <div class="tab-content">
         <div class="tab-pane fade show active" id="list-view">
-            @include('pages.admin.users.roles.details.overview')
+            @include('pages.admin.opti-hr.users.roles.details.overview')
         </div>
         <div class="tab-pane fade" id="grid-view">
-            @include('pages.admin.users.roles.details.settings')
+            @include('pages.admin.opti-hr.users.roles.details.settings')
 
         </div>
     </div>

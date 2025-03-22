@@ -104,15 +104,15 @@
 
                                         </td>
                                         <td>
-                                            @include('pages.admin.documents.main.actions')
+                                            @include('pages.admin.opti-hr.documents.main.actions')
 
 
 
 
                                         </td>
                                     </tr>
-                                    @include('pages.admin.documents.main.request.comment')
-                                    @include('pages.admin.documents.main.details')
+                                    @include('pages.admin.opti-hr.documents.main.request.comment')
+                                    @include('pages.admin.opti-hr.documents.main.details')
                                 @endif
 
                                 @empty

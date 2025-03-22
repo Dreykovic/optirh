@@ -39,7 +39,7 @@
 
 
     <!-- Le stage est dans la liste -->
-    @include('pages.admin.documents.main.handled-requests')
+    @include('pages.admin.opti-hr.documents.main.handled-requests')
 @endsection
 @push('plugins-js')
     <script src={{ asset('assets/bundles/dataTables.bundle.js') }}></script>

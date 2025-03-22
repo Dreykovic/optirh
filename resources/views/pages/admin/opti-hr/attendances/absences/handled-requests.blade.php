@@ -114,15 +114,15 @@
 
                                         </td>
                                         <td>
-                                            @include('pages.admin.attendances.absences.actions')
+                                            @include('pages.admin.opti-hr.attendances.absences.actions')
 
 
 
 
                                         </td>
                                     </tr>
-                                    @include('pages.admin.attendances.absences.request.comment')
-                                    @include('pages.admin.attendances.absences.details')
+                                    @include('pages.admin.opti-hr.attendances.absences.request.comment')
+                                    @include('pages.admin.opti-hr.attendances.absences.details')
                                 @endif
 
                                 @empty

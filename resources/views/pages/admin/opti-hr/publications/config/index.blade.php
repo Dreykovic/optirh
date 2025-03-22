@@ -154,7 +154,7 @@
                     <!-- Chat: Footer -->
                     <div class="chat-message">
 
-                        @include('pages.admin.publications.config.create')
+                        @include('pages.admin.opti-hr.publications.config.create')
                     </div>
                 @endcan
 

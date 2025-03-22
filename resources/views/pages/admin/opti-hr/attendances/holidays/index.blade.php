@@ -73,7 +73,7 @@
                                                 </button>
 
                                             </div>
-                                            @include('pages.admin.attendances.holidays.edit')
+                                            @include('pages.admin.opti-hr.attendances.holidays.edit')
                                         </td>
                                     @endcan
 
@@ -94,7 +94,7 @@
             </div>
         </div>
     </div><!-- Row End -->
-    @include('pages.admin.attendances.holidays.create')
+    @include('pages.admin.opti-hr.attendances.holidays.create')
 @endsection
 @push('plugins-js')
     <script src={{ asset('assets/bundles/dataTables.bundle.js') }}></script>

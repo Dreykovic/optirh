@@ -73,7 +73,7 @@
                                     @endcan
                                 </tr>
                                 @can('voir-un-all')
-                                    @include('pages.admin.documents.types.edit')
+                                    @include('pages.admin.opti-hr.documents.types.edit')
                                 @endcan
                             @empty
                                 <tr>
@@ -96,7 +96,7 @@
         </div>
     </div><!-- Row End -->
     @can('voir-un-all')
-        @include('pages.admin.documents.types.create')
+        @include('pages.admin.opti-hr.documents.types.create')
     @endcan
 @endsection
 @push('plugins-js')

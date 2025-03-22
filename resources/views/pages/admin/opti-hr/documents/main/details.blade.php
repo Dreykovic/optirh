@@ -9,7 +9,7 @@
             </div>
             <div class="modal-body">
                 <div>
-                    @include('pages.admin.documents.main.request.body')
+                    @include('pages.admin.opti-hr.documents.main.request.body')
                 </div>
             </div>
             <div class="modal-footer">
