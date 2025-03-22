@@ -25,16 +25,12 @@ class HolidayController extends Controller
 
         $holidays = Holiday::orderBy('date', 'asc')->get();
 
+        $holidays = Holiday::orderBy('date', 'asc')->get();
+
         return view('pages.admin.attendances.holidays.index', compact('holidays'));
 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -48,13 +44,26 @@ class HolidayController extends Controller
             'date' => 'required|date',
         ]);
 
+        // Valider les entrées
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'date' => 'required|date',
+        ]);
+
+        // Rechercher l'absence par ID
+        $holiday = new Holiday();
         // Rechercher l'absence par ID
         $holiday = new Holiday();
 
         // Mettre à jour les champs stage et level
         $holiday->date = $validatedData['date'];
         $holiday->name = $validatedData['name'];
+        // Mettre à jour les champs stage et level
+        $holiday->date = $validatedData['date'];
+        $holiday->name = $validatedData['name'];
 
+        // Sauvegarder les modifications
+        $holiday->save();
         // Sauvegarder les modifications
         $holiday->save();
 
@@ -63,20 +72,6 @@ class HolidayController extends Controller
             'ok' => true,
         ]);
 
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Holiday $holiday)
-    {
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Holiday $holiday)
-    {
     }
 
     /**
@@ -91,15 +86,33 @@ class HolidayController extends Controller
             'date' => 'required|date',
         ]);
 
+        // Valider les entrées
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'date' => 'required|date',
+        ]);
+
+        // Rechercher l'absence par ID
+        $holiday = Holiday::findOrFail($id);
         // Rechercher l'absence par ID
         $holiday = Holiday::findOrFail($id);
 
         // Mettre à jour les champs stage et level
         $holiday->date = $validatedData['date'];
         $holiday->name = $validatedData['name'];
+        // Mettre à jour les champs stage et level
+        $holiday->date = $validatedData['date'];
+        $holiday->name = $validatedData['name'];
 
         // Sauvegarder les modifications
         $holiday->save();
+        // Sauvegarder les modifications
+        $holiday->save();
+
+        return response()->json([
+            'message' => 'Jour férié a été mis à jour avec succès.',
+            'ok' => true,
+        ]);
 
         return response()->json([
             'message' => 'Jour férié a été mis à jour avec succès.',
@@ -115,6 +128,10 @@ class HolidayController extends Controller
     {
 
         \DB::table('holidays')->where('id', $id)->delete();
+
+        \DB::table('holidays')->where('id', $id)->delete();
+
+        return response()->json(['ok' => true, 'message' => 'Le jour fériée a été retiré avec succès.']);
 
         return response()->json(['ok' => true, 'message' => 'Le jour fériée a été retiré avec succès.']);
 

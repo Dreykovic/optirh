@@ -21,17 +21,11 @@ class AbsenceTypeController extends Controller
      */
     public function index()
     {
+
         $absenceTypes = AbsenceType::all();
 
         return view('pages.admin.attendances.types.index', compact('absenceTypes'));
 
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
     }
 
     /**
@@ -47,6 +41,18 @@ class AbsenceTypeController extends Controller
             'type' => 'sometimes',
         ]);
 
+        // Valider les fichiers et l'image
+        $request->validate([
+            'libelle' => 'required|string',
+            'description' => 'sometimes',
+            'type' => 'sometimes',
+        ]);
+
+        AbsenceType::create([
+            'label' => $request->input('libelle'),
+            'description' => $request->input('description'),
+            'type' => $request->input('type') ?? 'NORMAL',
+        ]);
         AbsenceType::create([
             'label' => $request->input('libelle'),
             'description' => $request->input('description'),
@@ -58,19 +64,7 @@ class AbsenceTypeController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(AbsenceType $absenceType)
-    {
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(AbsenceType $absenceType)
-    {
-    }
 
     /**
      * Update the specified resource in storage.
@@ -89,7 +83,22 @@ class AbsenceTypeController extends Controller
         $absenceType->description = $request->input('description');
         $absenceType->type = $request->input('type') ?? $absenceType->type;
 
+        // Valider les fichiers et l'image
+        $request->validate([
+            'libelle' => 'required|string',
+            'description' => 'sometimes',
+            'type' => 'sometimes',
+        ]);
+        $absenceType = AbsenceType::find($absenceTypeId);
+        $absenceType->label = $request->input('libelle');
+        $absenceType->description = $request->input('description');
+        $absenceType->type = $request->input('type') ?? $absenceType->type;
+
         $absenceType->save();
+        $absenceType->save();
+
+        // Redirection avec message de succès
+        return response()->json(['message' => 'Type Absence mis à jour avec succès.', 'ok' => true]);
 
         // Redirection avec message de succès
         return response()->json(['message' => 'Type Absence mis à jour avec succès.', 'ok' => true]);
@@ -103,6 +112,10 @@ class AbsenceTypeController extends Controller
     {
 
         \DB::table('absence_types')->where('id', $id)->delete();
+
+        \DB::table('absence_types')->where('id', $id)->delete();
+
+        return response()->json(['ok' => true, 'message' => 'Le type d\absence a été retiré avec succès.']);
 
         return response()->json(['ok' => true, 'message' => 'Le type d\absence a été retiré avec succès.']);
 

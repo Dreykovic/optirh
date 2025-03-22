@@ -28,12 +28,7 @@ class DocumentTypeController extends Controller
 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -59,19 +54,6 @@ class DocumentTypeController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(DocumentType $documentType)
-    {
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(DocumentType $documentType)
-    {
-    }
 
     /**
      * Update the specified resource in storage.

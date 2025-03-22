@@ -4,153 +4,266 @@ namespace App\Http\Controllers;
 
 use App\Models\Publication;
 use App\Models\PublicationFile;
+use App\Services\ActivityLogger;
 use App\Services\PublicationFileService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class PublicationController extends Controller
 {
+    /**
+     * Le service de gestion des fichiers de publication
+     *
+     * @var PublicationFileService
+     */
     protected $fileService;
 
-    public function __construct()
+    /**
+     * Le service de journalisation des activités
+     *
+     * @var ActivityLogger
+     */
+    protected $activityLogger;
+
+    /**
+     * Constructeur du contrôleur
+     *
+     * @param ActivityLogger $activityLogger
+     */
+    public function __construct(ActivityLogger $activityLogger)
     {
         $this->fileService = new PublicationFileService();
+        $this->activityLogger = $activityLogger;
+
         $this->middleware(['permission:voir-une-publication|écrire-une-publication|créer-une-publication|configurer-une-publication|voir-un-tout'], ['only' => ['index']]);
         $this->middleware(['permission:créer-une-publication|créer-un-tout'], ['only' => ['store']]);
         $this->middleware(['permission:écrire-une-publication|écrire-un-tout'], ['only' => ['destroy', 'updateStatus']]);
     }
 
     /**
-     * Display a listing of the resource.
-     */ /**
-     * Display a listing of the resource.
+     * Afficher la liste des publications filtrée par statut
+     *
+     * @param string $status
+     * @return \Illuminate\View\View
      */
     public function index($status = 'all')
     {
 
-        // Liste des statuss valides
+        // Liste des statuts valides
         $validStatus = ['archived', 'pending', 'published'];
 
-        // Vérification de la validité du status
+        // Vérification de la validité du statut
         if ($status !== 'all' && !in_array($status, $validStatus)) {
-            return redirect()->back()->with('error', 'status invalide');
+            $this->activityLogger->log(
+                'error',
+                "Tentative d'accès aux publications avec un statut invalide: {$status}"
+            );
+
+            return redirect()->back()->with('error', 'Statut invalide');
         }
 
-        $query = Publication::query();
+        // Construction de la requête
+        $publications = $this->getPublicationsByStatus($status);
 
-        // Filtrer par status si le status n'est pas "all"
-        $query->when($status !== 'all', function ($q) use ($status) {
-            $q->where('status', $status);
-        });
-        $query->with(['author', 'files']);
-
-        $publications = $query->orderBy('created_at', 'ASC')->get();
+        $this->activityLogger->log(
+            'view',
+            "Consultation de la liste des publications - Statut: {$status}"
+        );
 
         return view('pages.admin.publications.config.index', compact('publications', 'status'));
 
     }
 
+    /**
+     * Récupère les publications filtrées par statut
+     *
+     * @param string $status
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    private function getPublicationsByStatus($status)
+    {
+        $query = Publication::query();
+
+        // Filtrer par statut si le statut n'est pas "all"
+        $query->when($status !== 'all', function ($q) use ($status) {
+            $q->where('status', $status);
+        });
+
+        // Charger les relations nécessaires
+        $query->with(['author', 'files']);
+
+        // Trier par date de création
+        return $query->orderBy('created_at', 'ASC')->get();
+    }
+
+    /**
+     * Mettre à jour le statut d'une publication
+     *
+     * @param string $status
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function updateStatus($status, $id)
     {
 
-        // Liste des statuss valides
+        // Liste des statuts valides
         $validStatus = ['archived', 'pending', 'published'];
 
-        // Vérification de la validité du status
+        // Vérification de la validité du statut
         if (!in_array($status, $validStatus)) {
-            return redirect()->back()->with('error', 'status invalide');
-        }
-        $publication = Publication::findOrFail($id);
-        $publication->status = $status;
+            $this->activityLogger->log(
+                'error',
+                "Tentative de mise à jour d'une publication avec un statut invalide: {$status}"
+            );
 
+            return response()->json([
+                'ok' => false,
+                'message' => 'Statut invalide'
+            ], 400);
+        }
+
+        $publication = Publication::findOrFail($id);
+        $oldStatus = $publication->status;
+
+        // Mettre à jour le statut
+        $publication->status = $status;
         $publication->save();
 
-        session()->flash('success', 'Status mis à jour avec succès');
+        $this->activityLogger->log(
+            'updated',
+            "Mise à jour du statut de la publication #{$id} - Statut: {$oldStatus} → {$status}",
+            $publication
+        );
 
-        return response()->json(['ok' => true, 'message' => 'Status mis à jour avec succès']);
+        return response()->json([
+            'ok' => true,
+            'message' => 'Statut mis à jour avec succès'
+        ]);
 
     }
 
-
     /**
-     * Store a newly created resource in storage.
+     * Enregistrer une nouvelle publication
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
 
-        $request->validate([
+        $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'sometimes',
-            // 'files.*' => 'nullable|mimes:jpg,jpeg,png,gif,pdf|max:10240',  // Les fichiers peuvent être vides
-            'files.*' => 'nullable|mimes:jpg,jpeg,png,gif,pdf',  // Les fichiers peuvent être vides
+            'files.*' => 'nullable|mimes:jpg,jpeg,png,gif,pdf',
         ]);
 
+        // Création de la publication
         $publication = new Publication();
-        $publication->title = $request->input('title');
+        $publication->title = $validatedData['title'];
         $publication->content = $request->input('content');
         $publication->author_id = auth()->id();
-
         $publication->save();
-        $files = $request->file('files');
-        if ($files) {
-            foreach ($files as $file) {
-                $this->fileService->storeFile($publication->id, $file);
-            }
-        }
 
-        return response()->json(['message' => 'Note créée avec succès', 'ok' => true]);
+        // Traitement des fichiers
+        $this->processPublicationFiles($request, $publication);
+
+        $this->activityLogger->log(
+            'created',
+            "Création d'une nouvelle publication: {$publication->title}",
+            $publication
+        );
+
+        return response()->json([
+            'message' => 'Note créée avec succès',
+            'ok' => true
+        ]);
 
     }
 
+    /**
+     * Traiter les fichiers attachés à une publication
+     *
+     * @param Request $request
+     * @param Publication $publication
+     * @return void
+     */
+    private function processPublicationFiles(Request $request, Publication $publication)
+    {
+        $files = $request->file('files');
+
+        if ($files) {
+            foreach ($files as $file) {
+                $storedFile = $this->fileService->storeFile($publication->id, $file);
+
+                $this->activityLogger->log(
+                    'uploaded',
+                    "Ajout d'un fichier à la publication #{$publication->id}: {$file->getClientOriginalName()}",
+                    $storedFile
+                );
+            }
+        }
+    }
+
+    /**
+     * Prévisualiser un fichier de publication
+     *
+     * @param int $id
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
+     */
     public function preview($id)
     {
 
         $file = PublicationFile::findOrFail($id);
+
+        $this->activityLogger->log(
+            'download',
+            "Téléchargement du fichier #{$id} de la publication #{$file->publication_id}",
+            $file
+        );
 
         return response()->download($this->fileService->getFile($file));
 
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Publication $publication)
-    {
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Publication $publication)
-    {
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Publication $publication)
-    {
-    }
-
-    /**
-     * Remove the specified resource from storage.
+     * Supprimer une publication
+     *
+     * @param string $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(string $id)
     {
 
         $publication = Publication::findOrFail($id);
+        $publicationTitle = $publication->title;
 
+        // Supprimer les fichiers associés
         if ($publication->files->isNotEmpty()) {
             foreach ($publication->files as $file) {
+                $this->activityLogger->log(
+                    'deleted',
+                    "Suppression du fichier #{$file->id} associé à la publication #{$id}",
+                    $file
+                );
+
                 $this->fileService->destroyFile($file);
             }
         }
-        // Supprimer l'entrée de la base de données
+
+        // Supprimer la publication
         $publication->delete();
 
-        return response()->json(['ok' => true, 'message' => 'la note a été supprimé avec succès.']);
+        $this->activityLogger->log(
+            'deleted',
+            "Suppression de la publication #{$id}: {$publicationTitle}"
+        );
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'La note a été supprimée avec succès.'
+        ]);
 
     }
 }
