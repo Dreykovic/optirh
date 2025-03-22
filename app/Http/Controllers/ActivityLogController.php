@@ -47,7 +47,7 @@ class ActivityLogController extends Controller
             $query = ActivityLog::with('user');
 
             // Filtrer par utilisateur si ce n'est pas un super admin
-            if (!$user->hasRole('super-admin')) {
+            if (!$user->hasRole('GRH')) {
                 // Si l'utilisateur est un admin normal, il ne voit que ses propres logs
                 $query->where('user_id', $user->id);
             } elseif ($request->has('user_id') && $request->user_id) {
@@ -86,17 +86,14 @@ class ActivityLogController extends Controller
 
             // Pour les super admin, récupérer la liste des utilisateurs pour le filtre
             $users = [];
-            if ($user->hasRole('super-admin')) {
-                $users = User::all(['id', 'name']);
+            if ($user->hasRole('GRH')) {
+                $users = User::all(['id', 'username']);
             }
 
             // Récupérer les types de modèles distincts pour le filtre
             $modelTypes = ActivityLog::distinct()->pluck('model_type')->filter()->toArray();
 
-            $this->activityLogger->log(
-                'view',
-                "Consultation du journal d'activités"
-            );
+
 
             return view('pages.admin.users.activity-logs.index', compact('logs', 'users', 'modelTypes'));
         } catch (\Throwable $th) {
