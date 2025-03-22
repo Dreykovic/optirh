@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Modules\Recours\App\Models\Appeal;
+use App\Models\Recours\Appeal;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

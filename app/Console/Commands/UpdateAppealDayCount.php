@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Modules\Recours\App\Models\Appeal; 
+use App\Models\Recours\Appeal;
 use Carbon\Carbon;
 
 class UpdateAppealDayCount extends Command
@@ -28,4 +28,3 @@ class UpdateAppealDayCount extends Command
         $this->info('Mise à jour des délais terminée.');
     }
 }
-

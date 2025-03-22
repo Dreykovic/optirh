@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use Modules\Recours\App\Models\OptiHr\Appeal;
+use App\Models\Recours\OptiHr\Appeal;
 
 class DailyAppealReminderMail extends Mailable
 {
