@@ -66,7 +66,7 @@
     @endif
 
 
-    @include('pages.admin.attendances.decisions.create')
+    @include('pages.admin.attendances.annual-decisions.create')
 @endsection
 
 @push('js')

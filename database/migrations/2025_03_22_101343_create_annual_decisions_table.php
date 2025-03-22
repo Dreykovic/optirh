@@ -4,13 +4,13 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('decisions', function (Blueprint $table) {
+        Schema::create('annual_decisions', function (Blueprint $table) {
             $table->id();
             $table->string('number');
             $table->string('year');
@@ -28,6 +28,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('decisions');
+        Schema::dropIfExists('annual_decisions');
     }
 };

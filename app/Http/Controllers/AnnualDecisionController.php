@@ -2,15 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Decision;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Models\AnnualDecision;
 use Illuminate\Http\Request;
+
+
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+
 use Illuminate\Validation\ValidationException;
 
-class DecisionController extends Controller
+class AnnualDecisionController extends Controller
 {
     /**
-     * Store or update a decision.
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        //
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
      */
     public function storeOrUpdate(Request $request, $id = null)
     {
@@ -32,7 +51,7 @@ class DecisionController extends Controller
 
             // Création ou mise à jour de la décision
 
-            Decision::updateOrCreate(
+            AnnualDecision::updateOrCreate(
                 ['id' => $id],  // Condition de mise à jour
                 $validatedData   // Données mises à jour ou créées
             );
@@ -67,9 +86,9 @@ class DecisionController extends Controller
     public function show()
     {
         try {
-            $decision = Decision::where('state', 'current')->first();
+            $decision = AnnualDecision::where('state', 'current')->first();
 
-            return view('pages.admin.attendances.decisions.index', compact('decision'));
+            return view('pages.admin.attendances.annual-decisions.index', compact('decision'));
         } catch (\Throwable $th) {
             dd($th->getMessage());
 
@@ -79,24 +98,28 @@ class DecisionController extends Controller
         }
     }
 
+
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Decision $decision)
+    public function edit(AnnualDecision $annualDecision)
     {
+        //
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Decision $decision)
+    public function update(Request $request, AnnualDecision $annualDecision)
     {
+        //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Decision $decision)
+    public function destroy(AnnualDecision $annualDecision)
     {
+        //
     }
 }
