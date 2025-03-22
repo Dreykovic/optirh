@@ -84,7 +84,12 @@ class AbsenceController extends Controller
         // Récupérer les filtres de recherche
         $type = $request->input('type');
         $search = $request->input('search');
+        // Récupérer les filtres de recherche
+        $type = $request->input('type');
+        $search = $request->input('search');
 
+        // Récupérer les types d'absences (éviter de faire la requête à chaque appel)
+        $absence_types = AbsenceType::all();
         // Récupérer les types d'absences (éviter de faire la requête à chaque appel)
         $absence_types = AbsenceType::all();
 
@@ -134,6 +139,10 @@ class AbsenceController extends Controller
         $query->when($type, function ($q) use ($type) {
             $q->where('absence_type_id', $type);
         });
+        // Filtrer par type d'absence, si précisé
+        $query->when($type, function ($q) use ($type) {
+            $q->where('absence_type_id', $type);
+        });
 
         // Filtrer par stage si le stage n'est pas "ALL"
         $query->when($stage !== 'ALL', function ($q) use ($stage) {
@@ -169,6 +178,7 @@ class AbsenceController extends Controller
 
 
 
+        return view('pages.admin.attendances.absences.create', compact('absenceTypes'));
         return view('pages.admin.attendances.absences.create', compact('absenceTypes'));
 
     }
@@ -214,6 +224,9 @@ class AbsenceController extends Controller
         // Calcul du nombre de jours d'absence
         $workingDays = $this->calculateWorkingDays($validatedData['start_date'], $validatedData['end_date']);
 
+        // Récupération de l'employé actuel et de sa mission en cours
+        $currentUser = User::with('employee')->findOrFail(auth()->id());
+        $currentEmployee = $currentUser->employee;
         // Récupération de l'employé actuel et de sa mission en cours
         $currentUser = User::with('employee')->findOrFail(auth()->id());
         $currentEmployee = $currentUser->employee;
@@ -299,6 +312,9 @@ class AbsenceController extends Controller
         $oldStage = $absence->stage;
         $oldLevel = $absence->level;
 
+        // Mettre à jour les champs stage et level
+        $absence->stage = $validatedData['stage'];
+        $absence->level = $validatedData['level'];
         // Mettre à jour les champs stage et level
         $absence->stage = $validatedData['stage'];
         $absence->level = $validatedData['level'];

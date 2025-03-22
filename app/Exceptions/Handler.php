@@ -2,29 +2,133 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
-    /**
-     * The list of the inputs that are never flashed to the session on validation exceptions.
-     *
-     * @var array<int, string>
-     */
+    protected $dontReport = [
+        // Exceptions que vous ne souhaitez pas journaliser
+    ];
+
     protected $dontFlash = [
-        'current_password',
         'password',
         'password_confirmation',
     ];
 
-    /**
-     * Register the exception handling callbacks for the application.
-     */
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
-            //
+            // Logique personnalisée pour journaliser les exceptions
         });
+    }
+
+    /**
+     * Render une exception en HTTP response
+     */
+    public function render($request, Throwable $exception)
+    {
+        // Vérifier si la requête doit recevoir une réponse JSON
+        if ($request->expectsJson() ||
+            $request->is('api/*') ||
+            $request->attributes->get('expects_json_response', false) ||
+            $this->isJsonRoute($request)) {
+
+            return $this->handleJsonException($request, $exception);
+        }
+
+        return $this->handleWebException($request, $exception);
+    }
+
+
+
+    /**
+     * Déterminer si la route actuelle est configurée pour retourner du JSON
+     */
+    private function isJsonRoute(Request $request): bool
+    {
+        // Vérifier d'abord si la route a été marquée par le middleware
+        if ($request->attributes->get('expects_json_response', false)) {
+            return true;
+        }
+
+        // Ensuite appliquer la détection automatique
+        if ($request->ajax() || $request->wantsJson()) {
+            return true;
+        }
+
+        // Autres vérifications automatiques...
+
+        return false;
+    }
+    /**
+     * Gérer les exceptions pour les requêtes JSON
+     */
+    private function handleJsonException($request, Throwable $exception)
+    {
+        // Définir le code HTTP et la réponse par défaut
+        $status = 500;
+        $response = [
+            'ok' => false,
+            'message' => 'Une erreur est survenue sur le serveur.',
+        ];
+
+        // Personnaliser selon le type d'exception
+        if ($exception instanceof ValidationException) {
+            $status = 422;
+            $response['message'] = 'Les données fournies sont invalides.';
+            $response['errors'] = $exception->errors();
+        } elseif ($exception instanceof ModelNotFoundException) {
+            $status = 404;
+            $response['message'] = 'Données introuvables. Veuillez vérifier les entrées.';
+        } elseif ($exception instanceof NotFoundHttpException) {
+            $status = 404;
+            $response['message'] = 'La route demandée n\'existe pas.';
+        }
+
+        // En mode debug, ajouter plus d'informations
+        if (config('app.debug')) {
+            $response['error'] = $exception->getMessage();
+            $response['trace'] = explode("\n", $exception->getTraceAsString());
+        }
+
+        return response()->json($response, $status);
+    }
+
+    /**
+     * Gérer les exceptions pour les requêtes web standards
+     */
+    private function handleWebException($request, Throwable $exception)
+    {
+        // Pour les exceptions de validation, utiliser le comportement par défaut de Laravel
+        if ($exception instanceof ValidationException) {
+            return parent::render($request, $exception);
+        }
+
+        // Log de l'erreur
+        \Log::error('Erreur: ' . $exception->getMessage() . ' dans ' . $exception->getFile() . ' ligne ' . $exception->getLine());
+
+        // Pour les erreurs 404, utiliser une vue personnalisée
+        if ($exception instanceof NotFoundHttpException) {
+            return response()->view('errors.404', [], 404);
+        }
+
+        // Pour les erreurs ModelNotFoundException, rediriger avec message
+        if ($exception instanceof ModelNotFoundException) {
+            $model = strtolower(class_basename($exception->getModel()));
+            return redirect()->back()->with('error', "L'élément demandé est introuvable.");
+        }
+
+        // En production, afficher un message générique
+        if (!config('app.debug')) {
+            return redirect()->back()->with('error', 'Une erreur s\'est produite. Veuillez réessayer plus tard.');
+        }
+
+        // En mode debug, utiliser le comportement par défaut pour voir les détails
+        return parent::render($request, $exception);
     }
 }

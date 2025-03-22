@@ -31,6 +31,15 @@ class UserController extends Controller
         // Liste des statuss valides
         $validStatus = ['ACTIVATED', 'DEACTIVATED', 'DELETED'];
 
+        // Liste des statuss valides
+        $validStatus = ['ACTIVATED', 'DEACTIVATED', 'DELETED'];
+
+        // Vérification de la validité du status
+        if ($status !== 'ALL' && !in_array($status, $validStatus)) {
+            return redirect()->back()->with('error', 'status invalide');
+        }
+        $query = User::where('profile', '!=', 'ADMIN')->with('employee');
+        $query->where('status', '!=', 'DELETED');
         // Vérification de la validité du status
         if ($status !== 'ALL' && !in_array($status, $validStatus)) {
             return redirect()->back()->with('error', 'status invalide');
@@ -38,6 +47,10 @@ class UserController extends Controller
         $query = User::where('profile', '!=', 'ADMIN')->with('employee');
         $query->where('status', '!=', 'DELETED');
 
+        // Filtrer par status si le status n'est pas "ALL"
+        $query->when($status !== 'ALL', function ($q) use ($status) {
+            $q->where('status', $status);
+        });
         // Filtrer par status si le status n'est pas "ALL"
         $query->when($status !== 'ALL', function ($q) use ($status) {
             $q->where('status', $status);
@@ -50,13 +63,25 @@ class UserController extends Controller
                 $q2->where('name', '!=', 'ADMIN');
             })
             ->orderBy('username', 'ASC');
+        $query = $query->with(['roles' => function ($q1) {
+            $q1->where('name', '!=', 'ADMIN');
+        }])
+            ->whereHas('roles', function ($q2) {
+                $q2->where('name', '!=', 'ADMIN');
+            })
+            ->orderBy('username', 'ASC');
 
+        $roles = Role::select('id', 'name')->where('name', '!=', 'ADMIN')->orderBy('id', 'ASC')->get();
         $roles = Role::select('id', 'name')->where('name', '!=', 'ADMIN')->orderBy('id', 'ASC')->get();
 
         $users = $query->get();
         // $roles = Role::whereNotIn('name', ['client', 'main', 'admin'])->get();
         $employeesWithoutUser = Employee::doesntHave('users')->get();
+        $users = $query->get();
+        // $roles = Role::whereNotIn('name', ['client', 'main', 'admin'])->get();
+        $employeesWithoutUser = Employee::doesntHave('users')->get();
 
+        // session()->flash('success', "L'utilisateur  à été créé.");
         // session()->flash('success', "L'utilisateur  à été créé.");
 
         return view('pages.admin.users.credentials.index', compact('users', 'roles', 'status', 'employeesWithoutUser'));
@@ -77,12 +102,25 @@ class UserController extends Controller
             'employee' => 'required|exists:employees,id',
         ]);
 
+        // Validation des données
+        $this->validate($request, [
+            'role' => 'required',
+            'employee' => 'required|exists:employees,id',
+        ]);
+
+        // Récupération de l'employé
+        $employee = Employee::findOrFail($request->input('employee'));
         // Récupération de l'employé
         $employee = Employee::findOrFail($request->input('employee'));
 
         $username = strtolower(substr($employee->first_name, 0, 1)).strtolower($employee->last_name).$employee->id;
         $username = utf8_encode($username);
+        $username = strtolower(substr($employee->first_name, 0, 1)).strtolower($employee->last_name).$employee->id;
+        $username = utf8_encode($username);
 
+        $randomString = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 6);
+        $pwd = strtolower(substr($employee->first_name, 0, 1)).ucfirst($employee->last_name).$randomString;
+        $pwd = utf8_encode($pwd);
         $randomString = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 6);
         $pwd = strtolower(substr($employee->first_name, 0, 1)).ucfirst($employee->last_name).$randomString;
         $pwd = utf8_encode($pwd);
@@ -94,10 +132,21 @@ class UserController extends Controller
             'password' => Hash::make($pwd),
             'employee_id' => $employee->id,
         ]);
+        // Création de l'utilisateur
+        $user = User::create([
+            'username' => $username,
+            'email' => $employee->email,
+            'password' => Hash::make($pwd),
+            'employee_id' => $employee->id,
+        ]);
 
         // Attribution des rôles
         $user->syncRoles([$request->input('role')]);
+        // Attribution des rôles
+        $user->syncRoles([$request->input('role')]);
 
+        // Notification à l'utilisateur actuel
+        session()->flash('success', "L'utilisateur avec le nom *{$user->username}* et l'email *{$user->email}* a été créé. 
         // Notification à l'utilisateur actuel
         session()->flash('success', "L'utilisateur avec le nom *{$user->username}* et l'email *{$user->email}* a été créé. 
             Mot de passe *{$pwd}*. Retenez-le ou notez-le quelque part, il ne sera plus affiché.");
@@ -135,9 +184,30 @@ class UserController extends Controller
         $user->username = $request->input('username');
         $user->status = $request->input('status');
 
+        // Valider les fichiers et l'image
+        $request->validate([
+            'email' => [
+                'email',
+                Rule::unique('users', 'email')->ignore($id),
+            ],
+            'username' => [
+                'string',
+                Rule::unique('users', 'username')->ignore($id),
+            ],
+            'status' => 'required|in:ACTIVATED,DEACTIVATED',
+        ]);
+        $user = User::find($id);
+        $user->email = $request->input('email');
+        $user->username = $request->input('username');
+        $user->status = $request->input('status');
+
+        $user->save();
         $user->save();
 
         session()->flash('success', 'Les détails ont été mis à jour.');
+        session()->flash('success', 'Les détails ont été mis à jour.');
+
+        return response()->json(['ok' => true, 'message' => 'Les détails de l\'utilisateur ont été mis à jour avec succès']);
 
         return response()->json(['ok' => true, 'message' => 'Les détails de l\'utilisateur ont été mis à jour avec succès']);
 
@@ -153,14 +223,29 @@ class UserController extends Controller
         ]);
         $user = User::find($id);
 
+        // Valider les fichiers et l'image
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:8|different:current_password|confirmed',
+        ]);
+        $user = User::find($id);
+
+        if (!Hash::check($request->input('current_password'), $user->password)) {
+            return response()->json(['ok' => true, 'message' => 'Mot de passe actuel incorrect.'], 401);
+        }
         if (!Hash::check($request->input('current_password'), $user->password)) {
             return response()->json(['ok' => true, 'message' => 'Mot de passe actuel incorrect.'], 401);
         }
 
         $user->password = Hash::make($request->input('new_password'));
         $user->save();
+        $user->password = Hash::make($request->input('new_password'));
+        $user->save();
 
         session()->flash('success', 'Le mot de passe à été mis à jour.');
+        session()->flash('success', 'Le mot de passe à été mis à jour.');
+
+        return response()->json(['ok' => true, 'message' => 'Mot de passe mis à jour avec succès !'], 200);
 
         return response()->json(['ok' => true, 'message' => 'Mot de passe mis à jour avec succès !'], 200);
 
@@ -176,8 +261,19 @@ class UserController extends Controller
         $user = User::find($id);
         $user->password = Hash::make($request->input('password'));
 
+        // Valider les fichiers et l'image
+        $request->validate([
+            'password' => 'required|min:8|confirmed',
+        ]);
+        $user = User::find($id);
+        $user->password = Hash::make($request->input('password'));
+
         $user->save();
         session()->flash('success', 'Le mot de passe à été mis à jour.');
+        $user->save();
+        session()->flash('success', 'Le mot de passe à été mis à jour.');
+
+        return response()->json(['message' => __(' Votre mot de passe a été mis à jour avec succès .'), 'ok' => true]);
 
         return response()->json(['message' => __(' Votre mot de passe a été mis à jour avec succès .'), 'ok' => true]);
 
@@ -193,7 +289,17 @@ class UserController extends Controller
         $user = User::find($id);
         $user->syncRoles([$request->input('role')]);
 
+        // Valider les fichiers et l'image
+        $request->validate([
+            'role' => 'required',
+        ]);
+        $user = User::find($id);
+        $user->syncRoles([$request->input('role')]);
+
         session()->flash('success', 'Le role à été mis à jour.');
+        session()->flash('success', 'Le role à été mis à jour.');
+
+        return response()->json(['ok' => true, 'message' => 'Le role de l\'utilisateur a été mis à jour avec succès']);
 
         return response()->json(['ok' => true, 'message' => 'Le role de l\'utilisateur a été mis à jour avec succès']);
 
@@ -207,6 +313,12 @@ class UserController extends Controller
 
         $currentUser = auth()->user();
 
+        $currentUser = auth()->user();
+
+        // Vérifie si l'utilisateur actuel correspond à l'ID à supprimer
+        if ($currentUser->id == $id) {
+            return response()->json(['ok' => false, 'message' => 'Vous ne pouvez pas supprimer votre propre compte.']);
+        }
         // Vérifie si l'utilisateur actuel correspond à l'ID à supprimer
         if ($currentUser->id == $id) {
             return response()->json(['ok' => false, 'message' => 'Vous ne pouvez pas supprimer votre propre compte.']);

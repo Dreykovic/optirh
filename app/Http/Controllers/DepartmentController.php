@@ -49,6 +49,20 @@ class DepartmentController extends Controller
             'director_id' => 'nullable|exists:employees,id',
         ]);
 
+        $validatedData = $request->validate([
+            'name' => 'required|unique:departments,name|string|max:255',
+            'description' => 'required|string|max:500',
+            'director_id' => 'nullable|exists:employees,id',
+        ]);
+
+        $validatedData['director_id'] = $validatedData['director_id'] ?? null;
+        $job_superior = Job::where('title', 'DG')->firstOrFail();
+        // Créer le département
+        $dept = Department::create([
+            'name' => $validatedData['name'],
+            'description' => $validatedData['description'],
+            'director_id' => $validatedData['director_id'],
+        ]);
         $validatedData['director_id'] = $validatedData['director_id'] ?? null;
         $job_superior = Job::where('title', 'DG')->firstOrFail();
         // Créer le département
@@ -64,12 +78,34 @@ class DepartmentController extends Controller
             'n_plus_one_job_id' => $job_superior->id,
             'department_id' => $dept->id,
         ]);
+        $job = Job::create([
+            'title' => 'Directeur·trice '.$dept->name,
+            'description' => 'Directeur·trice '.$dept->description,
+            'n_plus_one_job_id' => $job_superior->id,
+            'department_id' => $dept->id,
+        ]);
 
         if ($validatedData['director_id'] != null) {
             $duty = Duty::where('evolution', $this->evolutions[0])
             ->where('employee_id', $validatedData['director_id'])
             ->first();
+            if ($validatedData['director_id'] != null) {
+                $duty = Duty::where('evolution', $this->evolutions[0])
+                ->where('employee_id', $validatedData['director_id'])
+                ->first();
 
+                if ($duty) {
+                    $duty->update([
+                        'evolution' => $this->evolutions[1],
+                        'status' => $this->status[1],
+                    ]);
+                    Duty::create([
+                        'job_id' => $job->id,
+                        'employee_id' => $validatedData['director_id'],
+                        'begin_date' => Carbon::now(),
+                    ]);
+                }
+            }
             if ($duty) {
                 $duty->update([
                     'evolution' => $this->evolutions[1],
@@ -116,6 +152,13 @@ class DepartmentController extends Controller
             'description' => 'required|string|max:500',
         ]);
 
+        $validatedData = $request->validate([
+            'name' => 'required|unique:departments,name,'.$id.'|string|max:255',
+            'description' => 'required|string|max:500',
+        ]);
+
+        // Récupérer le département
+        $department = Department::findOrFail($id);
         // Récupérer le département
         $department = Department::findOrFail($id);
 
@@ -124,10 +167,23 @@ class DepartmentController extends Controller
             'name' => $validatedData['name'],
             'description' => $validatedData['description'],
         ]);
+        // Mettre à jour les informations du département
+        $department->update([
+            'name' => $validatedData['name'],
+            'description' => $validatedData['description'],
+        ]);
 
         // Mettre à jour le job "Directeur·rice" associé au département
         // $job = Job::where('title', 'Directeur·rice ' . $department->name)->first();
+        // Mettre à jour le job "Directeur·rice" associé au département
+        // $job = Job::where('title', 'Directeur·rice ' . $department->name)->first();
 
+        // if ($job) {
+        //     $job->update([
+        //         'title' => 'Directeur·rice ' . $department->name,
+        //         'description' => 'Directeur·rice ' . $department->description,
+        //     ]);
+        // }
         // if ($job) {
         //     $job->update([
         //         'title' => 'Directeur·rice ' . $department->name,

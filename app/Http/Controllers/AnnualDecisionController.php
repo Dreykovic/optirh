@@ -17,54 +17,34 @@ class AnnualDecisionController extends Controller
      */
     public function storeOrUpdate(Request $request, $id = null)
     {
-        try {
-            // Validation des données
-            $validatedData = $request->validate([
-                'number' => 'required|string|max:255',
-                'year' => 'required|string|max:4',
-                'reference' => 'nullable|string|max:255',
-                'date' => 'required|date',
-                'pdf' => 'nullable|file|mimes:pdf|max:2048',
-            ]);
 
-            // Gestion du fichier PDF
-            if ($request->hasFile('pdf')) {
-                $pdfPath = $request->file('pdf')->store('decisions', 'public');
-                $validatedData['pdf'] = $pdfPath;
-            }
+        // Validation des données
+        $validatedData = $request->validate([
+            'number' => 'required|string|max:255',
+            'year' => 'required|string|max:4',
+            'reference' => 'nullable|string|max:255',
+            'date' => 'required|date',
+            'pdf' => 'nullable|file|mimes:pdf|max:2048',
+        ]);
 
-            // Création ou mise à jour de la décision
-
-            AnnualDecision::updateOrCreate(
-                ['id' => $id],  // Condition de mise à jour
-                $validatedData   // Données mises à jour ou créées
-            );
-
-            return response()->json([
-                'message' => $id ? 'Decision updated successfully' : 'Decision created successfully',
-                'ok' => true,
-            ]);
-        } catch (ValidationException $e) {
-            // Gestion des erreurs de validation
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (ModelNotFoundException $e) {
-            // Gestion des cas où le modèle n'est pas trouvé
-            return response()->json([
-                'ok' => false,
-                'message' => 'Données introuvables. Veuillez vérifier les entrées.',
-            ], 404);
-        } catch (\Throwable $th) {
-            // Gestion générale des erreurs
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s’est produite. Veuillez réessayer.',
-                'error' => $th->getMessage(),
-            ], 500);
+        // Gestion du fichier PDF
+        if ($request->hasFile('pdf')) {
+            $pdfPath = $request->file('pdf')->store('decisions', 'public');
+            $validatedData['pdf'] = $pdfPath;
         }
+
+        // Création ou mise à jour de la décision
+
+        AnnualDecision::updateOrCreate(
+            ['id' => $id],  // Condition de mise à jour
+            $validatedData   // Données mises à jour ou créées
+        );
+
+        return response()->json([
+            'message' => $id ? 'Decision updated successfully' : 'Decision created successfully',
+            'ok' => true,
+        ]);
+
     }
 
     public function show()

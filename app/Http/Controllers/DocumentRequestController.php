@@ -66,6 +66,9 @@ class DocumentRequestController extends Controller
         // Liste des stages valides
         $validStages = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'IN_PROGRESS', 'COMPLETED'];
 
+        // Liste des stages valides
+        $validStages = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'IN_PROGRESS', 'COMPLETED'];
+
         // Vérification de la validité du stage
         if ($stage !== 'ALL' && !in_array($stage, $validStages)) {
             $this->activityLogger->log(
@@ -76,6 +79,9 @@ class DocumentRequestController extends Controller
             return redirect()->route('documents.requests')->with('error', 'Stage invalide');
         }
 
+        // Récupérer les filtres de recherche
+        $type = $request->input('type');
+        $search = $request->input('search');
         // Récupérer les filtres de recherche
         $type = $request->input('type');
         $search = $request->input('search');
@@ -129,6 +135,10 @@ class DocumentRequestController extends Controller
         $query->when($type, function ($q) use ($type) {
             $q->where('document_type_id', $type);
         });
+        // Filtrer par type de document, si précisé
+        $query->when($type, function ($q) use ($type) {
+            $q->where('document_type_id', $type);
+        });
 
         // Filtrer par stage si le stage n'est pas "ALL"
         $query->when($stage !== 'ALL', function ($q) use ($stage) {
@@ -169,6 +179,7 @@ class DocumentRequestController extends Controller
         );
 
         return view('pages.admin.documents.main.create', compact('documentTypes'));
+        return view('pages.admin.documents.main.create', compact('documentTypes'));
 
     }
 
@@ -192,6 +203,10 @@ class DocumentRequestController extends Controller
         $currentUser = User::with('employee')->findOrFail(auth()->id());
         $currentEmployee = $currentUser->employee;
 
+        $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
+                                    ->where('employee_id', $currentEmployee->id)
+                                    ->firstOrFail();
+        $document_type_id = $request->input('document_type');
         $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
                                     ->where('employee_id', $currentEmployee->id)
                                     ->firstOrFail();
@@ -232,6 +247,12 @@ class DocumentRequestController extends Controller
      */
     public function updateStageAndLevel(Request $request, $id)
     {
+
+        // Valider les entrées
+        $validatedData = $request->validate([
+            'stage' => 'required|in:PENDING,APPROVED,REJECTED,CANCELLED,IN_PROGRESS,COMPLETED',
+            'level' => 'required|in:ZERO,ONE,TWO,THREE',
+        ]);
 
         // Valider les entrées
         $validatedData = $request->validate([
