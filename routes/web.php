@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AbsenceTypeController;
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\AnnualDecisionController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DecisionController;
@@ -257,6 +258,18 @@ Route::group(['middleware' => 'auth'], function () {
         Route::prefix('/permissions')->group(function () {
             Route::get('/list', [RoleController::class, 'get_permissions'])->name('permissions.index');
         });
+        /*
+         * Activity Log
+        */
+
+        Route::prefix('/activity-logs')->group(function () {
+            // Routes pour les logs d'activité
+            Route::get('/', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+
+            // Si vous souhaitez ajouter une route pour voir les détails d'un log spécifique
+            Route::get('/{log}', [ActivityLogController::class, 'show'])->name('activity-logs.show');
+        });
+
     });
 
     /*
@@ -280,4 +293,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/preview/{publicationId}', [PublicationController::class,   'preview'])->name('publications.pdf.preview');
         });
     });
+
+
 });
