@@ -29,115 +29,88 @@ class PublicationController extends Controller
      */
     public function index($status = 'all')
     {
-        try {
-            // Liste des statuss valides
-            $validStatus = ['archived', 'pending', 'published'];
 
-            // Vérification de la validité du status
-            if ($status !== 'all' && !in_array($status, $validStatus)) {
-                return redirect()->back()->with('error', 'status invalide');
-            }
+        // Liste des statuss valides
+        $validStatus = ['archived', 'pending', 'published'];
 
-            $query = Publication::query();
-
-            // Filtrer par status si le status n'est pas "all"
-            $query->when($status !== 'all', function ($q) use ($status) {
-                $q->where('status', $status);
-            });
-            $query->with(['author', 'files']);
-
-            $publications = $query->orderBy('created_at', 'ASC')->get();
-
-            return view('pages.admin.publications.config.index', compact('publications', 'status'));
-        } catch (\Throwable $th) {
-            dd($th->getMessage());
-            abort(500);
+        // Vérification de la validité du status
+        if ($status !== 'all' && !in_array($status, $validStatus)) {
+            return redirect()->back()->with('error', 'status invalide');
         }
+
+        $query = Publication::query();
+
+        // Filtrer par status si le status n'est pas "all"
+        $query->when($status !== 'all', function ($q) use ($status) {
+            $q->where('status', $status);
+        });
+        $query->with(['author', 'files']);
+
+        $publications = $query->orderBy('created_at', 'ASC')->get();
+
+        return view('pages.admin.publications.config.index', compact('publications', 'status'));
+
     }
 
     public function updateStatus($status, $id)
     {
-        try {
-            // Liste des statuss valides
-            $validStatus = ['archived', 'pending', 'published'];
 
-            // Vérification de la validité du status
-            if (!in_array($status, $validStatus)) {
-                return redirect()->back()->with('error', 'status invalide');
-            }
-            $publication = Publication::findOrFail($id);
-            $publication->status = $status;
+        // Liste des statuss valides
+        $validStatus = ['archived', 'pending', 'published'];
 
-            $publication->save();
-
-            session()->flash('success', 'Status mis à jour avec succès');
-
-            return response()->json(['ok' => true, 'message' => 'Status mis à jour avec succès']);
-        } catch (\Throwable $th) {
-            // return response()->json(['ok' => false,  'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
-
-            return response()->json(['ok' => false,  'message' => $th->getMessage()], 500);
+        // Vérification de la validité du status
+        if (!in_array($status, $validStatus)) {
+            return redirect()->back()->with('error', 'status invalide');
         }
+        $publication = Publication::findOrFail($id);
+        $publication->status = $status;
+
+        $publication->save();
+
+        session()->flash('success', 'Status mis à jour avec succès');
+
+        return response()->json(['ok' => true, 'message' => 'Status mis à jour avec succès']);
+
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        try {
-            $request->validate([
-                'title' => 'required|string|max:255',
-                'content' => 'sometimes',
-                // 'files.*' => 'nullable|mimes:jpg,jpeg,png,gif,pdf|max:10240',  // Les fichiers peuvent être vides
-                'files.*' => 'nullable|mimes:jpg,jpeg,png,gif,pdf',  // Les fichiers peuvent être vides
-            ]);
 
-            $publication = new Publication();
-            $publication->title = $request->input('title');
-            $publication->content = $request->input('content');
-            $publication->author_id = auth()->id();
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'sometimes',
+            // 'files.*' => 'nullable|mimes:jpg,jpeg,png,gif,pdf|max:10240',  // Les fichiers peuvent être vides
+            'files.*' => 'nullable|mimes:jpg,jpeg,png,gif,pdf',  // Les fichiers peuvent être vides
+        ]);
 
-            $publication->save();
-            $files = $request->file('files');
-            if ($files) {
-                foreach ($files as $file) {
-                    $this->fileService->storeFile($publication->id, $file);
-                }
+        $publication = new Publication();
+        $publication->title = $request->input('title');
+        $publication->content = $request->input('content');
+        $publication->author_id = auth()->id();
+
+        $publication->save();
+        $files = $request->file('files');
+        if ($files) {
+            foreach ($files as $file) {
+                $this->fileService->storeFile($publication->id, $file);
             }
-
-            return response()->json(['message' => 'Note créée avec succès', 'ok' => true]);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (\Throwable $th) {
-            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
+
+        return response()->json(['message' => 'Note créée avec succès', 'ok' => true]);
+
     }
 
     public function preview($id)
     {
-        try {
-            $file = PublicationFile::findOrFail($id);
 
-            return response()->download($this->fileService->getFile($file));
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['ok' => false, 'message' => 'Publication non trouvée.'], 404);
-        } catch (\Throwable $th) {
-            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+        $file = PublicationFile::findOrFail($id);
 
-            // return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
-        }
+        return response()->download($this->fileService->getFile($file));
+
     }
 
     /**
@@ -166,20 +139,18 @@ class PublicationController extends Controller
      */
     public function destroy(string $id)
     {
-        try {
-            $publication = Publication::findOrFail($id);
 
-            if ($publication->files->isNotEmpty()) {
-                foreach ($publication->files as $file) {
-                    $this->fileService->destroyFile($file);
-                }
+        $publication = Publication::findOrFail($id);
+
+        if ($publication->files->isNotEmpty()) {
+            foreach ($publication->files as $file) {
+                $this->fileService->destroyFile($file);
             }
-            // Supprimer l'entrée de la base de données
-            $publication->delete();
-
-            return response()->json(['ok' => true, 'message' => 'la note a été supprimé avec succès.']);
-        } catch (\Exception $e) {
-            return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
         }
+        // Supprimer l'entrée de la base de données
+        $publication->delete();
+
+        return response()->json(['ok' => true, 'message' => 'la note a été supprimé avec succès.']);
+
     }
 }

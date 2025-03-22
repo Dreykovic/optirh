@@ -22,18 +22,12 @@ class DocumentRequestController extends Controller
 
     public function download($absenceId)
     {
-        try {
-            $documentRequest = DocumentRequest::findOrFail($absenceId);
-            $documentPdf = new DocumentPdfService();
 
-            return $documentPdf->generate($documentRequest);
-        } catch (\Throwable $th) {
-            dd('Erreur lors du chargement des absences : '.$th->getMessage());
-            // Log propre de l'erreur et affichage d'un message utilisateur
-            \Log::error('Erreur lors du chargement des absences : '.$th->getMessage());
+        $documentRequest = DocumentRequest::findOrFail($absenceId);
+        $documentPdf = new DocumentPdfService();
 
-            return back()->with('error', 'Une erreur s\'est produite lors du chargement des absences. Veuillez réessayer.');
-        }
+        return $documentPdf->generate($documentRequest);
+
     }
 
     /**
@@ -41,58 +35,52 @@ class DocumentRequestController extends Controller
      */
     public function index(Request $request, $stage = 'PENDING')
     {
-        try {
-            // Liste des stages valides
-            $validStages = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'IN_PROGRESS', 'COMPLETED'];
 
-            // Vérification de la validité du stage
-            if ($stage !== 'ALL' && !in_array($stage, $validStages)) {
-                return redirect()->route('documents.requests')->with('error', 'Stage invalide');
-            }
+        // Liste des stages valides
+        $validStages = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'IN_PROGRESS', 'COMPLETED'];
 
-            // Récupérer les filtres de recherche
-            $type = $request->input('type');
-            $search = $request->input('search');
-
-            // Récupérer les types de document (éviter de faire la requête à chaque appel)
-            $document_types = DocumentType::all();
-
-            // Construire la requête principale avec les relations nécessaires
-            $query = DocumentRequest::with(['document_type', 'duty', 'duty.employee']);
-
-            // Appliquer le filtre de recherche (groupe de conditions OR)
-            $query->when($search, function ($q) use ($search) {
-                $q->whereHas('duty.employee', function ($query) use ($search) {
-                    $query->where('first_name', 'ILIKE', '%'.$search.'%')
-                          ->orWhere('last_name', 'ILIKE', '%'.$search.'%');
-                });
-            });
-            $query->orderBy('date_of_application');
-
-            // Filtrer par type de document, si précisé
-            $query->when($type, function ($q) use ($type) {
-                $q->where('document_type_id', $type);
-            });
-
-            // Filtrer par stage si le stage n'est pas "ALL"
-            $query->when($stage !== 'ALL', function ($q) use ($stage) {
-                $q->where('stage', $stage);
-            });
-            // $limit = in_array($stage, ['PENDING', 'IN_PROGRESS']) ? 2 : 10;
-            // Appliquer la pagination seulement si on filtre par stage (sauf ALL)
-            $documentRequests = (in_array($stage, ['PENDING', 'IN_PROGRESS']))
-                ? $query->paginate(2)
-                : $query->get();
-
-            // Retourner la vue avec les données nécessaires
-            return view('pages.admin.documents.main.index', compact('documentRequests', 'stage', 'document_types'));
-        } catch (\Throwable $th) {
-            dd('Erreur lors du chargement des demandes de documents : '.$th->getMessage());
-            // Log propre de l'erreur et affichage d'un message utilisateur
-            \Log::error('Erreur lors du chargement des demandes de documents : '.$th->getMessage());
-
-            return back()->with('error', 'Une erreur s\'est produite lors du chargement des demandes de documents. Veuillez réessayer.');
+        // Vérification de la validité du stage
+        if ($stage !== 'ALL' && !in_array($stage, $validStages)) {
+            return redirect()->route('documents.requests')->with('error', 'Stage invalide');
         }
+
+        // Récupérer les filtres de recherche
+        $type = $request->input('type');
+        $search = $request->input('search');
+
+        // Récupérer les types de document (éviter de faire la requête à chaque appel)
+        $document_types = DocumentType::all();
+
+        // Construire la requête principale avec les relations nécessaires
+        $query = DocumentRequest::with(['document_type', 'duty', 'duty.employee']);
+
+        // Appliquer le filtre de recherche (groupe de conditions OR)
+        $query->when($search, function ($q) use ($search) {
+            $q->whereHas('duty.employee', function ($query) use ($search) {
+                $query->where('first_name', 'ILIKE', '%'.$search.'%')
+                      ->orWhere('last_name', 'ILIKE', '%'.$search.'%');
+            });
+        });
+        $query->orderBy('date_of_application');
+
+        // Filtrer par type de document, si précisé
+        $query->when($type, function ($q) use ($type) {
+            $q->where('document_type_id', $type);
+        });
+
+        // Filtrer par stage si le stage n'est pas "ALL"
+        $query->when($stage !== 'ALL', function ($q) use ($stage) {
+            $q->where('stage', $stage);
+        });
+        // $limit = in_array($stage, ['PENDING', 'IN_PROGRESS']) ? 2 : 10;
+        // Appliquer la pagination seulement si on filtre par stage (sauf ALL)
+        $documentRequests = (in_array($stage, ['PENDING', 'IN_PROGRESS']))
+            ? $query->paginate(2)
+            : $query->get();
+
+        // Retourner la vue avec les données nécessaires
+        return view('pages.admin.documents.main.index', compact('documentRequests', 'stage', 'document_types'));
+
     }
 
     /**
@@ -100,17 +88,11 @@ class DocumentRequestController extends Controller
      */
     public function create()
     {
-        try {
-            $documentTypes = DocumentType::all();
 
-            return view('pages.admin.documents.main.create', compact('documentTypes'));
-        } catch (\Throwable $th) {
-            dd($th->getMessage());
+        $documentTypes = DocumentType::all();
 
-            // Gestion des erreurs avec un message d'erreur plus propre
-            return back()->with('error', 'Une erreur s\'est produite lors du chargement des types de document.');
-            // abort(500);
-        }
+        return view('pages.admin.documents.main.create', compact('documentTypes'));
+
     }
 
     /**
@@ -120,62 +102,41 @@ class DocumentRequestController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            // Validation des champs de la requête
-            $validatedData = $request->validate([
-                'document_type' => 'required|exists:absence_types,id',
 
-                'start_date' => 'required|date|before_or_equal:end_date',
-                'end_date' => 'required|date|after_or_equal:start_date',
-            ]);
+        // Validation des champs de la requête
+        $validatedData = $request->validate([
+            'document_type' => 'required|exists:absence_types,id',
 
-            // Récupération de l'employé actuel et de sa mission en cours
-            $currentUser = User::with('employee')->findOrFail(auth()->id());
+            'start_date' => 'required|date|before_or_equal:end_date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
 
-            $currentEmployee = $currentUser->employee;
+        // Récupération de l'employé actuel et de sa mission en cours
+        $currentUser = User::with('employee')->findOrFail(auth()->id());
 
-            $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
-                                        ->where('employee_id', $currentEmployee->id)
-                                        ->firstOrFail();
-            $document_type_id = $request->input('document_type');
+        $currentEmployee = $currentUser->employee;
 
-            // Enregistrement de la demande d'absence
-            $documentRequest = DocumentRequest::create([
-                'duty_id' => $currentEmployeeDuty->id,
-                'document_type_id' => $document_type_id,
+        $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
+                                    ->where('employee_id', $currentEmployee->id)
+                                    ->firstOrFail();
+        $document_type_id = $request->input('document_type');
 
-                'start_date' => $validatedData['start_date'],
-                'end_date' => $validatedData['end_date'],
-            ]);
+        // Enregistrement de la demande d'absence
+        $documentRequest = DocumentRequest::create([
+            'duty_id' => $currentEmployeeDuty->id,
+            'document_type_id' => $document_type_id,
 
-            $var = $documentRequest->document_type() ? $documentRequest->document_type->label : '';
+            'start_date' => $validatedData['start_date'],
+            'end_date' => $validatedData['end_date'],
+        ]);
 
-            return response()->json([
-                'message' => "Demande de {$var}  créée avec succès.",
-                'ok' => true,
-            ]);
-        } catch (ValidationException $e) {
-            // Gestion des erreurs de validation
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (ModelNotFoundException $e) {
-            // Gestion des cas où le modèle n'est pas trouvé
-            return response()->json([
-                'ok' => false,
-                'message' => 'Données introuvables. Veuillez vérifier les entrées.',
-                'errors' => $e->getMessage(),
-            ], 404);
-        } catch (\Throwable $th) {
-            // Gestion générale des erreurs
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s’est produite. Veuillez réessayer.',
-                'error' => $th->getMessage(),
-            ], 500);
-        }
+        $var = $documentRequest->document_type() ? $documentRequest->document_type->label : '';
+
+        return response()->json([
+            'message' => "Demande de {$var}  créée avec succès.",
+            'ok' => true,
+        ]);
+
     }
 
     /**
@@ -208,54 +169,34 @@ class DocumentRequestController extends Controller
      */
     public function updateStageAndLevel(Request $request, $id)
     {
-        try {
-            // Valider les entrées
-            $validatedData = $request->validate([
-                'stage' => 'required|in:PENDING,APPROVED,REJECTED,CANCELLED,IN_PROGRESS,COMPLETED',
-                'level' => 'required|in:ZERO,ONE,TWO,THREE',
-            ]);
 
-            // Rechercher l'absence par ID
-            $absence = Absence::find($id);
+        // Valider les entrées
+        $validatedData = $request->validate([
+            'stage' => 'required|in:PENDING,APPROVED,REJECTED,CANCELLED,IN_PROGRESS,COMPLETED',
+            'level' => 'required|in:ZERO,ONE,TWO,THREE',
+        ]);
 
-            if (!$absence) {
-                return response()->json([
-                    'message' => 'Absence not found.',
-                ], 404);
-            }
+        // Rechercher l'absence par ID
+        $absence = Absence::find($id);
 
-            // Mettre à jour les champs stage et level
-            $absence->stage = $validatedData['stage'];
-            $absence->level = $validatedData['level'];
-
-            // Sauvegarder les modifications
-            $absence->save();
-
+        if (!$absence) {
             return response()->json([
-                'message' => 'Stage and level updated successfully.',
-                'ok' => true,
-            ]);
-        } catch (ValidationException $e) {
-            // Gestion des erreurs de validation
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (ModelNotFoundException $e) {
-            // Gestion des cas où le modèle n'est pas trouvé
-            return response()->json([
-                'ok' => false,
-                'message' => 'Données introuvables. Veuillez vérifier les entrées.',
+                'message' => 'Absence not found.',
             ], 404);
-        } catch (\Throwable $th) {
-            // Gestion générale des erreurs
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s’est produite. Veuillez réessayer.',
-                'error' => $th->getMessage(),
-            ], 500);
         }
+
+        // Mettre à jour les champs stage et level
+        $absence->stage = $validatedData['stage'];
+        $absence->level = $validatedData['level'];
+
+        // Sauvegarder les modifications
+        $absence->save();
+
+        return response()->json([
+            'message' => 'Stage and level updated successfully.',
+            'ok' => true,
+        ]);
+
     }
 
     public function approve($id)

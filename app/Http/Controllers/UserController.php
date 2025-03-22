@@ -27,43 +27,40 @@ class UserController extends Controller
      */
     public function index($status = 'ALL')
     {
-        try {
-            // Liste des statuss valides
-            $validStatus = ['ACTIVATED', 'DEACTIVATED', 'DELETED'];
 
-            // Vérification de la validité du status
-            if ($status !== 'ALL' && !in_array($status, $validStatus)) {
-                return redirect()->back()->with('error', 'status invalide');
-            }
-            $query = User::where('profile', '!=', 'ADMIN')->with('employee');
-            $query->where('status', '!=', 'DELETED');
+        // Liste des statuss valides
+        $validStatus = ['ACTIVATED', 'DEACTIVATED', 'DELETED'];
 
-            // Filtrer par status si le status n'est pas "ALL"
-            $query->when($status !== 'ALL', function ($q) use ($status) {
-                $q->where('status', $status);
-            });
-
-            $query = $query->with(['roles' => function ($q1) {
-                $q1->where('name', '!=', 'ADMIN');
-            }])
-                ->whereHas('roles', function ($q2) {
-                    $q2->where('name', '!=', 'ADMIN');
-                })
-                ->orderBy('username', 'ASC');
-
-            $roles = Role::select('id', 'name')->where('name', '!=', 'ADMIN')->orderBy('id', 'ASC')->get();
-
-            $users = $query->get();
-            // $roles = Role::whereNotIn('name', ['client', 'main', 'admin'])->get();
-            $employeesWithoutUser = Employee::doesntHave('users')->get();
-
-            // session()->flash('success', "L'utilisateur  à été créé.");
-
-            return view('pages.admin.users.credentials.index', compact('users', 'roles', 'status', 'employeesWithoutUser'));
-        } catch (\Throwable $th) {
-            dd($th->getMessage());
-            abort(500);
+        // Vérification de la validité du status
+        if ($status !== 'ALL' && !in_array($status, $validStatus)) {
+            return redirect()->back()->with('error', 'status invalide');
         }
+        $query = User::where('profile', '!=', 'ADMIN')->with('employee');
+        $query->where('status', '!=', 'DELETED');
+
+        // Filtrer par status si le status n'est pas "ALL"
+        $query->when($status !== 'ALL', function ($q) use ($status) {
+            $q->where('status', $status);
+        });
+
+        $query = $query->with(['roles' => function ($q1) {
+            $q1->where('name', '!=', 'ADMIN');
+        }])
+            ->whereHas('roles', function ($q2) {
+                $q2->where('name', '!=', 'ADMIN');
+            })
+            ->orderBy('username', 'ASC');
+
+        $roles = Role::select('id', 'name')->where('name', '!=', 'ADMIN')->orderBy('id', 'ASC')->get();
+
+        $users = $query->get();
+        // $roles = Role::whereNotIn('name', ['client', 'main', 'admin'])->get();
+        $employeesWithoutUser = Employee::doesntHave('users')->get();
+
+        // session()->flash('success', "L'utilisateur  à été créé.");
+
+        return view('pages.admin.users.credentials.index', compact('users', 'roles', 'status', 'employeesWithoutUser'));
+
     }
 
     /**
@@ -78,64 +75,47 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            // Validation des données
-            $this->validate($request, [
-                'role' => 'required',
-                'employee' => 'required|exists:employees,id',
-            ]);
 
-            // Récupération de l'employé
-            $employee = Employee::findOrFail($request->input('employee'));
+        // Validation des données
+        $this->validate($request, [
+            'role' => 'required',
+            'employee' => 'required|exists:employees,id',
+        ]);
 
-            $username = strtolower(substr($employee->first_name, 0, 1)).strtolower($employee->last_name).$employee->id;
-            $username = utf8_encode($username);
+        // Récupération de l'employé
+        $employee = Employee::findOrFail($request->input('employee'));
 
-            $randomString = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 6);
-            $pwd = strtolower(substr($employee->first_name, 0, 1)).ucfirst($employee->last_name).$randomString;
-            $pwd = utf8_encode($pwd);
+        $username = strtolower(substr($employee->first_name, 0, 1)).strtolower($employee->last_name).$employee->id;
+        $username = utf8_encode($username);
 
-            // Création de l'utilisateur
-            $user = User::create([
-                'username' => $username,
-                'email' => $employee->email,
-                'password' => Hash::make($pwd),
-                'employee_id' => $employee->id,
-            ]);
+        $randomString = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 6);
+        $pwd = strtolower(substr($employee->first_name, 0, 1)).ucfirst($employee->last_name).$randomString;
+        $pwd = utf8_encode($pwd);
 
-            // Attribution des rôles
-            $user->syncRoles([$request->input('role')]);
+        // Création de l'utilisateur
+        $user = User::create([
+            'username' => $username,
+            'email' => $employee->email,
+            'password' => Hash::make($pwd),
+            'employee_id' => $employee->id,
+        ]);
 
-            // Notification à l'utilisateur actuel
-            session()->flash('success', "L'utilisateur avec le nom *{$user->username}* et l'email *{$user->email}* a été créé. 
+        // Attribution des rôles
+        $user->syncRoles([$request->input('role')]);
+
+        // Notification à l'utilisateur actuel
+        session()->flash('success', "L'utilisateur avec le nom *{$user->username}* et l'email *{$user->email}* a été créé. 
             Mot de passe *{$pwd}*. Retenez-le ou notez-le quelque part, il ne sera plus affiché.");
 
-            return response()->json(['message' => "L'utilisateur avec le nom {$user->username} et l'email {$user->email} a été créé.et un lien de réinitialisation de mot de passe a été envoyé à l'utilisateur.",  'ok' => true]);
-            // Envoi du lien de réinitialisation de mot de passe
-            // $status = Password::sendResetLink(['email' => $employee->email]);
-            // if ($status === Password::RESET_LINK_SENT) {
-            //     return response()->json(['message' => "L'utilisateur avec le nom {$user->username} et l'email {$user->email} a été créé.et un lien de réinitialisation de mot de passe a été envoyé à l'utilisateur.",  'ok' => true]);
-            // } else {
-            //     return response()->json(['message' => __('Une erreur est survenue lors de l\'envoi du lien de réinitialisation.'), 'ok' => false]);
-            // }
-        } catch (ValidationException $e) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Données introuvables. Veuillez vérifier les entrées.',
-            ], 404);
-        } catch (\Throwable $th) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s’est produite. Veuillez réessayer.',
-                'error' => $th->getMessage(),
-            ], 500);
-        }
+        return response()->json(['message' => "L'utilisateur avec le nom {$user->username} et l'email {$user->email} a été créé.et un lien de réinitialisation de mot de passe a été envoyé à l'utilisateur.",  'ok' => true]);
+        // Envoi du lien de réinitialisation de mot de passe
+        // $status = Password::sendResetLink(['email' => $employee->email]);
+        // if ($status === Password::RESET_LINK_SENT) {
+        //     return response()->json(['message' => "L'utilisateur avec le nom {$user->username} et l'email {$user->email} a été créé.et un lien de réinitialisation de mot de passe a été envoyé à l'utilisateur.",  'ok' => true]);
+        // } else {
+        //     return response()->json(['message' => __('Une erreur est survenue lors de l\'envoi du lien de réinitialisation.'), 'ok' => false]);
+        // }
+
     }
 
     /**
@@ -161,130 +141,86 @@ class UserController extends Controller
 
     public function updateDetails(Request $request, string $id)
     {
-        try {
-            // Valider les fichiers et l'image
-            $request->validate([
-                'email' => [
-                    'email',
-                    Rule::unique('users', 'email')->ignore($id),
-                ],
-                'username' => [
-                    'string',
-                    Rule::unique('users', 'username')->ignore($id),
-                ],
-                'status' => 'required|in:ACTIVATED,DEACTIVATED',
-            ]);
-            $user = User::find($id);
-            $user->email = $request->input('email');
-            $user->username = $request->input('username');
-            $user->status = $request->input('status');
 
-            $user->save();
+        // Valider les fichiers et l'image
+        $request->validate([
+            'email' => [
+                'email',
+                Rule::unique('users', 'email')->ignore($id),
+            ],
+            'username' => [
+                'string',
+                Rule::unique('users', 'username')->ignore($id),
+            ],
+            'status' => 'required|in:ACTIVATED,DEACTIVATED',
+        ]);
+        $user = User::find($id);
+        $user->email = $request->input('email');
+        $user->username = $request->input('username');
+        $user->status = $request->input('status');
 
-            session()->flash('success', 'Les détails ont été mis à jour.');
+        $user->save();
 
-            return response()->json(['ok' => true, 'message' => 'Les détails de l\'utilisateur ont été mis à jour avec succès']);
-        } catch (ValidationException $e) {
-            // Gestion des erreurs de validation
-            // return response()->json(['ok' => false, 'errors' => $e->errors(), 'message' => 'Données invalides. Veuillez vérifier votre saisie.']);
-            return response()->json(['ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
-            ], 422);
-        } catch (\Throwable $th) {
-            // return response()->json(['ok' => false,  'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
+        session()->flash('success', 'Les détails ont été mis à jour.');
 
-            return response()->json(['ok' => false,  'message' => $th->getMessage()], 500);
-        }
+        return response()->json(['ok' => true, 'message' => 'Les détails de l\'utilisateur ont été mis à jour avec succès']);
+
     }
 
     public function updatePassword(Request $request, string $id)
     {
-        try {
-            // Valider les fichiers et l'image
-            $request->validate([
-                'current_password' => 'required',
-                'new_password' => 'required|min:8|different:current_password|confirmed',
-            ]);
-            $user = User::find($id);
 
-            if (!Hash::check($request->input('current_password'), $user->password)) {
-                return response()->json(['ok' => true, 'message' => 'Mot de passe actuel incorrect.'], 401);
-            }
+        // Valider les fichiers et l'image
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:8|different:current_password|confirmed',
+        ]);
+        $user = User::find($id);
 
-            $user->password = Hash::make($request->input('new_password'));
-            $user->save();
-
-            session()->flash('success', 'Le mot de passe à été mis à jour.');
-
-            return response()->json(['ok' => true, 'message' => 'Mot de passe mis à jour avec succès !'], 200);
-        } catch (ValidationException $e) {
-            // Gestion des erreurs de validation
-            // return response()->json(['ok' => false, 'errors' => $e->errors(), 'message' => 'Données invalides. Veuillez vérifier votre saisie.']);
-            return response()->json(['ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
-            ], 422);
-        } catch (\Throwable $th) {
-            // return response()->json(['ok' => false,  'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
-
-            return response()->json(['ok' => false,  'message' => $th->getMessage()], 500);
+        if (!Hash::check($request->input('current_password'), $user->password)) {
+            return response()->json(['ok' => true, 'message' => 'Mot de passe actuel incorrect.'], 401);
         }
+
+        $user->password = Hash::make($request->input('new_password'));
+        $user->save();
+
+        session()->flash('success', 'Le mot de passe à été mis à jour.');
+
+        return response()->json(['ok' => true, 'message' => 'Mot de passe mis à jour avec succès !'], 200);
+
     }
 
     public function changePassword(Request $request, string $id)
     {
-        try {
-            // Valider les fichiers et l'image
-            $request->validate([
-                'password' => 'required|min:8|confirmed',
-            ]);
-            $user = User::find($id);
-            $user->password = Hash::make($request->input('password'));
 
-            $user->save();
-            session()->flash('success', 'Le mot de passe à été mis à jour.');
+        // Valider les fichiers et l'image
+        $request->validate([
+            'password' => 'required|min:8|confirmed',
+        ]);
+        $user = User::find($id);
+        $user->password = Hash::make($request->input('password'));
 
-            return response()->json(['message' => __(' Votre mot de passe a été mis à jour avec succès .'), 'ok' => true]);
-        } catch (ValidationException $e) {
-            // Gestion des erreurs de validation
-            // return response()->json(['ok' => false, 'errors' => $e->errors(), 'message' => 'Données invalides. Veuillez vérifier votre saisie.']);
-            return response()->json(['ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
-            ], 422);
-        } catch (\Throwable $th) {
-            // return response()->json(['ok' => false,  'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
+        $user->save();
+        session()->flash('success', 'Le mot de passe à été mis à jour.');
 
-            return response()->json(['ok' => false,  'message' => $th->getMessage()], 500);
-        }
+        return response()->json(['message' => __(' Votre mot de passe a été mis à jour avec succès .'), 'ok' => true]);
+
     }
 
     public function updateRole(Request $request, string $id)
     {
-        try {
-            // Valider les fichiers et l'image
-            $request->validate([
-                'role' => 'required',
-            ]);
-            $user = User::find($id);
-            $user->syncRoles([$request->input('role')]);
 
-            session()->flash('success', 'Le role à été mis à jour.');
+        // Valider les fichiers et l'image
+        $request->validate([
+            'role' => 'required',
+        ]);
+        $user = User::find($id);
+        $user->syncRoles([$request->input('role')]);
 
-            return response()->json(['ok' => true, 'message' => 'Le role de l\'utilisateur a été mis à jour avec succès']);
-        } catch (ValidationException $e) {
-            // Gestion des erreurs de validation
-            // return response()->json(['ok' => false, 'errors' => $e->errors(), 'message' => 'Données invalides. Veuillez vérifier votre saisie.']);
-            return response()->json(['ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
-            ], 422);
-        } catch (\Throwable $th) {
-            // return response()->json(['ok' => false,  'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
+        session()->flash('success', 'Le role à été mis à jour.');
 
-            return response()->json(['ok' => false,  'message' => $th->getMessage()], 500);
-        }
+        return response()->json(['ok' => true, 'message' => 'Le role de l\'utilisateur a été mis à jour avec succès']);
+
     }
 
     /**
@@ -292,19 +228,17 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        try {
-            $currentUser = auth()->user();
 
-            // Vérifie si l'utilisateur actuel correspond à l'ID à supprimer
-            if ($currentUser->id == $id) {
-                return response()->json(['ok' => false, 'message' => 'Vous ne pouvez pas supprimer votre propre compte.']);
-            }
+        $currentUser = auth()->user();
 
-            \DB::table('users')->where('id', $id)->delete();
-
-            return response()->json(['ok' => true, 'message' => 'l\'utilisateur à été supprimé avec succès.']);
-        } catch (\Exception $e) {
-            return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
+        // Vérifie si l'utilisateur actuel correspond à l'ID à supprimer
+        if ($currentUser->id == $id) {
+            return response()->json(['ok' => false, 'message' => 'Vous ne pouvez pas supprimer votre propre compte.']);
         }
+
+        \DB::table('users')->where('id', $id)->delete();
+
+        return response()->json(['ok' => true, 'message' => 'l\'utilisateur à été supprimé avec succès.']);
+
     }
 }
