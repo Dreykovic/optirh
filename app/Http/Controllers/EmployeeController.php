@@ -31,11 +31,11 @@ class EmployeeController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->input('search', '');     
-        $limit = $request->input('limit', 5);   
-        $page = $request->input('page', 1);  
-        $departmentId = $request->input('deptValue', null); 
-    
+        $search = $request->input('search', '');
+        $limit = $request->input('limit', 5);
+        $page = $request->input('page', 1);
+        $departmentId = $request->input('deptValue', null);
+
         // Construire la requête
         $query = DB::table('employees')
             ->join('duties', 'employees.id', '=', 'duties.employee_id')
@@ -45,10 +45,10 @@ class EmployeeController extends Controller
             // ->where('employees.status', '=', $this->status[0])
             ->where('duties.status', '=', $this->status[0])
             ->orderBy('created_at', 'desc');
-        
+
         // Filtrer par département, si fourni
         if (!is_null($departmentId)) {
-            
+
             $query->where('jobs.department_id', '=', $departmentId);
         }
         if ($search) {
@@ -61,17 +61,18 @@ class EmployeeController extends Controller
                   ->orWhereRaw('LOWER(address1) LIKE ?', ['%' . strtolower($search) . '%']);
             });
         }
-        
-    
+
+
         // Ajouter la pagination
         $employees = $query->paginate($limit);
-    
+
         // Retourner la réponse JSON
         return response()->json($employees);
     }
-    
-    
-    function pages(){
+
+
+    public function pages()
+    {
         $departments = Department::orderBy('created_at', 'desc')->get();
         $query = DB::table('employees')
             ->join('duties', 'employees.id', '=', 'duties.employee_id')
@@ -84,18 +85,19 @@ class EmployeeController extends Controller
 
         $nbre_employees = $query->count();
         return view('pages.admin.personnel.membres.index', compact('nbre_employees', 'departments'));
-        
+
     }
 
     // function pay(){
     //     $departments = Department::orderBy('created_at', 'desc')->get();
     //     return view('pages.admin.personnel.membres.pay-form',compact('departments'));
     // }
-    function paycode(){
+    public function paycode()
+    {
         $departments = Department::orderBy('created_at', 'desc')->get();
-        return view('pages.admin.personnel.membres.pay-form-code',compact('departments'));
+        return view('pages.admin.personnel.membres.pay-form-code', compact('departments'));
     }
-  
+
 
     // function employees($id){
     //     try {
@@ -114,94 +116,116 @@ class EmployeeController extends Controller
     // }
     public function jobEmployees($id)
     {
-        try {
-            // Récupérer uniquement les noms et prénoms des employés liés aux devoirs
-            $duties = Duty::where('evolution', $this->evolutions[0])
-                ->where('job_id', $id)
-                ->with(['employee:id,first_name,last_name,gender']) // Charge les employés avec seulement les champs nécessaires
-                ->get()
-                ->map(function ($duty) {
-                    return [
-                        'id' => $duty->employee->id,
-                        'first_name' => $duty->employee->first_name,
-                        'last_name' => $duty->employee->last_name,
-                        'gender' => $duty->employee->gender,
-                    ];
-                });
-                return response()->json([
-                    'data' => $duties,
-                ], 200);
-                
-            // return response()->json($duties, 200);
-        } catch (\Throwable $th) {
-            return response()->json([
-                'ok' => false,
-                'message' => $th->getMessage(),
-            ], 500);
-        }
+
+        // Récupérer uniquement les noms et prénoms des employés liés aux devoirs
+        $duties = Duty::where('evolution', $this->evolutions[0])
+            ->where('job_id', $id)
+            ->with(['employee:id,first_name,last_name,gender']) // Charge les employés avec seulement les champs nécessaires
+            ->get()
+            ->map(function ($duty) {
+                return [
+                    'id' => $duty->employee->id,
+                    'first_name' => $duty->employee->first_name,
+                    'last_name' => $duty->employee->last_name,
+                    'gender' => $duty->employee->gender,
+                ];
+            });
+        return response()->json([
+            'data' => $duties,
+        ], 200);
+
+        // return response()->json($duties, 200);
+
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        try {
-            // Validation des données d'entrée
-    
-            $validatedData = $request->validate([
-                'first_name' => 'required|max:255|string',
-                'last_name' => 'required|max:255|string',
-                'email' => 'required|email|max:255|unique:employees,email',
-                'phone_number' => 'required|string|max:255|unique:employees,phone_number',
-                'address1' => 'required|string|max:255',
-                'gender' => 'required|in:MALE,FEMALE',
-                'duration' => 'sometimes',
-                'begin_date' => 'required|date',
-                'type' => 'required|string|max:255',
-                'job_id' => 'required|exists:jobs,id',
-                'department_id' => 'required|exists:departments,id',
-                'absence_balance' => 'required|numeric|min:0',
-                // 'force_create' => 'sometimes|boolean',
-            ]);
-            
 
-            // Récupération de la direction et du poste
-            $dept = Department::find($validatedData['department_id']);
-            $job = Job::find($validatedData['job_id']);
+        // Validation des données d'entrée
 
-            if (!$dept || !$job) {
-                return response()->json(['ok' => false, 'message' => 'Direction ou poste introuvable.'], 404);
-            }
+        $validatedData = $request->validate([
+            'first_name' => 'required|max:255|string',
+            'last_name' => 'required|max:255|string',
+            'email' => 'required|email|max:255|unique:employees,email',
+            'phone_number' => 'required|string|max:255|unique:employees,phone_number',
+            'address1' => 'required|string|max:255',
+            'gender' => 'required|in:MALE,FEMALE',
+            'duration' => 'sometimes',
+            'begin_date' => 'required|date',
+            'type' => 'required|string|max:255',
+            'job_id' => 'required|exists:jobs,id',
+            'department_id' => 'required|exists:departments,id',
+            'absence_balance' => 'required|numeric|min:0',
+            // 'force_create' => 'sometimes|boolean',
+        ]);
 
-            // Vérification des conditions spécifiques à la direction
-            if ($dept->name === 'DG' && $dept->director_id !== null && $job->title === 'DG') {
-                if (empty($request->input('force_create'))) {
-                    return response()->json([
-                        'ok' => false,
-                        'message' => 'La direction générale a déjà un directeur. Voulez-vous continuer ?',
-                        'requires_confirmation' => true,
-                    ], 400);
-                }
-            } elseif ($dept->director_id !== null && $job->n_plus_one_job != null && $job->n_plus_one_job->title == 'DG') {
-                if (empty($request->input('force_create'))) {
-                    return response()->json([
-                        'ok' => false,
-                        'message' => 'La direction générale a déjà un directeur. Voulez-vous continuer ?',
-                        'requires_confirmation' => true,
-                    ], 400);
-                }
-            }
 
-            // Création de l'employé
+        // Récupération de la direction et du poste
+        $dept = Department::find($validatedData['department_id']);
+        $job = Job::find($validatedData['job_id']);
+
+        if (!$dept || !$job) {
+            return response()->json(['ok' => false, 'message' => 'Direction ou poste introuvable.'], 404);
+        }
+
+        // Vérification des conditions spécifiques à la direction
+        if ($dept->name === 'DG' && $dept->director_id !== null && $job->title === 'DG') {
             if (empty($request->input('force_create'))) {
+                return response()->json([
+                    'ok' => false,
+                    'message' => 'La direction générale a déjà un directeur. Voulez-vous continuer ?',
+                    'requires_confirmation' => true,
+                ], 400);
+            }
+        } elseif ($dept->director_id !== null && $job->n_plus_one_job != null && $job->n_plus_one_job->title == 'DG') {
+            if (empty($request->input('force_create'))) {
+                return response()->json([
+                    'ok' => false,
+                    'message' => 'La direction générale a déjà un directeur. Voulez-vous continuer ?',
+                    'requires_confirmation' => true,
+                ], 400);
+            }
+        }
+
+        // Création de l'employé
+        if (empty($request->input('force_create'))) {
+            $emp = Employee::create([
+                'first_name' => $validatedData['first_name'],
+                'last_name' => $validatedData['last_name'],
+                'email' => $validatedData['email'],
+                'phone_number' => $validatedData['phone_number'],
+                'address1' => $validatedData['address1'],
+                'gender' => $validatedData['gender'],
+            ]);
+
+            // Création du devoir (Duty)
+            Duty::create([
+                'job_id' => $validatedData['job_id'],
+                'duration' => $validatedData['duration'],
+                'begin_date' => $validatedData['begin_date'],
+                'type' => $validatedData['type'],
+                'employee_id' => $emp->id,
+                'absence_balance' => $validatedData['absence_balance']
+            ]);
+
+            // Mise à jour du directeur de la direction si applicable
+            if ($dept->name === 'DG' || ($job->n_plus_one_job != null && $job->n_plus_one_job->title == 'DG')) {
+                $dept->update(['director_id' => $emp->id]);
+            }
+        }
+
+        if ($dept->name === 'DG' && $dept->director_id !== null && $job->title === 'DG') {
+            if ($request->input('force_create') == true) {
+                $old_header = Employee::find($dept->director_id);
+                $old_header->update(['status' => $this->status[3]]);
+
+                $old_header_duty = Duty::where('employee_id', $old_header->id)->where('evolution', 'ON_GOING');
+                $old_header_duty->update(['evolution' => $this->evolutions[1]]);
+                // Création de l'employé
                 $emp = Employee::create([
                     'first_name' => $validatedData['first_name'],
                     'last_name' => $validatedData['last_name'],
@@ -211,7 +235,7 @@ class EmployeeController extends Controller
                     'gender' => $validatedData['gender'],
                 ]);
 
-            // Création du devoir (Duty)
+                // Création du devoir (Duty)
                 Duty::create([
                     'job_id' => $validatedData['job_id'],
                     'duration' => $validatedData['duration'],
@@ -220,91 +244,51 @@ class EmployeeController extends Controller
                     'employee_id' => $emp->id,
                     'absence_balance' => $validatedData['absence_balance']
                 ]);
-
-                // Mise à jour du directeur de la direction si applicable
-                if ($dept->name === 'DG' || ($job->n_plus_one_job != null && $job->n_plus_one_job->title == 'DG')) {
-                    $dept->update(['director_id' => $emp->id]);
-                }
+                $dept->update(['director_id' => $emp->id]);
             }
+        } elseif ($dept->director_id !== null && $job->n_plus_one_job != null && $job->n_plus_one_job->title == 'DG') {
+            if ($request->input('force_create') == true) {
+                $old_header = Employee::find($dept->director_id);
+                $old_header->update(['status' => 'DELETED']);
 
-            if ($dept->name === 'DG' && $dept->director_id !== null && $job->title === 'DG') {
-                if ($request->input('force_create')==true) {
-                    $old_header = Employee::find($dept->director_id);
-                    $old_header->update(['status' => $this->status[3]]);
+                $old_header_duty = Duty::where('employee_id', $old_header->id)->where('evolution', 'ON_GOING');
+                $old_header_duty->update(['evolution' => $this->status[1]]);
+                // Création de l'employé
+                $emp = Employee::create([
+                    'first_name' => $validatedData['first_name'],
+                    'last_name' => $validatedData['last_name'],
+                    'email' => $validatedData['email'],
+                    'phone_number' => $validatedData['phone_number'],
+                    'address1' => $validatedData['address1'],
+                    'gender' => $validatedData['gender'],
+                ]);
 
-                    $old_header_duty = Duty::where('employee_id',$old_header->id)->where('evolution','ON_GOING');
-                    $old_header_duty->update(['evolution' => $this->evolutions[1]]);
-                    // Création de l'employé
-                    $emp = Employee::create([
-                        'first_name' => $validatedData['first_name'],
-                        'last_name' => $validatedData['last_name'],
-                        'email' => $validatedData['email'],
-                        'phone_number' => $validatedData['phone_number'],
-                        'address1' => $validatedData['address1'],
-                        'gender' => $validatedData['gender'],
-                    ]);
-
-                    // Création du devoir (Duty)
-                    Duty::create([
-                        'job_id' => $validatedData['job_id'],
-                        'duration' => $validatedData['duration'],
-                        'begin_date' => $validatedData['begin_date'],
-                        'type' => $validatedData['type'],
-                        'employee_id' => $emp->id,
-                        'absence_balance' => $validatedData['absence_balance']
-                    ]);
-                    $dept->update(['director_id' => $emp->id]);
-                }
-            } elseif ($dept->director_id !== null && $job->n_plus_one_job != null && $job->n_plus_one_job->title == 'DG') {
-                if ($request->input('force_create')==true) {
-                    $old_header = Employee::find($dept->director_id);
-                    $old_header->update(['status' => 'DELETED']);
-
-                    $old_header_duty = Duty::where('employee_id',$old_header->id)->where('evolution','ON_GOING');
-                    $old_header_duty->update(['evolution' => $this->status[1]]);
-                    // Création de l'employé
-                    $emp = Employee::create([
-                        'first_name' => $validatedData['first_name'],
-                        'last_name' => $validatedData['last_name'],
-                        'email' => $validatedData['email'],
-                        'phone_number' => $validatedData['phone_number'],
-                        'address1' => $validatedData['address1'],
-                        'gender' => $validatedData['gender'],
-                    ]);
-
-                    // Création du devoir (Duty)
-                    Duty::create([
-                        'job_id' => $validatedData['job_id'],
-                        'duration' => $validatedData['duration'],
-                        'begin_date' => $validatedData['begin_date'],
-                        'type' => $validatedData['type'],
-                        'employee_id' => $emp->id,
-                        'absence_balance' => $validatedData['absence_balance']
-                    ]);
-                    $dept->update(['director_id' => $emp->id]);
-                }
+                // Création du devoir (Duty)
+                Duty::create([
+                    'job_id' => $validatedData['job_id'],
+                    'duration' => $validatedData['duration'],
+                    'begin_date' => $validatedData['begin_date'],
+                    'type' => $validatedData['type'],
+                    'employee_id' => $emp->id,
+                    'absence_balance' => $validatedData['absence_balance']
+                ]);
+                $dept->update(['director_id' => $emp->id]);
             }
-
-
-            return response()->json(['message' => 'Employé créé avec succès.', 'ok' => true]);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'ok' => false,
-                'message' => $e->getMessage(),
-                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
-            ], 422);
-        } catch (\Throwable $th) {
-            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
+
+
+        return response()->json(['message' => 'Employé créé avec succès.', 'ok' => true]);
+
     }
 
 
     /**
      * Display the specified resource.
      */
-    public function mesFactures(Employee $employee){
+    public function mesFactures(Employee $employee)
+    {
         $files = File::where('employee_id', $employee->id)->get();
-       
+
         return view('pages.admin.personnel.membres.employee-pay', compact('employee', 'files'));
     }
 
@@ -318,12 +302,6 @@ class EmployeeController extends Controller
         return view('pages.admin.personnel.membres.show', compact('employee', 'duty', 'files'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Employee $employee)
-    {
-    }
 
     /**
      * Update the specified resource in storage. updatePresIdentity
@@ -332,184 +310,147 @@ class EmployeeController extends Controller
     {
         $employee = Employee::findOrFail($id);
 
-        try {
-            $validatedData = $request->validate([
-                'nationality' => 'max:255|sometimes',
-                'religion' => 'max:255|sometimes',
-                'marital_status' => 'max:255|sometimes',
-                'emergency_contact' => 'max:255|sometimes',
-                'city' => 'max:255|sometimes',
-                'state' => 'max:255|sometimes',
-            ]);
-            $employee->update([
-                'nationality' => $validatedData['nationality'],
-                'religion' => $validatedData['religion'],
-                'marital_status' => $validatedData['marital_status'],
-                'emergency_contact' => $validatedData['emergency_contact'],
-                'city' => $validatedData['city'],
-                'state' => $validatedData['state'],
-            ]);
 
-            return response()->json(['message' => 'Employé editer avec succès.', 'ok' => true]);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
-            ], 422);
-        } catch (\Throwable $th) {
-            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
-        }
+        $validatedData = $request->validate([
+            'nationality' => 'max:255|sometimes',
+            'religion' => 'max:255|sometimes',
+            'marital_status' => 'max:255|sometimes',
+            'emergency_contact' => 'max:255|sometimes',
+            'city' => 'max:255|sometimes',
+            'state' => 'max:255|sometimes',
+        ]);
+        $employee->update([
+            'nationality' => $validatedData['nationality'],
+            'religion' => $validatedData['religion'],
+            'marital_status' => $validatedData['marital_status'],
+            'emergency_contact' => $validatedData['emergency_contact'],
+            'city' => $validatedData['city'],
+            'state' => $validatedData['state'],
+        ]);
+
+        return response()->json(['message' => 'Employé editer avec succès.', 'ok' => true]);
+
     }
 
     public function updatePresIdentity(Request $request, $id)
     {
         $employee = Employee::findOrFail($id);
 
-        try {
-            $validatedData = $request->validate([
-                'first_name' => 'max:255|sometimes',
-                'last_name' => 'max:255|sometimes',
-                'phone_number' => 'max:255|sometimes',
-                'address1' => 'max:255|sometimes',
-                'birth_date' => 'max:255|sometimes',
-                'email' => 'max:255|sometimes',
-            ]);
-            $employee->update([
-                'first_name' => $validatedData['first_name'],
-                'last_name' => $validatedData['last_name'],
-                'phone_number' => $validatedData['phone_number'],
-                'address1' => $validatedData['address1'],
-                'birth_date' => $validatedData['birth_date'],
-                'email' => $validatedData['email'],
-            ]);
 
-            return response()->json(['message' => 'Employé editer avec succès.', 'ok' => true]);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
-            ], 422);
-        } catch (\Throwable $th) {
-            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
-        }
+        $validatedData = $request->validate([
+            'first_name' => 'max:255|sometimes',
+            'last_name' => 'max:255|sometimes',
+            'phone_number' => 'max:255|sometimes',
+            'address1' => 'max:255|sometimes',
+            'birth_date' => 'max:255|sometimes',
+            'email' => 'max:255|sometimes',
+        ]);
+        $employee->update([
+            'first_name' => $validatedData['first_name'],
+            'last_name' => $validatedData['last_name'],
+            'phone_number' => $validatedData['phone_number'],
+            'address1' => $validatedData['address1'],
+            'birth_date' => $validatedData['birth_date'],
+            'email' => $validatedData['email'],
+        ]);
+
+        return response()->json(['message' => 'Employé editer avec succès.', 'ok' => true]);
+
     }
 
 
 
     public function updateBank(Request $request, Employee $employee)
     {
-        try {
-            $validatedData = $request->validate([
-                'bank_name' => 'max:255|sometimes',
-                'rib' => 'max:255|sometimes',
-                'code_bank' => 'max:255|sometimes',
-                'code_guichet' => 'max:255|sometimes',
-                'iban' => 'max:255|sometimes',
-                'swift' => 'max:255|sometimes',
-                'cle_rib' => 'max:255|sometimes',
-            ]);
-            $employee->update([
-                'bank_name' => $validatedData['bank_name'],
-                'rib' => $validatedData['rib'],
-                'code_bank' => $validatedData['code_bank'],
-                'code_guichet' => $validatedData['code_guichet'],
-                'iban' => $validatedData['iban'],
-                'swift' => $validatedData['swift'],
-                'cle_rib' => $validatedData['cle_rib'],
-            ]);
 
-            return response()->json(['message' => 'Employé editer avec succès.', 'ok' => true]);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
-            ], 422);
-        } catch (\Throwable $th) {
-            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
-        }
+        $validatedData = $request->validate([
+            'bank_name' => 'max:255|sometimes',
+            'rib' => 'max:255|sometimes',
+            'code_bank' => 'max:255|sometimes',
+            'code_guichet' => 'max:255|sometimes',
+            'iban' => 'max:255|sometimes',
+            'swift' => 'max:255|sometimes',
+            'cle_rib' => 'max:255|sometimes',
+        ]);
+        $employee->update([
+            'bank_name' => $validatedData['bank_name'],
+            'rib' => $validatedData['rib'],
+            'code_bank' => $validatedData['code_bank'],
+            'code_guichet' => $validatedData['code_guichet'],
+            'iban' => $validatedData['iban'],
+            'swift' => $validatedData['swift'],
+            'cle_rib' => $validatedData['cle_rib'],
+        ]);
+
+        return response()->json(['message' => 'Employé editer avec succès.', 'ok' => true]);
+
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Employee $employee)
-    {
-    }
 
     public function editEmployeeData()
-        {
-            $user = Auth::user();
-            $employee = $user->employee;
-            return view('pages.admin.personnel.membres.edits.index',compact('employee'));
-        }
-    public function updateEmployeeData(Request $request, $id){
+    {
+        $user = Auth::user();
+        $employee = $user->employee;
+        return view('pages.admin.personnel.membres.edits.index', compact('employee'));
+    }
+    public function updateEmployeeData(Request $request, $id)
+    {
         $employee = Employee::findOrFail($id);
-        try {
-            $validatedData = $request->validate([
-                'first_name' => 'max:255|string|required',
-                'last_name' => 'max:255|string|required',
-                'phone_number' => 'max:255|string|required',
-                'email' => 'max:255|string|required',
-                'gender' => 'max:255|string|required',
-                'address1' => 'max:255|string|sometimes',
-                'birth_date' => 'sometimes',
 
-                'nationality' => 'max:255|sometimes',
-                'religion' => 'max:255|sometimes',
-                'marital_status' => 'max:255|sometimes',
-                'emergency_contact' => 'max:255|sometimes',
-                'city' => 'max:255|sometimes',
-                'state' => 'max:255|sometimes',
+        $validatedData = $request->validate([
+            'first_name' => 'max:255|string|required',
+            'last_name' => 'max:255|string|required',
+            'phone_number' => 'max:255|string|required',
+            'email' => 'max:255|string|required',
+            'gender' => 'max:255|string|required',
+            'address1' => 'max:255|string|sometimes',
+            'birth_date' => 'sometimes',
 
-                'bank_name' => 'max:255|sometimes',
-                'rib' => 'max:255|sometimes',
-                'code_bank' => 'max:255|sometimes',
-                'code_guichet' => 'max:255|sometimes',
-                'iban' => 'max:255|sometimes',
-                'swift' => 'max:255|sometimes',
-                'cle_rib' => 'max:255|sometimes',
-            ]);
-            $employee->update([
-                'nationality' => $validatedData['nationality'],
-                'religion' => $validatedData['religion'],
-                'marital_status' => $validatedData['marital_status'],
-                'emergency_contact' => $validatedData['emergency_contact'],
-                'city' => $validatedData['city'],
-                'state' => $validatedData['state'],
+            'nationality' => 'max:255|sometimes',
+            'religion' => 'max:255|sometimes',
+            'marital_status' => 'max:255|sometimes',
+            'emergency_contact' => 'max:255|sometimes',
+            'city' => 'max:255|sometimes',
+            'state' => 'max:255|sometimes',
 
-                'bank_name' => $validatedData['bank_name'],
-                'rib' => $validatedData['rib'],
-                'code_bank' => $validatedData['code_bank'],
-                'code_guichet' => $validatedData['code_guichet'],
-                'iban' => $validatedData['iban'],
-                'swift' => $validatedData['swift'],
-                'cle_rib' => $validatedData['cle_rib'],
+            'bank_name' => 'max:255|sometimes',
+            'rib' => 'max:255|sometimes',
+            'code_bank' => 'max:255|sometimes',
+            'code_guichet' => 'max:255|sometimes',
+            'iban' => 'max:255|sometimes',
+            'swift' => 'max:255|sometimes',
+            'cle_rib' => 'max:255|sometimes',
+        ]);
+        $employee->update([
+            'nationality' => $validatedData['nationality'],
+            'religion' => $validatedData['religion'],
+            'marital_status' => $validatedData['marital_status'],
+            'emergency_contact' => $validatedData['emergency_contact'],
+            'city' => $validatedData['city'],
+            'state' => $validatedData['state'],
 
-                'first_name' => $validatedData['first_name'],
-                'last_name' => $validatedData['last_name'],
-                'phone_number' => $validatedData['phone_number'],
-                'email' => $validatedData['email'],
-                'gender' => $validatedData['gender'],
-                'address1' => $validatedData['address1'],
-                'birth_date' => $validatedData['birth_date'],
+            'bank_name' => $validatedData['bank_name'],
+            'rib' => $validatedData['rib'],
+            'code_bank' => $validatedData['code_bank'],
+            'code_guichet' => $validatedData['code_guichet'],
+            'iban' => $validatedData['iban'],
+            'swift' => $validatedData['swift'],
+            'cle_rib' => $validatedData['cle_rib'],
 
-            ]);
+            'first_name' => $validatedData['first_name'],
+            'last_name' => $validatedData['last_name'],
+            'phone_number' => $validatedData['phone_number'],
+            'email' => $validatedData['email'],
+            'gender' => $validatedData['gender'],
+            'address1' => $validatedData['address1'],
+            'birth_date' => $validatedData['birth_date'],
 
-            return response()->json(['message' => 'Employé editer avec succès.', 'ok' => true]);
-        }catch (ValidationException $e) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
-            ], 422);
-        } catch (\Throwable $th) {
-            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
-        }
+        ]);
 
-    }    
+        return response()->json(['message' => 'Employé editer avec succès.', 'ok' => true]);
+
+
+    }
 
 
 }

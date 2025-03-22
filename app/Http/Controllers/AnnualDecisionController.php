@@ -13,22 +13,6 @@ use Illuminate\Validation\ValidationException;
 class AnnualDecisionController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function storeOrUpdate(Request $request, $id = null)
@@ -99,27 +83,5 @@ class AnnualDecisionController extends Controller
     }
 
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(AnnualDecision $annualDecision)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, AnnualDecision $annualDecision)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(AnnualDecision $annualDecision)
-    {
-        //
-    }
 }

@@ -21,108 +21,62 @@ class DocumentTypeController extends Controller
      */
     public function index()
     {
-        try {
-            $documentTypes = DocumentType::all();
 
-            return view('pages.admin.documents.types.index', compact('documentTypes'));
-        } catch (\Throwable $th) {
-            dd($th->getMessage());
+        $documentTypes = DocumentType::all();
 
-            // Gestion des erreurs avec un message d'erreur plus propre
-            return back()->with('error', 'Une erreur s\'est produite lors du chargement des types de document.');
-            // abort(500);
-        }
+        return view('pages.admin.documents.types.index', compact('documentTypes'));
+
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-    }
+
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        try {
-            // Valider les fichiers et l'image
-            $request->validate([
-                'libelle' => 'required|string',
-                'description' => 'sometimes',
-                'type' => 'sometimes',
-            ]);
 
-            DocumentType::create([
-                'label' => $request->input('libelle'),
-                'description' => $request->input('description'),
-                'type' => $request->input('type') ?? 'NORMAL',
-            ]);
+        // Valider les fichiers et l'image
+        $request->validate([
+            'libelle' => 'required|string',
+            'description' => 'sometimes',
+            'type' => 'sometimes',
+        ]);
 
-            // Redirection avec message de succès
-            return response()->json(['message' => 'Type Document créé avec succès.', 'ok' => true]);
-        } catch (ValidationException $e) {
-            // Gestion des erreurs de validation
-            // return response()->json(['ok' => false, 'errors' => $e->errors(), 'message' => 'Données invalides. Veuillez vérifier votre saisie.']);
-            return response()->json(['ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
-            ], 422);
-        } catch (\Throwable $th) {
-            // return response()->json(['ok' => false,  'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
+        DocumentType::create([
+            'label' => $request->input('libelle'),
+            'description' => $request->input('description'),
+            'type' => $request->input('type') ?? 'NORMAL',
+        ]);
 
-            return response()->json(['ok' => false,  'message' => $th->getMessage()], 500);
-        }
+        // Redirection avec message de succès
+        return response()->json(['message' => 'Type Document créé avec succès.', 'ok' => true]);
+
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(DocumentType $documentType)
-    {
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(DocumentType $documentType)
-    {
-    }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $documentTypeId)
     {
-        try {
-            // Valider les fichiers et l'image
-            $request->validate([
-                'libelle' => 'required|string',
-                'description' => 'sometimes',
-                'type' => 'sometimes',
-            ]);
-            $documentType = DocumentType::find($documentTypeId);
-            $documentType->label = $request->input('libelle');
-            $documentType->description = $request->input('description');
-            $documentType->type = $request->input('type') ?? $documentType->type;
 
-            $documentType->save();
+        // Valider les fichiers et l'image
+        $request->validate([
+            'libelle' => 'required|string',
+            'description' => 'sometimes',
+            'type' => 'sometimes',
+        ]);
+        $documentType = DocumentType::find($documentTypeId);
+        $documentType->label = $request->input('libelle');
+        $documentType->description = $request->input('description');
+        $documentType->type = $request->input('type') ?? $documentType->type;
 
-            // Redirection avec message de succès
-            return response()->json(['message' => 'Type Document mis à jour avec succès.', 'ok' => true]);
-        } catch (ValidationException $e) {
-            // Gestion des erreurs de validation
-            // return response()->json(['ok' => false, 'errors' => $e->errors(), 'message' => 'Données invalides. Veuillez vérifier votre saisie.']);
-            return response()->json(['ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
-            ], 422);
-        } catch (\Throwable $th) {
-            // return response()->json(['ok' => false,  'message' => 'Une erreur s\'est produite. Veuillez réessayer.'], 500);
+        $documentType->save();
 
-            return response()->json(['ok' => false,  'message' => $th->getMessage()], 500);
-        }
+        // Redirection avec message de succès
+        return response()->json(['message' => 'Type Document mis à jour avec succès.', 'ok' => true]);
+
     }
 
     /**
@@ -130,13 +84,10 @@ class DocumentTypeController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            \DB::table('document_types')->where('id', $id)->delete();
 
-            return response()->json(['ok' => true, 'message' => 'Le type d\document a été retiré avec succès.']);
-        } catch (\Throwable $th) {
-            return response()->json(['ok' => false, 'message' => $th->getMessage()]);
-            // return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
-        }
+        \DB::table('document_types')->where('id', $id)->delete();
+
+        return response()->json(['ok' => true, 'message' => 'Le type d\document a été retiré avec succès.']);
+
     }
 }

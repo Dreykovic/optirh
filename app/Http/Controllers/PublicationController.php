@@ -50,43 +50,30 @@ class PublicationController extends Controller
      */
     public function index($status = 'all')
     {
-        try {
-            // Liste des statuts valides
-            $validStatus = ['archived', 'pending', 'published'];
 
-            // Vérification de la validité du statut
-            if ($status !== 'all' && !in_array($status, $validStatus)) {
-                $this->activityLogger->log(
-                    'error',
-                    "Tentative d'accès aux publications avec un statut invalide: {$status}"
-                );
+        // Liste des statuts valides
+        $validStatus = ['archived', 'pending', 'published'];
 
-                return redirect()->back()->with('error', 'Statut invalide');
-            }
-
-            // Construction de la requête
-            $publications = $this->getPublicationsByStatus($status);
-
-            $this->activityLogger->log(
-                'view',
-                "Consultation de la liste des publications - Statut: {$status}"
-            );
-
-            return view('pages.admin.publications.config.index', compact('publications', 'status'));
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors du chargement des publications', [
-                'status' => $status,
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString()
-            ]);
-
+        // Vérification de la validité du statut
+        if ($status !== 'all' && !in_array($status, $validStatus)) {
             $this->activityLogger->log(
                 'error',
-                "Erreur lors du chargement des publications - Statut: {$status}"
+                "Tentative d'accès aux publications avec un statut invalide: {$status}"
             );
 
-            return back()->with('error', 'Une erreur s\'est produite lors du chargement des publications. Veuillez réessayer.');
+            return redirect()->back()->with('error', 'Statut invalide');
         }
+
+        // Construction de la requête
+        $publications = $this->getPublicationsByStatus($status);
+
+        $this->activityLogger->log(
+            'view',
+            "Consultation de la liste des publications - Statut: {$status}"
+        );
+
+        return view('pages.admin.publications.config.index', compact('publications', 'status'));
+
     }
 
     /**
@@ -120,68 +107,41 @@ class PublicationController extends Controller
      */
     public function updateStatus($status, $id)
     {
-        try {
-            // Liste des statuts valides
-            $validStatus = ['archived', 'pending', 'published'];
 
-            // Vérification de la validité du statut
-            if (!in_array($status, $validStatus)) {
-                $this->activityLogger->log(
-                    'error',
-                    "Tentative de mise à jour d'une publication avec un statut invalide: {$status}"
-                );
+        // Liste des statuts valides
+        $validStatus = ['archived', 'pending', 'published'];
 
-                return response()->json([
-                    'ok' => false,
-                    'message' => 'Statut invalide'
-                ], 400);
-            }
-
-            $publication = Publication::findOrFail($id);
-            $oldStatus = $publication->status;
-
-            // Mettre à jour le statut
-            $publication->status = $status;
-            $publication->save();
-
-            $this->activityLogger->log(
-                'updated',
-                "Mise à jour du statut de la publication #{$id} - Statut: {$oldStatus} → {$status}",
-                $publication
-            );
-
-            return response()->json([
-                'ok' => true,
-                'message' => 'Statut mis à jour avec succès'
-            ]);
-        } catch (ModelNotFoundException $e) {
-            Log::warning('Publication non trouvée lors de la mise à jour du statut', [
-                'publication_id' => $id,
-                'status' => $status
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Publication non trouvée'
-            ], 404);
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors de la mise à jour du statut d\'une publication', [
-                'publication_id' => $id,
-                'status' => $status,
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString()
-            ]);
-
+        // Vérification de la validité du statut
+        if (!in_array($status, $validStatus)) {
             $this->activityLogger->log(
                 'error',
-                "Échec de mise à jour du statut de la publication #{$id}"
+                "Tentative de mise à jour d'une publication avec un statut invalide: {$status}"
             );
 
             return response()->json([
                 'ok' => false,
-                'message' => 'Une erreur s\'est produite. Veuillez réessayer.'
-            ], 500);
+                'message' => 'Statut invalide'
+            ], 400);
         }
+
+        $publication = Publication::findOrFail($id);
+        $oldStatus = $publication->status;
+
+        // Mettre à jour le statut
+        $publication->status = $status;
+        $publication->save();
+
+        $this->activityLogger->log(
+            'updated',
+            "Mise à jour du statut de la publication #{$id} - Statut: {$oldStatus} → {$status}",
+            $publication
+        );
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'Statut mis à jour avec succès'
+        ]);
+
     }
 
     /**
@@ -192,60 +152,34 @@ class PublicationController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $validatedData = $request->validate([
-                'title' => 'required|string|max:255',
-                'content' => 'sometimes',
-                'files.*' => 'nullable|mimes:jpg,jpeg,png,gif,pdf',
-            ]);
 
-            // Création de la publication
-            $publication = new Publication();
-            $publication->title = $validatedData['title'];
-            $publication->content = $request->input('content');
-            $publication->author_id = auth()->id();
-            $publication->save();
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'sometimes',
+            'files.*' => 'nullable|mimes:jpg,jpeg,png,gif,pdf',
+        ]);
 
-            // Traitement des fichiers
-            $this->processPublicationFiles($request, $publication);
+        // Création de la publication
+        $publication = new Publication();
+        $publication->title = $validatedData['title'];
+        $publication->content = $request->input('content');
+        $publication->author_id = auth()->id();
+        $publication->save();
 
-            $this->activityLogger->log(
-                'created',
-                "Création d'une nouvelle publication: {$publication->title}",
-                $publication
-            );
+        // Traitement des fichiers
+        $this->processPublicationFiles($request, $publication);
 
-            return response()->json([
-                'message' => 'Note créée avec succès',
-                'ok' => true
-            ]);
-        } catch (ValidationException $e) {
-            Log::warning('Erreur de validation lors de la création d\'une publication', [
-                'errors' => $e->errors(),
-            ]);
+        $this->activityLogger->log(
+            'created',
+            "Création d'une nouvelle publication: {$publication->title}",
+            $publication
+        );
 
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors de la création d\'une publication', [
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString(),
-                'inputs' => $request->except(['files']),
-            ]);
+        return response()->json([
+            'message' => 'Note créée avec succès',
+            'ok' => true
+        ]);
 
-            $this->activityLogger->log(
-                'error',
-                "Échec de création d'une publication"
-            );
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s\'est produite lors de la création de la publication.'
-            ], 500);
-        }
     }
 
     /**
@@ -280,42 +214,17 @@ class PublicationController extends Controller
      */
     public function preview($id)
     {
-        try {
-            $file = PublicationFile::findOrFail($id);
 
-            $this->activityLogger->log(
-                'download',
-                "Téléchargement du fichier #{$id} de la publication #{$file->publication_id}",
-                $file
-            );
+        $file = PublicationFile::findOrFail($id);
 
-            return response()->download($this->fileService->getFile($file));
-        } catch (ModelNotFoundException $e) {
-            Log::warning('Fichier de publication non trouvé lors de la prévisualisation', [
-                'file_id' => $id
-            ]);
+        $this->activityLogger->log(
+            'download',
+            "Téléchargement du fichier #{$id} de la publication #{$file->publication_id}",
+            $file
+        );
 
-            return response()->json([
-                'ok' => false,
-                'message' => 'Fichier non trouvé.'
-            ], 404);
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors de la prévisualisation d\'un fichier de publication', [
-                'file_id' => $id,
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString()
-            ]);
+        return response()->download($this->fileService->getFile($file));
 
-            $this->activityLogger->log(
-                'error',
-                "Échec de téléchargement du fichier #{$id}"
-            );
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s\'est produite lors de la prévisualisation du fichier.'
-            ], 500);
-        }
     }
 
     /**
@@ -326,60 +235,35 @@ class PublicationController extends Controller
      */
     public function destroy(string $id)
     {
-        try {
-            $publication = Publication::findOrFail($id);
-            $publicationTitle = $publication->title;
 
-            // Supprimer les fichiers associés
-            if ($publication->files->isNotEmpty()) {
-                foreach ($publication->files as $file) {
-                    $this->activityLogger->log(
-                        'deleted',
-                        "Suppression du fichier #{$file->id} associé à la publication #{$id}",
-                        $file
-                    );
+        $publication = Publication::findOrFail($id);
+        $publicationTitle = $publication->title;
 
-                    $this->fileService->destroyFile($file);
-                }
+        // Supprimer les fichiers associés
+        if ($publication->files->isNotEmpty()) {
+            foreach ($publication->files as $file) {
+                $this->activityLogger->log(
+                    'deleted',
+                    "Suppression du fichier #{$file->id} associé à la publication #{$id}",
+                    $file
+                );
+
+                $this->fileService->destroyFile($file);
             }
-
-            // Supprimer la publication
-            $publication->delete();
-
-            $this->activityLogger->log(
-                'deleted',
-                "Suppression de la publication #{$id}: {$publicationTitle}"
-            );
-
-            return response()->json([
-                'ok' => true,
-                'message' => 'La note a été supprimée avec succès.'
-            ]);
-        } catch (ModelNotFoundException $e) {
-            Log::warning('Publication non trouvée lors de la suppression', [
-                'publication_id' => $id
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Publication non trouvée.'
-            ], 404);
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors de la suppression d\'une publication', [
-                'publication_id' => $id,
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString()
-            ]);
-
-            $this->activityLogger->log(
-                'error',
-                "Échec de suppression de la publication #{$id}"
-            );
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s\'est produite lors de la suppression de la publication.'
-            ], 500);
         }
+
+        // Supprimer la publication
+        $publication->delete();
+
+        $this->activityLogger->log(
+            'deleted',
+            "Suppression de la publication #{$id}: {$publicationTitle}"
+        );
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'La note a été supprimée avec succès.'
+        ]);
+
     }
 }

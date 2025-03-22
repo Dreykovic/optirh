@@ -39,31 +39,18 @@ class DocumentRequestController extends Controller
      */
     public function download($documentRequestId)
     {
-        try {
-            $documentRequest = DocumentRequest::findOrFail($documentRequestId);
-            $documentPdf = new DocumentPdfService();
 
-            $this->activityLogger->log(
-                'download',
-                "Téléchargement du PDF de demande de document #{$documentRequest->id}",
-                $documentRequest
-            );
+        $documentRequest = DocumentRequest::findOrFail($documentRequestId);
+        $documentPdf = new DocumentPdfService();
 
-            return $documentPdf->generate($documentRequest);
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors du téléchargement du PDF de demande de document', [
-                'document_request_id' => $documentRequestId,
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString()
-            ]);
+        $this->activityLogger->log(
+            'download',
+            "Téléchargement du PDF de demande de document #{$documentRequest->id}",
+            $documentRequest
+        );
 
-            $this->activityLogger->log(
-                'error',
-                "Échec du téléchargement du PDF de demande de document #{$documentRequestId}"
-            );
+        return $documentPdf->generate($documentRequest);
 
-            return back()->with('error', 'Une erreur s\'est produite lors du téléchargement du PDF. Veuillez réessayer.');
-        }
     }
 
     /**
@@ -75,56 +62,43 @@ class DocumentRequestController extends Controller
      */
     public function index(Request $request, $stage = 'PENDING')
     {
-        try {
-            // Liste des stages valides
-            $validStages = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'IN_PROGRESS', 'COMPLETED'];
 
-            // Vérification de la validité du stage
-            if ($stage !== 'ALL' && !in_array($stage, $validStages)) {
-                $this->activityLogger->log(
-                    'error',
-                    "Tentative d'accès aux demandes de documents avec un stage invalide: {$stage}"
-                );
+        // Liste des stages valides
+        $validStages = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'IN_PROGRESS', 'COMPLETED'];
 
-                return redirect()->route('documents.requests')->with('error', 'Stage invalide');
-            }
-
-            // Récupérer les filtres de recherche
-            $type = $request->input('type');
-            $search = $request->input('search');
-
-            // Récupérer les types de document
-            $document_types = DocumentType::all();
-
-            // Construire la requête principale
-            $query = $this->buildDocumentRequestQuery($search, $type, $stage);
-
-            // Pagination adaptative selon le type de stage
-            $documentRequests = $this->getPaginatedResults($query, $stage);
-
-            $this->activityLogger->log(
-                'view',
-                "Consultation de la liste des demandes de documents - Stage: {$stage}" .
-                ($type ? ", Type: {$type}" : "") .
-                ($search ? ", Recherche: {$search}" : "")
-            );
-
-            // Retourner la vue avec les données nécessaires
-            return view('pages.admin.documents.main.index', compact('documentRequests', 'stage', 'document_types'));
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors du chargement des demandes de documents', [
-                'stage' => $stage,
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString()
-            ]);
-
+        // Vérification de la validité du stage
+        if ($stage !== 'ALL' && !in_array($stage, $validStages)) {
             $this->activityLogger->log(
                 'error',
-                "Erreur lors du chargement des demandes de documents - Stage: {$stage}"
+                "Tentative d'accès aux demandes de documents avec un stage invalide: {$stage}"
             );
 
-            return back()->with('error', 'Une erreur s\'est produite lors du chargement des demandes de documents. Veuillez réessayer.');
+            return redirect()->route('documents.requests')->with('error', 'Stage invalide');
         }
+
+        // Récupérer les filtres de recherche
+        $type = $request->input('type');
+        $search = $request->input('search');
+
+        // Récupérer les types de document
+        $document_types = DocumentType::all();
+
+        // Construire la requête principale
+        $query = $this->buildDocumentRequestQuery($search, $type, $stage);
+
+        // Pagination adaptative selon le type de stage
+        $documentRequests = $this->getPaginatedResults($query, $stage);
+
+        $this->activityLogger->log(
+            'view',
+            "Consultation de la liste des demandes de documents - Stage: {$stage}" .
+            ($type ? ", Type: {$type}" : "") .
+            ($search ? ", Recherche: {$search}" : "")
+        );
+
+        // Retourner la vue avec les données nécessaires
+        return view('pages.admin.documents.main.index', compact('documentRequests', 'stage', 'document_types'));
+
     }
 
     /**
@@ -186,28 +160,16 @@ class DocumentRequestController extends Controller
      */
     public function create()
     {
-        try {
-            $documentTypes = DocumentType::all();
 
-            $this->activityLogger->log(
-                'access',
-                "Accès au formulaire de création de demande de document"
-            );
+        $documentTypes = DocumentType::all();
 
-            return view('pages.admin.documents.main.create', compact('documentTypes'));
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors du chargement du formulaire de création de demande de document', [
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString()
-            ]);
+        $this->activityLogger->log(
+            'access',
+            "Accès au formulaire de création de demande de document"
+        );
 
-            $this->activityLogger->log(
-                'error',
-                "Erreur lors de l'accès au formulaire de création de demande de document"
-            );
+        return view('pages.admin.documents.main.create', compact('documentTypes'));
 
-            return back()->with('error', 'Une erreur s\'est produite lors du chargement des types de document.');
-        }
     }
 
     /**
@@ -218,89 +180,47 @@ class DocumentRequestController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            // Validation des champs de la requête
-            $validatedData = $request->validate([
-                'document_type' => 'required|exists:document_types,id', // Corrigé de absence_types à document_types
-                'start_date' => 'required|date|before_or_equal:end_date',
-                'end_date' => 'required|date|after_or_equal:start_date',
-            ]);
 
-            // Récupération de l'employé actuel et de sa mission en cours
-            $currentUser = User::with('employee')->findOrFail(auth()->id());
-            $currentEmployee = $currentUser->employee;
+        // Validation des champs de la requête
+        $validatedData = $request->validate([
+            'document_type' => 'required|exists:document_types,id', // Corrigé de absence_types à document_types
+            'start_date' => 'required|date|before_or_equal:end_date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
 
-            $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
-                                        ->where('employee_id', $currentEmployee->id)
-                                        ->firstOrFail();
-            $document_type_id = $request->input('document_type');
+        // Récupération de l'employé actuel et de sa mission en cours
+        $currentUser = User::with('employee')->findOrFail(auth()->id());
+        $currentEmployee = $currentUser->employee;
 
-            // Obtenir le type de document pour le log
-            $documentType = DocumentType::find($document_type_id);
+        $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
+                                    ->where('employee_id', $currentEmployee->id)
+                                    ->firstOrFail();
+        $document_type_id = $request->input('document_type');
 
-            // Enregistrement de la demande de document
-            $documentRequest = DocumentRequest::create([
-                'duty_id' => $currentEmployeeDuty->id,
-                'document_type_id' => $document_type_id,
-                'start_date' => $validatedData['start_date'],
-                'end_date' => $validatedData['end_date'],
-            ]);
+        // Obtenir le type de document pour le log
+        $documentType = DocumentType::find($document_type_id);
 
-            $this->activityLogger->log(
-                'created',
-                "Création d'une demande de document de type {$documentType->label}",
-                $documentRequest
-            );
+        // Enregistrement de la demande de document
+        $documentRequest = DocumentRequest::create([
+            'duty_id' => $currentEmployeeDuty->id,
+            'document_type_id' => $document_type_id,
+            'start_date' => $validatedData['start_date'],
+            'end_date' => $validatedData['end_date'],
+        ]);
 
-            $var = $documentRequest->document_type ? $documentRequest->document_type->label : '';
+        $this->activityLogger->log(
+            'created',
+            "Création d'une demande de document de type {$documentType->label}",
+            $documentRequest
+        );
 
-            return response()->json([
-                'message' => "Demande de {$var} créée avec succès.",
-                'ok' => true,
-            ]);
-        } catch (ValidationException $e) {
-            Log::warning('Erreur de validation lors de la création d\'une demande de document', [
-                'errors' => $e->errors(),
-            ]);
+        $var = $documentRequest->document_type ? $documentRequest->document_type->label : '';
 
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (ModelNotFoundException $e) {
-            Log::warning('Entité non trouvée lors de la création d\'une demande de document', [
-                'error' => $e->getMessage(),
-            ]);
+        return response()->json([
+            'message' => "Demande de {$var} créée avec succès.",
+            'ok' => true,
+        ]);
 
-            $this->activityLogger->log(
-                'error',
-                "Échec de création d'une demande de document - Entité non trouvée"
-            );
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Données introuvables. Veuillez vérifier les entrées.',
-                'errors' => $e->getMessage(),
-            ], 404);
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors de la création d\'une demande de document', [
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString(),
-                'inputs' => $request->except(['_token']),
-            ]);
-
-            $this->activityLogger->log(
-                'error',
-                "Échec de création d'une demande de document - Erreur serveur"
-            );
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s\'est produite lors de la création de la demande de document.',
-                'error' => $th->getMessage(),
-            ], 500);
-        }
     }
 
     /**
@@ -312,70 +232,38 @@ class DocumentRequestController extends Controller
      */
     public function updateStageAndLevel(Request $request, $id)
     {
-        try {
-            // Valider les entrées
-            $validatedData = $request->validate([
-                'stage' => 'required|in:PENDING,APPROVED,REJECTED,CANCELLED,IN_PROGRESS,COMPLETED',
-                'level' => 'required|in:ZERO,ONE,TWO,THREE',
-            ]);
 
-            // Rechercher la demande de document par ID (corrigé de Absence à DocumentRequest)
-            $documentRequest = DocumentRequest::findOrFail($id);
+        // Valider les entrées
+        $validatedData = $request->validate([
+            'stage' => 'required|in:PENDING,APPROVED,REJECTED,CANCELLED,IN_PROGRESS,COMPLETED',
+            'level' => 'required|in:ZERO,ONE,TWO,THREE',
+        ]);
 
-            // Sauvegarder les valeurs précédentes pour le log
-            $oldStage = $documentRequest->stage;
-            $oldLevel = $documentRequest->level;
+        // Rechercher la demande de document par ID (corrigé de Absence à DocumentRequest)
+        $documentRequest = DocumentRequest::findOrFail($id);
 
-            // Mettre à jour les champs stage et level
-            $documentRequest->stage = $validatedData['stage'];
-            $documentRequest->level = $validatedData['level'];
+        // Sauvegarder les valeurs précédentes pour le log
+        $oldStage = $documentRequest->stage;
+        $oldLevel = $documentRequest->level;
 
-            // Sauvegarder les modifications
-            $documentRequest->save();
+        // Mettre à jour les champs stage et level
+        $documentRequest->stage = $validatedData['stage'];
+        $documentRequest->level = $validatedData['level'];
 
-            $this->activityLogger->log(
-                'updated',
-                "Mise à jour du statut de la demande de document #{$id} - Stage: {$oldStage} → {$documentRequest->stage}, Level: {$oldLevel} → {$documentRequest->level}",
-                $documentRequest
-            );
+        // Sauvegarder les modifications
+        $documentRequest->save();
 
-            return response()->json([
-                'message' => 'Stage and level updated successfully.',
-                'ok' => true,
-            ]);
-        } catch (ValidationException $e) {
-            Log::warning('Erreur de validation lors de la mise à jour du statut d\'une demande de document', [
-                'document_request_id' => $id,
-                'errors' => $e->errors(),
-            ]);
+        $this->activityLogger->log(
+            'updated',
+            "Mise à jour du statut de la demande de document #{$id} - Stage: {$oldStage} → {$documentRequest->stage}, Level: {$oldLevel} → {$documentRequest->level}",
+            $documentRequest
+        );
 
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (ModelNotFoundException $e) {
-            Log::warning('Demande de document non trouvée lors de la mise à jour du statut', [
-                'document_request_id' => $id,
-            ]);
+        return response()->json([
+            'message' => 'Stage and level updated successfully.',
+            'ok' => true,
+        ]);
 
-            return response()->json([
-                'ok' => false,
-                'message' => 'Demande de document introuvable. Veuillez vérifier l\'identifiant.',
-            ], 404);
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors de la mise à jour du statut d\'une demande de document', [
-                'document_request_id' => $id,
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString(),
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s\'est produite. Veuillez réessayer.',
-                'error' => $th->getMessage(),
-            ], 500);
-        }
     }
 
     /**
@@ -388,64 +276,29 @@ class DocumentRequestController extends Controller
     {
         DB::beginTransaction();
 
-        try {
-            // Rechercher la demande de document par ID
-            $documentRequest = DocumentRequest::findOrFail($id);
-            $oldStage = $documentRequest->stage;
-            $oldLevel = $documentRequest->level;
 
-            // Mise à jour du niveau et du statut
-            $documentRequest->updateLevelAndStage();
+        // Rechercher la demande de document par ID
+        $documentRequest = DocumentRequest::findOrFail($id);
+        $oldStage = $documentRequest->stage;
+        $oldLevel = $documentRequest->level;
 
-            $this->activityLogger->log(
-                'approved',
-                "Approbation de la demande de document #{$id} - Stage: {$oldStage} → {$documentRequest->stage}, Level: {$oldLevel} → {$documentRequest->level}",
-                $documentRequest
-            );
+        // Mise à jour du niveau et du statut
+        $documentRequest->updateLevelAndStage();
 
-            DB::commit();
+        $this->activityLogger->log(
+            'approved',
+            "Approbation de la demande de document #{$id} - Stage: {$oldStage} → {$documentRequest->stage}, Level: {$oldLevel} → {$documentRequest->level}",
+            $documentRequest
+        );
 
-            return response()->json([
-                'message' => 'Demande de document acceptée',
-                'ok' => true,
-                'documentRequest' => $documentRequest
-            ]);
-        } catch (ValidationException $e) {
-            DB::rollBack();
-            Log::warning('Erreur de validation lors de l\'approbation d\'une demande de document', [
-                'document_request_id' => $id,
-                'errors' => $e->errors(),
-            ]);
+        DB::commit();
 
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (ModelNotFoundException $e) {
-            DB::rollBack();
-            Log::warning('Demande de document non trouvée lors de l\'approbation', [
-                'document_request_id' => $id,
-            ]);
+        return response()->json([
+            'message' => 'Demande de document acceptée',
+            'ok' => true,
+            'documentRequest' => $documentRequest
+        ]);
 
-            return response()->json([
-                'ok' => false,
-                'message' => 'Demande de document introuvable. Veuillez vérifier l\'identifiant.',
-            ], 404);
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            Log::error('Erreur lors de l\'approbation d\'une demande de document', [
-                'document_request_id' => $id,
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString(),
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s\'est produite. Veuillez réessayer.',
-                'error' => $th->getMessage(),
-            ], 500);
-        }
     }
 
     /**
@@ -456,73 +309,41 @@ class DocumentRequestController extends Controller
      */
     public function reject($id)
     {
-        try {
-            // Rechercher la demande de document par ID
-            $documentRequest = DocumentRequest::findOrFail($id);
-            $oldStage = $documentRequest->stage;
-            $oldLevel = $documentRequest->level;
 
-            switch ($documentRequest->level) {
-                case 'ZERO':
-                    $documentRequest->level = 'ONE';
-                    break;
-                case 'ONE':
-                    $documentRequest->level = 'TWO';
-                    break;
-                case 'TWO':
-                    $documentRequest->level = 'THREE';
-                    break;
-                default:
-                    $documentRequest->level = 'THREE';
-                    break;
-            }
-            $documentRequest->stage = 'REJECTED';
+        // Rechercher la demande de document par ID
+        $documentRequest = DocumentRequest::findOrFail($id);
+        $oldStage = $documentRequest->stage;
+        $oldLevel = $documentRequest->level;
 
-            $documentRequest->save();
-
-            $this->activityLogger->log(
-                'rejected',
-                "Rejet de la demande de document #{$id} - Stage: {$oldStage} → {$documentRequest->stage}, Level: {$oldLevel} → {$documentRequest->level}",
-                $documentRequest
-            );
-
-            return response()->json([
-                'message' => "Demande de {$documentRequest->document_type->label} rejetée",
-                'ok' => true,
-            ]);
-        } catch (ValidationException $e) {
-            Log::warning('Erreur de validation lors du rejet d\'une demande de document', [
-                'document_request_id' => $id,
-                'errors' => $e->errors(),
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (ModelNotFoundException $e) {
-            Log::warning('Demande de document non trouvée lors du rejet', [
-                'document_request_id' => $id,
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Demande de document introuvable. Veuillez vérifier l\'identifiant.',
-            ], 404);
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors du rejet d\'une demande de document', [
-                'document_request_id' => $id,
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString(),
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s\'est produite. Veuillez réessayer.',
-                'error' => $th->getMessage(),
-            ], 500);
+        switch ($documentRequest->level) {
+            case 'ZERO':
+                $documentRequest->level = 'ONE';
+                break;
+            case 'ONE':
+                $documentRequest->level = 'TWO';
+                break;
+            case 'TWO':
+                $documentRequest->level = 'THREE';
+                break;
+            default:
+                $documentRequest->level = 'THREE';
+                break;
         }
+        $documentRequest->stage = 'REJECTED';
+
+        $documentRequest->save();
+
+        $this->activityLogger->log(
+            'rejected',
+            "Rejet de la demande de document #{$id} - Stage: {$oldStage} → {$documentRequest->stage}, Level: {$oldLevel} → {$documentRequest->level}",
+            $documentRequest
+        );
+
+        return response()->json([
+            'message' => "Demande de {$documentRequest->document_type->label} rejetée",
+            'ok' => true,
+        ]);
+
     }
 
     /**
@@ -534,62 +355,30 @@ class DocumentRequestController extends Controller
      */
     public function comment(Request $request, $id)
     {
-        try {
-            // Valider les entrées
-            $request->validate([
-                'comment' => 'sometimes',
-            ]);
 
-            // Rechercher la demande de document par ID
-            $documentRequest = DocumentRequest::findOrFail($id);
-            $oldComment = $documentRequest->comment;
+        // Valider les entrées
+        $request->validate([
+            'comment' => 'sometimes',
+        ]);
 
-            $documentRequest->comment = $request->input('comment') ?? null;
-            $documentRequest->save();
+        // Rechercher la demande de document par ID
+        $documentRequest = DocumentRequest::findOrFail($id);
+        $oldComment = $documentRequest->comment;
 
-            $this->activityLogger->log(
-                'commented',
-                "Ajout/Modification d'un commentaire sur la demande de document #{$id}",
-                $documentRequest
-            );
+        $documentRequest->comment = $request->input('comment') ?? null;
+        $documentRequest->save();
 
-            return response()->json([
-                'message' => "Commentaire ajouté à la demande de {$documentRequest->document_type->label}",
-                'ok' => true,
-            ]);
-        } catch (ValidationException $e) {
-            Log::warning('Erreur de validation lors de l\'ajout d\'un commentaire à une demande de document', [
-                'document_request_id' => $id,
-                'errors' => $e->errors(),
-            ]);
+        $this->activityLogger->log(
+            'commented',
+            "Ajout/Modification d'un commentaire sur la demande de document #{$id}",
+            $documentRequest
+        );
 
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (ModelNotFoundException $e) {
-            Log::warning('Demande de document non trouvée lors de l\'ajout d\'un commentaire', [
-                'document_request_id' => $id,
-            ]);
+        return response()->json([
+            'message' => "Commentaire ajouté à la demande de {$documentRequest->document_type->label}",
+            'ok' => true,
+        ]);
 
-            return response()->json([
-                'ok' => false,
-                'message' => 'Demande de document introuvable. Veuillez vérifier l\'identifiant.',
-            ], 404);
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors de l\'ajout d\'un commentaire à une demande de document', [
-                'document_request_id' => $id,
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString(),
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s\'est produite. Veuillez réessayer.',
-                'error' => $th->getMessage(),
-            ], 500);
-        }
     }
 
     /**
@@ -600,69 +389,37 @@ class DocumentRequestController extends Controller
      */
     public function cancel($id)
     {
-        try {
-            // Rechercher la demande de document par ID
-            $documentRequest = DocumentRequest::findOrFail($id);
-            $oldStage = $documentRequest->stage;
 
-            if ($documentRequest->level != 'ZERO') {
-                $this->activityLogger->log(
-                    'denied',
-                    "Tentative d'annulation d'une demande de document #{$id} non annulable",
-                    $documentRequest
-                );
+        // Rechercher la demande de document par ID
+        $documentRequest = DocumentRequest::findOrFail($id);
+        $oldStage = $documentRequest->stage;
 
-                return response()->json([
-                    'ok' => false,
-                    'message' => "Vous ne pouvez plus annuler cette demande de {$documentRequest->document_type->label}.",
-                ], 403);
-            }
-
-            $documentRequest->stage = 'CANCELLED';
-            $documentRequest->save();
-
+        if ($documentRequest->level != 'ZERO') {
             $this->activityLogger->log(
-                'cancelled',
-                "Annulation de la demande de document #{$id} - Stage: {$oldStage} → {$documentRequest->stage}",
+                'denied',
+                "Tentative d'annulation d'une demande de document #{$id} non annulable",
                 $documentRequest
             );
 
             return response()->json([
-                'message' => "Demande de {$documentRequest->document_type->label} annulée",
-                'ok' => true,
-            ]);
-        } catch (ValidationException $e) {
-            Log::warning('Erreur de validation lors de l\'annulation d\'une demande de document', [
-                'document_request_id' => $id,
-                'errors' => $e->errors(),
-            ]);
-
-            return response()->json([
                 'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (ModelNotFoundException $e) {
-            Log::warning('Demande de document non trouvée lors de l\'annulation', [
-                'document_request_id' => $id,
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Demande de document introuvable. Veuillez vérifier l\'identifiant.',
-            ], 404);
-        } catch (\Throwable $th) {
-            Log::error('Erreur lors de l\'annulation d\'une demande de document', [
-                'document_request_id' => $id,
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString(),
-            ]);
-
-            return response()->json([
-                'ok' => false,
-                'message' => 'Une erreur s\'est produite. Veuillez réessayer.',
-                'error' => $th->getMessage(),
-            ], 500);
+                'message' => "Vous ne pouvez plus annuler cette demande de {$documentRequest->document_type->label}.",
+            ], 403);
         }
+
+        $documentRequest->stage = 'CANCELLED';
+        $documentRequest->save();
+
+        $this->activityLogger->log(
+            'cancelled',
+            "Annulation de la demande de document #{$id} - Stage: {$oldStage} → {$documentRequest->stage}",
+            $documentRequest
+        );
+
+        return response()->json([
+            'message' => "Demande de {$documentRequest->document_type->label} annulée",
+            'ok' => true,
+        ]);
+
     }
 }

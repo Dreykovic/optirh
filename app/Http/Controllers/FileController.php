@@ -42,89 +42,67 @@ class FileController extends Controller
 
     public function upload(Request $request, $employeeId)
     {
-        try {
-            $request->validate([
-                'files.*' => 'required|file|mimes:pdf|max:2048', // Limite de 2 Mo par fichier
-            ]);
 
-            $uploadedFiles = [];
-            foreach ($request->file('files') as $file) {
-                $uploadedFiles[] = $this->fileService->storeFile($employeeId, $file);
-            }
+        $request->validate([
+            'files.*' => 'required|file|mimes:pdf|max:2048', // Limite de 2 Mo par fichier
+        ]);
 
-            return response()->json([
-                'ok' => true,
-                'message' => 'Fichiers sauvegardés avec succès.',
-                'files' => $uploadedFiles,
-            ]);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
-            ], 422);
-        } catch (\Throwable $th) {
-            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+        $uploadedFiles = [];
+        foreach ($request->file('files') as $file) {
+            $uploadedFiles[] = $this->fileService->storeFile($employeeId, $file);
         }
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'Fichiers sauvegardés avec succès.',
+            'files' => $uploadedFiles,
+        ]);
+
     }
 
     public function rename(Request $request, $id)
     {
-        try {
-            $request->validate([
-                'new_name' => 'required|string',
-            ]);
 
-            $file = File::findOrFail($id);
+        $request->validate([
+            'new_name' => 'required|string',
+        ]);
 
-            $updatedFile = $this->fileService->renameFile($file, $request->new_name);
+        $file = File::findOrFail($id);
 
-            return response()->json(['ok' => true, 'message' => 'Fichier renommé avec succès.', 'file' => $updatedFile]);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Les données fournies sont invalides.',
-                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
-            ], 422);
-        } catch (\Throwable $th) {
-            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
-        }
+        $updatedFile = $this->fileService->renameFile($file, $request->new_name);
+
+        return response()->json(['ok' => true, 'message' => 'Fichier renommé avec succès.', 'file' => $updatedFile]);
+
     }
 
     public function delete($fileId)
     {
-        try {
-            $file = File::findOrFail($fileId);
-            $this->fileService->deleteFile($file);
 
-            // return response()->json(['message' => 'Fichier supprimé avec succès.','ok' => true]);
-            return redirect()->back()->with('message', 'Action réussie !');
-        } catch (\Throwable $th) {
-            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
-        }
+        $file = File::findOrFail($fileId);
+        $this->fileService->deleteFile($file);
+
+        // return response()->json(['message' => 'Fichier supprimé avec succès.','ok' => true]);
+        return redirect()->back()->with('message', 'Action réussie !');
+
     }
 
     public function download($fileId)
     {
-        try {
-            $file = File::findOrFail($fileId);
 
-            return $this->fileService->downloadFile($file);
-        } catch (\Throwable $th) {
-            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
-        }
+        $file = File::findOrFail($fileId);
+
+        return $this->fileService->downloadFile($file);
+
     }
 
     public function openFile($fileId)
     {
-        try {
-            $file = File::findOrFail($fileId);
-            $fileUrl = $this->fileService->getFileUrl($file);
 
-            return redirect()->away($fileUrl); // Redirection vers l'URL du fichier
-        } catch (\Throwable $th) {
-            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
-        }
+        $file = File::findOrFail($fileId);
+        $fileUrl = $this->fileService->getFileUrl($file);
+
+        return redirect()->away($fileUrl); // Redirection vers l'URL du fichier
+
     }
 
     public function getFiles(Request $request, $employeeId)
@@ -222,16 +200,16 @@ class FileController extends Controller
     // }
 
 
-//uploadPayroll
+    //uploadPayroll
     public function uploadInvoices(Request $request)
-{
-    $request->validate([
-        'file' => 'required|file|mimes:pdf|max:5120', // 5MB max
-    ]);
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:pdf|max:5120', // 5MB max
+        ]);
 
-    $file = $request->file('file');
+        $file = $request->file('file');
 
-    try {
+
         // Appeler le service pour traiter le fichier
         $results = app(FileService::class)->storeFilesFromSinglePdf($file);
 
@@ -246,13 +224,8 @@ class FileController extends Controller
             ->with('success', 'Les bulletins ont été traités avec succès.')
             ->with('summary', $summary)
             ->with('details', $results);
-    } catch (\Exception $e) {
-        dump($e->getMessage());
-        // return back()
-        //     ->with('error', 'Erreur lors du traitement du fichier.')
-        //     ->with('details', $e->getMessage());
+
     }
-}
 
 
 }
