@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Config\ActivityLogActions;
 use App\Http\Controllers\Controller;
@@ -28,7 +28,7 @@ class ActivityLogController extends Controller
     public function __construct(ActivityLogger $activityLogger)
     {
         $this->activityLogger = $activityLogger;
-        $this->middleware(['permission:voir-une-activité|voir-un-tout'], ['only' => ['index']]);
+        // $this->middleware(['permission:voir-une-activité|voir-un-tout'], ['only' => ['index']]);
     }
 
     /**
@@ -98,8 +98,9 @@ class ActivityLogController extends Controller
                 "Consultation du journal d'activités"
             );
 
-            return view('pages.admin.activity-logs.index', compact('logs', 'users', 'modelTypes'));
+            return view('pages.admin.users.activity-logs.index', compact('logs', 'users', 'modelTypes'));
         } catch (\Throwable $th) {
+            dd($th->getMessage());
             Log::error('Erreur lors du chargement du journal d\'activités', [
                 'error' => $th->getMessage(),
                 'trace' => $th->getTraceAsString()
@@ -128,7 +129,7 @@ class ActivityLogController extends Controller
                 "Consultation des détails du log d'activité #{$id}"
             );
 
-            return view('pages.admin.activity-logs.show', compact('log'));
+            return view('pages.admin.users.activity-logs.show', compact('log'));
         } catch (\Throwable $th) {
             Log::error('Erreur lors de l\'affichage des détails d\'un log d\'activité', [
                 'log_id' => $id,

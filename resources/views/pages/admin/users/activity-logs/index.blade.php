@@ -15,7 +15,7 @@
                 <div class="card-body">
                     <div class="row mb-4">
                         <div class="col-md-12">
-                            <form action="{{ route('admin.activity-logs.index') }}" method="GET" class="row g-3">
+                            <form action="{{ route('activity-logs.index') }}" method="GET" class="row g-3">
                                 <!-- Filtre par groupe d'action -->
                                 <div class="col-md-3">
                                     <label for="action_group" class="form-label">Type d'action</label>
@@ -88,7 +88,7 @@
                                 <!-- Boutons de filtre -->
                                 <div class="col-md-3 d-flex align-items-end">
                                     <button type="submit" class="btn btn-primary me-2">Filtrer</button>
-                                    <a href="{{ route('admin.activity-logs.index') }}"
+                                    <a href="{{ route('activity-logs.index') }}"
                                         class="btn btn-outline-secondary">Réinitialiser</a>
                                 </div>
                             </form>
