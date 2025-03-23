@@ -14,12 +14,11 @@ class AuthController extends Controller
 {
     public function login()
     {
-        return view('pages.auth.login.index');
+        return view('auth.login.index');
     }
 
     public function logUser(Request $request)
     {
-
         $attributes = request()->validate([
             'email' => 'required|email',
             'password' => 'required',
@@ -38,26 +37,22 @@ class AuthController extends Controller
 
             return response()->json(['ok' => false, 'message' => 'Email ou password invalide.']);
         }
-
     }
 
     public function logout()
     {
-
         Auth::logout();
 
         return back()->with(['success' => 'Vous êtes déconnecté.']);
-
     }
 
     public function forgotPasswordFormGet()
     {
-        return view('pages.auth.password-forgot.index');
+        return view('auth.password-forgot.index');
     }
 
     public function sendEmail(Request $request)
     {
-
         $request->validate(['email' => 'required|email']);
 
         // Envoyer le lien de réinitialisation du mot de passe
@@ -69,17 +64,15 @@ class AuthController extends Controller
         } else {
             return response()->json(['error' => __('Une erreur est survenue'), 'ok' => true], 422);
         }
-
     }
 
     public function resetPass($token)
     {
-        return view('pages.auth.reset-password.index', ['token' => $token]);
+        return view('auth.reset-password.index', ['token' => $token]);
     }
 
     public function changePassword(Request $request)
     {
-
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
@@ -107,7 +100,6 @@ class AuthController extends Controller
             // return response()->json(['error' => __('Password reset failed.'), 'ok' => false], 422);
             return response()->json(['message' => 'Une erreur est survenu. Verifiez les information entrées', 'ok' => false]);
         }
-
     }
 
     public function passwordChanged()

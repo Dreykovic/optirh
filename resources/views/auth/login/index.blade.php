@@ -1,4 +1,4 @@
-@extends('pages.auth.base')
+@extends('auth.base')
 
 @section('auth-content')
     <form class="row g-1 p-3 p-md-4" id="modelAddForm" data-model-add-url="{{ route('login') }}">

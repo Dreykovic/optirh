@@ -54,14 +54,14 @@ Route::group(['middleware' => 'guest'], function () {
 });
 Route::group(['middleware' => 'auth'], function () {
     /*
+    * Logout
+    */
+    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+    /*
      * OptiHR
      */
     Route::prefix('/opti-hr')->group(function () {
         Route::get('/', [HomeController::class, 'home'])->name('home');
-        /*
-         * Logout
-         */
-        Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
         /*
           * Help
