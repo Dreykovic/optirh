@@ -1,4 +1,4 @@
-@extends('pages.admin.recours_base')
+@extends('modules.recours.pages.base')
 @section('admin-content')
     
     <div class="body d-flex py-lg-3 py-md-2">

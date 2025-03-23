@@ -3,13 +3,13 @@
     @auth
 
         <!-- sidebar -->
-        @include('partials.sidebar.recours.index')
+        @include('modules.recours.partials.sidebar.index')
 
         <!-- main body area -->
         <div class="main px-lg-4 px-md-4">
 
             <!-- Body: Header -->
-            @include('partials.header.index')
+            @include('modules.recours.partials.header.index')
 
             <!-- Body: Body -->
             <div class="body d-flex py-3">
