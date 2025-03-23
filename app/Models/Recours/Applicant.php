@@ -2,14 +2,10 @@
 
 namespace App\Models\Recours;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Modules\Recours\Database\factories\ApplicantFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Recours\Personnal;
-use App\Models\Recours\Appeal;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Applicant extends Model
 {
@@ -25,14 +21,9 @@ class Applicant extends Model
         'status',
         'created_by',
         'last_updated_by',
-        'nif'
+        'nif',
     ];
 
-
-    protected static function newFactory(): ApplicantFactory
-    {
-        //return ApplicantFactory::new();
-    }
     public function appeals(): HasMany
     {
         return $this->hasMany(Appeal::class, 'applicant_id');
@@ -47,5 +38,4 @@ class Applicant extends Model
     {
         return $this->belongsTo(Personnal::class, 'last_updated_by');
     }
-
 }

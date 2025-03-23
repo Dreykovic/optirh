@@ -2,14 +2,10 @@
 
 namespace App\Models\Recours;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Modules\Recours\Database\factories\PersonnalFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-use App\Models\Recours\Comment;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Personnal extends Model
 {
@@ -23,13 +19,8 @@ class Personnal extends Model
         'last_name',
         'email',
         'job',
-        'sexe'
+        'sexe',
     ];
-
-    protected static function newFactory(): PersonnalFactory
-    {
-        //return PersonnalFactory::new();
-    }
 
     public function comments(): HasMany
     {
@@ -45,7 +36,4 @@ class Personnal extends Model
     {
         return $this->belongsTo(Personnal::class, 'last_updated_by');
     }
-
-
-
 }

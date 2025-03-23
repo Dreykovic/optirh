@@ -2,14 +2,10 @@
 
 namespace App\Models\Recours;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Modules\Recours\Database\factories\DacFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Recours\Personnal;
-use App\Models\Recours\Appeal;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Dac extends Model
 {
@@ -24,13 +20,9 @@ class Dac extends Model
         'ac',
         'status',
         'created_by',
-        'last_updated_by'
+        'last_updated_by',
     ];
 
-    protected static function newFactory(): DacFactory
-    {
-        //return DacFactory::new();
-    }
     public function appeals(): HasMany
     {
         return $this->hasMany(Appeal::class, 'dac_id');
@@ -45,5 +37,4 @@ class Dac extends Model
     {
         return $this->belongsTo(Personnal::class, 'last_updated_by');
     }
-
 }
