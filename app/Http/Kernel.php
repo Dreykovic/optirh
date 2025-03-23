@@ -69,7 +69,6 @@ class Kernel extends HttpKernel
          * Custom
          */
         'json.response' => Middleware\JsonResponseRoute::class,
-        'ensure.access' => Middleware\EnsureUserHasAccess::class,
 
         /*
          * Spatie

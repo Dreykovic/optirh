@@ -109,12 +109,10 @@ const AppModules = (function () {
          * @param {Any} data - Les données supplémentaires à logger
          */
         debug: (type = "log", message, data = null) => {
-            if (process.env.NODE_ENV !== "production") {
-                if (data) {
-                    console[type](message, data);
-                } else {
-                    console[type](message);
-                }
+            if (data) {
+                console[type](message, data);
+            } else {
+                console[type](message);
             }
         },
     };

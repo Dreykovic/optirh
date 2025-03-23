@@ -61,12 +61,12 @@ Route::group(['middleware' => 'auth'], function () {
     /*
     * Gateway
     */
-    Route::get('/', [HomeController::class, 'gateway'])->name('gateway')->middleware(['auth', 'ensure.access:access-all']);
+    Route::get('/', [HomeController::class, 'gateway'])->name('gateway');
     /*
      * OptiHR
      */
     Route::prefix('/opti-hr')->group(function () {
-        Route::get('/', [HomeController::class, 'home'])->name('home')->middleware(['auth', 'ensure.access:access-all,access-opti-hr']);
+        Route::get('/', [HomeController::class, 'home'])->name('home');
 
         /*
           * Help
@@ -307,7 +307,7 @@ Route::group(['middleware' => 'auth'], function () {
      * Recours
      */
     Route::prefix('recours')->group(function () {
-        Route::get('/', [HomeController::class, 'recours_home'])->name('recours.home')->middleware(['auth', 'ensure.access:access-all,access-recours']);
+        Route::get('/', [HomeController::class, 'recours_home'])->name('recours.home');
         Route::post('/', [HomeController::class, 'recours_home'])->name('recours.home');
 
         Route::get('/index', [RecoursController::class, 'index'])->name('recours.index');

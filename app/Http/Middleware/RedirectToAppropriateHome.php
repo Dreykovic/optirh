@@ -68,6 +68,6 @@ class RedirectToAppropriateHome
             return redirect(RouteServiceProvider::RECOURS_HOME);
         }
 
-        return redirect(RouteServiceProvider::OPTI_HR_HOME);
+        return redirect('/');
     }
 }

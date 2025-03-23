@@ -1,7 +1,7 @@
 @extends('auth.base')
 
 @section('auth-content')
-    <form class="row g-1 p-3 p-md-4" id="modelAddForm" data-model-add-url="{{ route('login') }}">
+    <form class="row g-1 p-3 p-md-4" id="loginForm" data-login-url="{{ route('login') }}">
         @csrf
         <div class="col-12 text-center mb-1 mb-lg-5">
             <h1>Connexion</h1>
@@ -34,8 +34,7 @@
             </div>
         </div>
         <div class="col-12 text-center mt-4">
-            <button type="submit" class="btn btn-lg btn-block btn-light lift text-uppercase" atl="signin"
-                id="modelAddBtn">
+            <button type="submit" class="btn btn-lg btn-block btn-light lift text-uppercase" atl="signin" id="loginBtn">
                 <span class="normal-status">
                     Se
                     Connecter
@@ -52,5 +51,5 @@
     </form>
 @endsection
 @push('js')
-    <script src={{ asset('app-js/crud/post.js') }}></script>
+    <script src={{ asset('app-js/auth/login.js') }}></script>
 @endpush
