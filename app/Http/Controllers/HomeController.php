@@ -16,7 +16,7 @@ class HomeController extends Controller
 
     public function gateway()
     {
-        return view('pages.admin.dashbord.index');
+        return view('modules.gateway.index');
     }
 
     public function recours_home(Request $request)

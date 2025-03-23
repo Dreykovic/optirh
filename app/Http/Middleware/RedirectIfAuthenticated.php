@@ -20,16 +20,24 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                if (Auth::user()->can('access-recours')) {
-                    return redirect(RouteServiceProvider::RECOURS_HOME);
-                }
-                if (Auth::user()->can('access-opti-hr')) {
-                    return redirect(RouteServiceProvider::OPTI_HR_HOME);
-                }
-                if (Auth::user()->can('access-all')) {
+                $user = Auth::user();
+
+                // Priorité des redirections en fonction des permissions
+                // L'accès complet a la priorité la plus élevée
+                if ($user->can('access-all')) {
                     return redirect(RouteServiceProvider::GATEWAY);
                 }
 
+                // Ensuite, vérifier les autres permissions dans l'ordre de priorité
+                if ($user->can('access-opti-hr')) {
+                    return redirect(RouteServiceProvider::OPTI_HR_HOME);
+                }
+
+                if ($user->can('access-recours')) {
+                    return redirect(RouteServiceProvider::RECOURS_HOME);
+                }
+
+                // Si l'utilisateur n'a aucune permission spécifique
                 return redirect(RouteServiceProvider::HOME);
             }
         }

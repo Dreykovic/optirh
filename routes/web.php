@@ -60,7 +60,7 @@ Route::group(['middleware' => 'auth'], function () {
     /*
     * Gateway
     */
-    Route::get('/gateway', [HomeController::class, 'gateway'])->name('gateway');
+    Route::get('/', [HomeController::class, 'gateway'])->name('gateway');
     /*
      * OptiHR
      */

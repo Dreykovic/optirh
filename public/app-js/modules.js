@@ -1,60 +1,211 @@
 "use strict";
 
-// Class definition
+/**
+ * AppModules - Bibliothèque d'utilitaires pour l'application
+ * Version améliorée avec meilleure organisation, documentation et gestion des erreurs
+ */
 const AppModules = (function () {
-    // Public functions
-    return {
-        // Initialization
-        formatMontant: (text) => {
-            text = text.trim();
-            text = text.split("").reverse().join("");
-            var length = text.length;
-            var newText = "";
-            for (var i = 0; i <= length - 1; i++) {
-                if ((i + 1) % 3 === 1 && i != 1) {
-                    newText += " ";
+    // Configuration globale
+    const CONFIG = {
+        ALERTS: {
+            DELETE_CONFIRM: {
+                TITLE: "Confirmation de suppression",
+                CANCEL_TEXT: "Non, Annuler",
+                CONFIRM_TEXT: "Oui, Supprimer",
+                SUCCESS_MESSAGE: "L'élément a été supprimé avec succès.",
+                CANCEL_MESSAGE: " n'a pas été effacé",
+            },
+            CLASSES: {
+                CONFIRM_BUTTON: "btn fw-bold btn-primary",
+                DELETE_BUTTON: "btn fw-bold btn-danger",
+                CANCEL_BUTTON: "btn fw-bold btn-active-light-primary",
+            },
+        },
+        DATATABLES: {
+            DEFAULTS: {
+                responsive: true,
+                language: {
+                    processing: "Traitement en cours...",
+                    search: "Rechercher&nbsp;:",
+                    lengthMenu: "Afficher _MENU_ &eacute;l&eacute;ments",
+                    info: "Affichage de l'&eacute;l&eacute;ment _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
+                    infoEmpty:
+                        "Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment",
+                    infoFiltered:
+                        "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+                    infoPostFix: "",
+                    loadingRecords: "Chargement en cours...",
+                    zeroRecords:
+                        "Aucun &eacute;l&eacute;ment &agrave; afficher",
+                    emptyTable:
+                        "Aucune donn&eacute;e disponible dans le tableau",
+                    paginate: {
+                        first: "Premier",
+                        previous: "Pr&eacute;c&eacute;dent",
+                        next: "Suivant",
+                        last: "Dernier",
+                    },
+                    aria: {
+                        sortAscending:
+                            ": activer pour trier la colonne par ordre croissant",
+                        sortDescending:
+                            ": activer pour trier la colonne par ordre d&eacute;croissant",
+                    },
+                },
+            },
+        },
+        SELECT2: {
+            DEFAULT_OPTIONS: {
+                allowClear: true,
+            },
+        },
+    };
+
+    // Méthodes privées
+    const _private = {
+        /**
+         * Gère et formate les messages d'erreur provenant des réponses du serveur
+         * @param {Object} error - L'objet d'erreur retourné par axios
+         * @returns {String} Le message d'erreur formaté
+         */
+        formatErrorMessage: (error) => {
+            let errorMessage = "Une erreur s'est produite";
+
+            if (error.response && error.response.data) {
+                const { data } = error.response;
+
+                if (data.message) {
+                    errorMessage = data.message;
+
+                    // Ajout des erreurs détaillées si disponibles
+                    if (data.errors) {
+                        errorMessage += ":<br>";
+                        errorMessage += Object.values(data.errors)
+                            .flat()
+                            .map((msg) => `• ${msg}`)
+                            .join("<br>");
+                    }
                 }
-                newText += text[i];
+            } else if (error.message) {
+                errorMessage = error.message;
             }
-            newText = newText.split("").reverse().join("");
 
-            return newText;
+            return errorMessage;
         },
+
+        /**
+         * Vérifie si un élément DOM existe
+         * @param {HTMLElement} element - L'élément à vérifier
+         * @returns {Boolean} True si l'élément existe, false sinon
+         */
+        elementExists: (element) => {
+            return element !== null && element !== undefined;
+        },
+
+        /**
+         * Effectue un log de débogage si le mode debug est activé
+         * @param {String} type - Le type de log (log, error, warn, info)
+         * @param {String} message - Le message principal
+         * @param {Any} data - Les données supplémentaires à logger
+         */
+        debug: (type = "log", message, data = null) => {
+            if (process.env.NODE_ENV !== "production") {
+                if (data) {
+                    console[type](message, data);
+                } else {
+                    console[type](message);
+                }
+            }
+        },
+    };
+
+    // Méthodes publiques
+    return {
+        /**
+         * Formate un montant avec des séparateurs d'espaces pour les milliers
+         * @param {String} text - Le montant à formater
+         * @returns {String} Le montant formaté
+         */
+        formatMontant: (text) => {
+            if (!text || typeof text !== "string") return "";
+
+            text = text.trim();
+            const reversed = text.split("").reverse();
+            let formatted = [];
+
+            reversed.forEach((char, index) => {
+                if (index > 0 && index % 3 === 0) {
+                    formatted.push(" ");
+                }
+                formatted.push(char);
+            });
+
+            return formatted.reverse().join("");
+        },
+
+        /**
+         * Affiche un indicateur de chargement sur un bouton
+         * @param {HTMLElement} btn - L'élément bouton
+         */
         showSpinner: (btn) => {
-            if (!btn) return;
+            if (!_private.elementExists(btn)) return;
 
-            let spinner = btn.querySelector(".indicateur");
-            let normalStatut = btn.querySelector(".normal-status");
+            const spinner = btn.querySelector(".indicateur");
+            const normalStatus = btn.querySelector(".normal-status");
 
-            spinner.classList.remove("d-none");
-            normalStatut.style.display = "none";
-            btn.disabled = true;
+            if (spinner && normalStatus) {
+                spinner.classList.remove("d-none");
+                normalStatus.style.display = "none";
+                btn.disabled = true;
+            }
         },
 
+        /**
+         * Cache l'indicateur de chargement d'un bouton
+         * @param {HTMLElement} btn - L'élément bouton
+         */
         hideSpinner: (btn) => {
-            if (!btn) return;
+            if (!_private.elementExists(btn)) return;
 
-            let spinner = btn.querySelector(".indicateur");
-            let normalStatut = btn.querySelector(".normal-status");
+            const spinner = btn.querySelector(".indicateur");
+            const normalStatus = btn.querySelector(".normal-status");
 
-            spinner.classList.add("d-none");
-            normalStatut.style.display = "block";
-            btn.disabled = false;
+            if (spinner && normalStatus) {
+                spinner.classList.add("d-none");
+                normalStatus.style.display = "block";
+                btn.disabled = false;
+            }
         },
+
+        /**
+         * Affiche une alerte de confirmation avec SweetAlert2
+         * @param {String} message - Le message à afficher
+         * @returns {Promise} La promesse de SweetAlert2
+         */
         showAskAlert: (message = "") => {
+            const config = CONFIG.ALERTS;
+
             return Swal.fire({
                 html: message,
                 icon: "warning",
                 showCancelButton: true,
                 buttonsStyling: false,
-                confirmButtonText: "Oui, Supprimer",
-                cancelButtonText: "Non, Annuler",
+                confirmButtonText: config.DELETE_CONFIRM.CONFIRM_TEXT,
+                cancelButtonText: config.DELETE_CONFIRM.CANCEL_TEXT,
                 customClass: {
-                    confirmButton: "btn fw-bold btn-danger",
-                    cancelButton: "btn fw-bold btn-active-light-primary",
+                    confirmButton: config.ALERTS.CLASSES.DELETE_BUTTON,
+                    cancelButton: config.ALERTS.CLASSES.CANCEL_BUTTON,
                 },
             });
         },
+
+        /**
+         * Affiche une alerte d'information ou d'erreur avec SweetAlert2
+         * @param {String} message - Le message à afficher
+         * @param {String} status - Le statut (success, error, warning, info)
+         * @param {String} confirm - Le texte du bouton de confirmation
+         * @returns {Promise} La promesse de SweetAlert2
+         */
         showConfirmAlert: (
             message = "",
             status = "error",
@@ -66,249 +217,219 @@ const AppModules = (function () {
                 buttonsStyling: false,
                 confirmButtonText: confirm,
                 customClass: {
-                    confirmButton: "btn btn-primary",
+                    confirmButton: CONFIG.ALERTS.CLASSES.CONFIRM_BUTTON,
                 },
             });
         },
 
+        /**
+         * Soumet un formulaire via AJAX
+         * @param {HTMLElement} btn - Le bouton de soumission
+         * @param {FormData|Object} formData - Les données du formulaire
+         * @param {String} url - L'URL de soumission
+         * @param {Function} callback - La fonction de rappel après soumission
+         */
         submitFromBtn: (btn, formData, url, callback) => {
-            if (btn == null || !formData || !url) {
-                return "something is not get";
+            if (!_private.elementExists(btn) || !formData || !url) {
+                _private.debug(
+                    "error",
+                    "Paramètres invalides pour submitFromBtn",
+                    { btn, formData, url }
+                );
+                return;
             }
-
-            // Validate form
 
             AppModules.showSpinner(btn);
 
-            console.log(formData);
-            console.log(url);
-
-            // Check axios library docs: https://axios-http.com/docs/intro
             axios
                 .post(url, formData)
-                .then(function (response) {
-                    console.log(url);
-                    if (response.data.ok) {
-                        // Hide loading indication
-                        AppModules.hideSpinner(btn);
-                        AppModules.showConfirmAlert(
-                            response.data.message,
-                            "success"
-                        ).then(function (result) {
+                .then((response) => {
+                    AppModules.hideSpinner(btn);
+
+                    const { data } = response;
+                    const status = data.ok ? "success" : "error";
+
+                    AppModules.showConfirmAlert(data.message, status).then(
+                        (result) => {
                             if (result.isDismissed || result.isConfirmed) {
-                                if (callback == null || callback == undefined) {
-                                    return response;
-                                } else {
-                                    callback();
+                                if (typeof callback === "function") {
+                                    callback(response);
                                 }
                             }
-                        });
-                        console.log(1);
-                    } else {
-                        console.log(0);
-                        console.log("response", response);
-
-                        console.log(response.data);
-
-                        AppModules.hideSpinner(btn);
-                        AppModules.showConfirmAlert(response.data.message).then(
-                            function (result) {
-                                if (result.isDismissed || result.isConfirmed) {
-                                    if (
-                                        callback == null ||
-                                        callback == undefined
-                                    ) {
-                                        return response;
-                                    } else {
-                                        callback();
-                                    }
-                                }
-                            }
-                        );
-                    }
-                })
-                .catch(function (error) {
-                    if (
-                        error.response &&
-                        error.response.data &&
-                        error.response.data.message
-                    ) {
-                        // Remove loading indication
-                        console.error("Erreur de validation détectée.");
-                        console.error(error.response.data); // Affiche la réponse complète pour debug
-                        let errorMessages = error.response.data.message;
-                        AppModules.hideSpinner(btn);
-
-                        if (error.response.data.errors) {
-                            // Crée une seule chaîne de message à partir de toutes les erreurs
-                            errorMessages +=
-                                ":<br> " +
-                                Object.values(error.response.data.errors)
-                                    .flatMap((messages) => messages) // Transforme chaque tableau de messages en une seule liste
-                                    .join("\n"); // Combine tous les messages avec un retour à la ligne
                         }
-                        console.error(errorMessages);
-                        AppModules.showConfirmAlert(errorMessages).then(
-                            function (result) {
-                                if (result.isDismissed || result.isConfirmed) {
-                                    if (
-                                        callback == null ||
-                                        callback == undefined
-                                    ) {
-                                        return response;
-                                    } else {
-                                        callback();
-                                    }
-                                }
-                            }
-                        );
-                    } else {
-                        //  Remove loading indication
-                        AppModules.hideSpinner(btn);
+                    );
+                })
+                .catch((error) => {
+                    AppModules.hideSpinner(btn);
 
-                        AppModules.showConfirmAlert(
-                            "Erreur de soumission du formulaire:" + error
-                        ).then(function (result) {
-                            if (result.isDismissed || result.isConfirmed) {
-                                if (callback == null || callback == undefined) {
-                                    return response;
-                                } else {
-                                    callback();
-                                }
+                    const errorMessage = _private.formatErrorMessage(error);
+
+                    AppModules.showConfirmAlert(errorMessage).then((result) => {
+                        if (result.isDismissed || result.isConfirmed) {
+                            if (typeof callback === "function") {
+                                callback({ error });
                             }
-                        });
-                    }
+                        }
+                    });
                 });
         },
+
+        /**
+         * Gère la suppression d'un élément de table
+         * @param {HTMLElement} btn - Le bouton de suppression
+         * @param {HTMLElement} parent - L'élément parent à supprimer
+         * @param {String} item - Le nom de l'élément à supprimer
+         * @param {String} url - L'URL de suppression
+         */
         deleteTableItemSubmission: (btn, parent, item, url) => {
-            // SweetAlert2 pop up --- official docs reference: https://sweetalert2.github.io/
-            AppModules.showAskAlert(
-                "Etes-vous sûr que vous voulez supprimer " + item + "?"
-            ).then(function (result) {
+            if (!url) {
+                _private.debug("error", "URL manquante pour la suppression");
+                return;
+            }
+
+            const confirmMessage = `Êtes-vous sûr que vous voulez supprimer ${item} ?`;
+
+            AppModules.showAskAlert(confirmMessage).then((result) => {
                 if (result.value) {
                     AppModules.showSpinner(btn);
 
-                    //  console.log(15000)
                     axios
                         .delete(url)
                         .then((response) => {
-                            if (response.data.ok) {
-                                AppModules.hideSpinner(btn);
+                            AppModules.hideSpinner(btn);
 
+                            const { data } = response;
+
+                            if (data.ok) {
                                 AppModules.showConfirmAlert(
-                                    response.data.message,
+                                    data.message,
                                     "success"
-                                ).then(function (result) {
+                                ).then((result) => {
                                     if (
                                         result.isDismissed ||
-                                        result.isConfirmed
+                                        (result.isConfirmed && parent)
                                     ) {
-                                        // Remove current row
-                                        if (parent) {
-                                            parent.remove();
-                                        }
+                                        parent.remove();
                                     }
                                 });
                             } else {
-                                AppModules.showConfirmAlert(
-                                    response.data.message
-                                );
-                                AppModules.hideSpinner(btn);
+                                AppModules.showConfirmAlert(data.message);
                             }
                         })
                         .catch((error) => {
-                            if (
-                                error.response &&
-                                error.response.data &&
-                                error.response.data.message
-                            ) {
-                                AppModules.hideSpinner(btn);
+                            AppModules.hideSpinner(btn);
 
-                                console.error(
-                                    "Erreur de soumission du formulaire:",
-                                    error.response.data.message
-                                );
-                                AppModules.showConfirmAlert(
-                                    "Erreur de soumission du formulaire:",
-                                    error.response.data.message
-                                );
-                            } else {
-                                AppModules.showConfirmAlert(
-                                    "Erreur de soumission du formulaire:" +
-                                        error
-                                );
-                                AppModules.hideSpinner(btn);
-                            }
+                            const errorMessage =
+                                _private.formatErrorMessage(error);
+                            AppModules.showConfirmAlert(errorMessage);
                         });
                 } else if (result.dismiss === "cancel") {
-                    AppModules.showConfirmAlert(item + " N'a pas été effacé");
-                    AppModules.hideSpinner(btn);
+                    AppModules.showConfirmAlert(
+                        `${item}${CONFIG.ALERTS.DELETE_CONFIRM.CANCEL_MESSAGE}`
+                    );
                 }
             });
         },
+
+        /**
+         * Réinitialise tous les formulaires de la page
+         */
         resetForms: () => {
-            let forms = document.getElementsByTagName("form");
-            for (const element of forms) {
-                element.reset();
+            document.querySelectorAll("form").forEach((form) => form.reset());
+        },
+
+        /**
+         * Initialise un select2 sur un sélecteur
+         * @param {String} selector - Le sélecteur CSS
+         * @param {String} placeholder - Le texte d'aide
+         * @param {Object} options - Options supplémentaires pour Select2
+         */
+        initSelect2: (selector, placeholder, options = {}) => {
+            if (!selector) return;
+
+            try {
+                const defaultOptions = {
+                    ...CONFIG.SELECT2.DEFAULT_OPTIONS,
+                    placeholder,
+                };
+
+                jQuery(selector).select2({
+                    ...defaultOptions,
+                    ...options,
+                });
+            } catch (error) {
+                _private.debug(
+                    "error",
+                    "Erreur lors de l'initialisation de Select2",
+                    error
+                );
             }
         },
-        initSelect2: (selector, placeholder) => {
-            jQuery(selector).select2({
-                placeholder,
-                allowClear: true,
+
+        /**
+         * Initialise une DataTable sur un sélecteur
+         * @param {String} selector - Le sélecteur CSS
+         * @param {Object} options - Options supplémentaires pour DataTable
+         */
+        initDataTable: (selector, options = {}) => {
+            if (!selector) return;
+
+            try {
+                const element = $(selector);
+
+                if (element.length) {
+                    element.addClass("nowrap").dataTable({
+                        ...CONFIG.DATATABLES.DEFAULTS,
+                        ...options,
+                    });
+                } else {
+                    _private.debug(
+                        "warn",
+                        `Élément non trouvé pour DataTable: ${selector}`
+                    );
+                }
+            } catch (error) {
+                _private.debug(
+                    "error",
+                    "Erreur lors de l'initialisation de DataTable",
+                    error
+                );
+            }
+        },
+
+        /**
+         * Configure les gestionnaires d'événements pour supprimer des lignes
+         * @param {String} selector - Le sélecteur pour les boutons de suppression (optionnel)
+         */
+        setupDeleteRowHandlers: (selector = ".deleterow") => {
+            $(document).on("click", selector, function () {
+                const table = $(this).closest("table");
+
+                if (table.length && $.fn.DataTable.isDataTable(table)) {
+                    const dataTable = table.DataTable();
+                    dataTable.row($(this).parents("tr")).remove().draw();
+                }
             });
         },
-        initDataTable: (selector) => {
-            // project data table
 
-            $(selector)
-                .addClass("nowrap")
-                .dataTable({
-                    responsive: true,
-
-                    language: {
-                        processing: "Traitement en cours...",
-                        search: "Rechercher&nbsp;:",
-                        lengthMenu: "Afficher _MENU_ &eacute;l&eacute;ments",
-                        info: "Affichage de l'&eacute;l&eacute;ment _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
-                        infoEmpty:
-                            "Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment",
-                        infoFiltered:
-                            "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
-                        infoPostFix: "",
-                        loadingRecords: "Chargement en cours...",
-                        zeroRecords:
-                            "Aucun &eacute;l&eacute;ment &agrave; afficher",
-                        emptyTable:
-                            "Aucune donn&eacute;e disponible dans le tableau",
-                        paginate: {
-                            first: "Premier",
-                            previous: "Pr&eacute;c&eacute;dent",
-                            next: "Suivant",
-                            last: "Dernier",
-                        },
-                        aria: {
-                            sortAscending:
-                                ": activer pour trier la colonne par ordre croissant",
-                            sortDescending:
-                                ": activer pour trier la colonne par ordre d&eacute;croissant",
-                        },
-                    },
-                });
-        },
-        deleteRow: () => {
-            $(".deleterow").on("click", function () {
-                var tablename = $(this).closest("table").DataTable();
-                tablename.row($(this).parents("tr")).remove().draw();
-            });
-        },
+        /**
+         * Initialise le module
+         */
         init: function () {
-            console.log("all modules loaded");
+            _private.debug("info", "Initialisation d'AppModules");
+
+            // Réinitialisation des formulaires
             this.resetForms();
+
+            // Configuration des gestionnaires d'événements pour la suppression de lignes
+            this.setupDeleteRowHandlers();
+
+            _private.debug("info", "AppModules initialisé avec succès");
         },
     };
 })();
 
-document.addEventListener("DOMContentLoaded", (e) => {
+// Initialisation au chargement du DOM
+document.addEventListener("DOMContentLoaded", () => {
     AppModules.init();
 });

@@ -93,8 +93,7 @@
         <p>© 2025 | Enhanced Browser Experience</p>
     </div>
 
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
 
     <!-- Script for animated background dots -->
     <script>
