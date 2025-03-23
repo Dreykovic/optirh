@@ -135,7 +135,7 @@
             <div class="modal-body">
                 <label for="nom" class='fs-5'>Dénomination</label>
                 <input type="text" class="form-control mb-2" id="nom" name='name'>
-                <label for="nif" class='fs-5'>NIF</label>
+                <label for="nif" class='fs-5'>NIF/RCCM</label>
                 <input type="text" class="form-control mb-2" id="nif" name='nif'>
                 <label for="phone" class='fs-5'>Téléphone</label>
                 <input type="text" class="form-control mb-2" id="phone" name='phone_number'>
