@@ -1,6 +1,6 @@
 <ul class="menu-list flex-grow-1 mt-3">
     <li>
-        <a class="m-link {{ Request::is('/') ? 'active' : '' }}" href="{{ route('opti-hr-home') }}">
+        <a class="m-link {{ Request::is('opti-hr') ? 'active' : '' }}" href="{{ route('opti-hr.home') }}">
             <i class="icofont-home fs-5"></i>
             <span>Tableau De Bord</span>
         </a>
