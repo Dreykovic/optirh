@@ -29,7 +29,7 @@
                 <!-- Applications Grid -->
                 <div class="app-grid">
 
-                    @can('access-opti-rh')
+                    @canany(['access-all', 'access-opti-rh'])
                         <!-- OptiHR App -->
                         <a href="{{ route('opti-hr.home') }}" class="app-card">
                             <div class="app-logo">
@@ -38,8 +38,8 @@
                             <h3 class="app-title">OptiHR</h3>
                             <p class="app-description">Gestion des ressources humaines</p>
                         </a>
-                    @endcan
-                    @can('access-recours')
+                    @endcanany
+                    @canany(['access-all', 'access-recours'])
                         <!-- Recours App -->
                         <a href="{{ route('recours.home') }}" class="app-card">
                             <div class="app-logo">
@@ -48,7 +48,7 @@
                             <h3 class="app-title">Recours</h3>
                             <p class="app-description">Système de rappels et suivi</p>
                         </a>
-                    @endcan
+                    @endcanany
 
                 </div>
 
