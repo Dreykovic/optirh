@@ -1,8 +1,9 @@
 <?php
+
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Modules\Recours\App\Models\Appeal;
+use App\Models\Recours\Appeal;
 use Carbon\Carbon;
 use App\Mail\DailyAppealReminderMail;
 use Illuminate\Support\Facades\Mail;
@@ -14,7 +15,7 @@ class SendDailyAppealReminderEmail extends Command
 
     public function handle()
     {
-       
+
         $appeals = Appeal::where('day_count', '>=', 3)//7
             ->where(function ($query) {
                 $query->where('analyse_status', 'EN_COURS')
@@ -47,4 +48,3 @@ class SendDailyAppealReminderEmail extends Command
         Mail::to($emailRecipient)->send(new DailyAppealReminderMail($appeals));
     }
 }
-

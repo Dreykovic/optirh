@@ -3,10 +3,10 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\Department;
-use App\Models\Duty;
-use App\Models\Employee;
-use App\Models\Job;
+use App\Models\OptiHr\Department;
+use App\Models\OptiHr\Duty;
+use App\Models\OptiHr\Employee;
+use App\Models\OptiHr\Job;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
@@ -25,6 +25,12 @@ class DatabaseSeeder extends Seeder
 
             DocumentTypeSeeder::class,
             HolidaySeeder::class,
+
+            //Recours Seeders
+            DacSeeder::class,
+            DecisionSeeder::class,
+            ApplicantSeeder::class,
+            AppealSeeder::class,
         ]);
         /**
          * Employees.

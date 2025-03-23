@@ -74,6 +74,15 @@ class RoleSeeder extends Seeder
             'écrire-un-férié',
             'créer-un-férié',
             'configurer-un-férié',
+
+            // Logs
+            'voir-un-journal',
+            'écrire-un-journal',
+            'créer-un-journal',
+            'configurer-un-journal',
+
+            // Modules
+            'access-opti-hr',
         ];
         $hr_permissions_list = [
             // compte
@@ -135,6 +144,17 @@ class RoleSeeder extends Seeder
             'écrire-un-férié',
             'créer-un-férié',
             'configurer-un-férié',
+
+            // Logs
+            'voir-un-journal',
+            'écrire-un-journal',
+            'créer-un-journal',
+            'configurer-un-journal',
+
+            // Modules
+            'access-opti-hr',
+            'access-recours',
+            'access-all',
         ];
         $dsaf_permissions_list = [
             // compte
@@ -196,6 +216,15 @@ class RoleSeeder extends Seeder
             'écrire-un-férié',
             'créer-un-férié',
             'configurer-un-férié',
+
+            // Logs
+            'voir-un-journal',
+            'écrire-un-journal',
+            'créer-un-journal',
+            'configurer-un-journal',
+
+            // Modules
+            'access-opti-hr',
         ];
         $dg_permissions_list = [
             // compte
@@ -257,6 +286,16 @@ class RoleSeeder extends Seeder
             // 'écrire-un-férié',
             // 'créer-un-férié',
             // 'configurer-un-férié',
+
+            // Logs
+            'voir-un-journal',
+            'écrire-un-journal',
+            'créer-un-journal',
+            'configurer-un-journal',
+
+            // Modules
+
+            'access-all',
         ];
         $employee_permissions_list = [
             // compte
@@ -284,6 +323,15 @@ class RoleSeeder extends Seeder
 
             // Fériés
             'voir-un-férié',
+
+            // Logs
+            'voir-un-journal',
+            'écrire-un-journal',
+            'créer-un-journal',
+            'configurer-un-journal',
+
+            // Modules
+            'access-opti-hr',
         ];
 
         // Création des permission

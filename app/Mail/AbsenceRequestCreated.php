@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Absence;
+use App\Models\OptiHr\Absence;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -57,7 +57,7 @@ class AbsenceRequestCreated extends Mailable implements ShouldQueue
         $url = $this->url;
 
         return new Content(
-            view: 'emails.absence_request_created',
+            view: 'modules.opti-hr.emails.absence_request_created',
             with: compact('receiverName', 'text', 'url')
         );
     }

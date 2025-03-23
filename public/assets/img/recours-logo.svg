@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200">
+  <!-- Background - fun wavy shape -->
+  <path d="M50,100 C65,70 85,60 110,60 L190,60 C215,60 235,70 250,100 C235,130 215,140 190,140 L110,140 C85,140 65,130 50,100 Z" fill="#B5D8B9" />
+  
+  <!-- Calendar/reminder icon -->
+  <rect x="75" y="80" width="40" height="40" rx="5" ry="5" fill="#4CAF50" />
+  <rect x="85" y="70" width="5" height="15" rx="2" ry="2" fill="#4CAF50" />
+  <rect x="100" y="70" width="5" height="15" rx="2" ry="2" fill="#4CAF50" />
+  <rect x="80" y="90" width="30" height="25" rx="2" ry="2" fill="#FFFFFF" />
+  <path d="M85,100 L95,110 L105,95" stroke="#FF5722" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <!-- Text with playful styling -->
+  <text x="165" y="110" font-family="Arial, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="#4CAF50" style="letter-spacing: 2px;">RECOURS</text>
+  
+  <!-- Notification bell icon -->
+  <path d="M220,85 C220,80 215,75 210,75 C205,75 200,80 200,85 L200,95 L195,105 L225,105 L220,95 Z" fill="#FF5722" />
+  <circle cx="210" cy="110" r="5" fill="#FF5722" />
+  <path d="M205,75 Q210,70 215,75" stroke="#FF5722" stroke-width="2" fill="none" />
+</svg>

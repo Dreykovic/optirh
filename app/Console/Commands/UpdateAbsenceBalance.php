@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\Duty;
+use App\Models\OptiHr\Duty;
 use Illuminate\Support\Facades\Log;
 
 class UpdateAbsenceBalance extends Command

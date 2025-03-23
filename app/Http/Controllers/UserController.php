@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Employee;
+use App\Models\OptiHr\Employee;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -84,7 +84,7 @@ class UserController extends Controller
         // session()->flash('success', "L'utilisateur  à été créé.");
         // session()->flash('success', "L'utilisateur  à été créé.");
 
-        return view('pages.admin.users.credentials.index', compact('users', 'roles', 'status', 'employeesWithoutUser'));
+        return view('modules.opti-hr.pages.users.credentials.index', compact('users', 'roles', 'status', 'employeesWithoutUser'));
 
     }
 
