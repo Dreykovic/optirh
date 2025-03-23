@@ -15,6 +15,9 @@ use App\Http\Controllers\OptiHr\FileController;
 use App\Http\Controllers\OptiHr\HolidayController;
 use App\Http\Controllers\OptiHr\JobController;
 use App\Http\Controllers\OptiHr\PublicationController;
+use App\Http\Controllers\Recours\DacController;
+use App\Http\Controllers\Recours\RecoursController;
+use App\Http\Controllers\Recours\StatsController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -294,5 +297,26 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::get('/preview/{publicationId}', [PublicationController::class,   'preview'])->name('publications.pdf.preview');
             });
         });
+    });
+    /*
+     * Recours
+     */
+    Route::prefix('recours')->group(function () {
+        Route::get('/', [HomeController::class, 'recours_home'])->name('recours.home');
+        Route::post('/', [HomeController::class, 'recours_home'])->name('recours.home');
+
+        Route::get('/index', [RecoursController::class, 'index'])->name('recours.index');
+        Route::get('/show/{id}', [RecoursController::class, 'show'])->name('recours.show');
+        Route::get('/new', [RecoursController::class, 'create'])->name('recours.new');
+        Route::put('/update/{id}', [RecoursController::class, 'update'])->name('recours.update');
+        Route::delete('/delete/{id}', [RecoursController::class, 'destroy'])->name('recours.delete');
+        Route::put('/accepted/{id}', [RecoursController::class, 'accepted'])->name('recours.accepted');
+        Route::put('/rejected/{id}', [RecoursController::class, 'rejected'])->name('recours.rejected');
+
+        Route::get('/api/data', [RecoursController::class, 'appeal_loading'])->name('recours.loaging');
+        Route::post('/store', [RecoursController::class, 'store'])->name('recours.store');
+        Route::post('/dacs/store', [DacController::class, 'dacStore'])->name('dac.store');
+        Route::post('/applicants/store', [DacController::class, 'applicantStore'])->name('applicant.store');
+        Route::get('/stats', [StatsController::class, 'index'])->name('stats.index');
     });
 });
