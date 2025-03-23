@@ -31,7 +31,7 @@ class RoleController extends Controller
             ->orderBy('id', 'ASC')
             ->get();
 
-        return view('pages.admin.users.permissions.index', compact('permissions'));
+        return view('modules.opti-hr.pages.users.permissions.index', compact('permissions'));
 
     }
 
@@ -47,7 +47,7 @@ class RoleController extends Controller
             $permissions = $this->trierPermissionsParCategory(Permission::orderBy('name', 'ASC')->get());
         }
 
-        return view('pages.admin.users.roles.index', compact('roles', 'permissions'));
+        return view('modules.opti-hr.pages.users.roles.index', compact('roles', 'permissions'));
 
     }
 
@@ -85,7 +85,7 @@ class RoleController extends Controller
 
         $permissions = $this->trierPermissionsParCategory($all_permissions);
 
-        return view('pages.admin.users.roles.details.index', compact('role', 'permissions'));
+        return view('modules.opti-hr.pages.users.roles.details.index', compact('role', 'permissions'));
 
     }
 

@@ -50,7 +50,7 @@ class AbsenceRequestUpdated extends Mailable implements ShouldQueue
         $url = $this->url;
 
         return new Content(
-            view: 'emails.absence_request_updated',
+            view: 'modules.opti-hr.emails.absence_request_updated',
             with: compact('receiverName', 'absence', 'url', 'status')
         );
     }

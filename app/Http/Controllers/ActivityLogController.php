@@ -95,7 +95,7 @@ class ActivityLogController extends Controller
 
 
 
-        return view('pages.admin.users.activity-logs.index', compact('logs', 'users', 'modelTypes'));
+        return view('modules.opti-hr.pages.users.activity-logs.index', compact('logs', 'users', 'modelTypes'));
 
     }
 
@@ -118,7 +118,7 @@ class ActivityLogController extends Controller
             "Consultation des détails du log d'activité #{$id}"
         );
 
-        return view('pages.admin.users.activity-logs.show', compact('log'));
+        return view('modules.opti-hr.pages.users.activity-logs.show', compact('log'));
 
     }
 

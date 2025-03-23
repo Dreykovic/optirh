@@ -25,7 +25,7 @@ class DocumentTypeController extends Controller
 
         $documentTypes = DocumentType::all();
 
-        return view('pages.admin.opti-hr.documents.types.index', compact('documentTypes'));
+        return view('modules.opti-hr.pages.documents.types.index', compact('documentTypes'));
 
     }
 

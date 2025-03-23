@@ -28,13 +28,13 @@ class AbsencePdfService
         // On choisit le template en fonction du type d'absence
         switch ($absenceType->label) {
             case 'annuel':
-                $view = 'pdf.absences.leave_request_annual';
+                $view = 'modules.opti-hr.pdf.absences.leave_request_annual';
                 break;
             case 'maternité':
-                $view = 'pdf.absences.leave_request_maternity';
+                $view = 'modules.opti-hr.pdf.absences.leave_request_maternity';
                 break;
             default:
-                $view = 'pdf.absences.leave_request_default'; // Template par défaut si nécessaire
+                $view = 'modules.opti-hr.pdf.absences.leave_request_default'; // Template par défaut si nécessaire
                 break;
         }
 

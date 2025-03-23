@@ -53,7 +53,7 @@ class AnnualDecisionController extends Controller
         try {
             $decision = AnnualDecision::where('state', 'current')->first();
 
-            return view('pages.admin.opti-hr.attendances.annual-decisions.index', compact('decision'));
+            return view('modules.opti-hr.pages.attendances.annual-decisions.index', compact('decision'));
         } catch (\Throwable $th) {
             dd($th->getMessage());
 

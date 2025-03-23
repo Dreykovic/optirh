@@ -104,7 +104,7 @@ class DocumentRequestController extends Controller
         );
 
         // Retourner la vue avec les données nécessaires
-        return view('pages.admin.opti-hr.documents.main.index', compact('documentRequests', 'stage', 'document_types'));
+        return view('modules.opti-hr.pages.documents.main.index', compact('documentRequests', 'stage', 'document_types'));
 
     }
 
@@ -179,8 +179,8 @@ class DocumentRequestController extends Controller
             "Accès au formulaire de création de demande de document"
         );
 
-        return view('pages.admin.opti-hr.documents.main.create', compact('documentTypes'));
-        return view('pages.admin.opti-hr.documents.main.create', compact('documentTypes'));
+        return view('modules.opti-hr.pages.documents.main.create', compact('documentTypes'));
+        return view('modules.opti-hr.pages.documents.main.create', compact('documentTypes'));
 
     }
 

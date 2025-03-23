@@ -84,7 +84,7 @@ class UserController extends Controller
         // session()->flash('success', "L'utilisateur  à été créé.");
         // session()->flash('success', "L'utilisateur  à été créé.");
 
-        return view('pages.admin.users.credentials.index', compact('users', 'roles', 'status', 'employeesWithoutUser'));
+        return view('modules.opti-hr.pages.users.credentials.index', compact('users', 'roles', 'status', 'employeesWithoutUser'));
 
     }
 

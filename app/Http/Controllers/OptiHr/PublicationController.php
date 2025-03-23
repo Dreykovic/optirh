@@ -73,7 +73,7 @@ class PublicationController extends Controller
             "Consultation de la liste des publications - Statut: {$status}"
         );
 
-        return view('pages.admin.opti-hr.publications.config.index', compact('publications', 'status'));
+        return view('modules.opti-hr.pages.publications.config.index', compact('publications', 'status'));
 
     }
 

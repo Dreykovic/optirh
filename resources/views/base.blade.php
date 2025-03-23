@@ -21,17 +21,6 @@
 <body>
     @guest
         <style>
-            /* body {
-                                font-family: Arial, sans-serif;
-                                background-color: #f4f4f9;
-                                display: flex;
-                                justify-content: center;
-                                align-items: center;
-                                height: 100vh;
-                                margin: 0;
-                                overflow: hidden;
-                            } */
-
             .background-animation {
                 position: fixed;
                 top: 0;
