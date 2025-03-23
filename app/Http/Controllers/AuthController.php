@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,18 +25,53 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($attributes, $request->input('remember'))) {
-            $user = User::where('email', '=', $request->input('email'))->first();
-            // if (!$user->hasRole(['admin', 'boss', 'cashier', 'accountant'])) {
-            //     return response()->json(['ok' => false, 'message' => "Vous n'avez pas le droit de vous connecter"]);
-            // }
+            $user = Auth::user();
             session()->regenerate();
 
-            return response()->json(['ok' => true, 'message' => 'Vous êtes connecté.']);
-        } else {
-            // return back()->withErrors(['email' => '']);
+            // Si la requête attend une réponse JSON (AJAX)
+            if ($request->expectsJson()) {
+                $redirectUrl = $this->getRedirectUrlForUser($user);
 
-            return response()->json(['ok' => false, 'message' => 'Email ou password invalide.']);
+                return response()->json([
+                    'ok' => true,
+                    'message' => 'Vous êtes connecté.',
+                    'redirect' => $redirectUrl,
+                ]);
+            }
+
+            // Sinon, redirection directe pour les requêtes non-AJAX
+            return redirect($this->getRedirectUrlForUser($user));
+        } else {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'ok' => false,
+                    'message' => 'Email ou mot de passe invalide.',
+                ]);
+            }
+
+            return back()->withErrors([
+                'email' => 'Email ou mot de passe invalide.',
+            ]);
         }
+    }
+
+    private function getRedirectUrlForUser($user)
+    {
+        // Priorité des redirections en fonction des permissions
+        if ($user->can('access-all')) {
+            return RouteServiceProvider::GATEWAY;
+        }
+
+        if ($user->can('access-opti-hr')) {
+            return RouteServiceProvider::OPTI_HR_HOME;
+        }
+
+        if ($user->can('access-recours')) {
+            return RouteServiceProvider::RECOURS_HOME;
+        }
+
+        // Redirection par défaut
+        return RouteServiceProvider::OPTI_HR_HOME;
     }
 
     public function logout()

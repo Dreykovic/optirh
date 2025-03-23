@@ -4,138 +4,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browser Homepage Enhanced</title>
-    <!-- Bootstrap CSS -->
+    <title>Portail</title>
     <link rel="stylesheet" href="{{ asset('assets/css/my-task.style.min.css') }}">
-    <!-- Font Awesome pour les icônes -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/gateway.css') }}">
 
 </head>
 
 <body>
-    <div class="browser-container">
-        <!-- Zone de contenu principale -->
-        <div class="content-area h-100">
-            <div class="search-container">
-                <div class="logo text-center mb-4">
-                    <img src="/api/placeholder/50/50" alt="Browser logo" class="rounded-circle bg-white p-2">
-                </div>
-
-                <div class="search-box">
-                    <i class="fa-brands fa-google search-icon"></i>
-                    <input type="text" placeholder="Search the web">
-                    <i class="fas fa-search text-muted ms-2"></i>
-                </div>
-
-                <div class="shortcuts-container">
-                    <a href="#" class="shortcut">
-                        <div class="shortcut-icon medium-icon">
-                            <i class="fab fa-medium-m text-white"></i>
-                        </div>
-                        <div class="shortcut-name">Medium</div>
-                    </a>
-                    <a href="#" class="shortcut">
-                        <div class="shortcut-icon twitch-icon">
-                            <i class="fab fa-twitch text-white"></i>
-                        </div>
-                        <div class="shortcut-name">Twitch</div>
-                    </a>
-                    <a href="#" class="shortcut">
-                        <div class="shortcut-icon reddit-icon">
-                            <i class="fab fa-reddit-alien text-white"></i>
-                        </div>
-                        <div class="shortcut-name">Reddit</div>
-                    </a>
-                    <a href="#" class="shortcut">
-                        <div class="shortcut-icon twitter-icon">
-                            <i class="fab fa-twitter text-white"></i>
-                        </div>
-                        <div class="shortcut-name">Twitter</div>
-                    </a>
-
-                    <a href="#" class="shortcut">
-                        <div class="shortcut-icon airbnb-icon">
-                            <i class="fab fa-airbnb text-white"></i>
-                        </div>
-                        <div class="shortcut-name">Airbnb</div>
-                    </a>
-                    <a href="#" class="shortcut">
-                        <div class="shortcut-icon youtube-icon">
-                            <i class="fab fa-youtube text-white"></i>
-                        </div>
-                        <div class="shortcut-name">Youtube</div>
-                    </a>
-                    <a href="#" class="shortcut">
-                        <div class="shortcut-icon netflix-icon">
-                            <i class="fas fa-play text-white"></i>
-                        </div>
-                        <div class="shortcut-name">Netflix</div>
-                    </a>
-                    <a href="#" class="shortcut">
-                        <div class="shortcut-icon">
-                            <i class="fas fa-plus add-icon"></i>
-                        </div>
-                        <div class="shortcut-name">Add a site</div>
-                    </a>
+    <div class="container-fluid p-0">
+        <div class="row g-0">
+            <!-- Main Content -->
+            <div class="col
+                <!-- Browser Nav -->
+                <div class="browser-window">
+                <div class="address-bar d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-sm me-1"><i class="icofont-arrow-left"></i></button>
+                        <button class="btn btn-sm me-1"><i class="icofont-arrow-right"></i></button>
+                        <button class="btn btn-sm me-1"><i class="icofont-refresh"></i></button>
+                        <span class="border rounded px-3 py-1 text-muted">Enter search or web address</span>
+                    </div>
+                    <div>
+                        <button class="btn btn-sm"><i class="icofont-share"></i></button>
+                        <button class="btn btn-sm"><i class="icofont-camera"></i></button>
+                        <button class="btn btn-sm"><i class="icofont-ui-grid"></i></button>
+                        <button class="btn btn-sm"><i class="icofont-user-alt-7"></i></button>
+                    </div>
                 </div>
             </div>
 
-            <div class="dots-container">
-                <!-- Generated by JS -->
+            <!-- Content Area -->
+            <div class="main-content p-4">
+                <div class="search-container d-flex justify-content-center mb-5 mx-auto" style="max-width: 600px;">
+                    <div class="search-bar d-flex align-items-center w-100">
+                        <img src="/api/placeholder/20/20" alt="Google" class="me-2" />
+                        <span class="flex-grow-1 text-muted">Search the web</span>
+                        <i class="icofont-search"></i>
+                    </div>
+                </div>
+
+                <!-- Shortcuts -->
+                <div class="d-flex justify-content-center flex-wrap" style="max-width: 800px; margin: 0 auto;">
+                    <div class="shortcut-container text-center">
+                        <img src="/api/placeholder/30/30" alt="Medium" class="mb-2" />
+                        <span class="small">Medium</span>
+                    </div>
+                    <div class="shortcut-container text-center">
+                        <img src="/api/placeholder/30/30" alt="Twitch" class="mb-2" />
+                        <span class="small">Twitch</span>
+                    </div>
+                    <div class="shortcut-container text-center">
+                        <img src="/api/placeholder/30/30" alt="Reddit" class="mb-2" />
+                        <span class="small">Reddit</span>
+                    </div>
+                    <div class="shortcut-container text-center">
+                        <img src="/api/placeholder/30/30" alt="Twitter" class="mb-2" />
+                        <span class="small">Twitter</span>
+                    </div>
+                    <div class="shortcut-container text-center">
+                        <img src="/api/placeholder/30/30" alt="Airbnb" class="mb-2" />
+                        <span class="small">Airbnb</span>
+                    </div>
+                    <div class="shortcut-container text-center">
+                        <img src="/api/placeholder/30/30" alt="Youtube" class="mb-2" />
+                        <span class="small">Youtube</span>
+                    </div>
+                    <div class="shortcut-container text-center">
+                        <img src="/api/placeholder/30/30" alt="Netflix" class="mb-2" />
+                        <span class="small">Netflix</span>
+                    </div>
+                    <div class="shortcut-container text-center">
+                        <span class="add-button">+</span>
+                        <span class="small">Add a site</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <div class="footer">
-        <p>© 2025 | Enhanced Browser Experience</p>
     </div>
 
 
-
-    <!-- Script for animated background dots -->
+    <!-- Animation des particules en arrière-plan -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const dotsContainer = document.querySelector('.dots-container');
-            const dotCount = 30;
+            // Créer un canvas pour les particules
+            const particleCanvas = document.createElement('canvas');
+            particleCanvas.style.position = 'absolute';
+            particleCanvas.style.top = '0';
+            particleCanvas.style.left = '0';
+            particleCanvas.style.width = '100%';
+            particleCanvas.style.height = '100%';
+            particleCanvas.style.pointerEvents = 'none';
+            particleCanvas.style.zIndex = '0';
+            document.querySelector('.main-content').prepend(particleCanvas);
 
-            for (let i = 0; i < dotCount; i++) {
-                const dot = document.createElement('div');
-                dot.classList.add('dot');
+            // Configurer le canvas
+            const ctx = particleCanvas.getContext('2d');
+            particleCanvas.width = window.innerWidth;
+            particleCanvas.height = window.innerHeight;
 
-                // Random position
-                const x = Math.random() * 100;
-                const y = Math.random() * 100;
+            // Paramètres des particules
+            const particlesArray = [];
+            const numberOfParticles = 30;
 
-                dot.style.top = `${y}%`;
-                dot.style.left = `${x}%`;
-                dot.style.opacity = Math.random() * 0.5 + 0.1;
-                dot.style.width = `${Math.random() * 5 + 3}px`;
-                dot.style.height = dot.style.width;
-
-                // Random animation
-                const duration = Math.random() * 20 + 10;
-                const delay = Math.random() * 5;
-
-                dot.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
-
-                dotsContainer.appendChild(dot);
-            }
-        });
-
-        // Animation for floating dots
-        document.head.insertAdjacentHTML('beforeend', `
-            <style>
-                @keyframes float {
-                    0%, 100% { transform: translateY(0) translateX(0); }
-                    25% { transform: translateY(-20px) translateX(10px); }
-                    50% { transform: translateY(-35px) translateX(-15px); }
-                    75% { transform: translateY(-15px) translateX(15px); }
+            // Classe Particule
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * particleCanvas.width;
+                    this.y = Math.random() * particleCanvas.height;
+                    this.size = Math.random() * 3 + 1;
+                    this.speedX = Math.random() * 1 - 0.5;
+                    this.speedY = Math.random() * 1 - 0.5;
+                    this.color = 'rgba(255, 255, 255, ' + (Math.random() * 0.3 + 0.2) + ')';
                 }
-            </style>
-        `);
+
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+
+                    if (this.size > 0.2) this.size -= 0.01;
+
+                    if (this.x < 0 || this.x > particleCanvas.width) {
+                        this.speedX = -this.speedX;
+                    }
+
+                    if (this.y < 0 || this.y > particleCanvas.height) {
+                        this.speedY = -this.speedY;
+                    }
+                }
+
+                draw() {
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            // Créer les particules
+            function init() {
+                for (let i = 0; i < numberOfParticles; i++) {
+                    particlesArray.push(new Particle());
+                }
+            }
+
+            // Animer les particules
+            function animate() {
+                ctx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+
+                for (let i = 0; i < particlesArray.length; i++) {
+                    particlesArray[i].update();
+                    particlesArray[i].draw();
+                }
+
+                // Connecter les particules proches
+                connectParticles();
+                requestAnimationFrame(animate);
+            }
+
+            // Connecter les particules avec des lignes
+            function connectParticles() {
+                for (let a = 0; a < particlesArray.length; a++) {
+                    for (let b = a; b < particlesArray.length; b++) {
+                        const dx = particlesArray[a].x - particlesArray[b].x;
+                        const dy = particlesArray[a].y - particlesArray[b].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance < 100) {
+                            ctx.strokeStyle = 'rgba(255, 255, 255, ' + (0.2 - distance / 500) + ')';
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                            ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            // Redimensionner le canvas si la fenêtre change
+            window.addEventListener('resize', function() {
+                particleCanvas.width = window.innerWidth;
+                particleCanvas.height = window.innerHeight;
+                init();
+            });
+
+            // Initialiser et démarrer l'animation
+            init();
+            animate();
+        });
     </script>
 </body>
 

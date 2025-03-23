@@ -19,8 +19,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     public const RECOURS_HOME = '/recours';
     public const OPTI_HR_HOME = '/opti-hr';
-    public const GATEWAY = '/gateway';
-    public const HOME = '/';
+    public const GATEWAY = '/';
 
     /**
      * Define your route model bindings, pattern filters, and other route configuration.

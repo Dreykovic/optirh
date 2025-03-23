@@ -38,7 +38,7 @@ class RedirectIfAuthenticated
                 }
 
                 // Si l'utilisateur n'a aucune permission spécifique
-                return redirect(RouteServiceProvider::HOME);
+                return redirect(RouteServiceProvider::OPTI_HR_HOME);
             }
         }
 
