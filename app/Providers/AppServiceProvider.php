@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Models\Employee;
+use App\Models\OptiHr\Employee;
 use App\Observers\EmployeeObserver;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
         Paginator::defaultView('pagination::bootstrap-4');
         ResetPassword::toMailUsing(function ($user, $token) {
             return (new MailMessage())
-                ->view('emails.reset_password', ['resetLink' => url(config('app.url').route('password.reset', $token, false))])
+                ->view('modules.opti-hr.emails.reset_password', ['resetLink' => url(config('app.url').route('password.reset', $token, false))])
                 ->subject(__('Réinitialisation de mot de passe'));
         });
         // Directives Blade personnalisées

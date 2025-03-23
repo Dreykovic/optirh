@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,116 +14,126 @@ class AuthController extends Controller
 {
     public function login()
     {
-        return view('pages.auth.login.index');
+        return view('auth.login.index');
     }
 
     public function logUser(Request $request)
     {
-        try {
-            $attributes = request()->validate([
-                'email' => 'required|email',
-                'password' => 'required',
-            ]);
+        $attributes = request()->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-            if (Auth::attempt($attributes, $request->input('remember'))) {
-                $user = User::where('email', '=', $request->input('email'))->first();
-                // if (!$user->hasRole(['admin', 'boss', 'cashier', 'accountant'])) {
-                //     return response()->json(['ok' => false, 'message' => "Vous n'avez pas le droit de vous connecter"]);
-                // }
-                session()->regenerate();
+        if (Auth::attempt($attributes, $request->input('remember'))) {
+            $user = Auth::user();
+            session()->regenerate();
 
-                return response()->json(['ok' => true, 'message' => 'Vous êtes connecté.']);
-            } else {
-                // return back()->withErrors(['email' => '']);
+            // Si la requête attend une réponse JSON (AJAX)
+            if ($request->expectsJson()) {
+                $redirectUrl = $this->getRedirectUrlForUser($user);
 
-                return response()->json(['ok' => false, 'message' => 'Email ou password invalide.']);
+                return response()->json([
+                    'ok' => true,
+                    'message' => 'Vous êtes connecté.',
+                    'redirect' => $redirectUrl,
+                ]);
             }
-        } catch (\Exception $e) {
-            // return response()->json(['ok' => false, 'message' => $e->getMessage()]);
 
-            return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
+            // Sinon, redirection directe pour les requêtes non-AJAX
+            return redirect($this->getRedirectUrlForUser($user));
+        } else {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'ok' => false,
+                    'message' => 'Email ou mot de passe invalide.',
+                ]);
+            }
+
+            return back()->withErrors([
+                'email' => 'Email ou mot de passe invalide.',
+            ]);
         }
+    }
+
+    private function getRedirectUrlForUser($user)
+    {
+        // Priorité des redirections en fonction des permissions
+        if ($user->can('access-all')) {
+            return RouteServiceProvider::GATEWAY;
+        }
+
+        if ($user->can('access-opti-hr')) {
+            return RouteServiceProvider::OPTI_HR_HOME;
+        }
+
+        if ($user->can('access-recours')) {
+            return RouteServiceProvider::RECOURS_HOME;
+        }
+
+        // Redirection par défaut
+        return RouteServiceProvider::OPTI_HR_HOME;
     }
 
     public function logout()
     {
-        try {
-            Auth::logout();
+        Auth::logout();
 
-            return back()->with(['success' => 'Vous êtes déconnecté.']);
-        } catch (\Exception $e) {
-            // Gérez l'erreur ici, vous pouvez la logger ou retourner une réponse adaptée à l'erreur.
-            return back()->with(['error' => 'Une erreur s\'est produite. Veuillez réessayer.']);
-
-            // return back()->with(['error' => $e->getMessage()]);
-        }
+        return back()->with(['success' => 'Vous êtes déconnecté.']);
     }
 
     public function forgotPasswordFormGet()
     {
-        return view('pages.auth.password-forgot.index');
+        return view('auth.password-forgot.index');
     }
 
     public function sendEmail(Request $request)
     {
-        try {
-            $request->validate(['email' => 'required|email']);
+        $request->validate(['email' => 'required|email']);
 
-            // Envoyer le lien de réinitialisation du mot de passe
-            $status = Password::sendResetLink(
-                $request->only('email')
-            );
-            if ($status === Password::RESET_LINK_SENT) {
-                return response()->json(['message' => __(' Nous vous avons envoyé par email le lien de réinitialisation du mot de passe ! Le lien expirera dans 15 minutes.'), 'ok' => true]);
-            } else {
-                return response()->json(['error' => __('Une erreur est survenue'), 'ok' => true], 422);
-            }
-        } catch (\Exception $e) {
-            // return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
-
-            return response()->json(['ok' => false, 'message' => $e->getMessage()]);
+        // Envoyer le lien de réinitialisation du mot de passe
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+        if ($status === Password::RESET_LINK_SENT) {
+            return response()->json(['message' => __(' Nous vous avons envoyé par email le lien de réinitialisation du mot de passe ! Le lien expirera dans 15 minutes.'), 'ok' => true]);
+        } else {
+            return response()->json(['error' => __('Une erreur est survenue'), 'ok' => true], 422);
         }
     }
 
     public function resetPass($token)
     {
-        return view('pages.auth.reset-password.index', ['token' => $token]);
+        return view('auth.reset-password.index', ['token' => $token]);
     }
 
     public function changePassword(Request $request)
     {
-        try {
-            $request->validate([
-                'token' => 'required',
-                'email' => 'required|email',
-                'password' => 'required|min:8|confirmed',
-            ]);
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:8|confirmed',
+        ]);
 
-            $status = Password::reset(
-                $request->only('email', 'password', 'password_confirmation', 'token'),
-                function ($user, $password) {
-                    $user->forceFill([
-                        'password' => Hash::make($password),
-                    ])->setRememberToken(Str::random(60));
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password),
+                ])->setRememberToken(Str::random(60));
 
-                    $user->save();
-                    session()->regenerate();
+                $user->save();
+                session()->regenerate();
 
-                    event(new PasswordReset($user));
-                    Auth::logoutOtherDevices($password);
-                }
-            );
-
-            if ($status === Password::PASSWORD_RESET) {
-                return response()->json(['message' => __(' Votre mot de passe a été mis à jour avec succes .'), 'ok' => true]);
-            } else {
-                // return response()->json(['error' => __('Password reset failed.'), 'ok' => false], 422);
-                return response()->json(['message' => 'Une erreur est survenu. Verifiez les information entrées', 'ok' => false]);
+                event(new PasswordReset($user));
+                Auth::logoutOtherDevices($password);
             }
-        } catch (\Exception $e) {
+        );
 
-            return response()->json(['ok' => false, 'message' => $e->getMessage()]);
-            return response()->json(['ok' => false, 'message' => 'Une erreur s\'est produite. Veuillez réessayer.']);
+        if ($status === Password::PASSWORD_RESET) {
+            return response()->json(['message' => __(' Votre mot de passe a été mis à jour avec succes .'), 'ok' => true]);
+        } else {
+            // return response()->json(['error' => __('Password reset failed.'), 'ok' => false], 422);
+            return response()->json(['message' => 'Une erreur est survenu. Verifiez les information entrées', 'ok' => false]);
         }
     }
 

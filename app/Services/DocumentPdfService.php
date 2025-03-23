@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\DocumentRequest;
-use App\Models\DocumentType;
-use App\Models\Job;
+use App\Models\OptiHr\DocumentRequest;
+use App\Models\OptiHr\DocumentType;
+use App\Models\OptiHr\Job;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class DocumentPdfService
@@ -23,7 +23,7 @@ class DocumentPdfService
             'dgJob' => $dgJob,
         ];
 
-        $view = 'pdf.documents.document_request';
+        $view = 'modules.opti-hr.pdf.documents.document_request';
 
         // Charge la vue avec les données
         $pdf = Pdf::loadView($view, $viewData);
