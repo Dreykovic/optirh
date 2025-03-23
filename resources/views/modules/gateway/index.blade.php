@@ -29,7 +29,7 @@
                 <!-- Applications Grid -->
                 <div class="app-grid">
 
-                    @canany(['access-all', 'access-opti-rh'])
+                    @canany(['access-all', 'access-opti-hr'])
                         <!-- OptiHR App -->
                         <a href="{{ route('opti-hr.home') }}" class="app-card">
                             <div class="app-logo">
