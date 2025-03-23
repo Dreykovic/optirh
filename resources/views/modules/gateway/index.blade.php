@@ -14,21 +14,58 @@
     <div class="container-fluid p-0">
         <div class="row g-0">
             <!-- Main Content -->
-            <div class="col
-                <!-- Browser Nav -->
-                <div class="browser-window">
+            <div class="col">
                 <div class="address-bar d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center">
-                        <button class="btn btn-sm me-1"><i class="icofont-arrow-left"></i></button>
-                        <button class="btn btn-sm me-1"><i class="icofont-arrow-right"></i></button>
-                        <button class="btn btn-sm me-1"><i class="icofont-refresh"></i></button>
-                        <span class="border rounded px-3 py-1 text-muted">Enter search or web address</span>
+
                     </div>
                     <div>
-                        <button class="btn btn-sm"><i class="icofont-share"></i></button>
-                        <button class="btn btn-sm"><i class="icofont-camera"></i></button>
-                        <button class="btn btn-sm"><i class="icofont-ui-grid"></i></button>
-                        <button class="btn btn-sm"><i class="icofont-user-alt-7"></i></button>
+
+                        <div class="dropdown user-profile ml-2 ml-sm-3 d-flex align-items-center zindex-popover">
+                            <div class="u-info me-2">
+                                <p class="mb-0 text-end line-height-sm "><span
+                                        class="font-weight-bold">{{ auth()->user()->username }}</span></p>
+                                <small>{{ auth()->user()->getRoleNames()->first() }}</small>
+                            </div>
+                            <a class=" dropdown-toggle pulse p-0" href="#" role="button"
+                                data-bs-toggle="dropdown" data-bs-display="static">
+
+                                <i
+                                    class="icofont icofont-business-man-alt-2 avatar lg rounded-circle img-thumbnail fs-3    "></i>
+
+
+                            </a>
+                            <div
+                                class="dropdown-menu rounded-lg shadow border-0 dropdown-animation dropdown-menu-end p-0 m-0">
+                                <div class="card border-0 w280">
+                                    <div class="card-body pb-0">
+                                        <div class="d-flex py-1">
+
+                                            <div class="flex-fill ms-3">
+                                                <p class="mb-0"><span
+                                                        class="font-weight-bold">{{ auth()->user()->username }}</span>
+                                                </p>
+                                                <small class="">{{ auth()->user()->eamil }}</small>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <hr class="dropdown-divider border-dark">
+                                        </div>
+                                    </div>
+                                    <div class="list-group m-2 ">
+
+                                        <div>
+                                            <hr class="dropdown-divider border-dark">
+                                        </div>
+
+                                        <a href="{{ route('logout') }}"
+                                            class="list-group-item list-group-item-action border-0 "><i
+                                                class="icofont-logout fs-6 me-3"></i>Se Déconnecter</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -37,42 +74,23 @@
             <div class="main-content p-4">
                 <div class="search-container d-flex justify-content-center mb-5 mx-auto" style="max-width: 600px;">
                     <div class="search-bar d-flex align-items-center w-100">
-                        <img src="/api/placeholder/20/20" alt="Google" class="me-2" />
-                        <span class="flex-grow-1 text-muted">Search the web</span>
+                        <span class="flex-grow-1 text-muted">Recherche Application</span>
                         <i class="icofont-search"></i>
                     </div>
                 </div>
 
                 <!-- Shortcuts -->
                 <div class="d-flex justify-content-center flex-wrap" style="max-width: 800px; margin: 0 auto;">
-                    <div class="shortcut-container text-center">
-                        <img src="/api/placeholder/30/30" alt="Medium" class="mb-2" />
-                        <span class="small">Medium</span>
+                    <div class="shortcut-container text-center" onclick="window.location.href = '/admin';">
+                        <img src="{{ asset('assets/img/optihr-logo.svg') }}" alt="Medium" class="mb-2" />
+                        <span class="small">OptiHr</span>
                     </div>
-                    <div class="shortcut-container text-center">
-                        <img src="/api/placeholder/30/30" alt="Twitch" class="mb-2" />
-                        <span class="small">Twitch</span>
+                    <div class="shortcut-container text-center" onclick="window.location.href = '/admin';">
+                        <img src="{{ asset('assets/img/recours-logo.svg') }}" alt="Medium" class="mb-2" />
+                        <span class="small">Recours</span>
                     </div>
-                    <div class="shortcut-container text-center">
-                        <img src="/api/placeholder/30/30" alt="Reddit" class="mb-2" />
-                        <span class="small">Reddit</span>
-                    </div>
-                    <div class="shortcut-container text-center">
-                        <img src="/api/placeholder/30/30" alt="Twitter" class="mb-2" />
-                        <span class="small">Twitter</span>
-                    </div>
-                    <div class="shortcut-container text-center">
-                        <img src="/api/placeholder/30/30" alt="Airbnb" class="mb-2" />
-                        <span class="small">Airbnb</span>
-                    </div>
-                    <div class="shortcut-container text-center">
-                        <img src="/api/placeholder/30/30" alt="Youtube" class="mb-2" />
-                        <span class="small">Youtube</span>
-                    </div>
-                    <div class="shortcut-container text-center">
-                        <img src="/api/placeholder/30/30" alt="Netflix" class="mb-2" />
-                        <span class="small">Netflix</span>
-                    </div>
+
+
                     <div class="shortcut-container text-center">
                         <span class="add-button">+</span>
                         <span class="small">Add a site</span>
@@ -83,7 +101,7 @@
     </div>
     </div>
 
-
+    <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
     <!-- Animation des particules en arrière-plan -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
