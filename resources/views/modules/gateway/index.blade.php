@@ -28,26 +28,30 @@
 
                 <!-- Applications Grid -->
                 <div class="app-grid">
-                    <!-- OptiHR App -->
-                    <a href="{{ route('opti-hr.home') }}" class="app-card">
-                        <div class="app-logo">
-                            <img src="{{ asset('assets/img/optihr-logo.png') }}" alt="OptiHR" />
-                        </div>
-                        <h3 class="app-title">OptiHR</h3>
-                        <p class="app-description">Gestion des ressources humaines</p>
-                    </a>
 
-                    <!-- Recours App -->
-                    <a href="{{ route('recours.home') }}" class="app-card">
-                        <div class="app-logo">
-                            <img src="{{ asset('assets/img/recours-logo.png') }}" alt="Recours" />
-                        </div>
-                        <h3 class="app-title">Recours</h3>
-                        <p class="app-description">Système de rappels et suivi</p>
-                    </a>
-
+                    @can('access-opti-rh')
+                        <!-- OptiHR App -->
+                        <a href="{{ route('opti-hr.home') }}" class="app-card">
+                            <div class="app-logo">
+                                <img src="{{ asset('assets/img/optihr-logo.png') }}" alt="OptiHR" />
+                            </div>
+                            <h3 class="app-title">OptiHR</h3>
+                            <p class="app-description">Gestion des ressources humaines</p>
+                        </a>
+                    @endcan
+                    @can('access-recours')
+                        <!-- Recours App -->
+                        <a href="{{ route('recours.home') }}" class="app-card">
+                            <div class="app-logo">
+                                <img src="{{ asset('assets/img/recours-logo.png') }}" alt="Recours" />
+                            </div>
+                            <h3 class="app-title">Recours</h3>
+                            <p class="app-description">Système de rappels et suivi</p>
+                        </a>
+                    @endcan
 
                 </div>
+
             </div>
         </div>
     </div>
