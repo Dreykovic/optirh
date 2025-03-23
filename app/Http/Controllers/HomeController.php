@@ -3,23 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Recours\Appeal;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use ArielMejiaDev\LarapexCharts\LarapexChart;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
     public function home()
     {
+        return view('modules.opti-hr.pages.dashboard.index');
+    }
 
+    public function gateway()
+    {
         return view('pages.admin.dashbord.index');
-
     }
 
     public function recours_home(Request $request)
     {
-
         // $on_going = DB::table('appeals')
         //     ->join('dacs', 'appeals.dac_id', '=', 'dacs.id')
         //     ->leftJoin('applicants', 'appeals.applicant_id', '=', 'applicants.id')
@@ -39,8 +40,6 @@ class HomeController extends Controller
             })
             ->orderByDesc('day_count')
             ->get();
-
-
 
         $rejected_count = Appeal::where('analyse_status', 'REJETE')->count();
         $accepted_count = Appeal::where('analyse_status', 'ACCEPTE')->count();
@@ -68,13 +67,12 @@ class HomeController extends Controller
         // ")
         // ->groupBy('decisions.decision');
         $query = Appeal::join('decisions', 'appeals.decision_id', '=', 'decisions.id')
-        ->selectRaw("
+        ->selectRaw('
                 decisions.decision as decision_group,
                 COUNT(*) as count
-            ")
+            ')
         ->where('decisions.decision', '!=', 'EN COURS') // Exclure les décisions "EN COURS"
         ->groupBy('decisions.decision');
-
 
         // Appliquer le filtre uniquement si l'utilisateur envoie des dates
         if ($startDate && $endDate) {
@@ -82,7 +80,7 @@ class HomeController extends Controller
         }
 
         $decisions = $query->pluck('count', 'decision_group');
-        //dd($decisions);
+        // dd($decisions);
 
         // Création du graphique
 
@@ -100,15 +98,10 @@ class HomeController extends Controller
             ->setDataset([
                 [
                     'name' => 'Nombre de recours',
-                    'data' => $decisions->values()->toArray()
-                ]
+                    'data' => $decisions->values()->toArray(),
+                ],
             ]);
 
-
-
-        return view('pages.admin.dashbord.recours.index', compact('rejected_count', 'accepted_count', 'on_going', 'on_going_count', 'chart', 'startDate', 'endDate'));
-
+        return view('modules.recours.pages.dashboard', compact('rejected_count', 'accepted_count', 'on_going', 'on_going_count', 'chart', 'startDate', 'endDate'));
     }
-
-
 }
