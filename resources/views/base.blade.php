@@ -13,9 +13,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/my-task.style.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
 
-    {{-- <link href=" https://cdn.jsdelivr.net/npm/sweetalert2@11.14.0/dist/sweetalert2.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" /> --}}
 </head>
 
 <body>
@@ -61,10 +59,7 @@
 
     <!-- Jquery Core Js -->
     <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
-    {{-- <script src=" https://cdn.jsdelivr.net/npm/sweetalert2@11.14.0/dist/sweetalert2.all.min.js "></script>
-    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
-    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
- --}}
+
 
 
     <!-- Plugin Js-->

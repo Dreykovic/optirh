@@ -1,0 +1,250 @@
+
+body {
+    background: linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%);
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.browser-container {
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    margin: 30px auto;
+    max-width: 1200px;
+    height: 90vh;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.search-container {
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+    margin: 10vh auto 0;
+    padding: 0 20px;
+}
+
+.logo {
+    margin-bottom: 30px;
+}
+
+.logo img {
+    width: 50px;
+    height: 50px;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.search-box {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 50px;
+    padding: 15px 25px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    margin-bottom: 40px;
+}
+
+.search-box:hover,
+.search-box:focus-within {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+    background-color: #ffffff;
+}
+
+.search-box input {
+    border: none;
+    flex-grow: 1;
+    outline: none;
+    font-size: 16px;
+    margin-left: 10px;
+    background: transparent;
+    color: #333;
+}
+
+.search-box .search-icon {
+    color: #5d6cf9;
+    font-size: 18px;
+}
+
+.shortcuts-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    padding: 0 50px;
+}
+
+.shortcut {
+    background-color: rgba(255, 255, 255, 0.85);
+    width: 120px;
+    height: 100px;
+    border-radius: 18px;
+    margin: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #333;
+    font-size: 13px;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+.shortcut::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transform: translateX(-100%);
+    transition: 0.5s;
+}
+
+.shortcut:hover::before {
+    transform: translateX(100%);
+}
+
+.shortcut:hover {
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px) scale(1.03);
+}
+
+.shortcut-icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.shortcut-icon img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.shortcut-name {
+    margin-top: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+.footer {
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+}
+
+.dots-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+}
+
+@media (max-width: 768px) {
+    .shortcut {
+        width: 100px;
+        height: 90px;
+        margin: 8px;
+    }
+
+    .shortcut-icon {
+        width: 35px;
+        height: 35px;
+    }
+
+    .search-box {
+        padding: 12px 20px;
+    }
+}
+
+/* Styles pour l'animation de typing */
+.search-box input::placeholder {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: typing 4s steps(40) infinite;
+}
+
+@keyframes typing {
+
+    0%,
+    100% {
+        width: 0
+    }
+
+    50% {
+        width: 100%
+    }
+}
+
+.add-icon {
+    color: #5d6cf9;
+    font-size: 24px;
+}
+
+/* Custom colors for site icons */
+.medium-icon {
+    background-color: #000000;
+    color: white;
+}
+
+.twitch-icon {
+    background-color: #6441a5;
+    color: white;
+}
+
+.reddit-icon {
+    background-color: #ff4500;
+    color: white;
+}
+
+.twitter-icon {
+    background-color: #1da1f2;
+    color: white;
+}
+
+.airbnb-icon {
+    background-color: #ff5a5f;
+    color: white;
+}
+
+.youtube-icon {
+    background-color: #ff0000;
+    color: white;
+}
+
+.netflix-icon {
+    background-color: #e50914;
+    color: white;
+}
