@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use App\Providers\RouteServiceProvider;
-use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,14 +12,24 @@ class RedirectIfAuthenticated
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
      */
-    public function handle(Request $request, Closure $next, string ...$guards): Response
+    public function handle(Request $request, \Closure $next, string ...$guards): Response
     {
         $guards = empty($guards) ? [null] : $guards;
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
+                if (Auth::user()->can('access-recours')) {
+                    return redirect(RouteServiceProvider::RECOURS_HOME);
+                }
+                if (Auth::user()->can('access-opti-hr')) {
+                    return redirect(RouteServiceProvider::OPTI_HR_HOME);
+                }
+                if (Auth::user()->can('access-all')) {
+                    return redirect(RouteServiceProvider::GATEWAY);
+                }
+
                 return redirect(RouteServiceProvider::HOME);
             }
         }
