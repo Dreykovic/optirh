@@ -4,101 +4,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portail</title>
+    <title>Portail d'Applications</title>
     <link rel="stylesheet" href="{{ asset('assets/css/my-task.style.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/gateway.css') }}">
-
 </head>
 
 <body>
     <div class="container-fluid p-0">
         <div class="row g-0">
             <!-- Main Content -->
-            <div class="col">
-                <div class="address-bar d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center">
 
-                    </div>
-                    <div>
-
-                        <div class="dropdown user-profile ml-2 ml-sm-3 d-flex align-items-center zindex-popover">
-                            <div class="u-info me-2">
-                                <p class="mb-0 text-end line-height-sm "><span
-                                        class="font-weight-bold">{{ auth()->user()->username }}</span></p>
-                                <small>{{ auth()->user()->getRoleNames()->first() }}</small>
-                            </div>
-                            <a class=" dropdown-toggle pulse p-0" href="#" role="button"
-                                data-bs-toggle="dropdown" data-bs-display="static">
-
-                                <i
-                                    class="icofont icofont-business-man-alt-2 avatar lg rounded-circle img-thumbnail fs-3    "></i>
-
-
-                            </a>
-                            <div
-                                class="dropdown-menu rounded-lg shadow border-0 dropdown-animation dropdown-menu-end p-0 m-0">
-                                <div class="card border-0 w280">
-                                    <div class="card-body pb-0">
-                                        <div class="d-flex py-1">
-
-                                            <div class="flex-fill ms-3">
-                                                <p class="mb-0"><span
-                                                        class="font-weight-bold">{{ auth()->user()->username }}</span>
-                                                </p>
-                                                <small class="">{{ auth()->user()->eamil }}</small>
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <hr class="dropdown-divider border-dark">
-                                        </div>
-                                    </div>
-                                    <div class="list-group m-2 ">
-
-                                        <div>
-                                            <hr class="dropdown-divider border-dark">
-                                        </div>
-
-                                        <a href="{{ route('logout') }}"
-                                            class="list-group-item list-group-item-action border-0 "><i
-                                                class="icofont-logout fs-6 me-3"></i>Se Déconnecter</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            @include('modules.gateway.partials.header')
             <!-- Content Area -->
             <div class="main-content p-4">
-                <div class="search-container d-flex justify-content-center mb-5 mx-auto" style="max-width: 600px;">
+                <h1 class="page-title">Vos Applications</h1>
+
+                <div class="search-container d-flex justify-content-center mb-5 mx-auto">
                     <div class="search-bar d-flex align-items-center w-100">
-                        <span class="flex-grow-1 text-muted">Recherche Application</span>
+                        <span class="flex-grow-1 text-muted">Rechercher une application...</span>
                         <i class="icofont-search"></i>
                     </div>
                 </div>
 
-                <!-- Shortcuts -->
-                <div class="d-flex justify-content-center flex-wrap" style="max-width: 800px; margin: 0 auto;">
-                    <div class="shortcut-container text-center" onclick="window.location.href = '/admin';">
-                        <img src="{{ asset('assets/img/optihr-logo.svg') }}" alt="Medium" class="mb-2" />
-                        <span class="small">OptiHr</span>
-                    </div>
-                    <div class="shortcut-container text-center" onclick="window.location.href = '/admin';">
-                        <img src="{{ asset('assets/img/recours-logo.svg') }}" alt="Medium" class="mb-2" />
-                        <span class="small">Recours</span>
-                    </div>
+                <!-- Applications Grid -->
+                <div class="app-grid">
+                    <!-- OptiHR App -->
+                    <a href="{{ route('opti-hr.home') }}" class="app-card">
+                        <div class="app-logo">
+                            <img src="{{ asset('assets/img/optihr-logo.svg') }}" alt="OptiHR" />
+                        </div>
+                        <h3 class="app-title">OptiHR</h3>
+                        <p class="app-description">Gestion des ressources humaines</p>
+                    </a>
+
+                    <!-- Recours App -->
+                    <a href="{{ route('recours.home') }}" class="app-card">
+                        <div class="app-logo">
+                            <img src="{{ asset('assets/img/recours-logo.svg') }}" alt="Recours" />
+                        </div>
+                        <h3 class="app-title">Recours</h3>
+                        <p class="app-description">Système de rappels et suivi</p>
+                    </a>
 
 
-                    <div class="shortcut-container text-center">
-                        <span class="add-button">+</span>
-                        <span class="small">Add a site</span>
-                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 
     <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
@@ -123,14 +74,14 @@
 
             // Paramètres des particules
             const particlesArray = [];
-            const numberOfParticles = 30;
+            const numberOfParticles = 50; // Augmenté pour plus d'effet
 
             // Classe Particule
             class Particle {
                 constructor() {
                     this.x = Math.random() * particleCanvas.width;
                     this.y = Math.random() * particleCanvas.height;
-                    this.size = Math.random() * 3 + 1;
+                    this.size = Math.random() * 5 + 1;
                     this.speedX = Math.random() * 1 - 0.5;
                     this.speedY = Math.random() * 1 - 0.5;
                     this.color = 'rgba(255, 255, 255, ' + (Math.random() * 0.3 + 0.2) + ')';
@@ -161,6 +112,7 @@
 
             // Créer les particules
             function init() {
+                particlesArray.length = 0;
                 for (let i = 0; i < numberOfParticles; i++) {
                     particlesArray.push(new Particle());
                 }
@@ -188,7 +140,7 @@
                         const dy = particlesArray[a].y - particlesArray[b].y;
                         const distance = Math.sqrt(dx * dx + dy * dy);
 
-                        if (distance < 100) {
+                        if (distance < 120) { // Augmenté pour plus de connexions
                             ctx.strokeStyle = 'rgba(255, 255, 255, ' + (0.2 - distance / 500) + ')';
                             ctx.lineWidth = 1;
                             ctx.beginPath();
@@ -210,6 +162,14 @@
             // Initialiser et démarrer l'animation
             init();
             animate();
+
+            // Animation pour la barre de recherche
+            const searchBar = document.querySelector('.search-bar');
+            searchBar.addEventListener('click', function() {
+                this.innerHTML =
+                    '<input type="text" class="border-0 w-100 bg-transparent" placeholder="Rechercher une application..." autofocus>';
+                this.querySelector('input').focus();
+            });
         });
     </script>
 </body>

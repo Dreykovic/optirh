@@ -66,7 +66,7 @@ Route::group(['middleware' => 'auth'], function () {
      * OptiHR
      */
     Route::prefix('/opti-hr')->group(function () {
-        Route::get('/', [HomeController::class, 'home'])->name('home');
+        Route::get('/', [HomeController::class, 'home'])->name('opti-hr.home');
 
         /*
           * Help

@@ -1,9 +1,9 @@
-
+/* Style de base */
 body {
     background-color: #6EA080;
-    /* Couleur verte de OptiRH */
     overflow-x: hidden;
     position: relative;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* Animation de fond avec gradient */
@@ -24,38 +24,39 @@ body::before {
     0% {
         background-position: 0% 50%;
     }
-
     50% {
         background-position: 100% 50%;
     }
-
     100% {
         background-position: 0% 50%;
     }
 }
 
-/* Styles de la sidebar supprimés */
-
-.browser-window {
-    background-color: white;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
+/* Barre d'adresse et navigation */
 .address-bar {
-    background-color: #f5f5f7;
-    padding: 8px;
+    background-color: #f8f9fa;
+    padding: 12px 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 10;
 }
 
+.user-profile .u-info {
+    line-height: 1.2;
+}
+
+/* Barre de recherche */
 .search-container {
-    background-color: #6EA080;
-    /* Couleur verte de OptiRH */
+    background-color: rgba(255, 255, 255, 0.2);
     border-radius: 50px;
-    padding: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 15px 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     animation: slideDown 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    opacity: 0;
-    transform: translateY(-30px);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    max-width: 500px;
+    width: 100%;
+    margin: 0 auto 40px auto;
 }
 
 @keyframes slideDown {
@@ -68,23 +69,44 @@ body::before {
 .search-bar {
     background-color: white;
     border-radius: 25px;
-    padding: 8px 15px;
+    padding: 15px 20px;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    font-size: 16px;
 }
 
-.search-bar:hover {
+.search-bar:hover, .search-bar:focus-within {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
 }
 
-.shortcut-container {
-    background-color: rgba(255, 255, 255, 0.8);
-    border-radius: 12px;
-    padding: 15px;
-    width: 100px;
-    height: 100px;
-    margin: 10px;
+.search-bar input {
+    border: none;
+    outline: none;
+    width: 100%;
+    background: transparent;
+}
+
+.search-bar i {
+    font-size: 18px;
+    color: #6EA080;
+}
+
+/* Grille d'applications */
+.app-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 24px;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Cartes d'applications */
+.app-card {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 16px;
+    padding: 25px 15px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -92,43 +114,14 @@ body::before {
     cursor: pointer;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     animation: fadeIn 0.6s ease-out forwards;
     opacity: 0;
     transform: translateY(20px);
-}
-
-.shortcut-container:nth-child(1) {
-    animation-delay: 0.1s;
-}
-
-.shortcut-container:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.shortcut-container:nth-child(3) {
-    animation-delay: 0.3s;
-}
-
-.shortcut-container:nth-child(4) {
-    animation-delay: 0.4s;
-}
-
-.shortcut-container:nth-child(5) {
-    animation-delay: 0.5s;
-}
-
-.shortcut-container:nth-child(6) {
-    animation-delay: 0.6s;
-}
-
-.shortcut-container:nth-child(7) {
-    animation-delay: 0.7s;
-}
-
-.shortcut-container:nth-child(8) {
-    animation-delay: 0.8s;
+    text-decoration: none;
+    color: #333;
+    min-height: 180px;
 }
 
 @keyframes fadeIn {
@@ -138,12 +131,13 @@ body::before {
     }
 }
 
-.shortcut-container:hover {
-    transform: scale(1.08) translateY(-5px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+.app-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    background-color: white;
 }
 
-.shortcut-container::after {
+.app-card::after {
     content: '';
     position: absolute;
     top: 0;
@@ -153,20 +147,164 @@ body::before {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0) 100%);
     opacity: 0;
     transition: opacity 0.3s ease;
+    pointer-events: none;
 }
 
-.shortcut-container:hover::after {
+.app-card:hover::after {
     opacity: 1;
 }
 
-.main-content {
-    background-color: #6EA080;
-    /* Couleur verte de OptiRH */
-    height: calc(100vh - 50px);
-    position: relative;
-    overflow-y: auto;
+/* Logos d'applications */
+.app-logo {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    transition: transform 0.3s ease;
 }
 
-.add-button {
-    font-size: 24px;
+.app-card:hover .app-logo {
+    transform: scale(1.1);
+}
+
+.app-logo img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.app-card .app-icon {
+    font-size: 42px;
+    color: #6EA080;
+    margin-bottom: 15px;
+    transition: transform 0.3s ease;
+}
+
+.app-card:hover .app-icon {
+    transform: scale(1.1);
+}
+
+.app-title {
+    font-weight: 600;
+    font-size: 16px;
+    margin-top: 8px;
+    text-align: center;
+}
+
+.app-description {
+    font-size: 13px;
+    color: #666;
+    text-align: center;
+    margin-top: 8px;
+    line-height: 1.4;
+}
+
+/* Carte d'ajout d'application */
+.add-app-card {
+    border: 2px dashed rgba(110, 160, 128, 0.5);
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+.add-app-card:hover {
+    border-color: #6EA080;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.add-app-card .app-icon {
+    font-size: 36px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: rgba(110, 160, 128, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.add-app-card:hover .app-icon {
+    background-color: rgba(110, 160, 128, 0.3);
+}
+
+/* Titre de page */
+.page-title {
+    color: white;
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 300;
+    font-size: 32px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Animation individuelle pour chaque carte */
+.app-card:nth-child(1) { animation-delay: 0.1s; }
+.app-card:nth-child(2) { animation-delay: 0.2s; }
+.app-card:nth-child(3) { animation-delay: 0.3s; }
+.app-card:nth-child(4) { animation-delay: 0.4s; }
+.app-card:nth-child(5) { animation-delay: 0.5s; }
+.app-card:nth-child(6) { animation-delay: 0.6s; }
+
+/* Main content area */
+.main-content {
+    background-color: transparent;
+    min-height: calc(100vh - 60px);
+    position: relative;
+    overflow-y: auto;
+    padding: 30px 15px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .app-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    .app-card {
+        padding: 15px 10px;
+        min-height: 150px;
+    }
+    
+    .app-logo {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .search-container {
+        max-width: 90%;
+        padding: 10px 20px;
+    }
+    
+    .page-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+}
+
+/* Animations pour l'effet de focus sur la barre de recherche */
+.search-bar input::placeholder {
+    color: #aaa;
+    transition: opacity 0.3s ease;
+}
+
+.search-bar input:focus::placeholder {
+    opacity: 0.7;
+}
+
+/* Style pour le menu dropdown du profil */
+.dropdown-menu {
+    border-radius: 12px;
+    border: none;
+    overflow: hidden;
+}
+
+.dropdown-menu .list-group-item {
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-menu .list-group-item:hover {
+    background-color: rgba(110, 160, 128, 0.1);
 }

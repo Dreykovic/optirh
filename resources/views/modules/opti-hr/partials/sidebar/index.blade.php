@@ -1,6 +1,6 @@
 <div class="sidebar px-4 py-4 py-md-5 me-0">
     <div class="d-flex flex-column h-100">
-        <a href="{{ route('home') }}" class="mb-0 brand-icon">
+        <a href="{{ route('opti-hr.home') }}" class="mb-0 brand-icon">
             <span class="logo-icon">
 
                 <img width="55" height="55" src="{{ asset('assets/img/logo.png') }}" alt="">
