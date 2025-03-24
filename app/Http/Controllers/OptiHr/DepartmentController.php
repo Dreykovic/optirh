@@ -41,55 +41,114 @@ class DepartmentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    // public function store(Request $request)
+    // {
+
+    //     $validatedData = $request->validate([
+    //         'name' => 'required|unique:departments,name|string|max:255',
+    //         'description' => 'required|string|max:500',
+    //         'director_id' => 'nullable|exists:employees,id',
+    //     ]);
+
+    //     // $validatedData = $request->validate([
+    //     //     'name' => 'required|unique:departments,name|string|max:255',
+    //     //     'description' => 'required|string|max:500',
+    //     //     'director_id' => 'nullable|exists:employees,id',
+    //     // ]);
+
+    //     $validatedData['director_id'] = $validatedData['director_id'] ?? null;
+    //     $job_superior = Job::where('title', 'DG')->firstOrFail();
+    //     // Créer le département
+    //     $dept = Department::create([
+    //         'name' => $validatedData['name'],
+    //         'description' => $validatedData['description'],
+    //         'director_id' => $validatedData['director_id'],
+    //     ]);
+    //     $validatedData['director_id'] = $validatedData['director_id'] ?? null;
+    //     $job_superior = Job::where('title', 'DG')->firstOrFail();
+    //     // Créer le département
+    //     $dept = Department::create([
+    //         'name' => $validatedData['name'],
+    //         'description' => $validatedData['description'],
+    //         'director_id' => $validatedData['director_id'],
+    //     ]);
+
+    //     $job = Job::create([
+    //         'title' => 'Directeur·trice '.$dept->name,
+    //         'description' => 'Directeur·trice '.$dept->description,
+    //         'n_plus_one_job_id' => $job_superior->id,
+    //         'department_id' => $dept->id,
+    //     ]);
+    //     $job = Job::create([
+    //         'title' => 'Directeur·trice '.$dept->name,
+    //         'description' => 'Directeur·trice '.$dept->description,
+    //         'n_plus_one_job_id' => $job_superior->id,
+    //         'department_id' => $dept->id,
+    //     ]);
+
+    //     if ($validatedData['director_id'] != null) {
+    //         $duty = Duty::where('evolution', $this->evolutions[0])
+    //         ->where('employee_id', $validatedData['director_id'])
+    //         ->first();
+    //         if ($validatedData['director_id'] != null) {
+    //             $duty = Duty::where('evolution', $this->evolutions[0])
+    //             ->where('employee_id', $validatedData['director_id'])
+    //             ->first();
+
+    //             if ($duty) {
+    //                 $duty->update([
+    //                     'evolution' => $this->evolutions[1],
+    //                     'status' => $this->status[1],
+    //                 ]);
+    //                 Duty::create([
+    //                     'job_id' => $job->id,
+    //                     'employee_id' => $validatedData['director_id'],
+    //                     'begin_date' => Carbon::now(),
+    //                 ]);
+    //             }
+    //         }
+    //         if ($duty) {
+    //             $duty->update([
+    //                 'evolution' => $this->evolutions[1],
+    //                 'status' => $this->status[1],
+    //             ]);
+    //             Duty::create([
+    //                 'job_id' => $job->id,
+    //                 'employee_id' => $validatedData['director_id'],
+    //                 'begin_date' => Carbon::now(),
+    //             ]);
+    //         }
+    //     }
+
+    //     return response()->json(['message' => 'Department créé avec succès.', 'ok' => true]);
+
+
+    // }
     public function store(Request $request)
     {
+        try {
+            $validatedData = $request->validate([
+                'name' => 'required|unique:departments,name|string|max:255',
+                'description' => 'required|string|max:500',
+                'director_id' => 'nullable|exists:employees,id',
+            ]);
 
-        $validatedData = $request->validate([
-            'name' => 'required|unique:departments,name|string|max:255',
-            'description' => 'required|string|max:500',
-            'director_id' => 'nullable|exists:employees,id',
-        ]);
+            $validatedData['director_id'] = $validatedData['director_id'] ?? null;
+            $job_superior = Job::where('title', 'DG')->firstOrFail();
+            // Créer le département
+            $dept = Department::create([
+                'name' => $validatedData['name'],
+                'description' => $validatedData['description'],
+                'director_id' => $validatedData['director_id'],
+            ]);
 
-        // $validatedData = $request->validate([
-        //     'name' => 'required|unique:departments,name|string|max:255',
-        //     'description' => 'required|string|max:500',
-        //     'director_id' => 'nullable|exists:employees,id',
-        // ]);
+            $job = Job::create([
+                'title' => 'Directeur·trice '.$dept->name,
+                'description' => 'Directeur·trice '.$dept->description,
+                'n_plus_one_job_id' => $job_superior->id,
+                'department_id' => $dept->id,
+            ]);
 
-        $validatedData['director_id'] = $validatedData['director_id'] ?? null;
-        $job_superior = Job::where('title', 'DG')->firstOrFail();
-        // Créer le département
-        $dept = Department::create([
-            'name' => $validatedData['name'],
-            'description' => $validatedData['description'],
-            'director_id' => $validatedData['director_id'],
-        ]);
-        $validatedData['director_id'] = $validatedData['director_id'] ?? null;
-        $job_superior = Job::where('title', 'DG')->firstOrFail();
-        // Créer le département
-        $dept = Department::create([
-            'name' => $validatedData['name'],
-            'description' => $validatedData['description'],
-            'director_id' => $validatedData['director_id'],
-        ]);
-
-        $job = Job::create([
-            'title' => 'Directeur·trice '.$dept->name,
-            'description' => 'Directeur·trice '.$dept->description,
-            'n_plus_one_job_id' => $job_superior->id,
-            'department_id' => $dept->id,
-        ]);
-        $job = Job::create([
-            'title' => 'Directeur·trice '.$dept->name,
-            'description' => 'Directeur·trice '.$dept->description,
-            'n_plus_one_job_id' => $job_superior->id,
-            'department_id' => $dept->id,
-        ]);
-
-        if ($validatedData['director_id'] != null) {
-            $duty = Duty::where('evolution', $this->evolutions[0])
-            ->where('employee_id', $validatedData['director_id'])
-            ->first();
             if ($validatedData['director_id'] != null) {
                 $duty = Duty::where('evolution', $this->evolutions[0])
                 ->where('employee_id', $validatedData['director_id'])
@@ -107,22 +166,17 @@ class DepartmentController extends Controller
                     ]);
                 }
             }
-            if ($duty) {
-                $duty->update([
-                    'evolution' => $this->evolutions[1],
-                    'status' => $this->status[1],
-                ]);
-                Duty::create([
-                    'job_id' => $job->id,
-                    'employee_id' => $validatedData['director_id'],
-                    'begin_date' => Carbon::now(),
-                ]);
-            }
+
+            return response()->json(['message' => 'Department créé avec succès.', 'ok' => true]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
+            ], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
-
-        return response()->json(['message' => 'Department créé avec succès.', 'ok' => true]);
-
-
     }
 
     /**
