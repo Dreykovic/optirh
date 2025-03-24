@@ -1,7 +1,7 @@
 
 
     const paginator = new Paginator({
-        apiUrl: '/membres/list', 
+        apiUrl: '/opti-hr/membres/list', 
         renderElement: document.getElementById('membres'),
         searchInput: document.getElementById('searchInput'), // Input de recherche
         department: document.getElementById('directorInput'),
@@ -30,7 +30,7 @@
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Actions</button>
                                     <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="/membres/pages/${employee.id}">Détails</a></li>
+                                        <li><a class="dropdown-item" href="/opti-hr/membres/pages/${employee.id}">Détails</a></li>
                                         <!-- <li><button class="dropdown-item text-danger">Supprimer</button></li>-->
                                     </ul>
                                 </div>

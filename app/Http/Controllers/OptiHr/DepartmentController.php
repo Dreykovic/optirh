@@ -50,11 +50,11 @@ class DepartmentController extends Controller
             'director_id' => 'nullable|exists:employees,id',
         ]);
 
-        $validatedData = $request->validate([
-            'name' => 'required|unique:departments,name|string|max:255',
-            'description' => 'required|string|max:500',
-            'director_id' => 'nullable|exists:employees,id',
-        ]);
+        // $validatedData = $request->validate([
+        //     'name' => 'required|unique:departments,name|string|max:255',
+        //     'description' => 'required|string|max:500',
+        //     'director_id' => 'nullable|exists:employees,id',
+        // ]);
 
         $validatedData['director_id'] = $validatedData['director_id'] ?? null;
         $job_superior = Job::where('title', 'DG')->firstOrFail();
