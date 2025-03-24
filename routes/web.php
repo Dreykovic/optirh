@@ -72,7 +72,7 @@ Route::group(['middleware' => 'auth'], function () {
           * Help
         */
         Route::get('/help', function () {
-            return view('pages.admin.help');
+            return view('modules.opti-hr.pages.help');
         })->name('help');
 
         // membres
