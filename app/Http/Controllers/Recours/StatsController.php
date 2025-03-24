@@ -64,7 +64,7 @@ class StatsController extends Controller
             ]);
 
         // dump($chart);
-        return view('recours::pages.recours.stats', compact('chart', 'startDate', 'endDate'));
+        return view('modules.recours.pages.stats', compact('chart', 'startDate', 'endDate'));
     }
 
     /**

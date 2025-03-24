@@ -20,7 +20,7 @@ class RecoursController extends Controller
     {
         $recours_count = Appeal::count();
 
-        return view('recours::pages.recours.liste', compact('recours_count'));
+        return view('modules.recours.pages.liste', compact('recours_count'));
     }
 
     public function appeal_loading(Request $request)
@@ -166,7 +166,7 @@ class RecoursController extends Controller
         $applicants = Applicant::orderBy('created_at', 'desc')->get();
 
         // dump($applicants);
-        return view('recours::pages.recours.new', compact('dacs', 'applicants'));
+        return view('modules.recours.pages.new', compact('dacs', 'applicants'));
     }
 
     /**
@@ -215,7 +215,7 @@ class RecoursController extends Controller
     {
         $appeal = Appeal::find($id);
 
-        return view('recours::pages.recours.show', compact('appeal'));
+        return view('modules.recours.pages.show', compact('appeal'));
     }
 
     /**
