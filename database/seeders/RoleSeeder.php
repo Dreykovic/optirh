@@ -83,6 +83,8 @@ class RoleSeeder extends Seeder
 
             // Modules
             'access-opti-hr',
+            'access-recours',
+            'access-all',
         ];
         $hr_permissions_list = [
             // compte
