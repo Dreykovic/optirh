@@ -39,12 +39,13 @@ class RoleController extends Controller
     {
 
         $roles = Role::with('permissions')->where('name', '!=', 'ADMIN')->orderBy('id', 'ASC')->get();
-        $permissions = $this->trierPermissionsParCategory(Permission::orderBy('name', 'ASC')->get());
-
+       // $permissions = $this->trierPermissionsParCategory(Permission::orderBy('name', 'ASC')->get());
+        $permissions =Permission::orderBy('name', 'ASC')->get();
         $currentUser = Auth::user();
         if ($currentUser->hasRole('ADMIN')) {
             $roles = Role::with('permissions')->orderBy('id', 'ASC')->get();
-            $permissions = $this->trierPermissionsParCategory(Permission::orderBy('name', 'ASC')->get());
+            // $permissions = $this->trierPermissionsParCategory(Permission::orderBy('name', 'ASC')->get());
+        
         }
 
         return view('modules.opti-hr.pages.users.roles.index', compact('roles', 'permissions'));
@@ -83,7 +84,7 @@ class RoleController extends Controller
 
         // dd($permissions);
 
-        $permissions = $this->trierPermissionsParCategory($all_permissions);
+     $permissions = $this->trierPermissionsParCategory($all_permissions);
 
         return view('modules.opti-hr.pages.users.roles.details.index', compact('role', 'permissions'));
 
