@@ -3,7 +3,7 @@
                {{ $publication->author_id !== auth()->user()->id && $publication->status === 'pending' ? 'd-none' : '' }}
                {{ $publication->status === 'published' ? 'publication-published' : 'publication-pending' }}"
         data-id="{{ $publication->id }}" data-status="{{ $publication->status }}"
-        data-date="{{ $publication->published_at }}">
+        data-date="{{ $publication->created_at }}">
 
         <!-- Avatar or Icon -->
         <div class="{{ $publication->author_id === auth()->user()->id ? 'ms-3' : 'me-3' }}">
@@ -26,9 +26,10 @@
             <div class="d-flex justify-content-between align-items-center mb-1">
                 <div class="user-info small">
                     <span class="fw-bold">{{ $publication->author->username ?? 'Utilisateur' }}</span>
-                    <span class="text-muted ms-2 message-time" title="{{ $publication->published_at }}">
+                    <span class="text-muted ms-2 message-time" title="{{ $publication->created_at }}">
                         <i class="icofont-clock-time"></i>
-                        {{ $publication->published_at }}
+                        {{ $publication->created_at }}
+                        @formatDate($publication->created_at)
                     </span>
                 </div>
 
