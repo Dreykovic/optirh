@@ -62,23 +62,7 @@
                 <!-- Chat Body -->
                 <div class="card-body p-0">
                     <div class="chat-container position-relative" style="height: calc(100vh - 350px); overflow-y: auto;">
-                        <ul class="chat-history list-unstyled mb-0 p-4" id="chatHistory">
-                            <!-- Message Timeline Indicator -->
-                            <li class="timeline-marker text-center my-4 position-relative">
-                                <span
-                                    class="badge bg-light text-dark px-3 py-2 shadow-sm position-relative">Aujourd'hui</span>
-                                <hr class="position-absolute top-50 start-0 end-0 m-0" style="z-index: -1;">
-                            </li>
-                            @include('modules.opti-hr.pages.publications.config.items')
-
-
-                            <!-- Load More Button -->
-                            <li class="text-center my-4" id="loadMoreContainer">
-                                <button type="button" class="btn btn-outline-secondary btn-sm" id="loadMoreBtn">
-                                    <i class="icofont-refresh me-1"></i>Charger plus
-                                </button>
-                            </li>
-                        </ul>
+                        @include('modules.opti-hr.pages.publications.config.items')
 
                         <!-- Scroll to Bottom Button -->
                         <button type="button" id="scrollToBottomBtn"
