@@ -38,15 +38,15 @@ class RedirectToAppropriateHome
             $currentPath = $request->path();
 
             // Vérifier si l'utilisateur est sur la bonne route selon ses permissions
-            if ($currentPath === 'recours' && !$user->can('access-recours') && !$user->can('access-all')) {
+            if ($currentPath === 'recours' && !$user->hasPermissionTo('access-recours') && !$user->hasPermissionTo('access-all')) {
                 return $this->redirectBasedOnPermission($user);
             }
 
-            if ($currentPath === 'opti-hr' && !$user->can('access-opti-hr') && !$user->can('access-all')) {
+            if ($currentPath === 'opti-hr' && !$user->hasPermissionTo('access-opti-hr') && !$user->hasPermissionTo('access-all')) {
                 return $this->redirectBasedOnPermission($user);
             }
 
-            if ($currentPath === '/' && !$user->can('access-all')) {
+            if ($currentPath === '/' && !$user->hasPermissionTo('access-all')) {
                 return $this->redirectBasedOnPermission($user);
             }
         }
@@ -56,15 +56,15 @@ class RedirectToAppropriateHome
 
     private function redirectBasedOnPermission($user)
     {
-        if ($user->can('access-all')) {
+        if ($user->hasPermissionTo('access-all')) {
             return redirect(RouteServiceProvider::GATEWAY);
         }
 
-        if ($user->can('access-opti-hr')) {
+        if ($user->hasPermissionTo('access-opti-hr')) {
             return redirect(RouteServiceProvider::OPTI_HR_HOME);
         }
 
-        if ($user->can('access-recours')) {
+        if ($user->hasPermissionTo('access-recours')) {
             return redirect(RouteServiceProvider::RECOURS_HOME);
         }
 
