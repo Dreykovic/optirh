@@ -66,9 +66,9 @@
 
                         <!-- Scroll to Bottom Button -->
                         <button type="button" id="scrollToBottomBtn"
-                            class="btn btn-sm btn-primary rounded-circle position-absolute bottom-0 end-0 mb-4 me-4"
+                            class="btn btn-sm btn-info rounded-circle position-absolute bottom-0 end-0 mb-4 me-4"
                             style="width: 40px; height: 40px; display: none;" aria-label="Défiler vers le bas">
-                            <i class="icofont-arrow-down"></i>
+                            <i class="icofont-arrow-down text-primary fs-4"></i>
                         </button>
                     </div>
                 </div>
