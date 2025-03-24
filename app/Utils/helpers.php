@@ -2,6 +2,28 @@
 
 use Carbon\Carbon;
 
+
+/**
+ * Convertit une taille en octets en une représentation lisible pour les humains
+ *
+ * @param int $bytes Taille en octets
+ * @param int $precision Nombre de chiffres après la virgule (par défaut 2)
+ * @return string Taille formatée avec unité (KB, MB, GB, etc.)
+ */
+if (!function_exists('human_filesize')) {
+    function human_filesize($bytes, $precision = 2) {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+        
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+        
+        // Calcul de la taille avec la précision demandée
+        $bytes /= pow(1024, $pow);
+        
+        return round($bytes, $precision) . ' ' . $units[$pow];
+    }
+}
 if (!function_exists('formatDate')) {
     /**
      * Retourne une règle de validation pour les heures d'ouverture.

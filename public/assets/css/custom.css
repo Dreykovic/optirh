@@ -14,3 +14,13 @@
   max-height: 600px;
   object-fit: contain;
 }
+
+
+.preview-image {
+  max-height: 80vh;
+}
+
+/* Add your custom styles here */
+.max-width-150 {
+  max-width: 150px;
+}
