@@ -69,162 +69,8 @@
                                     class="badge bg-light text-dark px-3 py-2 shadow-sm position-relative">Aujourd'hui</span>
                                 <hr class="position-absolute top-50 start-0 end-0 m-0" style="z-index: -1;">
                             </li>
+                            @include('modules.opti-hr.pages.publications.config.items')
 
-                            @forelse ($publications as $publication)
-                                <li class="publication-item mb-4 d-flex {{ $publication->author_id === auth()->user()->id ? 'flex-row-reverse' : 'flex-row' }} align-items-start 
-                                               {{ $publication->author_id !== auth()->user()->id && $publication->status === 'pending' ? 'd-none' : '' }}
-                                               {{ $publication->status === 'published' ? 'publication-published' : 'publication-pending' }}"
-                                    data-id="{{ $publication->id }}" data-status="{{ $publication->status }}"
-                                    data-date="{{ $publication->published_at }}">
-
-                                    <!-- Avatar or Icon -->
-                                    <div class="{{ $publication->author_id === auth()->user()->id ? 'ms-3' : 'me-3' }}">
-                                        <div class="avatar-wrapper position-relative">
-                                            <div class="avatar rounded-circle d-flex align-items-center justify-content-center {{ $publication->author_id === auth()->user()->id ? 'bg-primary text-white' : 'bg-light' }}"
-                                                style="width: 40px; height: 40px;">
-                                                <span
-                                                    class="small fw-bold">{{ substr($publication->author->name ?? 'U', 0, 1) }}</span>
-                                            </div>
-                                            @if ($publication->status === 'pending')
-                                                <span class="position-absolute bottom-0 end-0 bg-warning rounded-circle p-1"
-                                                    style="width: 10px; height: 10px;" aria-hidden="true"
-                                                    title="En attente de publication"></span>
-                                            @endif
-                                        </div>
-                                    </div>
-
-                                    <!-- Message Content -->
-                                    <div class="publication-content {{ $publication->author_id === auth()->user()->id ? 'own-message' : 'other-message' }}"
-                                        style="max-width: 75%;">
-                                        <!-- Message Header -->
-                                        <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <div class="user-info small">
-                                                <span
-                                                    class="fw-bold">{{ $publication->author->name ?? 'Utilisateur' }}</span>
-                                                <span class="text-muted ms-2 message-time"
-                                                    title="{{ $publication->published_at }}">
-                                                    <i class="icofont-clock-time"></i>
-                                                    {{ $publication->published_at }}
-                                                </span>
-                                            </div>
-
-                                            @if ($publication->status === 'pending')
-                                                <span class="badge bg-warning text-dark small">Non publié</span>
-                                            @endif
-                                        </div>
-
-                                        <!-- Message Body -->
-                                        <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
-                                            <div
-                                                class="card-header py-2 px-3 {{ $publication->author_id === auth()->user()->id ? 'bg-primary text-white' : 'bg-light' }}">
-                                                <h2 class="h6 mb-0 fw-bold">{{ $publication->title }}</h2>
-                                            </div>
-                                            <div class="card-body p-3">
-                                                <div class="message-text mb-3">
-                                                    {{ $publication->content }}
-                                                </div>
-
-                                                <!-- Attached Files -->
-                                                @if ($publication->files->isNotEmpty())
-                                                    <div class="attached-files border-top pt-3">
-                                                        <p class="text-muted small mb-2">
-                                                            <i class="icofont-paper-clip me-1"></i>
-                                                            Fichiers joints ({{ $publication->files->count() }})
-                                                        </p>
-
-                                                        <div class="row g-2">
-                                                            @foreach ($publication->files as $file)
-                                                                <div class="col-12 col-md-6">
-                                                                    <a href="#"
-                                                                        class="file-item d-flex align-items-center p-2 rounded border downloadBtn text-decoration-none text-reset hover-shadow"
-                                                                        data-publication-id="{{ $file->id }}"
-                                                                        aria-label="Télécharger {{ $file->display_name }}">
-                                                                        <div
-                                                                            class="file-icon d-flex align-items-center justify-content-center rounded-circle me-2 p-2 
-                                                                            {{ strpos($file->mime_type, 'pdf') !== false ? 'bg-danger-subtle' : (strpos($file->mime_type, 'image') !== false ? 'bg-success-subtle' : 'bg-warning-subtle') }}">
-                                                                            <i
-                                                                                class="fs-5 {{ strpos($file->mime_type, 'pdf') !== false ? 'icofont-file-pdf text-danger' : (strpos($file->mime_type, 'image') !== false ? 'icofont-image text-success' : 'icofont-file-alt text-warning') }}"></i>
-                                                                        </div>
-                                                                        <div class="file-info overflow-hidden">
-                                                                            <p class="file-name mb-0 text-truncate small">
-                                                                                {{ $file->display_name }}</p>
-                                                                        </div>
-                                                                    </a>
-                                                                </div>
-                                                            @endforeach
-                                                        </div>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </div>
-
-                                        <!-- Action Buttons -->
-                                        @can('configurer-une-publication')
-                                            <div class="publication-actions mt-2 text-end">
-                                                <div class="btn-group">
-                                                    <button type="button"
-                                                        class="btn btn-sm btn-outline-secondary dropdown-toggle"
-                                                        data-bs-toggle="dropdown" aria-expanded="false" aria-label="Options">
-                                                        <i class="icofont-gear"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm">
-                                                        <li>
-                                                            <div class="dropdown-item py-2">
-                                                                <form
-                                                                    data-model-update-url="{{ route('publications.config.updateStatus', [$publication->status === 'published' ? 'pending' : 'published', $publication->id]) }}">
-                                                                    <button type="button"
-                                                                        class="btn btn-sm w-100 text-start modelUpdateBtn"
-                                                                        atl="Modifier le statut de publication">
-                                                                        <span class="normal-status">
-                                                                            <i
-                                                                                class="icofont-{{ $publication->status === 'published' ? 'eye-blocked text-warning' : 'check text-success' }} me-2"></i>
-                                                                            {{ $publication->status === 'published' ? 'Masquer' : 'Publier' }}
-                                                                        </span>
-                                                                        <span class="indicateur d-none">
-                                                                            <span class="spinner-grow spinner-grow-sm"
-                                                                                role="status" aria-hidden="true"></span>
-                                                                            Un instant...
-                                                                        </span>
-                                                                    </button>
-                                                                </form>
-                                                            </div>
-                                                        </li>
-                                                        <li>
-                                                            <hr class="dropdown-divider my-1">
-                                                        </li>
-                                                        <li>
-                                                            <button class="dropdown-item py-2 modelDeleteBtn"
-                                                                data-model-action="delete"
-                                                                data-model-delete-url="{{ route('publications.config.destroy', $publication->id) }}"
-                                                                data-model-parent-selector="li.publication-item">
-                                                                <span class="normal-status">
-                                                                    <i class="icofont-ui-delete text-danger me-2"></i>
-                                                                    Supprimer
-                                                                </span>
-                                                                <span class="indicateur d-none">
-                                                                    <span class="spinner-grow spinner-grow-sm" role="status"
-                                                                        aria-hidden="true"></span>
-                                                                </span>
-                                                            </button>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        @endcan
-                                    </div>
-                                </li>
-                            @empty
-                                <li class="text-center p-5">
-                                    <div class="empty-state">
-                                        <div class="icon-container mb-3">
-                                            <i class="icofont-chat fs-1 text-muted"></i>
-                                        </div>
-                                        <h3 class="h5 text-muted">Aucune publication</h3>
-                                        <p class="text-muted">Soyez le premier à partager une information avec l'équipe.
-                                        </p>
-                                    </div>
-                                </li>
-                            @endforelse
 
                             <!-- Load More Button -->
                             <li class="text-center my-4" id="loadMoreContainer">
@@ -245,69 +91,7 @@
 
                 <!-- Chat Input -->
                 @can('créer-une-publication')
-                    <div class="card-footer bg-white p-3 border-top">
-                        <form id="modelAddForm" data-model-add-url="{{ route('publications.config.save') }}">
-                            @csrf
-
-                            <!-- Publication Title -->
-                            <div class="input-group mb-3">
-                                <span class="input-group-text bg-transparent border-end-0">
-                                    <i class="icofont-pencil-alt-2 text-primary"></i>
-                                </span>
-                                <input type="text" class="form-control border-start-0" id="title" name="title"
-                                    placeholder="Titre de votre publication" aria-label="Titre" required>
-                            </div>
-
-                            <!-- Publication Content -->
-                            <div class="mb-3">
-                                <div class="form-floating">
-                                    <textarea class="form-control" id="content" name="content" style="height: 100px"
-                                        placeholder="Partagez vos informations avec l'équipe" aria-label="Contenu" required></textarea>
-                                    <label for="content">Partagez vos informations avec l'équipe...</label>
-                                </div>
-                            </div>
-
-                            <div class="d-flex flex-wrap justify-content-between align-items-center">
-                                <!-- File Attachment -->
-                                <div class="file-upload position-relative mb-2 mb-md-0">
-                                    <input type="file" class="file-input position-absolute opacity-0" id="file"
-                                        name="files[]" multiple accept="image/*, application/pdf"
-                                        style="width: 100%; height: 100%; cursor: pointer;" aria-label="Joindre des fichiers">
-
-                                    <button type="button" class="btn btn-outline-secondary"
-                                        onclick="document.getElementById('file').click();" aria-label="Joindre des fichiers">
-                                        <i class="icofont-attachment me-1"></i>
-                                        <span class="d-none d-md-inline">Joindre des fichiers</span>
-                                    </button>
-
-                                    <small class="form-text text-muted d-block mt-1">
-                                        <i class="icofont-info-circle"></i> Images et PDF (max. 10 Mo)
-                                    </small>
-                                </div>
-
-                                <!-- File List Preview -->
-                                <div id="fileList" class="file-preview d-flex flex-wrap gap-2 my-2 w-100"
-                                    style="display: none !important;">
-                                    <!-- Files will be displayed here -->
-                                </div>
-
-                                <!-- Submit Button -->
-                                <div class="submit-btn">
-                                    <button type="submit" class="btn btn-primary" id="modelAddBtn" aria-label="Publier">
-                                        <span class="normal-status">
-                                            <i class="icofont-paper-plane me-1"></i>
-                                            <span class="d-none d-md-inline">Publier</span>
-                                        </span>
-                                        <span class="indicateur d-none">
-                                            <span class="spinner-grow spinner-grow-sm" role="status"
-                                                aria-hidden="true"></span>
-                                            <span class="d-none d-md-inline">Un instant...</span>
-                                        </span>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                    @include('modules.opti-hr.pages.publications.config.create')
                 @endcan
             </div>
         </div>
@@ -464,7 +248,7 @@
                             month: 'short'
                         };
                         formattedDate =
-                        `${date.toLocaleDateString('fr-FR', options)} à ${hours}h${minutes}`;
+                            `${date.toLocaleDateString('fr-FR', options)} à ${hours}h${minutes}`;
                     }
 
                     element.textContent = formattedDate;
