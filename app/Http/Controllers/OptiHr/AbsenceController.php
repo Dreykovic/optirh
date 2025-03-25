@@ -179,26 +179,20 @@ class AbsenceController extends Controller
 
 
     }
-
     /**
-     * Calculer le nombre de jours ouvrés entre deux dates
+     * Calculer le nombre total de jours entre deux dates (y compris week-ends et jours fériés)
      *
-     * @param string $startDate
-     * @param string $endDate
-     * @return int
+     * @param string $startDate Date de début au format Y-m-d
+     * @param string $endDate Date de fin au format Y-m-d
+     * @return int Nombre total de jours
      */
     private function calculateWorkingDays($startDate, $endDate)
     {
-        $count = 0;
-        $currentDate = Carbon::parse($startDate);
+        $startDate = Carbon::parse($startDate);
         $endDate = Carbon::parse($endDate);
 
-        while ($currentDate->lte($endDate)) {
-            ++$count;
-            $currentDate->addDay();
-        }
-
-        return $count;
+        // diffInDays() retourne la différence en jours, +1 pour inclure le jour de fin
+        return $endDate->diffInDays($startDate) + 1;
     }
 
     /**
@@ -224,9 +218,7 @@ class AbsenceController extends Controller
         // Récupération de l'employé actuel et de sa mission en cours
         $currentUser = User::with('employee')->findOrFail(auth()->id());
         $currentEmployee = $currentUser->employee;
-        // Récupération de l'employé actuel et de sa mission en cours
-        $currentUser = User::with('employee')->findOrFail(auth()->id());
-        $currentEmployee = $currentUser->employee;
+
 
         $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
             ->where('employee_id', $currentEmployee->id)

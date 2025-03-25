@@ -9,31 +9,23 @@ let AppAbsenceRequestCreateManager = (function () {
     let absenceReasonTextarea;
     let form;
 
-    // Fonction pour calculer le nombre de jours ouvrés entre deux dates
+    // Fonction pour calculer le nombre de jours entre deux dates (incluant les week-ends)
     function calculateWorkingDays(startDate, endDate) {
-        let count = 0;
         let currentDate = new Date(startDate);
-        endDate = new Date(endDate);
+        let endDateObj = new Date(endDate);
 
         // Vérifier que la date de début est antérieure à la date de fin
-        if (currentDate > endDate) {
+        if (currentDate > endDateObj) {
             return 0;
         }
 
-        while (currentDate <= endDate) {
-            const dayOfWeek = currentDate.getDay();
+        // Calculer la différence en millisecondes
+        const diffTime = Math.abs(endDateObj - currentDate);
 
-            // Exclure uniquement les samedis (6) et dimanches (0)
-            // Les jours fériés sont inclus dans le calcul
-            if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-                count++;
-            }
+        // Convertir en jours et ajouter 1 pour inclure le jour de fin
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
-            // Passer au jour suivant
-            currentDate.setDate(currentDate.getDate() + 1);
-        }
-
-        return count;
+        return diffDays;
     }
 
     // Fonction de mise à jour de l'affichage du nombre de jours demandés
@@ -92,6 +84,59 @@ let AppAbsenceRequestCreateManager = (function () {
         });
     }
 
+    // Valider le formulaire avant soumission
+    function validateForm(e) {
+        const startDate = startDateInput.value;
+        const endDate = endDateInput.value;
+        const absenceType = absenceTypeSelect.value;
+
+        let isValid = true;
+
+        // Réinitialiser les messages d'erreur
+        document
+            .querySelectorAll(".invalid-feedback")
+            .forEach((el) => el.remove());
+        document
+            .querySelectorAll(".is-invalid")
+            .forEach((el) => el.classList.remove("is-invalid"));
+
+        // Valider le type d'absence
+        if (!absenceType) {
+            appendErrorMessage(
+                absenceTypeSelect,
+                "Veuillez sélectionner un type d'absence"
+            );
+            isValid = false;
+        }
+
+        // Valider les dates
+        if (!startDate) {
+            appendErrorMessage(startDateInput, "La date de début est requise");
+            isValid = false;
+        }
+
+        if (!endDate) {
+            appendErrorMessage(endDateInput, "La date de fin est requise");
+            isValid = false;
+        }
+
+        if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+            appendErrorMessage(
+                endDateInput,
+                "La date de fin doit être postérieure à la date de début"
+            );
+            isValid = false;
+        }
+
+        // Si le formulaire n'est pas valide, empêcher sa soumission
+        if (!isValid) {
+            e.preventDefault();
+            return false;
+        }
+
+        return true;
+    }
+
     // Ajouter un message d'erreur après un champ
     function appendErrorMessage(element, message) {
         element.classList.add("is-invalid");
@@ -142,7 +187,7 @@ let AppAbsenceRequestCreateManager = (function () {
 })();
 
 // Gestionnaire de soumission du formulaire
-let AppAbsenceCreateManager = (function () {
+let AppModelCreateManager = (function () {
     let addModelForm;
     let modelAddBtn;
 
@@ -233,13 +278,8 @@ let AppAbsenceCreateManager = (function () {
         element.parentNode.appendChild(errorDiv);
     };
 
-    let addModelCallback = (response) => {
-        console.log(response.data.redirect);
-        if (response.data.redirect) {
-            location.href = response.data.redirect;
-        } else {
-            location.reload();
-        }
+    let addModelCallback = () => {
+        location.reload();
     };
 
     return {
@@ -263,5 +303,5 @@ document.addEventListener("DOMContentLoaded", (e) => {
     AppAbsenceRequestCreateManager.init();
 
     // Puis initialiser le gestionnaire de soumission du formulaire
-    AppAbsenceCreateManager.init();
+    AppModelCreateManager.init();
 });
