@@ -234,8 +234,9 @@ let AppAbsenceCreateManager = (function () {
     };
 
     let addModelCallback = (response) => {
-        if (response.redirect) {
-            location.href = response.redirect;
+        console.log(response.data.redirect);
+        if (response.data.redirect) {
+            location.href = response.data.redirect;
         } else {
             location.reload();
         }
