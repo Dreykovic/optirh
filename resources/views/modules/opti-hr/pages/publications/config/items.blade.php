@@ -166,9 +166,7 @@
                 </div>
                 <h3 class="h5 fw-light text-muted">Aucune publication</h3>
                 <p class="text-muted small">Soyez le premier à partager une information avec l'équipe.</p>
-                <button class="btn btn-sm btn-primary rounded-pill mt-2">
-                    <i class="icofont-plus-circle me-1"></i> Nouvelle publication
-                </button>
+
             </div>
         </li>
     @endforelse
