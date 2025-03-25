@@ -13,12 +13,9 @@ use App\Models\User;
 use App\Services\AbsencePdfService;
 use App\Services\ActivityLogger;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Validation\ValidationException;
 
 class AbsenceController extends Controller
 {
