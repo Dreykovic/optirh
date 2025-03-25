@@ -28,7 +28,7 @@ class ActivityLogController extends Controller
     public function __construct(ActivityLogger $activityLogger)
     {
         $this->activityLogger = $activityLogger;
-        // $this->middleware(['permission:voir-une-activité|voir-un-tout'], ['only' => ['index']]);
+
     }
 
     /**
