@@ -250,7 +250,7 @@ class AbsenceController extends Controller
             $absence->duty->job->n_plus_one_job->duties->firstWhere('evolution', 'ON_GOING')->employee->users->first()
             : User::role('GRH')->first();
 
-        $this->handleApprovalNotifications($absence, $receiver, false);
+        $this->handleNotifications($absence, $receiver, false);
         return response()->json([
             'message' => "Demande d'absence {$absenceType->label} créée avec succès.",
             'ok' => true,
@@ -380,7 +380,7 @@ class AbsenceController extends Controller
         );
 
         // Gestion des notifications
-        $this->handleApprovalNotifications($absence, $receiver, $toEmployee);
+        $this->handleNotifications($absence, $receiver, $toEmployee);
 
         DB::commit();
 
@@ -419,7 +419,7 @@ class AbsenceController extends Controller
      * @param bool $toEmployee
      * @return void
      */
-    private function handleApprovalNotifications(Absence $absence, User $receiver, bool $toEmployee)
+    private function handleNotifications(Absence $absence, User $receiver, bool $toEmployee)
     {
         if ($toEmployee) {
             $url = route('absences.requests', 'ALL');
@@ -466,6 +466,9 @@ class AbsenceController extends Controller
             "Rejet de la demande d'absence #{$id} - Stage: {$oldStage} → {$absence->stage}, Level: {$oldLevel} → {$absence->level}",
             $absence
         );
+        $receiver = $absence->duty->employee->users->first();
+        $toEmployee = true;
+        $this->handleNotifications($absence, $receiver, $toEmployee);
 
         return response()->json([
             'message' => "Demande de {$absence->absence_type->label} rejetée",
