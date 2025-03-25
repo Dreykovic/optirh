@@ -18,7 +18,10 @@ class AnnualDecisionController extends Controller
     {
         parent::__construct(activityLogger: app(ActivityLogger::class)); // Injection automatique
 
+        $this->middleware(['permission:configurer-une-absence|voir-un-tout'], ['only' => ['index', 'show']]);
+        $this->middleware(['permission:configurer-une-absence|créer-un-tout'], ['only' => ['store', 'storeOrUpdate', 'setCurrent', 'downloadPdf']]);
 
+        $this->middleware(['permission:configurer-une-absence|écrire-un-tout'], ['only' => ['destroy']]);
 
     }
     /**
