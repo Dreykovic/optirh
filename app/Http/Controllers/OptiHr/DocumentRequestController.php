@@ -28,7 +28,7 @@ class DocumentRequestController extends Controller
     {
         $this->activityLogger = $activityLogger;
 
-        $this->middleware(['permission:voir-un-document|écrire-un-document|créer-un-document|configurer-un-document|voir-un-tout'], ['only' => ['index']]);
+        $this->middleware(['permission:voir-un-document|écrire-un-document|créer-un-document|configurer-un-document|voir-un-tout'], ['only' => ['index', "download"]]);
         $this->middleware(['permission:créer-un-document|créer-un-tout'], ['only' => ['store', 'cancel', 'create']]);
     }
 
