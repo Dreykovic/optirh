@@ -204,9 +204,7 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::get('/list', [AnnualDecisionController::class, 'index'])->name('decisions.index');
                 Route::get('/detail/{id}', [AnnualDecisionController::class, 'detail'])->name('decisions.detail');
 
-                // Form routes
-                Route::get('/create', [AnnualDecisionController::class, 'create'])->name('decisions.create');
-                Route::get('/edit/{id}', [AnnualDecisionController::class, 'edit'])->name('decisions.edit');
+
 
                 // Action routes
                 Route::post('/save/{annualDecisionId?}', [AnnualDecisionController::class, 'storeOrUpdate'])->name('decisions.save');
