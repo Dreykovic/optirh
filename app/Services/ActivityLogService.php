@@ -26,9 +26,9 @@ class ActivityLogService
             // Enregistrer quand même mais avec un avertissement
             \Illuminate\Support\Facades\Log::warning("Code d'action de log non standard utilisé: {$action}");
         }
-
+        $user = auth()->user();
         $logData = [
-            'user_id' => Auth::user()->id,
+            'user_id' => $user ? $user->id : null,
             'action' => $action,
             'description' => $description,
             'ip_address' => request()->ip(),
