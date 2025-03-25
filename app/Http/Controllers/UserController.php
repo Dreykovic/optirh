@@ -110,8 +110,7 @@ class UserController extends Controller
 
         // Récupération de l'employé
         $employee = Employee::findOrFail($request->input('employee'));
-        // Récupération de l'employé
-        $employee = Employee::findOrFail($request->input('employee'));
+
 
         $username = strtolower(substr($employee->first_name, 0, 1)) . strtolower($employee->last_name) . $employee->id;
         $username = utf8_encode($username);
@@ -206,29 +205,17 @@ class UserController extends Controller
         ]);
         $user = User::find($id);
 
-        // Valider les fichiers et l'image
-        $request->validate([
-            'current_password' => 'required',
-            'new_password' => 'required|min:8|different:current_password|confirmed',
-        ]);
-        $user = User::find($id);
 
-        if (!Hash::check($request->input('current_password'), $user->password)) {
-            return response()->json(['ok' => true, 'message' => 'Mot de passe actuel incorrect.'], 401);
-        }
+
         if (!Hash::check($request->input('current_password'), $user->password)) {
             return response()->json(['ok' => true, 'message' => 'Mot de passe actuel incorrect.'], 401);
         }
 
         $user->password = Hash::make($request->input('new_password'));
         $user->save();
-        $user->password = Hash::make($request->input('new_password'));
-        $user->save();
 
         session()->flash('success', 'Le mot de passe à été mis à jour.');
-        session()->flash('success', 'Le mot de passe à été mis à jour.');
 
-        return response()->json(['ok' => true, 'message' => 'Mot de passe mis à jour avec succès !'], 200);
 
         return response()->json(['ok' => true, 'message' => 'Mot de passe mis à jour avec succès !'], 200);
 
@@ -244,19 +231,9 @@ class UserController extends Controller
         $user = User::find($id);
         $user->password = Hash::make($request->input('password'));
 
-        // Valider les fichiers et l'image
-        $request->validate([
-            'password' => 'required|min:8|confirmed',
-        ]);
-        $user = User::find($id);
-        $user->password = Hash::make($request->input('password'));
 
         $user->save();
         session()->flash('success', 'Le mot de passe à été mis à jour.');
-        $user->save();
-        session()->flash('success', 'Le mot de passe à été mis à jour.');
-
-        return response()->json(['message' => __(' Votre mot de passe a été mis à jour avec succès .'), 'ok' => true]);
 
         return response()->json(['message' => __(' Votre mot de passe a été mis à jour avec succès .'), 'ok' => true]);
 
@@ -265,12 +242,6 @@ class UserController extends Controller
     public function updateRole(Request $request, string $id)
     {
 
-        // Valider les fichiers et l'image
-        $request->validate([
-            'role' => 'required',
-        ]);
-        $user = User::find($id);
-        $user->syncRoles([$request->input('role')]);
 
         // Valider les fichiers et l'image
         $request->validate([
@@ -280,9 +251,6 @@ class UserController extends Controller
         $user->syncRoles([$request->input('role')]);
 
         session()->flash('success', 'Le role à été mis à jour.');
-        session()->flash('success', 'Le role à été mis à jour.');
-
-        return response()->json(['ok' => true, 'message' => 'Le role de l\'utilisateur a été mis à jour avec succès']);
 
         return response()->json(['ok' => true, 'message' => 'Le role de l\'utilisateur a été mis à jour avec succès']);
 
@@ -296,12 +264,7 @@ class UserController extends Controller
 
         $currentUser = auth()->user();
 
-        $currentUser = auth()->user();
 
-        // Vérifie si l'utilisateur actuel correspond à l'ID à supprimer
-        if ($currentUser->id == $id) {
-            return response()->json(['ok' => false, 'message' => 'Vous ne pouvez pas supprimer votre propre compte.']);
-        }
         // Vérifie si l'utilisateur actuel correspond à l'ID à supprimer
         if ($currentUser->id == $id) {
             return response()->json(['ok' => false, 'message' => 'Vous ne pouvez pas supprimer votre propre compte.']);
