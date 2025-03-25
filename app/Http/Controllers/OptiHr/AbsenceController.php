@@ -7,8 +7,8 @@ use App\Mail\AbsenceRequestCreated;
 use App\Mail\AbsenceRequestUpdated;
 use App\Models\OptiHr\Absence;
 use App\Models\OptiHr\AbsenceType;
-use App\Models\OptiHr\Decision;
 use App\Models\OptiHr\Duty;
+use App\Models\OptiHr\AnnualDecision;
 use App\Models\User;
 use App\Services\AbsencePdfService;
 use App\Services\ActivityLogger;
@@ -41,7 +41,7 @@ class AbsenceController extends Controller
     public function download($absenceId)
     {
         $absence = Absence::findOrFail($absenceId);
-        $decision = Decision::where('state', 'current')->first();
+        $decision = AnnualDecision::where('state', 'current')->first();
         $absencePdf = new AbsencePdfService();
 
         $this->activityLogger->log(
