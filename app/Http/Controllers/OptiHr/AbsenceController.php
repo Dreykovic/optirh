@@ -26,6 +26,8 @@ class AbsenceController extends Controller
 
     public function __construct()
     {
+        parent::__construct(app(ActivityLogger::class)); // Injection automatique
+
 
         $this->middleware(['permission:voir-une-absence|écrire-une-absence|créer-une-absence|configurer-une-absence|voir-un-tout'], ['only' => ['index']]);
         $this->middleware(['permission:créer-une-absence|créer-un-tout'], ['only' => ['store', 'cancel', 'create']]);

@@ -21,22 +21,12 @@ class PublicationController extends Controller
      */
     protected $fileService;
 
-    /**
-     * Le service de journalisation des activités
-     *
-     * @var ActivityLogger
-     */
-    protected $activityLogger;
 
-    /**
-     * Constructeur du contrôleur
-     *
-     * @param ActivityLogger $activityLogger
-     */
-    public function __construct(ActivityLogger $activityLogger)
+    public function __construct()
     {
+        parent::__construct(app(ActivityLogger::class)); // Injection automatique
+
         $this->fileService = new PublicationFileService();
-        $this->activityLogger = $activityLogger;
 
         $this->middleware(['permission:voir-une-publication|écrire-une-publication|créer-une-publication|configurer-une-publication|voir-un-tout'], ['only' => ['index']]);
         $this->middleware(['permission:créer-une-publication|créer-un-tout'], ['only' => ['store']]);
