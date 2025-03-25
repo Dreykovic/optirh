@@ -548,7 +548,7 @@
                         data-model-add-url="{{ route('files.upload', ['employeeId' => $employee->id]) }}">
                         @csrf
                         <div class="">
-                            <label for="files" class="form-label">Choisir des fichiers (PDF, IMAGE) :</label>
+                            <label for="files" class="form-label">Choisir des fichiers (PDF) :</label>
                             <input type="file" name="files[]" id="files" class="form-control form-control-lg"
                                 accept=".pdf" multiple>
                         </div>
