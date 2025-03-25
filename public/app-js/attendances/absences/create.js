@@ -1,5 +1,6 @@
 "use strict";
 
+// Gestionnaire de création de demande d'absence
 let AppAbsenceRequestCreateManager = (function () {
     let startDateInput;
     let endDateInput;
@@ -91,59 +92,6 @@ let AppAbsenceRequestCreateManager = (function () {
         });
     }
 
-    // Valider le formulaire avant soumission
-    function validateForm(e) {
-        const startDate = startDateInput.value;
-        const endDate = endDateInput.value;
-        const absenceType = absenceTypeSelect.value;
-
-        let isValid = true;
-
-        // Réinitialiser les messages d'erreur
-        document
-            .querySelectorAll(".invalid-feedback")
-            .forEach((el) => el.remove());
-        document
-            .querySelectorAll(".is-invalid")
-            .forEach((el) => el.classList.remove("is-invalid"));
-
-        // Valider le type d'absence
-        if (!absenceType) {
-            appendErrorMessage(
-                absenceTypeSelect,
-                "Veuillez sélectionner un type d'absence"
-            );
-            isValid = false;
-        }
-
-        // Valider les dates
-        if (!startDate) {
-            appendErrorMessage(startDateInput, "La date de début est requise");
-            isValid = false;
-        }
-
-        if (!endDate) {
-            appendErrorMessage(endDateInput, "La date de fin est requise");
-            isValid = false;
-        }
-
-        if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
-            appendErrorMessage(
-                endDateInput,
-                "La date de fin doit être postérieure à la date de début"
-            );
-            isValid = false;
-        }
-
-        // Si le formulaire n'est pas valide, empêcher sa soumission
-        if (!isValid) {
-            e.preventDefault();
-            return false;
-        }
-
-        return true;
-    }
-
     // Ajouter un message d'erreur après un champ
     function appendErrorMessage(element, message) {
         element.classList.add("is-invalid");
@@ -187,15 +135,132 @@ let AppAbsenceRequestCreateManager = (function () {
                 setupSelect2();
             }
 
-            // Ajouter la validation du formulaire avant la soumission
-            form.addEventListener("submit", validateForm);
-
             // Initialiser l'affichage des jours demandés
             updateDaysRequested();
         },
     };
 })();
 
+// Gestionnaire de soumission du formulaire
+let AppModelCreateManager = (function () {
+    let addModelForm;
+    let modelAddBtn;
+
+    const handleModelAdd = () => {
+        const addModelUrl = addModelForm.getAttribute("data-model-add-url");
+
+        addModelForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            // Validation du formulaire avant soumission
+            if (
+                addModelForm.id === "modelAddForm" &&
+                typeof AppAbsenceRequestCreateManager !== "undefined"
+            ) {
+                // Validation personnalisée pour le formulaire d'absence
+                if (!validateAbsenceForm(e)) {
+                    return false;
+                }
+            }
+
+            const formData = new FormData(addModelForm);
+            AppModules.submitFromBtn(
+                modelAddBtn,
+                formData,
+                addModelUrl,
+                addModelCallback
+            );
+        });
+    };
+
+    // Fonction de validation du formulaire d'absence
+    const validateAbsenceForm = (e) => {
+        const startDateInput = document.getElementById("absenceStartDate");
+        const endDateInput = document.getElementById("absenceEndDate");
+        const absenceTypeSelect = document.getElementById("absenceTypeSelect");
+
+        let isValid = true;
+
+        // Réinitialiser les messages d'erreur
+        document
+            .querySelectorAll(".invalid-feedback")
+            .forEach((el) => el.remove());
+        document
+            .querySelectorAll(".is-invalid")
+            .forEach((el) => el.classList.remove("is-invalid"));
+
+        // Valider le type d'absence
+        if (!absenceTypeSelect.value) {
+            appendErrorMessage(
+                absenceTypeSelect,
+                "Veuillez sélectionner un type d'absence"
+            );
+            isValid = false;
+        }
+
+        // Valider les dates
+        if (!startDateInput.value) {
+            appendErrorMessage(startDateInput, "La date de début est requise");
+            isValid = false;
+        }
+
+        if (!endDateInput.value) {
+            appendErrorMessage(endDateInput, "La date de fin est requise");
+            isValid = false;
+        }
+
+        if (
+            startDateInput.value &&
+            endDateInput.value &&
+            new Date(startDateInput.value) > new Date(endDateInput.value)
+        ) {
+            appendErrorMessage(
+                endDateInput,
+                "La date de fin doit être postérieure à la date de début"
+            );
+            isValid = false;
+        }
+
+        return isValid;
+    };
+
+    // Fonction pour ajouter un message d'erreur
+    const appendErrorMessage = (element, message) => {
+        element.classList.add("is-invalid");
+        const errorDiv = document.createElement("div");
+        errorDiv.className = "invalid-feedback";
+        errorDiv.textContent = message;
+        element.parentNode.appendChild(errorDiv);
+    };
+
+    let addModelCallback = (response) => {
+        if (response.redirect) {
+            location.href = response.redirect;
+        } else {
+            location.reload();
+        }
+    };
+
+    return {
+        init: () => {
+            addModelForm = document.querySelector("#modelAddForm");
+
+            if (!addModelForm) {
+                return;
+            }
+
+            modelAddBtn = addModelForm.querySelector("#modelAddBtn");
+
+            handleModelAdd();
+        },
+    };
+})();
+
+// Initialisation des gestionnaires au chargement du document
 document.addEventListener("DOMContentLoaded", (e) => {
+    // Initialiser d'abord le gestionnaire de demande d'absence
     AppAbsenceRequestCreateManager.init();
+
+    // Puis initialiser le gestionnaire de soumission du formulaire
+    AppModelCreateManager.init();
 });
