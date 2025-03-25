@@ -57,7 +57,7 @@ class AbsenceRequestCreated extends Mailable implements ShouldQueue
         $url = $this->url;
 
         return new Content(
-            view: 'modules.opti-hr.emails.absence_request_created',
+            view: 'modules.opti-hr.emails.absence-request-created',
             with: compact('receiverName', 'text', 'url')
         );
     }
