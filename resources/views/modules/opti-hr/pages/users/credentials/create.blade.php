@@ -66,8 +66,8 @@
                         <div class="card-body p-3">
                             <!-- Accès Recours -->
                             <div class="form-check custom-option custom-option-basic mb-3">
-                                <input class="form-check-input" type="checkbox" name="permissions[]"
-                                    value="access-recours" id="permission_recours">
+                                <input class="form-check-input" type="radio" name="permission" value="access-recours"
+                                    id="permission_recours">
                                 <label class="form-check-label d-flex align-items-center" for="permission_recours">
                                     <span class="me-2"><i class="fas fa-balance-scale text-primary"></i></span>
                                     <span class="fw-semibold">Accès Recours</span>
@@ -77,8 +77,8 @@
 
                             <!-- Accès Opti-HR -->
                             <div class="form-check custom-option custom-option-basic mb-3">
-                                <input class="form-check-input" type="checkbox" name="permissions[]"
-                                    value="access-opti-hr" id="permission_opti_hr">
+                                <input class="form-check-input" type="radio" name="permission" value="access-opti-hr"
+                                    id="permission_opti_hr">
                                 <label class="form-check-label d-flex align-items-center" for="permission_opti_hr">
                                     <span class="me-2"><i class="fas fa-users text-success"></i></span>
                                     <span class="fw-semibold">Accès Opti-HR</span>
@@ -88,7 +88,7 @@
 
                             <!-- Accès Complet -->
                             <div class="form-check custom-option custom-option-basic">
-                                <input class="form-check-input" type="checkbox" name="permissions[]" value="access-all"
+                                <input class="form-check-input" type="radio" name="permission" value="access-all"
                                     id="permission_all">
                                 <label class="form-check-label d-flex align-items-center" for="permission_all">
                                     <span class="me-2"><i class="fas fa-key text-danger"></i></span>

@@ -100,26 +100,19 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-
-        // Validation des données
+        // Validation des données avec permission optionnelle
         $this->validate($request, [
             'role' => 'required',
             'employee' => 'required|exists:employees,id',
+            'permission' => 'nullable|exists:permissions,name', // Permission optionnelle
         ]);
-
 
         // Récupération de l'employé
         $employee = Employee::findOrFail($request->input('employee'));
 
-
-        $username = strtolower(substr($employee->first_name, 0, 1)) . strtolower($employee->last_name) . $employee->id;
-        $username = utf8_encode($username);
         $username = strtolower(substr($employee->first_name, 0, 1)) . strtolower($employee->last_name) . $employee->id;
         $username = utf8_encode($username);
 
-        $randomString = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 6);
-        $pwd = strtolower(substr($employee->first_name, 0, 1)) . ucfirst($employee->last_name) . $randomString;
-        $pwd = utf8_encode($pwd);
         $randomString = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 6);
         $pwd = strtolower(substr($employee->first_name, 0, 1)) . ucfirst($employee->last_name) . $randomString;
         $pwd = utf8_encode($pwd);
@@ -135,6 +128,11 @@ class UserController extends Controller
         // Attribution des rôles
         $user->syncRoles([$request->input('role')]);
 
+        // Attribution de la permission supplémentaire si présente
+        if ($request->has('permission') && $request->input('permission')) {
+            $user->givePermissionTo($request->input('permission'));
+        }
+
         Mail::send('emails.user-credentials', [
             'email' => $user->email,
             'password' => $pwd,
@@ -143,24 +141,20 @@ class UserController extends Controller
             $message->to($user->email);
             $message->subject('Vos identifiants OptiRh');
         });
+
         // Envoi du lien de réinitialisation de mot de passe
         $status = Password::sendResetLink(['email' => $employee->email]);
+
         // Notification à l'utilisateur actuel
         session()->flash('success', "L'utilisateur avec le nom *{$user->username}* et l'email *{$user->email}* a été créé. 
             Mot de passe *{$pwd}*. Retenez-le ou notez-le quelque part, il ne sera plus affiché.");
-
-
-
-
 
         if ($status === Password::RESET_LINK_SENT) {
             return response()->json(['message' => "L'utilisateur avec le nom {$user->username} et l'email {$user->email} a été créé.et un lien de réinitialisation de mot de passe a été envoyé à l'utilisateur.", 'ok' => true]);
         } else {
             return response()->json(['message' => "L'utilisateur avec le nom {$user->username} et l'email {$user->email} a été créé", 'ok' => true]);
         }
-
     }
-
 
 
     public function updateDetails(Request $request, string $id)
