@@ -539,5 +539,4 @@
 @push('js')
     <script src="{{ asset('app-js/crud/post.js') }}"></script>
     <script src="{{ asset('app-js/crud/put.js') }}"></script>
-    <script src="{{ asset('app-js/crud/delete.js') }}"></script>
 @endpush

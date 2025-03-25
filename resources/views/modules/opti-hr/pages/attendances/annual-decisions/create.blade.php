@@ -1,9 +1,7 @@
 <div class="modal fade" id="addDecisionModal" tabindex="-1" aria-labelledby="addDecisionModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modelUpdateFormContainer"
-        id="addOrEditDecisionForm{{ $decision ? $decision->id : '' }}">
+    <div class="modal-dialog modal-dialog-centered ">
         <div class="modal-content">
-            <form class="modal-content"
-                data-model-update-url="{{ route('decisions.save', $decision ? $decision->id : null) }}">
+            <form class="modal-content" id="modelAddForm" data-model-add-url="{{ route('decisions.save') }}">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title" id="addDecisionModalLabel">
@@ -51,10 +49,10 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
 
-                    <button type="submit" class="btn btn-primary modelUpdateBtn" atl="Ajouter Décision"
+                    <button type="submit" class="btn btn-primary " atl="Ajouter Décision" id="modelAddBtn"
                         data-bs-dismiss="modal">
                         <span class="normal-status">
-                            {{ $decision ? 'Mettre à jour' : 'Enregistrer' }}
+                            {{ 'Enregistrer' }}
                         </span>
                         <span class="indicateur d-none">
                             <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
