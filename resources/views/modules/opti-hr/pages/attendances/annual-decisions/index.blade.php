@@ -223,7 +223,7 @@
                                                             </a>
 
                                                         </li>
-                                                        @if ($decision->state != 'current')
+                                                        @if ($decision->state !== 'current')
                                                             <li>
 
                                                                 <div class="modelUpdateFormContainer dropdown-item"
