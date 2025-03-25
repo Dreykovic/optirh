@@ -8,6 +8,7 @@ trait LogsActivity
 {
     public static function bootLogsActivity()
     {
+        /*
         static::created(function ($model) {
             $model->logActivity('created');
         });
@@ -19,6 +20,7 @@ trait LogsActivity
         static::deleted(function ($model) {
             $model->logActivity('deleted');
         });
+        */
     }
 
     public function logActivity($action)
