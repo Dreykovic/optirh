@@ -176,7 +176,7 @@ class AbsenceController extends Controller
 
 
         return view('modules.opti-hr.pages.attendances.absences.create', compact('absenceTypes'));
-        return view('modules.opti-hr.pages.attendances.absences.create', compact('absenceTypes'));
+
 
     }
 
@@ -262,6 +262,7 @@ class AbsenceController extends Controller
         return response()->json([
             'message' => "Demande d'absence {$absenceType->label} créée avec succès.",
             'ok' => true,
+            "redirect" => route('absences.requests', 'PENDING')
         ]);
 
     }
