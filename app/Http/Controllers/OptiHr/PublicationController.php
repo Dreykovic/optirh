@@ -21,22 +21,12 @@ class PublicationController extends Controller
      */
     protected $fileService;
 
-    /**
-     * Le service de journalisation des activités
-     *
-     * @var ActivityLogger
-     */
-    protected $activityLogger;
 
-    /**
-     * Constructeur du contrôleur
-     *
-     * @param ActivityLogger $activityLogger
-     */
-    public function __construct(ActivityLogger $activityLogger)
+    public function __construct()
     {
+        parent::__construct(app(ActivityLogger::class)); // Injection automatique
+
         $this->fileService = new PublicationFileService();
-        $this->activityLogger = $activityLogger;
 
         $this->middleware(['permission:voir-une-publication|écrire-une-publication|créer-une-publication|configurer-une-publication|voir-un-tout'], ['only' => ['index']]);
         $this->middleware(['permission:créer-une-publication|créer-un-tout'], ['only' => ['store']]);
@@ -213,20 +203,37 @@ class PublicationController extends Controller
      * @param int $id
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
      */
-    public function preview($id)
-    {
+ public function preview($id)
+{
+    $file = PublicationFile::findOrFail($id);
 
-        $file = PublicationFile::findOrFail($id);
+    $this->activityLogger->log(
+        'preview',
+        "Prévisualisation du fichier #{$id} de la publication #{$file->publication_id}",
+        $file
+    );
 
-        $this->activityLogger->log(
-            'download',
-            "Téléchargement du fichier #{$id} de la publication #{$file->publication_id}",
-            $file
-        );
-
-        return response()->download($this->fileService->getFile($file));
-
+    // Get the file path
+    $filePath = $this->fileService->getFile($file);
+    
+    // Get file mime type
+    $mimeType = mime_content_type($filePath);
+    
+    // For PDFs, images, and text files - display in browser
+    if (in_array($mimeType, [
+        'application/pdf', 
+        'image/jpeg', 
+        'image/png', 
+        'image/gif', 
+        'text/plain',
+        'text/html'
+    ])) {
+        return response()->file($filePath);
     }
+    
+    // For other file types that can't be previewed, fall back to download
+    return response()->download($filePath);
+}
 
     /**
      * Supprimer une publication

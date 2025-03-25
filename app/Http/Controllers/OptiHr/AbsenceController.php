@@ -7,8 +7,8 @@ use App\Mail\AbsenceRequestCreated;
 use App\Mail\AbsenceRequestUpdated;
 use App\Models\OptiHr\Absence;
 use App\Models\OptiHr\AbsenceType;
-use App\Models\OptiHr\Decision;
 use App\Models\OptiHr\Duty;
+use App\Models\OptiHr\AnnualDecision;
 use App\Models\User;
 use App\Services\AbsencePdfService;
 use App\Services\ActivityLogger;
@@ -22,16 +22,12 @@ use Illuminate\Validation\ValidationException;
 
 class AbsenceController extends Controller
 {
-    /**
-     * Le service de journalisation des activités
-     *
-     * @var ActivityLogger
-     */
-    protected $activityLogger;
 
-    public function __construct(ActivityLogger $activityLogger)
+
+    public function __construct()
     {
-        $this->activityLogger = $activityLogger;
+        parent::__construct(app(ActivityLogger::class)); // Injection automatique
+
 
         $this->middleware(['permission:voir-une-absence|écrire-une-absence|créer-une-absence|configurer-une-absence|voir-un-tout'], ['only' => ['index']]);
         $this->middleware(['permission:créer-une-absence|créer-un-tout'], ['only' => ['store', 'cancel', 'create']]);
@@ -47,7 +43,7 @@ class AbsenceController extends Controller
     public function download($absenceId)
     {
         $absence = Absence::findOrFail($absenceId);
-        $decision = Decision::where('state', 'current')->first();
+        $decision = AnnualDecision::where('state', 'current')->first();
         $absencePdf = new AbsencePdfService();
 
         $this->activityLogger->log(
@@ -128,8 +124,8 @@ class AbsenceController extends Controller
         // Appliquer le filtre de recherche (groupe de conditions OR)
         $query->when($search, function ($q) use ($search) {
             $q->whereHas('duty.employee', function ($query) use ($search) {
-                $query->where('first_name', 'ILIKE', '%'.$search.'%')
-                      ->orWhere('last_name', 'ILIKE', '%'.$search.'%');
+                $query->where('first_name', 'ILIKE', '%' . $search . '%')
+                    ->orWhere('last_name', 'ILIKE', '%' . $search . '%');
             });
         });
 
@@ -233,8 +229,8 @@ class AbsenceController extends Controller
         $currentEmployee = $currentUser->employee;
 
         $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
-                                    ->where('employee_id', $currentEmployee->id)
-                                    ->firstOrFail();
+            ->where('employee_id', $currentEmployee->id)
+            ->firstOrFail();
         $absence_type_id = $request->input('absence_type');
 
         // Obtenir le type d'absence pour le log

@@ -191,8 +191,8 @@ const AppModules = (function () {
                 confirmButtonText: config.DELETE_CONFIRM.CONFIRM_TEXT,
                 cancelButtonText: config.DELETE_CONFIRM.CANCEL_TEXT,
                 customClass: {
-                    confirmButton: config.ALERTS.CLASSES.DELETE_BUTTON,
-                    cancelButton: config.ALERTS.CLASSES.CANCEL_BUTTON,
+                    confirmButton: config.CLASSES.DELETE_BUTTON,
+                    cancelButton: config.CLASSES.CANCEL_BUTTON,
                 },
             });
         },
