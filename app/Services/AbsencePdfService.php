@@ -4,13 +4,13 @@ namespace App\Services;
 
 use App\Models\OptiHr\Absence;
 use App\Models\OptiHr\AbsenceType;
-use App\Models\OptiHr\Decision;
+use App\Models\OptiHr\AnnualDecision;
 use App\Models\OptiHr\Job;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class AbsencePdfService
 {
-    public function generate(Absence $leaveRequest, Decision $decision)
+    public function generate(Absence $leaveRequest, AnnualDecision $decision)
     {
         $absenceType = AbsenceType::find($leaveRequest->absence_type_id);
 
