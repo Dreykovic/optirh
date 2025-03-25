@@ -1,7 +1,7 @@
 // Fonction pour initialiser le paginator avec un statut spécifique
 function initPaginator(status) {
     window.paginator = new Paginator({
-        apiUrl: `/contrats/request/${status}`, // URL dynamique selon le statut
+        apiUrl: `/opti-hr/contrats/request/${status}`, // URL dynamique selon le statut
         renderElement: document.getElementById('contrats'),
         searchInput: document.getElementById('searchInput'), // Input de recherche
         department: document.getElementById('directorInput'), // Sélecteur de département

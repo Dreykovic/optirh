@@ -7,7 +7,7 @@
         }
 
         // Effectue une requête AJAX
-        fetch(`/api/jobs/${departmentId}`)
+        fetch(`/opti-hr/api/jobs/${departmentId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error("Erreur lors du chargement des jobs");

@@ -275,7 +275,7 @@ class DepartmentController extends Controller
 
         $departments = Department::orderBy('created_at', 'desc')->get();
 
-        return view('pages.admin.personnel.directions.index', compact('departments', 'employees'));
+        return view('modules.opti-hr.pages.personnel.directions.index', compact('departments', 'employees'));
     }
 
     /**
@@ -355,7 +355,7 @@ class DepartmentController extends Controller
         })
         ->count();
 
-        return view('pages.admin.personnel.directions.show', compact('department', 'nbre_postes', 'nbreduty'));
+        return view('modules.opti-hr.pages.personnel.directions.show', compact('department', 'nbre_postes', 'nbreduty'));
     }
 
     /**

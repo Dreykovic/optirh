@@ -1,6 +1,6 @@
 
     const paginator = new Paginator({
-        apiUrl: '/membres/list', 
+        apiUrl: '/opti-hr/membres/list', 
         renderElement: document.getElementById('paies'),
         searchInput: document.getElementById('searchInput'), // Input de recherche
         department: document.getElementById('directorInput'),
