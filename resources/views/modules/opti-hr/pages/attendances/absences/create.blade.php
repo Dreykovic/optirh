@@ -9,28 +9,34 @@
             color: #6c757d;
             margin-top: 0.25rem;
         }
+
         .required:after {
             content: " *";
             color: red;
         }
+
         .card {
             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
             border-radius: 0.5rem;
             transition: all 0.3s ease;
         }
+
         .card:hover {
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
         }
+
         .card-header {
             border-bottom: 1px solid rgba(0, 0, 0, 0.125);
             padding: 1.25rem 1.5rem;
             background-color: #f8f9fa;
             border-radius: 0.5rem 0.5rem 0 0 !important;
         }
+
         .card-header h3 {
             margin-bottom: 0;
             font-weight: 600;
         }
+
         .days-requested-container {
             background-color: #f8f9fa;
             padding: 0.75rem;
@@ -38,6 +44,7 @@
             margin-bottom: 1rem;
             font-size: 1rem;
         }
+
         .days-requested {
             font-weight: 600;
             color: #0d6efd;
@@ -65,13 +72,15 @@
                                         <option value="{{ $absenceType->id }}">{{ $absenceType->label }}</option>
                                     @endforeach
                                 </select>
-                                <div class="form-text">Veuillez sélectionner le type d'absence que vous souhaitez demander.</div>
+                                <div class="form-text">Veuillez sélectionner le type d'absence que vous souhaitez demander.
+                                </div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="absenceAddress" class="form-label">Adresse De Congé</label>
                                 <input type="text" class="form-control" id="absenceAddress" name="address"
-                                    value="{{ auth()->user()->employee->address1 }}" placeholder="Votre adresse pendant l'absence">
+                                    value="{{ auth()->user()->employee->address1 }}"
+                                    placeholder="Votre adresse pendant l'absence">
                                 <div class="form-text">Adresse où vous serez joignable pendant votre absence.</div>
                             </div>
 
@@ -87,15 +96,17 @@
                                     <div class="form-text">Dernier jour de votre absence.</div>
                                 </div>
                             </div>
-                            
+
                             <div class="days-requested-container mb-3">
-                                <i class="bi bi-calendar-check me-2"></i> Durée totale: <strong><span class="days-requested">0 jour</span></strong>
-                                <div class="form-text mt-1">Calculé automatiquement en jours ouvrés (hors week-ends, jours fériés inclus).</div>
+                                <i class="bi bi-calendar-check me-2"></i> Durée totale: <strong><span
+                                        class="days-requested">0 jour</span></strong>
+                                <div class="form-text mt-1">Calculé automatiquement en jours ouvrés (hors week-ends, jours
+                                    fériés inclus).</div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="absenceReason" class="form-label">Raisons de l'absence</label>
-                                <textarea class="form-control" id="absenceReason" rows="3" name="reasons" 
+                                <textarea class="form-control" id="absenceReason" rows="3" name="reasons"
                                     placeholder="Veuillez expliquer brièvement les raisons de votre demande d'absence"></textarea>
                                 <div class="form-text">Ces informations seront partagées avec votre responsable.</div>
                             </div>
@@ -127,5 +138,4 @@
 @endpush
 @push('js')
     <script src="{{ asset('app-js/attendances/absences/create.js') }}"></script>
-    <script src="{{ asset('app-js/crud/post.js') }}"></script>
 @endpush
