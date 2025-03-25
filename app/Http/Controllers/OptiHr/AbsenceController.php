@@ -246,10 +246,10 @@ class AbsenceController extends Controller
         );
 
         // Pour la notification par email (à activer si nécessaire)
-        // $receiver = $absence->duty->job->n_plus_one_job ?
-        //   $absence->duty->job->n_plus_one_job->duties->firstWhere('evolution', 'ON_GOING')->employee->users->first()
-        //   : User::role('GRH')->first();
-        // Mail::send(new AbsenceRequestCreated($receiver, $absence, route('absences.requests')));
+        $receiver = $absence->duty->job->n_plus_one_job ?
+            $absence->duty->job->n_plus_one_job->duties->firstWhere('evolution', 'ON_GOING')->employee->users->first()
+            : User::role('GRH')->first();
+        Mail::send(new AbsenceRequestCreated($receiver, $absence, route('absences.requests')));
 
         return response()->json([
             'message' => "Demande d'absence {$absenceType->label} créée avec succès.",
