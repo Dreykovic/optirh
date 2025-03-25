@@ -1,70 +1,561 @@
 @extends('modules.opti-hr.pages.base')
 
 @section('admin-content')
-    <div class="row align-items-center">
-        <div class="border-0 mb-4">
-            <div
-                class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-                <h3 class="fw-bold mb-0">Décision Courante</h3>
-                <div class="col-auto d-flex w-sm-100">
-                    <button type="button" class="btn btn-dark btn-set-task w-sm-100" data-bs-toggle="modal"
-                        data-bs-target="#addDecisionModal"><i class="icofont-plus-circle me-2 fs-6"></i>Changer</button>
-                </div>
+    <style>
+        /* Modern UI for Annual Decision Page */
+        .annual-decision-container {
+            padding: 1.5rem;
+        }
+
+        /* Header Section */
+        .decision-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .decision-title h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: #333;
+        }
+
+        .decision-title p {
+            margin-bottom: 0;
+        }
+
+        .decision-actions .btn-primary {
+            background: linear-gradient(135deg, #4e73df 0%, #3e60cc 100%);
+            border: none;
+            box-shadow: 0 4px 6px rgba(78, 115, 223, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .decision-actions .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(78, 115, 223, 0.25);
+        }
+
+        /* Decision Card */
+        .decision-content {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .decision-card {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 800px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .decision-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            transform: translateY(-5px);
+        }
+
+        .decision-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .decision-card-badge span {
+            background: linear-gradient(135deg, #36b9cc 0%, #1e95a7 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .btn-options {
+            background: none;
+            border: none;
+            color: #6e707e;
+            font-size: 1.25rem;
+            padding: 0.25rem 0.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .btn-options:hover {
+            color: #4e73df;
+        }
+
+        .decision-card-body {
+            padding: 2rem;
+        }
+
+        /* Decision Paper */
+        .decision-paper {
+            background-color: #f8f9fc;
+            border: 1px solid #e3e6f0;
+            border-radius: 8px;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .decision-paper-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .company-logo {
+            margin-bottom: 1rem;
+            color: #4e73df;
+        }
+
+        .decision-paper-title h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+            color: #333;
+        }
+
+        .decision-ref {
+            margin-top: 1rem;
+        }
+
+        .ref-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #4e73df;
+        }
+
+        .ref-code {
+            font-size: 1.1rem;
+            color: #5a5c69;
+            font-weight: 600;
+        }
+
+        .decision-paper-content {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .decision-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .meta-label {
+            font-size: 0.85rem;
+            color: #858796;
+            margin-bottom: 0.25rem;
+        }
+
+        .meta-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Decision Stamp */
+        .decision-stamp {
+            width: 150px;
+            height: 150px;
+            border: 3px solid #4e73df;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .decision-stamp::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            bottom: -10px;
+            left: -10px;
+            border: 1px dashed #4e73df;
+            border-radius: 50%;
+            opacity: 0.5;
+        }
+
+        .stamp-inner {
+            text-align: center;
+        }
+
+        .stamp-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #4e73df;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stamp-date {
+            font-size: 0.9rem;
+            color: #5a5c69;
+            font-weight: 600;
+        }
+
+        .decision-card-footer {
+            padding: 1.25rem 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .decision-validity {
+            display: flex;
+            align-items: center;
+            color: #5a5c69;
+            font-size: 0.9rem;
+        }
+
+        /* Empty State */
+        .empty-decision {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4rem 2rem;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .empty-illustration {
+            font-size: 5rem;
+            color: #e3e6f0;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-decision h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #5a5c69;
+        }
+
+        .empty-decision p {
+            color: #858796;
+            margin-bottom: 1.5rem;
+            max-width: 400px;
+        }
+
+        /* Timeline */
+        .decision-timeline {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .timeline-header h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0;
+            color: #333;
+        }
+
+        .timeline-content {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0.65rem;
+            width: 2px;
+            background-color: #e3e6f0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -2rem;
+            top: 0.25rem;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #e3e6f0;
+            border: 3px solid white;
+            z-index: 1;
+        }
+
+        .timeline-item.current .timeline-marker {
+            background-color: #4e73df;
+        }
+
+        .timeline-date {
+            font-size: 0.85rem;
+            color: #858796;
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-ref {
+            font-size: 0.9rem;
+            color: #5a5c69;
+        }
+
+        /* Animation for stamp */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(78, 115, 223, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(78, 115, 223, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(78, 115, 223, 0);
+            }
+        }
+
+        .decision-stamp {
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .decision-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .decision-paper-content {
+                flex-direction: column;
+                gap: 2rem;
+                align-items: center;
+            }
+
+            .decision-meta {
+                width: 100%;
+            }
+
+            .decision-card-footer {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .decision-stamp {
+                margin-top: 1rem;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            .decision-paper,
+            .decision-paper * {
+                visibility: visible;
+            }
+
+            .decision-paper {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                padding: 2cm;
+                box-shadow: none;
+                border: none;
+            }
+
+            .decision-stamp {
+                animation: none;
+            }
+        }
+    </style>
+    <div class="annual-decision-container">
+        <!-- Header Section -->
+        <div class="decision-header">
+            <div class="decision-title">
+                <h1>Décision Annuelle</h1>
+                <p class="text-muted">Gestion des décisions courantes de l'entreprise</p>
             </div>
+            @if ($decision)
+                <div class="decision-actions">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDecisionModal">
+                        <i class="icofont-refresh me-2"></i>Modifier la décision
+                    </button>
+                </div>
+            @endif
         </div>
-    </div> <!-- Row end  -->
-    @if ($decision)
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-md-12">
-                <div class="d-flex justify-content-center">
-                    <table class="card p-5">
-                        <tr>
-                            <td></td>
-                            <td class="text-center">
-                                <table>
-                                    <tr>
-                                        <td class="text-center">
-                                            <h2>N° {{ $decision->number }}</h2>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center py-2">
-                                            <h4 class="mb-0">
-                                                {{ "{$decision->number}/{$decision->year}/{$decision->reference}" }}</h4>
-                                        </td>
-                                    </tr>
 
-                                    <tr>
-                                        <td class="pt-2 pb-2 text-center">
-                                            <a href="#">Du</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-0 text-center">
-                                            @formatDateOnly($decision->date)
-                                        </td>
-                                    </tr>
-                                </table>
+        <!-- Decision Content -->
+        @if ($decision)
+            <div class="decision-content">
+                <div class="decision-card">
+                    <div class="decision-card-header">
+                        <div class="decision-card-badge">
+                            <span>Décision Courante</span>
+                        </div>
+                        <div class="decision-options">
+                            <div class="dropdown">
+                                <button class="btn-options" type="button" id="decisionOptions" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                    <i class="icofont-options"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="decisionOptions">
+                                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                            data-bs-target="#addDecisionModal"><i class="icofont-edit me-2"></i>Modifier</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#"><i
+                                                class="icofont-print me-2"></i>Imprimer</a></li>
+                                    <li><a class="dropdown-item" href="#"><i
+                                                class="icofont-download me-2"></i>Exporter en PDF</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
 
-                            </td>
-                            <td></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div> <!-- Row end  -->
-    @else
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-md-12">
-                <div class="d-flex justify-content-center">
-                    <div class="col-auto d-flex w-sm-100">
-                        <h3>Pas De décision enregistré.</h3>
+                    <div class="decision-card-body">
+                        <div class="decision-paper">
+                            <div class="decision-paper-header">
+                                <div class="company-logo">
+                                    <!-- Company Logo Here -->
+                                    <i class="icofont-building-alt fs-1"></i>
+                                </div>
+
+                                <div class="decision-paper-title">
+                                    <h2>DÉCISION</h2>
+                                </div>
+
+                                <div class="decision-ref">
+                                    <div class="ref-number">N° {{ $decision->number }}</div>
+                                    <div class="ref-code">
+                                        {{ "{$decision->number}/{$decision->year}/{$decision->reference}" }}</div>
+                                </div>
+                            </div>
+
+                            <div class="decision-paper-content">
+                                <div class="decision-meta">
+                                    <div class="meta-item">
+                                        <span class="meta-label">Date d'émission</span>
+                                        <span class="meta-value">@formatDateOnly($decision->date)</span>
+                                    </div>
+
+                                    <div class="meta-item">
+                                        <span class="meta-label">Année</span>
+                                        <span class="meta-value">{{ $decision->year }}</span>
+                                    </div>
+
+                                    <div class="meta-item">
+                                        <span class="meta-label">Référence</span>
+                                        <span class="meta-value">{{ $decision->reference }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="decision-stamp">
+                                    <div class="stamp-inner">
+                                        <div class="stamp-number">{{ $decision->number }}</div>
+                                        <div class="stamp-date">@formatDateOnly($decision->date)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="decision-card-footer">
+                        <div class="decision-validity">
+                            <i class="icofont-check-circled text-success me-2"></i>
+                            <span>Décision active et en vigueur</span>
+                        </div>
+
+                        <button class="btn btn-outline-primary" onclick="window.print()">
+                            <i class="icofont-print me-1"></i>
+                            Imprimer
+                        </button>
                     </div>
                 </div>
             </div>
-        </div> <!-- Row end  -->
-    @endif
+        @else
+            <div class="empty-decision">
+                <div class="empty-illustration">
+                    <i class="icofont-file-document"></i>
+                </div>
+                <h3>Aucune décision enregistrée</h3>
+                <p>Vous n'avez pas encore défini de décision courante pour cette période.</p>
+                <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal"
+                    data-bs-target="#addDecisionModal">
+                    <i class="icofont-plus-circle me-2"></i>Créer une décision
+                </button>
+            </div>
+        @endif
 
+        <!-- Recent Decisions Timeline (Optional) -->
+        @if ($decision)
+            <div class="decision-timeline mt-4">
+                <div class="timeline-header">
+                    <h4>Historique des Décisions</h4>
+                    <a href="#" class="btn btn-link">Voir tout <i class="icofont-arrow-right ms-1"></i></a>
+                </div>
+
+                <div class="timeline-content">
+                    <div class="timeline-item current">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">@formatDateOnly($decision->date)</div>
+                            <div class="timeline-title">Décision N° {{ $decision->number }}</div>
+                            <div class="timeline-ref">{{ "{$decision->number}/{$decision->year}/{$decision->reference}" }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Previous decisions would be listed here -->
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">01/01/2023</div>
+                            <div class="timeline-title">Décision précédente</div>
+                            <div class="timeline-ref">Référence précédente</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+    </div>
 
     @include('modules.opti-hr.pages.attendances.annual-decisions.create')
 @endsection
