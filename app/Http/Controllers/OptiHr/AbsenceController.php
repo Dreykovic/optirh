@@ -249,8 +249,8 @@ class AbsenceController extends Controller
         $receiver = $absence->duty->job->n_plus_one_job ?
             $absence->duty->job->n_plus_one_job->duties->firstWhere('evolution', 'ON_GOING')->employee->users->first()
             : User::role('GRH')->first();
-        Mail::send(new AbsenceRequestCreated($receiver, $absence, route('absences.requests')));
 
+        $this->handleApprovalNotifications($absence, $receiver, false);
         return response()->json([
             'message' => "Demande d'absence {$absenceType->label} créée avec succès.",
             'ok' => true,
@@ -423,10 +423,10 @@ class AbsenceController extends Controller
     {
         if ($toEmployee) {
             $url = route('absences.requests', 'ALL');
-            // Mail::send(new AbsenceRequestUpdated($absence, $url));
+            Mail::send(new AbsenceRequestUpdated($absence, $url));
         } else {
             $url = route('absences.requests', 'IN_PROGRESS');
-            // Mail::send(new AbsenceRequestCreated($receiver, $absence, $url));
+            Mail::send(new AbsenceRequestCreated($receiver, $absence, $url));
         }
     }
 

@@ -46,7 +46,7 @@ class AbsenceRequestUpdated extends Mailable implements ShouldQueue
 
         $receiverName = "{$receiverTitle} {$this->receiver->last_name} {$this->receiver->first_name}";
         $absence = $this->absence;
-        $status = $this->absence->stage == 'APPROVED' ? 'approuvé' : 'refusé';
+        $status = $this->absence->stage == 'APPROVED' ? 'approuvée' : 'refusée';
         $url = $this->url;
 
         return new Content(
