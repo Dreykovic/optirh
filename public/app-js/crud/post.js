@@ -19,8 +19,12 @@ let AppModelCreateManager = (function () {
         });
     };
 
-    let addModelCallback = () => {
-        location.reload();
+    let addModelCallback = (response) => {
+        if (response.redirect) {
+            location.href = response.redirect;
+        } else {
+            location.reload();
+        }
     };
     return {
         init: () => {
