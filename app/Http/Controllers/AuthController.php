@@ -218,68 +218,59 @@ class AuthController extends Controller
 
     /**
      * Change le mot de passe de l'utilisateur
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function changePassword(Request $request)
     {
-        try {
-            $request->validate([
-                'token' => 'required',
-                'email' => 'required|email',
-                'password' => 'required|min:8|confirmed',
-            ]);
 
-            $status = Password::reset(
-                $request->only('email', 'password', 'password_confirmation', 'token'),
-                function ($user, $password) {
-                    $user->forceFill([
-                        'password' => Hash::make($password),
-                    ])->setRememberToken(Str::random(60));
+        $validated = $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:8|confirmed',
+        ]);
 
-                    $user->save();
-                    session()->regenerate();
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password),
+                    'remember_token' => Str::random(60),
+                ])->save();
 
-                    event(new PasswordReset($user));
-                    Auth::logoutOtherDevices($password);
+                event(new PasswordReset($user));
+                Auth::logoutOtherDevices($password);
 
-                    // Journaliser la réinitialisation du mot de passe
-                    $this->activityLogger->log(
-                        'updated',
-                        "Réinitialisation du mot de passe pour l'utilisateur {$user->username}",
-                        $user
-                    );
-                }
-            );
-
-            if ($status === Password::PASSWORD_RESET) {
-                return response()->json([
-                    'message' => __('Votre mot de passe a été mis à jour avec succès.'),
-                    'ok' => true
-                ]);
-            } else {
-                // Journaliser l'échec
+                // Journaliser la réinitialisation du mot de passe
                 $this->activityLogger->log(
-                    'error',
-                    "Échec de la réinitialisation du mot de passe",
-                    null,
-                    ['email' => $request->email, 'status' => $status]
+                    'updated',
+                    "Réinitialisation du mot de passe pour l'utilisateur {$user->username}",
+                    $user
                 );
-
-                return response()->json([
-                    'message' => 'Une erreur est survenue. Vérifiez les informations entrées.',
-                    'ok' => false
-                ]);
             }
-        } catch (ValidationException $e) {
-            // Journaliser l'erreur de validation
-            $this->activityLogger->log(
-                'error',
-                "Erreur de validation lors de la réinitialisation du mot de passe",
-                null,
-                ['errors' => $e->errors(), 'email' => $request->email, 'ip' => $request->ip()]
-            );
+        );
 
-            throw $e;
+        if ($status === Password::PASSWORD_RESET) {
+            return response()->json([
+                'message' => __('Votre mot de passe a été mis à jour avec succès.'),
+                'ok' => true
+            ]);
         }
+
+        // Journaliser l'échec
+        $this->activityLogger->log(
+            'error',
+            "Échec de la réinitialisation du mot de passe",
+            null,
+            ['email' => $request->email, 'status' => $status]
+        );
+
+        return response()->json([
+            'message' => __($status),
+            'ok' => false
+        ]);
+
     }
 
     /**
