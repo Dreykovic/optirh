@@ -1,6 +1,6 @@
 "use strict";
 
-let AppAbsenceTypeListManager = (function () {
+let AppHolidaysListManager = (function () {
     return {
         init: () => {
             AppModules.initDataTable("#holidaysTable");
@@ -9,5 +9,5 @@ let AppAbsenceTypeListManager = (function () {
 })();
 
 document.addEventListener("DOMContentLoaded", (e) => {
-    AppAbsenceTypeListManager.init();
+    AppHolidaysListManager.init();
 });

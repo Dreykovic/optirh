@@ -1,6 +1,6 @@
 "use strict";
 
-let AppAbsenceTypeListManager = (function () {
+let AppDecisionsListManager = (function () {
     return {
         init: () => {
             AppModules.initDataTable("#decisionsTable");
@@ -9,5 +9,5 @@ let AppAbsenceTypeListManager = (function () {
 })();
 
 document.addEventListener("DOMContentLoaded", (e) => {
-    AppAbsenceTypeListManager.init();
+    AppDecisionsListManager.init();
 });

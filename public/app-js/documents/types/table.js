@@ -1,13 +1,13 @@
 "use strict";
 
-let AppAbsenceTypeListManager = (function () {
+let AppDocTypeListManager = (function () {
     return {
         init: () => {
-            AppModules.initDataTable("#absenceTypesTable");
+            AppModules.initDataTable("#documentTypesTable");
         },
     };
 })();
 
 document.addEventListener("DOMContentLoaded", (e) => {
-    AppAbsenceTypeListManager.init();
+    AppDocTypeListManager.init();
 });
