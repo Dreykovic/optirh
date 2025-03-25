@@ -2,566 +2,527 @@
 
 @section('admin-content')
     <style>
-        /* Modern UI for Annual Decision Page */
-        .annual-decision-container {
+        /* Decision List Styles */
+        .decisions-list-container {
             padding: 1.5rem;
         }
 
-        /* Header Section */
-        .decision-header {
+        .decisions-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
         }
 
-        .decision-title h1 {
+        .decisions-title h1 {
             font-size: 1.75rem;
             font-weight: 700;
             margin-bottom: 0.25rem;
             color: #333;
         }
 
-        .decision-title p {
+        .decisions-title p {
             margin-bottom: 0;
         }
 
-        .decision-actions .btn-primary {
+        .search-box {
+            position: relative;
+            width: 250px;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #858796;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: #e3e6f0;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #5a5c69;
+        }
+
+        .empty-state p {
+            color: #858796;
+            margin-bottom: 1rem;
+        }
+
+        /* Animations and hover effects */
+        .table-hover tbody tr:hover {
+            transform: translateY(-2px);
+            transition: transform 0.2s ease;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.05);
+            z-index: 1;
+            position: relative;
+        }
+
+        .btn-primary {
             background: linear-gradient(135deg, #4e73df 0%, #3e60cc 100%);
             border: none;
             box-shadow: 0 4px 6px rgba(78, 115, 223, 0.2);
             transition: all 0.3s ease;
         }
 
-        .decision-actions .btn-primary:hover {
+        .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(78, 115, 223, 0.25);
         }
 
-        /* Decision Card */
-        .decision-content {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 2rem;
+        /* Table styles */
+        .table {
+            border-collapse: separate;
+            border-spacing: 0;
         }
 
-        .decision-card {
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            width: 100%;
-            max-width: 800px;
-            overflow: hidden;
-            transition: all 0.3s ease;
+        .table td,
+        .table th {
+            border-bottom: 1px solid #e3e6f0;
+            padding: 0.75rem 1rem;
         }
 
-        .decision-card:hover {
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-            transform: translateY(-5px);
-        }
-
-        .decision-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .decision-card-badge span {
-            background: linear-gradient(135deg, #36b9cc 0%, #1e95a7 100%);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        .btn-options {
-            background: none;
-            border: none;
-            color: #6e707e;
-            font-size: 1.25rem;
-            padding: 0.25rem 0.5rem;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .btn-options:hover {
-            color: #4e73df;
-        }
-
-        .decision-card-body {
-            padding: 2rem;
-        }
-
-        /* Decision Paper */
-        .decision-paper {
+        .table thead th {
             background-color: #f8f9fc;
-            border: 1px solid #e3e6f0;
-            border-radius: 8px;
-            padding: 2rem;
-            position: relative;
-        }
-
-        .decision-paper-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .company-logo {
-            margin-bottom: 1rem;
-            color: #4e73df;
-        }
-
-        .decision-paper-title h2 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            letter-spacing: 2px;
-            color: #333;
-        }
-
-        .decision-ref {
-            margin-top: 1rem;
-        }
-
-        .ref-number {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: #4e73df;
-        }
-
-        .ref-code {
-            font-size: 1.1rem;
+            border-bottom: 2px solid #e3e6f0;
             color: #5a5c69;
             font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
         }
 
-        .decision-paper-content {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 2rem;
+        .table-active {
+            background-color: rgba(78, 115, 223, 0.05);
         }
 
-        .decision-meta {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .meta-item {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .meta-label {
-            font-size: 0.85rem;
-            color: #858796;
-            margin-bottom: 0.25rem;
-        }
-
-        .meta-value {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #333;
-        }
-
-        /* Decision Stamp */
-        .decision-stamp {
-            width: 150px;
-            height: 150px;
-            border: 3px solid #4e73df;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        .decision-stamp::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            bottom: -10px;
-            left: -10px;
-            border: 1px dashed #4e73df;
-            border-radius: 50%;
-            opacity: 0.5;
-        }
-
-        .stamp-inner {
-            text-align: center;
-        }
-
-        .stamp-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #4e73df;
-            line-height: 1;
-            margin-bottom: 0.5rem;
-        }
-
-        .stamp-date {
-            font-size: 0.9rem;
-            color: #5a5c69;
-            font-weight: 600;
-        }
-
-        .decision-card-footer {
-            padding: 1.25rem 1.5rem;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .decision-validity {
-            display: flex;
-            align-items: center;
-            color: #5a5c69;
-            font-size: 0.9rem;
-        }
-
-        /* Empty State */
-        .empty-decision {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 4rem 2rem;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-        }
-
-        .empty-illustration {
-            font-size: 5rem;
-            color: #e3e6f0;
-            margin-bottom: 1.5rem;
-        }
-
-        .empty-decision h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #5a5c69;
-        }
-
-        .empty-decision p {
-            color: #858796;
-            margin-bottom: 1.5rem;
-            max-width: 400px;
-        }
-
-        /* Timeline */
-        .decision-timeline {
-            background-color: #fff;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-        }
-
-        .timeline-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .timeline-header h4 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0;
-            color: #333;
-        }
-
-        .timeline-content {
-            position: relative;
-            padding-left: 2rem;
-        }
-
-        .timeline-content::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0.65rem;
-            width: 2px;
-            background-color: #e3e6f0;
-        }
-
-        .timeline-item {
-            position: relative;
-            padding-bottom: 1.5rem;
-        }
-
-        .timeline-marker {
-            position: absolute;
-            left: -2rem;
-            top: 0.25rem;
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            background-color: #e3e6f0;
-            border: 3px solid white;
-            z-index: 1;
-        }
-
-        .timeline-item.current .timeline-marker {
-            background-color: #4e73df;
-        }
-
-        .timeline-date {
-            font-size: 0.85rem;
-            color: #858796;
-            margin-bottom: 0.25rem;
-        }
-
-        .timeline-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 0.25rem;
-        }
-
-        .timeline-ref {
-            font-size: 0.9rem;
-            color: #5a5c69;
-        }
-
-        /* Animation for stamp */
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(78, 115, 223, 0.4);
-            }
-
-            70% {
-                box-shadow: 0 0 0 10px rgba(78, 115, 223, 0);
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(78, 115, 223, 0);
-            }
-        }
-
-        .decision-stamp {
-            animation: pulse 2s infinite;
-        }
-
-        /* Responsive Design */
+        /* Responsive */
         @media (max-width: 768px) {
-            .decision-header {
+            .decisions-header {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 1rem;
             }
 
-            .decision-paper-content {
+            .decisions-actions {
+                display: flex;
                 flex-direction: column;
-                gap: 2rem;
-                align-items: center;
+                width: 100%;
+                gap: 0.5rem;
             }
 
-            .decision-meta {
+            .decisions-actions .btn {
                 width: 100%;
             }
 
-            .decision-card-footer {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .decision-stamp {
+            .search-box {
+                width: 100%;
                 margin-top: 1rem;
             }
         }
-
-        /* Print Styles */
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-
-            .decision-paper,
-            .decision-paper * {
-                visibility: visible;
-            }
-
-            .decision-paper {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-                padding: 2cm;
-                box-shadow: none;
-                border: none;
-            }
-
-            .decision-stamp {
-                animation: none;
-            }
-        }
     </style>
-    <div class="annual-decision-container">
+    <div class="decisions-list-container">
         <!-- Header Section -->
-        <div class="decision-header">
-            <div class="decision-title">
-                <h1>Décision Annuelle</h1>
-                <p class="text-muted">Gestion des décisions courantes de l'entreprise</p>
+        <div class="decisions-header">
+            <div class="decisions-title">
+                <h1>Historique des Décisions</h1>
+                <p class="text-muted">Liste de toutes les décisions annuelles</p>
             </div>
-            @if ($decision)
-                <div class="decision-actions">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDecisionModal">
-                        <i class="icofont-refresh me-2"></i>Modifier la décision
-                    </button>
-                </div>
-            @endif
-        </div>
-
-        <!-- Decision Content -->
-        @if ($decision)
-            <div class="decision-content">
-                <div class="decision-card">
-                    <div class="decision-card-header">
-                        <div class="decision-card-badge">
-                            <span>Décision Courante</span>
-                        </div>
-                        <div class="decision-options">
-                            <div class="dropdown">
-                                <button class="btn-options" type="button" id="decisionOptions" data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-                                    <i class="icofont-options"></i>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="decisionOptions">
-                                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                            data-bs-target="#addDecisionModal"><i class="icofont-edit me-2"></i>Modifier</a>
-                                    </li>
-                                    <li><a class="dropdown-item" href="#"><i
-                                                class="icofont-print me-2"></i>Imprimer</a></li>
-                                    <li><a class="dropdown-item" href="#"><i
-                                                class="icofont-download me-2"></i>Exporter en PDF</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="decision-card-body">
-                        <div class="decision-paper">
-                            <div class="decision-paper-header">
-                                <div class="company-logo">
-                                    <!-- Company Logo Here -->
-                                    <i class="icofont-building-alt fs-1"></i>
-                                </div>
-
-                                <div class="decision-paper-title">
-                                    <h2>DÉCISION</h2>
-                                </div>
-
-                                <div class="decision-ref">
-                                    <div class="ref-number">N° {{ $decision->number }}</div>
-                                    <div class="ref-code">
-                                        {{ "{$decision->number}/{$decision->year}/{$decision->reference}" }}</div>
-                                </div>
-                            </div>
-
-                            <div class="decision-paper-content">
-                                <div class="decision-meta">
-                                    <div class="meta-item">
-                                        <span class="meta-label">Date d'émission</span>
-                                        <span class="meta-value">@formatDateOnly($decision->date)</span>
-                                    </div>
-
-                                    <div class="meta-item">
-                                        <span class="meta-label">Année</span>
-                                        <span class="meta-value">{{ $decision->year }}</span>
-                                    </div>
-
-                                    <div class="meta-item">
-                                        <span class="meta-label">Référence</span>
-                                        <span class="meta-value">{{ $decision->reference }}</span>
-                                    </div>
-                                </div>
-
-                                <div class="decision-stamp">
-                                    <div class="stamp-inner">
-                                        <div class="stamp-number">{{ $decision->number }}</div>
-                                        <div class="stamp-date">@formatDateOnly($decision->date)</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="decision-card-footer">
-                        <div class="decision-validity">
-                            <i class="icofont-check-circled text-success me-2"></i>
-                            <span>Décision active et en vigueur</span>
-                        </div>
-
-                        <button class="btn btn-outline-primary" onclick="window.print()">
-                            <i class="icofont-print me-1"></i>
-                            Imprimer
-                        </button>
-                    </div>
-                </div>
-            </div>
-        @else
-            <div class="empty-decision">
-                <div class="empty-illustration">
-                    <i class="icofont-file-document"></i>
-                </div>
-                <h3>Aucune décision enregistrée</h3>
-                <p>Vous n'avez pas encore défini de décision courante pour cette période.</p>
-                <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal"
-                    data-bs-target="#addDecisionModal">
-                    <i class="icofont-plus-circle me-2"></i>Créer une décision
+            <div class="decisions-actions">
+                <a href="{{ route('decisions.show') }}" class="btn btn-outline-primary me-2">
+                    <i class="icofont-eye me-1"></i>Décision courante
+                </a>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDecisionModal">
+                    <i class="icofont-plus-circle me-1"></i>Nouvelle décision
                 </button>
             </div>
-        @endif
+        </div>
 
-        <!-- Recent Decisions Timeline (Optional) -->
-        @if ($decision)
-            <div class="decision-timeline mt-4">
-                <div class="timeline-header">
-                    <h4>Historique des Décisions</h4>
-                    <a href="#" class="btn btn-link">Voir tout <i class="icofont-arrow-right ms-1"></i></a>
+        <!-- Decisions List -->
+        <div class="decisions-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Toutes les décisions</h5>
+                        <div class="search-box">
+                            <input type="text" id="searchDecisions" class="form-control" placeholder="Rechercher...">
+                            <i class="icofont-search-1 search-icon"></i>
+                        </div>
+                    </div>
                 </div>
+                <div class="card-body">
+                    @if ($decisions->count() > 0)
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Statut</th>
+                                        <th>Numéro</th>
+                                        <th>Référence</th>
+                                        <th>Année</th>
+                                        <th>Date</th>
+                                        <th>Document</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($decisions as $decision)
+                                        <tr id="decision-row-{{ $decision->id }}"
+                                            class="{{ $decision->state === 'current' ? 'table-active' : '' }}">
+                                            <td>
+                                                @if ($decision->state === 'current')
+                                                    <span class="badge bg-success">Actif</span>
+                                                @else
+                                                    <span class="badge bg-secondary">Archivé</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <strong>{{ $decision->number }}</strong>
+                                            </td>
+                                            <td>{{ $decision->reference ?: '-' }}</td>
+                                            <td>{{ $decision->year }}</td>
+                                            <td>@formatDateOnly($decision->date)</td>
+                                            <td>
+                                                @if ($decision->pdf)
+                                                    <a href="{{ route('decisions.downloadPdf', $decision->id) }}"
+                                                        class="btn btn-sm btn-outline-primary">
+                                                        <i class="icofont-download"></i>
+                                                    </a>
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                                        type="button" data-bs-toggle="dropdown">
+                                                        Actions
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a class="dropdown-item"
+                                                                href="{{ route('decisions.detail', $decision->id) }}">
+                                                                <i class="icofont-eye-alt me-2"></i>Détails
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item"
+                                                                href="{{ route('decisions.edit', $decision->id) }}">
+                                                                <i class="icofont-edit me-2"></i>Modifier
+                                                            </a>
+                                                        </li>
+                                                        @if ($decision->state !== 'current')
+                                                            <li>
+                                                                <button class="dropdown-item"
+                                                                    onclick="setCurrentDecision({{ $decision->id }})">
+                                                                    <i class="icofont-star me-2"></i>Définir comme courante
+                                                                </button>
+                                                            </li>
+                                                        @endif
+                                                        @if ($decision->pdf)
+                                                            <li>
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('decisions.downloadPdf', $decision->id) }}">
+                                                                    <i class="icofont-download me-2"></i>Télécharger PDF
+                                                                </a>
+                                                            </li>
+                                                        @endif
+                                                        <li>
+                                                            <hr class="dropdown-divider">
+                                                        </li>
+                                                        <li>
+                                                            <button class="dropdown-item text-danger"
+                                                                onclick="confirmDeleteDecision({{ $decision->id }})">
+                                                                <i class="icofont-trash me-2"></i>Supprimer
+                                                            </button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="icofont-folder"></i>
+                            </div>
+                            <h4>Aucune décision</h4>
+                            <p>Vous n'avez pas encore créé de décisions.</p>
+                            <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal"
+                                data-bs-target="#addDecisionModal">
+                                <i class="icofont-plus-circle me-1"></i>Créer une décision
+                            </button>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
 
-                <div class="timeline-content">
-                    <div class="timeline-item current">
-                        <div class="timeline-marker"></div>
-                        <div class="timeline-content">
-                            <div class="timeline-date">@formatDateOnly($decision->date)</div>
-                            <div class="timeline-title">Décision N° {{ $decision->number }}</div>
-                            <div class="timeline-ref">{{ "{$decision->number}/{$decision->year}/{$decision->reference}" }}
+    <!-- Create Decision Modal -->
+    <div class="modal fade" id="addDecisionModal" tabindex="-1" aria-labelledby="addDecisionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="decisionForm" action="{{ route('decisions.save') }}" method="POST"
+                    enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addDecisionModalLabel">Créer une nouvelle décision</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="number" class="form-label">Numéro de décision*</label>
+                            <input type="text" class="form-control" id="number" name="number" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="year" class="form-label">Année*</label>
+                            <input type="text" class="form-control" id="year" name="year"
+                                value="{{ date('Y') }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="reference" class="form-label">Référence</label>
+                            <input type="text" class="form-control" id="reference" name="reference">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Date*</label>
+                            <input type="date" class="form-control" id="date" name="date"
+                                value="{{ date('Y-m-d') }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="pdf" class="form-label">Document PDF</label>
+                            <input type="file" class="form-control" id="pdf" name="pdf" accept=".pdf">
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="setAsCurrent" name="state"
+                                    value="current" checked>
+                                <label class="form-check-label" for="setAsCurrent">
+                                    Définir comme décision courante
+                                </label>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Previous decisions would be listed here -->
-                    <div class="timeline-item">
-                        <div class="timeline-marker"></div>
-                        <div class="timeline-content">
-                            <div class="timeline-date">01/01/2023</div>
-                            <div class="timeline-title">Décision précédente</div>
-                            <div class="timeline-ref">Référence précédente</div>
-                        </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
                     </div>
-                </div>
+                </form>
             </div>
-        @endif
+        </div>
     </div>
 
-    @include('modules.opti-hr.pages.attendances.annual-decisions.create')
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer cette décision ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Supprimer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('js')
-    <script src="{{ asset('app-js/crud/post.js') }}"></script>
-    <script src="{{ asset('app-js/crud/put.js') }}"></script>
-    <script src="{{ asset('app-js/crud/delete.js') }}"></script>
+    <script>
+        // Handle AJAX form submission
+        $(document).ready(function() {
+            // Search functionality
+            $("#searchDecisions").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("table tbody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+            // Form submission
+            $('#decisionForm').submit(function(e) {
+                e.preventDefault();
+
+                var form = $(this);
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: form.attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.ok) {
+                            // Show success message
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Succès!',
+                                text: response.message,
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(function() {
+                                // Reload the page to show the updated decision
+                                window.location.reload();
+                            });
+                        } else {
+                            // Show error message
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erreur!',
+                                text: response.message
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        var errors = xhr.responseJSON.errors;
+                        var errorMessage = '';
+
+                        // Construct error message
+                        if (errors) {
+                            $.each(errors, function(key, value) {
+                                errorMessage += value + '<br>';
+                            });
+                        } else {
+                            errorMessage =
+                                'Une erreur s\'est produite lors de l\'enregistrement de la décision.';
+                        }
+
+                        // Show error message
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erreur de validation',
+                            html: errorMessage
+                        });
+                    }
+                });
+            });
+        });
+
+        // Set as current decision
+        function setCurrentDecision(id) {
+            $.ajax({
+                url: "{{ route('decisions.setCurrent', '') }}/" + id,
+                type: 'PATCH',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.ok) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Succès!',
+                            text: response.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(function() {
+                            // Reload the page to show the updated status
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erreur!',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erreur!',
+                        text: 'Une erreur s\'est produite lors de la mise à jour de la décision courante.'
+                    });
+                }
+            });
+        }
+
+        // Delete confirmation
+        function confirmDeleteDecision(id) {
+            $('#confirmDeleteModal').modal('show');
+
+            $('#confirmDeleteBtn').off('click').on('click', function() {
+                $.ajax({
+                    url: "{{ route('decisions.delete', '') }}/" + id,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.ok) {
+                            $('#confirmDeleteModal').modal('hide');
+
+                            // Remove the row from the table
+                            $('#decision-row-' + id).fadeOut(300, function() {
+                                $(this).remove();
+
+                                // Check if there are no more rows and show empty state
+                                if ($('table tbody tr').length === 0) {
+                                    location.reload();
+                                }
+                            });
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Succès!',
+                                text: response.message,
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        } else {
+                            $('#confirmDeleteModal').modal('hide');
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erreur!',
+                                text: response.message
+                            });
+                        }
+                    },
+                    error: function() {
+                        $('#confirmDeleteModal').modal('hide');
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erreur!',
+                            text: 'Une erreur s\'est produite lors de la suppression de la décision.'
+                        });
+                    }
+                });
+            });
+        }
+    </script>
+@endpush
+
+@push('css')
 @endpush

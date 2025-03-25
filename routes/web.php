@@ -39,7 +39,7 @@ Route::group(['middleware' => 'guest'], function () {
      */
     Route::get(
         '/login',
-        [AuthController::class,  'login']
+        [AuthController::class, 'login']
     )->name('login');
     Route::post(
         '/login',
@@ -54,13 +54,13 @@ Route::group(['middleware' => 'guest'], function () {
 });
 Route::group(['middleware' => 'auth'], function () {
     /*
-    * Logout
-    */
+     * Logout
+     */
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
     /*
-    * Gateway
-    */
+     * Gateway
+     */
     Route::get('/', [HomeController::class, 'gateway'])->name('gateway');
     /*
      * OptiHR
@@ -69,8 +69,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/', [HomeController::class, 'home'])->name('opti-hr.home');
 
         /*
-          * Help
-        */
+         * Help
+         */
         Route::get('/help', function () {
             return view('modules.opti-hr.pages.help');
         })->name('help');
@@ -155,48 +155,66 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::prefix('/attendances')->group(function () {
             /*
-            * Absences
-            */
+             * Absences
+             */
 
             Route::prefix('/absences')->group(function () {
-                Route::get('/requests/{stage?}', [AbsenceController::class,  'index'])->name('absences.requests');
-                Route::get('/request/create', [AbsenceController::class,  'create'])->name('absences.create');
-                Route::post('/request/save', [AbsenceController::class,  'store'])->name('absences.save');
-                Route::post('/request/approve/{absenceId}', [AbsenceController::class,  'approve'])->name('absences.approve');
-                Route::post('/request/reject/{absenceId}', [AbsenceController::class,  'reject'])->name('absences.reject');
-                Route::post('/request/comment/{absenceId}', [AbsenceController::class,  'comment'])->name('absences.comment');
-                Route::post('/request/cancel/{absenceId}', [AbsenceController::class,  'cancel'])->name('absences.cancel');
-                Route::get('/request/download/{absenceId}', [AbsenceController::class,  'download'])->name('absences.download');
+                Route::get('/requests/{stage?}', [AbsenceController::class, 'index'])->name('absences.requests');
+                Route::get('/request/create', [AbsenceController::class, 'create'])->name('absences.create');
+                Route::post('/request/save', [AbsenceController::class, 'store'])->name('absences.save');
+                Route::post('/request/approve/{absenceId}', [AbsenceController::class, 'approve'])->name('absences.approve');
+                Route::post('/request/reject/{absenceId}', [AbsenceController::class, 'reject'])->name('absences.reject');
+                Route::post('/request/comment/{absenceId}', [AbsenceController::class, 'comment'])->name('absences.comment');
+                Route::post('/request/cancel/{absenceId}', [AbsenceController::class, 'cancel'])->name('absences.cancel');
+                Route::get('/request/download/{absenceId}', [AbsenceController::class, 'download'])->name('absences.download');
             });
             /*
-            * Absences Types
-            */
+             * Absences Types
+             */
 
             Route::prefix('/absence-types')->group(function () {
-                Route::get('/list', [AbsenceTypeController::class,  'index'])->name('absenceTypes.index');
-                Route::post('/save', [AbsenceTypeController::class,  'store'])->name('absenceTypes.save');
-                Route::post('/update/{absenceTypeId}', [AbsenceTypeController::class,  'update'])->name('absenceTypes.update');
-                Route::delete('/delete/{absenceTypeId}', [AbsenceTypeController::class,  'destroy'])->name('absenceTypes.destroy');
+                Route::get('/list', [AbsenceTypeController::class, 'index'])->name('absenceTypes.index');
+                Route::post('/save', [AbsenceTypeController::class, 'store'])->name('absenceTypes.save');
+                Route::post('/update/{absenceTypeId}', [AbsenceTypeController::class, 'update'])->name('absenceTypes.update');
+                Route::delete('/delete/{absenceTypeId}', [AbsenceTypeController::class, 'destroy'])->name('absenceTypes.destroy');
             });
 
             /*
-            * Holidays
-            */
+             * Holidays
+             */
 
             Route::prefix('/holidays')->group(function () {
-                Route::get('/list/{stage?}', [HolidayController::class,  'index'])->name('holidays.index');
-                Route::post('/save', [HolidayController::class,  'store'])->name('holidays.save');
-                Route::post('/update/{holidayId}', [HolidayController::class,  'update'])->name('holidays.update');
-                Route::delete('/delete/{holidayId}', [HolidayController::class,  'destroy'])->name('holidays.destroy');
+                Route::get('/list/{stage?}', [HolidayController::class, 'index'])->name('holidays.index');
+                Route::post('/save', [HolidayController::class, 'store'])->name('holidays.save');
+                Route::post('/update/{holidayId}', [HolidayController::class, 'update'])->name('holidays.update');
+                Route::delete('/delete/{holidayId}', [HolidayController::class, 'destroy'])->name('holidays.destroy');
             });
 
             /*
-       * Decisions
-       */
+             * Decisions
+             */
+
+            /*
+             * Annual Decisions
+             */
 
             Route::prefix('/annual-decisions')->group(function () {
-                Route::get('/view', [AnnualDecisionController::class,  'show'])->name('decisions.show');
-                Route::post('/save/{annualDecisionId?}', [AnnualDecisionController::class,  'storeOrUpdate'])->name('decisions.save');
+                // Viewing routes
+                Route::get('/view', [AnnualDecisionController::class, 'show'])->name('decisions.show');
+                Route::get('/list', [AnnualDecisionController::class, 'index'])->name('decisions.index');
+                Route::get('/detail/{id}', [AnnualDecisionController::class, 'detail'])->name('decisions.detail');
+
+                // Form routes
+                Route::get('/create', [AnnualDecisionController::class, 'create'])->name('decisions.create');
+                Route::get('/edit/{id}', [AnnualDecisionController::class, 'edit'])->name('decisions.edit');
+
+                // Action routes
+                Route::post('/save/{annualDecisionId?}', [AnnualDecisionController::class, 'storeOrUpdate'])->name('decisions.save');
+                Route::delete('/delete/{id}', [AnnualDecisionController::class, 'destroy'])->name('decisions.delete');
+                Route::patch('/set-current/{id}', [AnnualDecisionController::class, 'setCurrent'])->name('decisions.setCurrent');
+
+                // File routes
+                Route::get('/download-pdf/{id}', [AnnualDecisionController::class, 'downloadPdf'])->name('decisions.downloadPdf');
             });
         });
         /*
@@ -205,47 +223,47 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::prefix('/documents')->group(function () {
             /*
-            * Document Request
-            */
+             * Document Request
+             */
 
             Route::prefix('/requests')->group(function () {
-                Route::get('/index/{stage?}', [DocumentRequestController::class,  'index'])->name('documents.requests');
-                Route::get('/create', [DocumentRequestController::class,  'create'])->name('documents.create');
-                Route::post('/save', [DocumentRequestController::class,  'store'])->name('documents.save');
-                Route::post('/approve/{absenceId}', [DocumentRequestController::class,  'approve'])->name('documents.approve');
-                Route::post('/reject/{absenceId}', [DocumentRequestController::class,  'reject'])->name('documents.reject');
-                Route::post('/comment/{absenceId}', [DocumentRequestController::class,  'comment'])->name('documents.comment');
-                Route::post('/cancel/{absenceId}', [DocumentRequestController::class,  'cancel'])->name('documents.cancel');
-                Route::get('/download/{absenceId}', [DocumentRequestController::class,  'download'])->name('documents.download');
+                Route::get('/index/{stage?}', [DocumentRequestController::class, 'index'])->name('documents.requests');
+                Route::get('/create', [DocumentRequestController::class, 'create'])->name('documents.create');
+                Route::post('/save', [DocumentRequestController::class, 'store'])->name('documents.save');
+                Route::post('/approve/{absenceId}', [DocumentRequestController::class, 'approve'])->name('documents.approve');
+                Route::post('/reject/{absenceId}', [DocumentRequestController::class, 'reject'])->name('documents.reject');
+                Route::post('/comment/{absenceId}', [DocumentRequestController::class, 'comment'])->name('documents.comment');
+                Route::post('/cancel/{absenceId}', [DocumentRequestController::class, 'cancel'])->name('documents.cancel');
+                Route::get('/download/{absenceId}', [DocumentRequestController::class, 'download'])->name('documents.download');
             });
             /*
-            * Document Types
-            */
+             * Document Types
+             */
 
             Route::prefix('/document-types')->group(function () {
-                Route::get('/list', [DocumentTypeController::class,  'index'])->name('documentTypes.index');
-                Route::post('/save', [DocumentTypeController::class,  'store'])->name('documentTypes.save');
-                Route::post('/update/{documentTypeId}', [DocumentTypeController::class,  'update'])->name('documentTypes.update');
-                Route::delete('/delete/{documentTypeId}', [DocumentTypeController::class,  'destroy'])->name('documentTypes.destroy');
+                Route::get('/list', [DocumentTypeController::class, 'index'])->name('documentTypes.index');
+                Route::post('/save', [DocumentTypeController::class, 'store'])->name('documentTypes.save');
+                Route::post('/update/{documentTypeId}', [DocumentTypeController::class, 'update'])->name('documentTypes.update');
+                Route::delete('/delete/{documentTypeId}', [DocumentTypeController::class, 'destroy'])->name('documentTypes.destroy');
             });
         });
 
         /*
-        * Users Management
-        */
+         * Users Management
+         */
 
         Route::prefix('/users-management')->group(function () {
             /*
-            * Identifiants
-            */
+             * Identifiants
+             */
             Route::prefix('/credentials')->group(function () {
-                Route::get('/list/{status?}', [UserController::class,   'index'])->name('credentials.index');
-                Route::post('/save', [UserController::class,   'store'])->name('credentials.save');
-                Route::post('/update-details/{userId}', [UserController::class,   'updateDetails'])->name('credentials.updateDetails');
-                Route::post('/update-password/{userId}', [UserController::class,   'updatePassword'])->name('credentials.updatePwd');
-                Route::post('/change-password/{userId}', [UserController::class,   'changePassword'])->name('credentials.changePassword');
-                Route::post('/change-role/{userId}', [UserController::class,   'updateRole'])->name('credentials.updateRole');
-                Route::delete('/delete/{userId}', [UserController::class,   'destroy'])->name('credentials.destroy');
+                Route::get('/list/{status?}', [UserController::class, 'index'])->name('credentials.index');
+                Route::post('/save', [UserController::class, 'store'])->name('credentials.save');
+                Route::post('/update-details/{userId}', [UserController::class, 'updateDetails'])->name('credentials.updateDetails');
+                Route::post('/update-password/{userId}', [UserController::class, 'updatePassword'])->name('credentials.updatePwd');
+                Route::post('/change-password/{userId}', [UserController::class, 'changePassword'])->name('credentials.changePassword');
+                Route::post('/change-role/{userId}', [UserController::class, 'updateRole'])->name('credentials.updateRole');
+                Route::delete('/delete/{userId}', [UserController::class, 'destroy'])->name('credentials.destroy');
             });
 
             /*
@@ -270,7 +288,7 @@ Route::group(['middleware' => 'auth'], function () {
             });
             /*
              * Activity Log
-            */
+             */
 
             Route::prefix('/activity-logs')->group(function () {
                 // Routes pour les logs d'activité
@@ -282,24 +300,24 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         /*
-        * Publications
-        */
+         * Publications
+         */
 
         Route::prefix('/publications')->group(function () {
             /*
-            * Identifiants
-            */
+             * Identifiants
+             */
             Route::prefix('/config')->group(function () {
-                Route::get('/list/{status?}', [PublicationController::class,   'index'])->name('publications.config.index');
-                Route::post('/save', [PublicationController::class,   'store'])->name('publications.config.save');
-                Route::post('/update-status/{status}/{publicationId}', [PublicationController::class,   'updateStatus'])->name('publications.config.updateStatus');
-                Route::delete('/delete/{userId}', [PublicationController::class,   'destroy'])->name('publications.config.destroy');
+                Route::get('/list/{status?}', [PublicationController::class, 'index'])->name('publications.config.index');
+                Route::post('/save', [PublicationController::class, 'store'])->name('publications.config.save');
+                Route::post('/update-status/{status}/{publicationId}', [PublicationController::class, 'updateStatus'])->name('publications.config.updateStatus');
+                Route::delete('/delete/{userId}', [PublicationController::class, 'destroy'])->name('publications.config.destroy');
             });
             /*
-            * Pdf
-            */
+             * Pdf
+             */
             Route::prefix('/pdf')->group(function () {
-                Route::get('/preview/{publicationId}', [PublicationController::class,   'preview'])->name('publications.pdf.preview');
+                Route::get('/preview/{publicationId}', [PublicationController::class, 'preview'])->name('publications.pdf.preview');
             });
         });
     });
