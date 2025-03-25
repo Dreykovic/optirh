@@ -223,10 +223,10 @@
                                                             </a>
 
                                                         </li>
-                                                        @if ($decision->state !== 'current')
+                                                        @if ($decision->state != 'current')
                                                             <li>
 
-                                                                <div class="modelUpdateFormContainer dropdown-item py-2 rounded"
+                                                                <div class="modelUpdateFormContainer dropdown-item"
                                                                     id="setDecisionToCurrentForm{{ $decision->id }}">
 
                                                                     <form
@@ -235,9 +235,8 @@
 
 
 
-                                                                        <a role="button"
-                                                                            class="dropdown-item modelUpdateBtn "
-                                                                            atl="update client status">
+                                                                        <a role="button" class="modelUpdateBtn"
+                                                                            atl="update decision status">
                                                                             <span class="normal-status">
                                                                                 <i class="icofont-star me-2"></i>
                                                                                 <span class="d-none d-sm-none d-md-inline">
