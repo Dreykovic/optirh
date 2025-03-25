@@ -370,12 +370,13 @@
                     <a href="{{ route('decisions.index') }}" class="btn btn-outline-primary me-2">
                         <i class="icofont-history me-1"></i>Historique
                     </a>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDecisionModal">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#addOrEditDecisionModal">
                         <i class="icofont-refresh me-1"></i>Modifier la décision
                     </button>
                 @else
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                        data-bs-target="#addDecisionModal">
+                        data-bs-target="#addOrEditDecisionModal">
                         <i class="icofont-plus-circle me-1"></i>Créer une décision
                     </button>
                 @endif

@@ -163,10 +163,7 @@
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Toutes les décisions</h5>
-                        <div class="search-box">
-                            <input type="text" id="searchDecisions" class="form-control" placeholder="Rechercher...">
-                            <i class="icofont-search-1 search-icon"></i>
-                        </div>
+
                     </div>
                 </div>
                 <div class="card-body">
@@ -317,6 +314,7 @@
             </div>
         </div>
     </div>
+    @include('modules.opti-hr.pages.attendances.annual-decisions.form')
 
 
 
