@@ -1,11 +1,10 @@
-<div class="card-footer justify-content-between d-flex align-items-center">
+<div class="card-footer bg-white d-flex justify-content-between align-items-center p-3">
     <div class="d-none d-md-block">
-        <strong>Soumis Le :</strong>
-        <span>@formatDate($absence->date_of_application)</span>
+        <span class="text-muted">Soumis le:</span>
+        <span class="ms-2 fw-medium">@formatDate($absence->date_of_application)</span>
     </div>
-    <div class="card-hover-show d-flex ">
 
-
+    <div class="d-flex">
         @if (
             ($absence->level == 'ONE' && auth()->user()->hasRole('GRH')) ||
                 ($absence->level == 'TWO' && auth()->user()->hasRole('DG')) ||
@@ -15,81 +14,54 @@
                 (in_array($absence->level, ['ZERO']) &&
                     auth()->user()->hasRole('GRH') &&
                     $absence->duty->job->n_plus_one_job_id === null))
-            <div class="modelUpdateFormContainer mx-2" id="absenceApproveForm{{ $absence->id }}">
-
+            <div class="modelUpdateFormContainer me-2" id="absenceApproveForm{{ $absence->id }}">
                 <form data-model-update-url="{{ route('absences.approve', $absence->id) }}">
-
-
-
-
-                    <button type="submit" class="btn btn-outline-primary btn-sm  lift modelUpdateBtn "
-                        atl="update client status">
+                    <button type="submit" class="btn btn-success lift modelUpdateBtn">
                         <span class="normal-status">
-                            <i class="icofont-check text-success"></i>
-                            <span class="d-none d-sm-none d-md-inline">Approuver</span>
+                            <i class="icofont-check me-1"></i>Approuver
                         </span>
                         <span class="indicateur d-none">
                             <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                            Un Instant...
+                            Un instant...
                         </span>
                     </button>
-
                 </form>
             </div>
 
-            <div class="modelUpdateFormContainer  mx-2" id="absenceRejectForm{{ $absence->id }}">
-
+            <div class="modelUpdateFormContainer me-2" id="absenceRejectForm{{ $absence->id }}">
                 <form data-model-update-url="{{ route('absences.reject', $absence->id) }}">
-
-
-
-
-                    <button type="submit" class="btn btn-outline-danger btn-sm  lift modelUpdateBtn "
-                        atl="update client status">
+                    <button type="submit" class="btn btn-danger lift modelUpdateBtn">
                         <span class="normal-status">
-                            <i class="icofont-close text-danger"></i>
-                            <span class="d-none d-sm-none d-md-inline">Rejeter</span>
+                            <i class="icofont-close me-1"></i>Rejeter
                         </span>
                         <span class="indicateur d-none">
                             <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                            Un Instant...
+                            Un instant...
                         </span>
                     </button>
-
                 </form>
             </div>
 
-
-            <button class="btn btn-outline-dark btn-sm  lift  mx-2" data-bs-toggle="modal"
-                data-bs-target="#absenceCommentAdd{{ $absence->id }}"> <i class="icofont-comment"></i>
-
-                <span class="d-none d-sm-none d-md-inline">Commenter</span></button>
+            <button class="btn btn-outline-primary me-2 lift" data-bs-toggle="modal"
+                data-bs-target="#absenceCommentAdd{{ $absence->id }}">
+                <i class="icofont-comment me-1"></i>Commenter
+            </button>
         @endif
-
 
         @if (auth()->user()->employee_id === $absence->duty->employee_id && $absence->level === 'ZERO')
-            <div class="modelUpdateFormContainer  mx-2" id="absenceCancelForm{{ $absence->id }}">
-
+            <div class="modelUpdateFormContainer" id="absenceCancelForm{{ $absence->id }}">
                 <form data-model-update-url="{{ route('absences.cancel', $absence->id) }}">
-
-
-
-
-                    <button type="submit" class="btn btn-outline-warning btn-sm   lift modelUpdateBtn "
-                        atl="update client status">
+                    <button type="submit" class="btn btn-warning lift modelUpdateBtn">
                         <span class="normal-status">
-                            <i class="icofont-ban text-warning"></i>
-                            <span class="d-none d-sm-none d-md-inline">Annuler</span>
+                            <i class="icofont-ban me-1"></i>Annuler
                         </span>
                         <span class="indicateur d-none">
                             <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                            Un Instant...
+                            Un instant...
                         </span>
                     </button>
-
                 </form>
             </div>
         @endif
-
     </div>
 </div>
