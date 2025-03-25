@@ -20,40 +20,69 @@ class JobController extends Controller
     /**
      * Store a newly created job in storage.
      */
+    // public function store(Request $request)
+    // {
+
+    //     $validatedData = $request->validate([
+    //         'title' => 'required|unique:jobs,title|string|max:255',
+    //         'description' => 'required|string|max:500',
+    //         'department_id' => 'required|exists:departments,id',
+    //         'n_plus_one_job_id' => 'nullable|exists:jobs,id',
+    //     ]);
+
+    //     $validatedData = $request->validate([
+    //         'title' => 'required|unique:jobs,title|string|max:255',
+    //         'description' => 'required|string|max:500',
+    //         'department_id' => 'required|exists:departments,id',
+    //         'n_plus_one_job_id' => 'nullable|exists:jobs,id',
+    //     ]);
+
+    //     // Create the job
+    //     Job::create([
+    //         'title' => $validatedData['title'],
+    //         'description' => $validatedData['description'],
+    //         'department_id' => $validatedData['department_id'],
+    //         'n_plus_one_job_id' => $validatedData['n_plus_one_job_id'],
+    //     ]);
+    //     // Create the job
+    //     Job::create([
+    //         'title' => $validatedData['title'],
+    //         'description' => $validatedData['description'],
+    //         'department_id' => $validatedData['department_id'],
+    //         'n_plus_one_job_id' => $validatedData['n_plus_one_job_id'],
+    //     ]);
+
+    //     return response()->json(['message' => 'Poste créé avec succès.', 'ok' => true]);
+
+    // }
     public function store(Request $request)
     {
+        try {
+            $validatedData = $request->validate([
+                'title' => 'required|unique:jobs,title|string|max:255',
+                'description' => 'required|string|max:500',
+                'department_id' => 'required|exists:departments,id',
+                'n_plus_one_job_id' => 'nullable|exists:jobs,id',
+            ]);
 
-        $validatedData = $request->validate([
-            'title' => 'required|unique:jobs,title|string|max:255',
-            'description' => 'required|string|max:500',
-            'department_id' => 'required|exists:departments,id',
-            'n_plus_one_job_id' => 'nullable|exists:jobs,id',
-        ]);
+            // Create the job
+            Job::create([
+                'title' => $validatedData['title'],
+                'description' => $validatedData['description'],
+                'department_id' => $validatedData['department_id'],
+                'n_plus_one_job_id' => $validatedData['n_plus_one_job_id'],
+            ]);
 
-        $validatedData = $request->validate([
-            'title' => 'required|unique:jobs,title|string|max:255',
-            'description' => 'required|string|max:500',
-            'department_id' => 'required|exists:departments,id',
-            'n_plus_one_job_id' => 'nullable|exists:jobs,id',
-        ]);
-
-        // Create the job
-        Job::create([
-            'title' => $validatedData['title'],
-            'description' => $validatedData['description'],
-            'department_id' => $validatedData['department_id'],
-            'n_plus_one_job_id' => $validatedData['n_plus_one_job_id'],
-        ]);
-        // Create the job
-        Job::create([
-            'title' => $validatedData['title'],
-            'description' => $validatedData['description'],
-            'department_id' => $validatedData['department_id'],
-            'n_plus_one_job_id' => $validatedData['n_plus_one_job_id'],
-        ]);
-
-        return response()->json(['message' => 'Poste créé avec succès.', 'ok' => true]);
-
+            return response()->json(['message' => 'Poste créé avec succès.', 'ok' => true]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Les données fournies sont invalides.',
+                'errors' => $e->errors(), // Contient tous les messages d'erreur de validation
+            ], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+        }
     }
 
     /**
