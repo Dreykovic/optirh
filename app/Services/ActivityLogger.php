@@ -28,7 +28,7 @@ class ActivityLogger
         }
 
         $logData = [
-            'user_id' => Auth::id(),
+            'user_id' => Auth::user()->id,
             'action' => $action,
             'description' => $description,
             'ip_address' => request()->ip(),

@@ -10,9 +10,17 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Storage;
+use App\Services\ActivityLogger;
 
 class AnnualDecisionController extends Controller
 {
+    public function __construct()
+    {
+        parent::__construct(activityLogger: app(ActivityLogger::class)); // Injection automatique
+
+
+
+    }
     /**
      * Display a listing of the annual decisions.
      *
@@ -23,7 +31,10 @@ class AnnualDecisionController extends Controller
         try {
             $decisions = AnnualDecision::orderBy('created_at', 'desc')->get();
             $currentDecision = AnnualDecision::where('state', 'current')->first();
-
+            $this->activityLogger->log(
+                'view',
+                "Consultation de la liste des décisions"
+            );
             return view('modules.opti-hr.pages.attendances.annual-decisions.index', compact('decisions', 'currentDecision'));
         } catch (\Throwable $th) {
             return back()->with('error', 'Une erreur s\'est produite lors du chargement des décisions annuelles.');
@@ -39,7 +50,11 @@ class AnnualDecisionController extends Controller
     {
 
         $decision = AnnualDecision::where('state', 'current')->first();
-
+        $this->activityLogger->log(
+            'access',
+            "Consultation de la décision actuel {$decision->number}/{$decision->year}/{$decision->reference}",
+            $decision
+        );
         return view('modules.opti-hr.pages.attendances.annual-decisions.current', compact('decision'));
 
     }
@@ -95,7 +110,11 @@ class AnnualDecisionController extends Controller
             ['id' => $id],  // Condition de mise à jour
             $validatedData   // Données mises à jour ou créées
         );
-
+        $this->activityLogger->log(
+            'updated',
+            "mis à jour de la décision{$decision->number}/{$decision->year}/{$decision->reference}",
+            $decision
+        );
         if ($request->wantsJson()) {
             return response()->json([
                 'message' => $id ? 'Décision mise à jour avec succès' : 'Décision créée avec succès',
@@ -180,29 +199,27 @@ class AnnualDecisionController extends Controller
      * Download the PDF file for a decision.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\StreamedResponse
      */
     public function downloadPdf($id)
     {
-        try {
-            $decision = AnnualDecision::findOrFail($id);
-
-            if (!$decision->pdf) {
-                return back()->with('error', 'Aucun fichier PDF n\'est associé à cette décision.');
-            }
-
-            if (!Storage::disk('public')->exists($decision->pdf)) {
-                return back()->with('error', 'Le fichier PDF associé à cette décision est introuvable.');
-            }
-
-            $fileName = "decision_{$decision->number}_{$decision->year}.pdf";
-
-            return Storage::disk('public')->download($decision->pdf, $fileName);
-        } catch (ModelNotFoundException $e) {
-            return back()->with('error', 'La décision demandée n\'existe pas.');
-        } catch (\Throwable $th) {
-            \Log::error('Error downloading decision PDF: ' . $th->getMessage());
-            return back()->with('error', 'Une erreur s\'est produite lors du téléchargement du fichier PDF.');
+        $decision = AnnualDecision::findOrFail($id);
+        $this->activityLogger->log(
+            'download',
+            "Téléchargement du PDF de la décision #{$decision->number}/{$decision->year}/{$decision->reference}",
+            $decision
+        );
+        if (!$decision->pdf) {
+            return back()->with('error', 'Aucun fichier PDF n\'est associé à cette décision.');
         }
+
+        if (!Storage::disk('public')->exists($decision->pdf)) {
+            return back()->with('error', 'Le fichier PDF associé à cette décision est introuvable.');
+        }
+
+        $fileName = "decision_{$decision->number}_{$decision->year}.pdf";
+
+        return Storage::disk('public')->download($decision->pdf, $fileName);
+
     }
 }
