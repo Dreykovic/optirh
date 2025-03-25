@@ -293,8 +293,9 @@
                                                     </ul>
                                                 </div>
                                             </td>
+                                            @include('modules.opti-hr.pages.attendances.annual-decisions.form')
+
                                         </tr>
-                                        @include('modules.opti-hr.pages.attendances.annual-decisions.form')
                                     @endforeach
                                 </tbody>
                             </table>
