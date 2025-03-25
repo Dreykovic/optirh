@@ -208,7 +208,7 @@ Route::group(['middleware' => 'auth'], function () {
 
                 // Action routes
                 Route::post('/save/{annualDecisionId?}', [AnnualDecisionController::class, 'storeOrUpdate'])->name('decisions.save');
-                Route::delete('/delete/{id}', [AnnualDecisionController::class, 'destroy'])->name('decisions.delete');
+                Route::delete('/delete/{id}', [AnnualDecisionController::class, 'destroy'])->name('decisions.destroy');
                 Route::patch('/set-current/{id}', [AnnualDecisionController::class, 'setCurrent'])->name('decisions.setCurrent');
 
                 // File routes

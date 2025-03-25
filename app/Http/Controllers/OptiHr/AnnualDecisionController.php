@@ -63,7 +63,7 @@ class AnnualDecisionController extends Controller
             'reference' => 'nullable|string|max:255',
             'date' => 'required|date',
             'pdf' => 'nullable|file|mimes:pdf|max:2048',
-            'state' => 'nullable|string|in:current,archived',
+            'state' => 'nullable|string|in:current,outdated',
         ]);
 
         // Set default state if not provided
@@ -73,7 +73,7 @@ class AnnualDecisionController extends Controller
 
         // If this is a current decision, archive all others
         if ($validatedData['state'] === 'current') {
-            AnnualDecision::where('state', 'current')->update(['state' => 'archived']);
+            AnnualDecision::where('state', 'current')->update(['state' => 'outdated']);
         }
 
         // Gestion du fichier PDF
@@ -149,7 +149,7 @@ class AnnualDecisionController extends Controller
     {
         try {
             // First archive the current decision
-            AnnualDecision::where('state', 'current')->update(['state' => 'archived']);
+            AnnualDecision::where('state', 'current')->update(['state' => 'outdated']);
 
             // Then set the selected decision as current
             $decision = AnnualDecision::findOrFail($id);

@@ -1,5 +1,8 @@
 @extends('modules.opti-hr.pages.base')
-
+@section('plugins-style')
+    <link rel="stylesheet" href={{ asset('assets/plugins/datatables/responsive.dataTables.min.css') }}>
+    <link rel="stylesheet" href={{ asset('assets/plugins/datatables/dataTables.bootstrap5.min.css') }}>
+@endsection
 @section('admin-content')
     <style>
         /* Decision List Styles */
@@ -169,7 +172,7 @@
                 <div class="card-body">
                     @if ($decisions->count() > 0)
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                            <table id="decisionsTable" class="table table-hover align-middle">
                                 <thead>
                                     <tr>
                                         <th>Statut</th>
@@ -184,7 +187,7 @@
                                 <tbody>
                                     @foreach ($decisions as $decision)
                                         <tr id="decision-row-{{ $decision->id }}"
-                                            class="{{ $decision->state === 'current' ? 'table-active' : '' }}">
+                                            class="{{ $decision->state === 'current' ? 'table-active' : '' }} parent">
                                             <td>
                                                 @if ($decision->state === 'current')
                                                     <span class="badge bg-success">Actif</span>
@@ -192,7 +195,7 @@
                                                     <span class="badge bg-secondary">Archivé</span>
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td class="model-value">
                                                 <strong>{{ $decision->number }}</strong>
                                             </td>
                                             <td>{{ $decision->reference ?: '-' }}</td>
@@ -215,24 +218,46 @@
                                                         Actions
                                                     </button>
                                                     <ul class="dropdown-menu">
+
                                                         <li>
-                                                            <a class="dropdown-item"
-                                                                href="{{ route('decisions.detail', $decision->id) }}">
-                                                                <i class="icofont-eye-alt me-2"></i>Détails
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item"
-                                                                href="{{ route('decisions.edit', $decision->id) }}">
+                                                            <a class="dropdown-item" role="button" data-bs-toggle="modal"
+                                                                data-bs-target="#addOrEditDecisionModal{{ $decision->id }}">
                                                                 <i class="icofont-edit me-2"></i>Modifier
                                                             </a>
+
                                                         </li>
                                                         @if ($decision->state !== 'current')
                                                             <li>
-                                                                <button class="dropdown-item"
-                                                                    onclick="setCurrentDecision({{ $decision->id }})">
-                                                                    <i class="icofont-star me-2"></i>Définir comme courante
-                                                                </button>
+
+                                                                <div class="modelUpdateFormContainer dropdown-item py-2 rounded"
+                                                                    id="setDecisionToCurrentForm{{ $decision->id }}">
+
+                                                                    <form
+                                                                        data-model-update-url="{{ route('decisions.setCurrent', $decision->id) }}">
+
+
+
+
+                                                                        <a role="button"
+                                                                            class="dropdown-item modelUpdateBtn "
+                                                                            atl="update client status">
+                                                                            <span class="normal-status">
+                                                                                <i class="icofont-star me-2"></i>
+                                                                                <span class="d-none d-sm-none d-md-inline">
+
+                                                                                    Définir comme courante
+                                                                                </span>
+                                                                            </span>
+                                                                            <span class="indicateur d-none">
+                                                                                <span class="spinner-grow spinner-grow-sm"
+                                                                                    role="status"
+                                                                                    aria-hidden="true"></span>
+                                                                                Un Instant...
+                                                                            </span>
+                                                                        </a>
+
+                                                                    </form>
+                                                                </div>
                                                             </li>
                                                         @endif
                                                         @if ($decision->pdf)
@@ -247,15 +272,29 @@
                                                             <hr class="dropdown-divider">
                                                         </li>
                                                         <li>
-                                                            <button class="dropdown-item text-danger"
-                                                                onclick="confirmDeleteDecision({{ $decision->id }})">
-                                                                <i class="icofont-trash me-2"></i>Supprimer
+
+
+                                                            <button type="button"
+                                                                class="dropdown-item text-danger modelDeleteBtn"
+                                                                data-model-action="delete"
+                                                                data-model-delete-url={{ route('decisions.destroy', $decision->id) }}
+                                                                data-model-parent-selector="tr.parent">
+                                                                <span class="normal-status">
+                                                                    <i class="icofont-ui-delete text-danger"></i>
+                                                                    Supprimer
+                                                                </span>
+                                                                <span class="indicateur d-none">
+                                                                    <span class="spinner-grow spinner-grow-sm"
+                                                                        role="status" aria-hidden="true"></span>
+
+                                                                </span>
                                                             </button>
                                                         </li>
                                                     </ul>
                                                 </div>
                                             </td>
                                         </tr>
+                                        @include('modules.opti-hr.pages.attendances.annual-decisions.form')
                                     @endforeach
                                 </tbody>
                             </table>
@@ -278,251 +317,12 @@
         </div>
     </div>
 
-    <!-- Create Decision Modal -->
-    <div class="modal fade" id="addDecisionModal" tabindex="-1" aria-labelledby="addDecisionModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form id="decisionForm" action="{{ route('decisions.save') }}" method="POST"
-                    enctype="multipart/form-data">
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addDecisionModalLabel">Créer une nouvelle décision</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="number" class="form-label">Numéro de décision*</label>
-                            <input type="text" class="form-control" id="number" name="number" required>
-                        </div>
 
-                        <div class="mb-3">
-                            <label for="year" class="form-label">Année*</label>
-                            <input type="text" class="form-control" id="year" name="year"
-                                value="{{ date('Y') }}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="reference" class="form-label">Référence</label>
-                            <input type="text" class="form-control" id="reference" name="reference">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="date" class="form-label">Date*</label>
-                            <input type="date" class="form-control" id="date" name="date"
-                                value="{{ date('Y-m-d') }}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="pdf" class="form-label">Document PDF</label>
-                            <input type="file" class="form-control" id="pdf" name="pdf" accept=".pdf">
-                        </div>
-
-                        <div class="mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="setAsCurrent" name="state"
-                                    value="current" checked>
-                                <label class="form-check-label" for="setAsCurrent">
-                                    Définir comme décision courante
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <button type="submit" class="btn btn-primary">Enregistrer</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Confirmation Modal -->
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirmation</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Êtes-vous sûr de vouloir supprimer cette décision ?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Supprimer</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
 @endsection
-
-@push('js')
-    <script>
-        // Handle AJAX form submission
-        $(document).ready(function() {
-            // Search functionality
-            $("#searchDecisions").on("keyup", function() {
-                var value = $(this).val().toLowerCase();
-                $("table tbody tr").filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                });
-            });
-
-            // Form submission
-            $('#decisionForm').submit(function(e) {
-                e.preventDefault();
-
-                var form = $(this);
-                var formData = new FormData(this);
-
-                $.ajax({
-                    url: form.attr('action'),
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        if (response.ok) {
-                            // Show success message
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Succès!',
-                                text: response.message,
-                                timer: 2000,
-                                showConfirmButton: false
-                            }).then(function() {
-                                // Reload the page to show the updated decision
-                                window.location.reload();
-                            });
-                        } else {
-                            // Show error message
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Erreur!',
-                                text: response.message
-                            });
-                        }
-                    },
-                    error: function(xhr) {
-                        var errors = xhr.responseJSON.errors;
-                        var errorMessage = '';
-
-                        // Construct error message
-                        if (errors) {
-                            $.each(errors, function(key, value) {
-                                errorMessage += value + '<br>';
-                            });
-                        } else {
-                            errorMessage =
-                                'Une erreur s\'est produite lors de l\'enregistrement de la décision.';
-                        }
-
-                        // Show error message
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Erreur de validation',
-                            html: errorMessage
-                        });
-                    }
-                });
-            });
-        });
-
-        // Set as current decision
-        function setCurrentDecision(id) {
-            $.ajax({
-                url: "{{ route('decisions.setCurrent', '') }}/" + id,
-                type: 'PATCH',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    if (response.ok) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Succès!',
-                            text: response.message,
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).then(function() {
-                            // Reload the page to show the updated status
-                            window.location.reload();
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Erreur!',
-                            text: response.message
-                        });
-                    }
-                },
-                error: function() {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Erreur!',
-                        text: 'Une erreur s\'est produite lors de la mise à jour de la décision courante.'
-                    });
-                }
-            });
-        }
-
-        // Delete confirmation
-        function confirmDeleteDecision(id) {
-            $('#confirmDeleteModal').modal('show');
-
-            $('#confirmDeleteBtn').off('click').on('click', function() {
-                $.ajax({
-                    url: "{{ route('decisions.delete', '') }}/" + id,
-                    type: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-                        if (response.ok) {
-                            $('#confirmDeleteModal').modal('hide');
-
-                            // Remove the row from the table
-                            $('#decision-row-' + id).fadeOut(300, function() {
-                                $(this).remove();
-
-                                // Check if there are no more rows and show empty state
-                                if ($('table tbody tr').length === 0) {
-                                    location.reload();
-                                }
-                            });
-
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Succès!',
-                                text: response.message,
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-                        } else {
-                            $('#confirmDeleteModal').modal('hide');
-
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Erreur!',
-                                text: response.message
-                            });
-                        }
-                    },
-                    error: function() {
-                        $('#confirmDeleteModal').modal('hide');
-
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Erreur!',
-                            text: 'Une erreur s\'est produite lors de la suppression de la décision.'
-                        });
-                    }
-                });
-            });
-        }
-    </script>
+@push('plugins-js')
+    <script src={{ asset('assets/bundles/dataTables.bundle.js') }}></script>
 @endpush
-
-@push('css')
+@push('js')
+    <script src="{{ asset('app-js/attendances/annual-decisions/table.js') }}"></script>
 @endpush

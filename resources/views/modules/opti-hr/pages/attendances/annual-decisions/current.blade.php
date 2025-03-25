@@ -527,7 +527,7 @@
     </div>
 
     <!-- Create/Edit Decision Modal -->
-    @include('modules.opti-hr.pages.attendances.annual-decisions.create')
+    @include('modules.opti-hr.pages.attendances.annual-decisions.form')
 @endsection
 
 @push('js')
