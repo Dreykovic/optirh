@@ -111,14 +111,7 @@ class UserController extends Controller
             $user->givePermissionTo($request->input('permission'));
         }
 
-        Mail::send('emails.user-credentials', [
-            'email' => $user->email,
-            'password' => $pwd,
-            'loginLink' => route('login')
-        ], function ($message) use ($user) {
-            $message->to($user->email);
-            $message->subject('Vos identifiants OptiRh');
-        });
+
 
         // Envoi du lien de réinitialisation de mot de passe
         $status = Password::sendResetLink(['email' => $employee->email]);
@@ -138,7 +131,14 @@ class UserController extends Controller
         // Notification à l'utilisateur actuel
         session()->flash('success', "L'utilisateur avec le nom *{$user->username}* et l'email *{$user->email}* a été créé. 
             Mot de passe *{$pwd}*. Retenez-le ou notez-le quelque part, il ne sera plus affiché.");
-
+        Mail::send('modules.opti-hr.emails.user-credentials', [
+            'email' => $user->email,
+            'password' => $pwd,
+            'loginLink' => route('login')
+        ], function ($message) use ($user) {
+            $message->to($user->email);
+            $message->subject('Vos identifiants OptiRh');
+        });
         if ($status === Password::RESET_LINK_SENT) {
             return response()->json(['message' => "L'utilisateur avec le nom {$user->username} et l'email {$user->email} a été créé.et un lien de réinitialisation de mot de passe a été envoyé à l'utilisateur.", 'ok' => true]);
         } else {
