@@ -142,7 +142,7 @@ let AppAbsenceRequestCreateManager = (function () {
 })();
 
 // Gestionnaire de soumission du formulaire
-let AppModelCreateManager = (function () {
+let AppAbsenceCreateManager = (function () {
     let addModelForm;
     let modelAddBtn;
 
@@ -262,5 +262,5 @@ document.addEventListener("DOMContentLoaded", (e) => {
     AppAbsenceRequestCreateManager.init();
 
     // Puis initialiser le gestionnaire de soumission du formulaire
-    AppModelCreateManager.init();
+    AppAbsenceCreateManager.init();
 });
