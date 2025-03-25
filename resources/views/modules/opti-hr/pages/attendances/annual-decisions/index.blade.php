@@ -184,7 +184,7 @@
                                 <tbody>
                                     @foreach ($decisions as $decision)
                                         <tr id="decision-row-{{ $decision->id }}"
-                                            class="{{ $decision->state === 'current' ? 'table-active' : '' }} parent">
+                                            class="parent {{ $decision->state === 'current' ? 'table-active' : '' }} ">
                                             <td>
                                                 @if ($decision->state === 'current')
                                                     <span class="badge bg-success">Actif</span>
@@ -271,8 +271,7 @@
                                                         <li>
 
 
-                                                            <button type="button"
-                                                                class="dropdown-item text-danger modelDeleteBtn"
+                                                            <button class="dropdown-item text-danger modelDeleteBtn"
                                                                 data-model-action="delete"
                                                                 data-model-delete-url={{ route('decisions.destroy', $decision->id) }}
                                                                 data-model-parent-selector="tr.parent">
