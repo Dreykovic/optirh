@@ -290,7 +290,7 @@
                                                     </ul>
                                                 </div>
                                             </td>
-                                            @include('modules.opti-hr.pages.attendances.annual-decisions.form')
+                                            @include('modules.opti-hr.pages.attendances.annual-decisions.edit')
 
                                         </tr>
                                     @endforeach
@@ -314,7 +314,7 @@
             </div>
         </div>
     </div>
-    @include('modules.opti-hr.pages.attendances.annual-decisions.form')
+    @include('modules.opti-hr.pages.attendances.annual-decisions.create')
 
 
 

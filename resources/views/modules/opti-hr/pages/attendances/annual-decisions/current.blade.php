@@ -371,12 +371,12 @@
                         <i class="icofont-history me-1"></i>Historique
                     </a>
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                        data-bs-target="#addOrEditDecisionModal">
+                        data-bs-target="#addOrEditDecisionModal{{ $decision->id }}">
                         <i class="icofont-refresh me-1"></i>Modifier la décision
                     </button>
                 @else
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                        data-bs-target="#addOrEditDecisionModal">
+                        data-bs-target="#addDecisionModal">
                         <i class="icofont-plus-circle me-1"></i>Créer une décision
                     </button>
                 @endif
@@ -526,9 +526,14 @@
             </div>
         @endif
     </div>
+    @if ($decision)
+        <!-- Edit Decision Modal -->
+        @include('modules.opti-hr.pages.attendances.annual-decisions.edit')
+    @else
+        <!-- Edit Decision Modal -->
+        @include('modules.opti-hr.pages.attendances.annual-decisions.create')
+    @endif
 
-    <!-- Create/Edit Decision Modal -->
-    @include('modules.opti-hr.pages.attendances.annual-decisions.form')
 @endsection
 
 @push('js')
