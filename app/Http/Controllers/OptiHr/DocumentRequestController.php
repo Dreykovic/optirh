@@ -7,7 +7,7 @@ use App\Models\OptiHr\DocumentRequest;
 use App\Models\OptiHr\DocumentType;
 use App\Models\OptiHr\Duty;
 use App\Models\User;
-use App\Services\ActivityLogger;
+use App\Services\ActivityLogService;
 use App\Services\DocumentPdfService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -20,11 +20,11 @@ class DocumentRequestController extends Controller
     /**
      * Le service de journalisation des activités
      *
-     * @var ActivityLogger
+     * @var ActivityLogService
      */
     protected $activityLogger;
 
-    public function __construct(ActivityLogger $activityLogger)
+    public function __construct(ActivityLogService $activityLogger)
     {
         $this->activityLogger = $activityLogger;
 

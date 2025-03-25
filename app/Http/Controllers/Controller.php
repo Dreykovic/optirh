@@ -8,7 +8,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\App;
 use Illuminate\Validation\ValidationException;
-use App\Services\ActivityLogger;
+use App\Services\ActivityLogService;
 
 class Controller extends BaseController
 {
@@ -17,11 +17,11 @@ class Controller extends BaseController
     /**
      * Le service de journalisation des activités
      *
-     * @var ActivityLogger
+     * @var ActivityLogService
      */
     protected $activityLogger;
 
-    public function __construct(ActivityLogger $activityLogger)
+    public function __construct(ActivityLogService $activityLogger)
     {
         $this->activityLogger = $activityLogger;
         App::setLocale('fr');

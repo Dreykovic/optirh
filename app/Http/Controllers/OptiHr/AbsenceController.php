@@ -11,7 +11,7 @@ use App\Models\OptiHr\Duty;
 use App\Models\OptiHr\AnnualDecision;
 use App\Models\User;
 use App\Services\AbsencePdfService;
-use App\Services\ActivityLogger;
+use App\Services\ActivityLogService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +23,7 @@ class AbsenceController extends Controller
 
     public function __construct()
     {
-        parent::__construct(app(ActivityLogger::class)); // Injection automatique
+        parent::__construct(app(ActivityLogService::class)); // Injection automatique
 
 
         $this->middleware(['permission:voir-une-absence|écrire-une-absence|créer-une-absence|configurer-une-absence|voir-un-tout'], ['only' => ['index']]);

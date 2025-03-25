@@ -10,13 +10,13 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Storage;
-use App\Services\ActivityLogger;
+use App\Services\ActivityLogService;
 
 class AnnualDecisionController extends Controller
 {
     public function __construct()
     {
-        parent::__construct(activityLogger: app(ActivityLogger::class)); // Injection automatique
+        parent::__construct(activityLogger: app(ActivityLogService::class)); // Injection automatique
 
         $this->middleware(['permission:configurer-une-absence|voir-un-tout'], ['only' => ['index', 'show']]);
         $this->middleware(['permission:configurer-une-absence|créer-un-tout'], ['only' => ['store', 'storeOrUpdate', 'setCurrent', 'downloadPdf']]);

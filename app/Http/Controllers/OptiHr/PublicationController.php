@@ -5,7 +5,7 @@ namespace App\Http\Controllers\OptiHr;
 use App\Http\Controllers\Controller;
 use App\Models\OptiHr\Publication;
 use App\Models\OptiHr\PublicationFile;
-use App\Services\ActivityLogger;
+use App\Services\ActivityLogService;
 use App\Services\PublicationFileService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -24,7 +24,7 @@ class PublicationController extends Controller
 
     public function __construct()
     {
-        parent::__construct(app(ActivityLogger::class)); // Injection automatique
+        parent::__construct(app(ActivityLogService::class)); // Injection automatique
 
         $this->fileService = new PublicationFileService();
 
