@@ -58,7 +58,7 @@ class AbsenceController extends Controller
      *
      * @param Request $request
      * @param string $stage
-     * @return \Illuminate\View\View
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function index(Request $request, $stage = 'PENDING')
     {
