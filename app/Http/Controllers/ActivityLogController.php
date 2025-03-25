@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Config\ActivityLogActions;
 use App\Http\Controllers\Controller;
+use App\Jobs\CleanupActivityLogsJob;
 use App\Models\ActivityLog;
 use App\Models\User;
 use App\Services\ActivityLogService;
@@ -39,7 +40,7 @@ class ActivityLogController extends Controller
      */
     public function index(Request $request)
     {
-
+        CleanupActivityLogsJob::dispatch(90);
         // Récupérer l'utilisateur connecté
         $user = auth()->user();
 
