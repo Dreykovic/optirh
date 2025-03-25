@@ -22,16 +22,10 @@ use Illuminate\Validation\ValidationException;
 
 class AbsenceController extends Controller
 {
-    /**
-     * Le service de journalisation des activités
-     *
-     * @var ActivityLogger
-     */
-    protected $activityLogger;
 
-    public function __construct(ActivityLogger $activityLogger)
+
+    public function __construct()
     {
-        $this->activityLogger = $activityLogger;
 
         $this->middleware(['permission:voir-une-absence|écrire-une-absence|créer-une-absence|configurer-une-absence|voir-un-tout'], ['only' => ['index']]);
         $this->middleware(['permission:créer-une-absence|créer-un-tout'], ['only' => ['store', 'cancel', 'create']]);
@@ -128,8 +122,8 @@ class AbsenceController extends Controller
         // Appliquer le filtre de recherche (groupe de conditions OR)
         $query->when($search, function ($q) use ($search) {
             $q->whereHas('duty.employee', function ($query) use ($search) {
-                $query->where('first_name', 'ILIKE', '%'.$search.'%')
-                      ->orWhere('last_name', 'ILIKE', '%'.$search.'%');
+                $query->where('first_name', 'ILIKE', '%' . $search . '%')
+                    ->orWhere('last_name', 'ILIKE', '%' . $search . '%');
             });
         });
 
@@ -233,8 +227,8 @@ class AbsenceController extends Controller
         $currentEmployee = $currentUser->employee;
 
         $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
-                                    ->where('employee_id', $currentEmployee->id)
-                                    ->firstOrFail();
+            ->where('employee_id', $currentEmployee->id)
+            ->firstOrFail();
         $absence_type_id = $request->input('absence_type');
 
         // Obtenir le type d'absence pour le log

@@ -8,14 +8,22 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\App;
 use Illuminate\Validation\ValidationException;
+use App\Services\ActivityLogger;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests;
     use ValidatesRequests;
+    /**
+     * Le service de journalisation des activités
+     *
+     * @var ActivityLogger
+     */
+    protected $activityLogger;
 
-    public function __construct()
+    public function __construct(ActivityLogger $activityLogger)
     {
+        $this->activityLogger = $activityLogger;
         App::setLocale('fr');
     }
 
@@ -35,7 +43,7 @@ class Controller extends BaseController
 
         $newText = strrev($newText);
 
-        return $newText.' FCFA';
+        return $newText . ' FCFA';
     }
 
     public function isAdult($birthdate)
@@ -55,8 +63,8 @@ class Controller extends BaseController
     }
 
     /*
-        * Réponse JSON en cas de succès.
-        */
+     * Réponse JSON en cas de succès.
+     */
     public function successResponse($message, $data = [])
     {
         return response()->json([
