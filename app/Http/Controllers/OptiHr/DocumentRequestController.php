@@ -15,6 +15,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use App\Mail\DocumentRequestCreated;
+use App\Mail\DocumentRequestStatus;
 
 class DocumentRequestController extends Controller
 {
@@ -223,19 +225,7 @@ class DocumentRequestController extends Controller
         ]);
         $receiver = User::role('GRH')->first();
         // Là où vous voulez envoyer l'email
-        $emailData = [
-            'receiverName' => $receiver->employee->last_name . " " . $receiver->employee->first_name,
-            'requesterName' => $currentEmployee->last_name . " " . $currentEmployee->first_name,
-            'documentType' => $documentRequest->document_type->name,
-            'dateOfApplication' => $documentRequest->date_of_application,
-            'startDate' => $documentRequest->start_date,
-            'endDate' => $documentRequest->end_date,
-            'reasons' => $documentRequest->reasons,
-            'url' => route('document-requests.show', $documentRequest->id)
-        ];
-
-        Mail::to($user->email)
-            ->send(new DocumentRequestMail($emailData));
+        $this->notifyApprover($documentRequest, $receiver);
         $this->activityLogger->log(
             'created',
             "Création d'une demande de document de type {$documentType->label}",
@@ -308,7 +298,6 @@ class DocumentRequestController extends Controller
      */
     public function approve($id)
     {
-        DB::beginTransaction();
 
 
         // Rechercher la demande de document par ID
@@ -318,21 +307,32 @@ class DocumentRequestController extends Controller
 
         // Mise à jour du niveau et du statut
         $documentRequest->updateLevelAndStage();
-        if ($documentRequest->status == 'APPROVED') {
-            # code...
+        $receiver = User::role('GRH')->first();
+        $toEmployee = false;
 
-            // Préparer les données
-            $emailData = [
-                'receiverName' => $documentRequest->duty->employee->name, // Adaptez selon votre modèle
-                'documentRequest' => $documentRequest,
-                'documentType' => $documentRequest->document_type->name,
-                'status' => $documentRequest->status == 'APPROVED' ? 'approuvée' : 'refusée',
-                'comment' => $documentRequest->comment, // Commentaire facultatif
-                'url' => route('documents.requests', "APPROVED")
-            ];
-            // Envoyer l'email
-            Mail::to($documentRequest->duty->employee->email) // Adaptez selon votre modèle
-                ->send(new DocumentRequestStatusMail($emailData));
+        switch ($documentRequest->level) {
+
+            case 'ONE':
+
+                $receiver = User::role('DG')->first();
+                break;
+
+            case 'TWO':
+
+                $toEmployee = true;
+                break;
+
+            default:
+
+                break;
+        }
+        if ($toEmployee) {
+
+            $this->notifyRequestor($documentRequest);
+
+        } else {
+            $this->notifyApprover($documentRequest, $receiver);
+
         }
 
         $this->activityLogger->log(
@@ -341,7 +341,6 @@ class DocumentRequestController extends Controller
             $documentRequest
         );
 
-        DB::commit();
 
         return response()->json([
             'message' => 'Demande de document acceptée',
@@ -384,19 +383,7 @@ class DocumentRequestController extends Controller
         $documentRequest->save();
         if ($documentRequest->status == 'REJECTED') {
             # code...
-
-            // Préparer les données
-            $emailData = [
-                'receiverName' => $documentRequest->duty->employee->name, // Adaptez selon votre modèle
-                'documentRequest' => $documentRequest,
-                'documentType' => $documentRequest->document_type->name,
-                'status' => $documentRequest->status == 'APPROVED' ? 'approuvée' : 'refusée',
-                'comment' => $documentRequest->comment, // Commentaire facultatif
-                'url' => route('documents.requests', "REJECTED")
-            ];
-            // Envoyer l'email
-            Mail::to($documentRequest->duty->employee->email) // Adaptez selon votre modèle
-                ->send(new DocumentRequestStatusMail($emailData));
+            $this->notifyRequestor($documentRequest);
         }
         $this->activityLogger->log(
             'rejected',
