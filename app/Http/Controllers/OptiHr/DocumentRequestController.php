@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\OptiHr;
-
+use Illuminate\Support\Facades\Mail;
+use App\Mail\DocumentRequestMail;
 use App\Http\Controllers\Controller;
 use App\Models\OptiHr\DocumentRequest;
 use App\Models\OptiHr\DocumentType;
@@ -233,7 +234,7 @@ class DocumentRequestController extends Controller
             'url' => route('document-requests.show', $documentRequest->id)
         ];
 
-        Mail::to('email-du-destinataire@exemple.com')
+        Mail::to($user->email)
             ->send(new DocumentRequestMail($emailData));
         $this->activityLogger->log(
             'created',
