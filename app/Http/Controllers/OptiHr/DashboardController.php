@@ -55,6 +55,15 @@ class DashboardController extends Controller
             ->orderBy('published_at', 'desc')
             ->take(3)
             ->get();
+        // Convert string dates to Carbon objects for publications
+        foreach ($recentPublications as $publications) {
+            if (!$publications->published_at instanceof Carbon) {
+                $publications->published_at = Carbon::parse($publications->published_at);
+            }
+            if (!$publications->created_at instanceof Carbon) {
+                $publications->created_at = Carbon::parse($publications->created_at);
+            }
+        }
 
         // Department distribution data
         $departmentData = DB::table('employees')
