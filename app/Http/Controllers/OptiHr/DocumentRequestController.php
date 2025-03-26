@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\OptiHr;
-
+use Illuminate\Support\Facades\Mail;
+use App\Mail\DocumentRequestMail;
 use App\Http\Controllers\Controller;
 use App\Models\OptiHr\DocumentRequest;
 use App\Models\OptiHr\DocumentType;
@@ -208,10 +209,7 @@ class DocumentRequestController extends Controller
             ->where('employee_id', $currentEmployee->id)
             ->firstOrFail();
         $document_type_id = $request->input('document_type');
-        $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
-            ->where('employee_id', $currentEmployee->id)
-            ->firstOrFail();
-        $document_type_id = $request->input('document_type');
+
 
         // Obtenir le type de document pour le log
         $documentType = DocumentType::find($document_type_id);
@@ -223,7 +221,21 @@ class DocumentRequestController extends Controller
             'start_date' => $validatedData['start_date'],
             'end_date' => $validatedData['end_date'],
         ]);
+        $receiver = User::role('GRH')->first();
+        // Là où vous voulez envoyer l'email
+        $emailData = [
+            'receiverName' => $receiver->employee->last_name . " " . $receiver->employee->first_name,
+            'requesterName' => $currentEmployee->last_name . " " . $currentEmployee->first_name,
+            'documentType' => $documentRequest->document_type->name,
+            'dateOfApplication' => $documentRequest->date_of_application,
+            'startDate' => $documentRequest->start_date,
+            'endDate' => $documentRequest->end_date,
+            'reasons' => $documentRequest->reasons,
+            'url' => route('document-requests.show', $documentRequest->id)
+        ];
 
+        Mail::to($user->email)
+            ->send(new DocumentRequestMail($emailData));
         $this->activityLogger->log(
             'created',
             "Création d'une demande de document de type {$documentType->label}",
@@ -306,6 +318,22 @@ class DocumentRequestController extends Controller
 
         // Mise à jour du niveau et du statut
         $documentRequest->updateLevelAndStage();
+        if ($documentRequest->status == 'APPROVED') {
+            # code...
+
+            // Préparer les données
+            $emailData = [
+                'receiverName' => $documentRequest->duty->employee->name, // Adaptez selon votre modèle
+                'documentRequest' => $documentRequest,
+                'documentType' => $documentRequest->document_type->name,
+                'status' => $documentRequest->status == 'APPROVED' ? 'approuvée' : 'refusée',
+                'comment' => $documentRequest->comment, // Commentaire facultatif
+                'url' => route('documents.requests', "APPROVED")
+            ];
+            // Envoyer l'email
+            Mail::to($documentRequest->duty->employee->email) // Adaptez selon votre modèle
+                ->send(new DocumentRequestStatusMail($emailData));
+        }
 
         $this->activityLogger->log(
             'approved',
@@ -354,7 +382,22 @@ class DocumentRequestController extends Controller
         $documentRequest->stage = 'REJECTED';
 
         $documentRequest->save();
+        if ($documentRequest->status == 'REJECTED') {
+            # code...
 
+            // Préparer les données
+            $emailData = [
+                'receiverName' => $documentRequest->duty->employee->name, // Adaptez selon votre modèle
+                'documentRequest' => $documentRequest,
+                'documentType' => $documentRequest->document_type->name,
+                'status' => $documentRequest->status == 'APPROVED' ? 'approuvée' : 'refusée',
+                'comment' => $documentRequest->comment, // Commentaire facultatif
+                'url' => route('documents.requests', "REJECTED")
+            ];
+            // Envoyer l'email
+            Mail::to($documentRequest->duty->employee->email) // Adaptez selon votre modèle
+                ->send(new DocumentRequestStatusMail($emailData));
+        }
         $this->activityLogger->log(
             'rejected',
             "Rejet de la demande de document #{$id} - Stage: {$oldStage} → {$documentRequest->stage}, Level: {$oldLevel} → {$documentRequest->level}",

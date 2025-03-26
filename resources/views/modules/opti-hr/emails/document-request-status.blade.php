@@ -28,7 +28,7 @@
                         <!-- Header with accent color -->
                         <div
                             style="margin:-40px -40px 30px -40px; padding: 20px 40px; background-color:#5BB18A; border-radius: 6px 6px 0 0;">
-                            <h2 style="color: #ffffff; margin: 0; font-size: 22px;">Statut de votre demande de congé
+                            <h2 style="color: #ffffff; margin: 0; font-size: 22px;">Statut de votre demande de document
                             </h2>
                         </div>
 
@@ -38,22 +38,30 @@
                         </div>
 
                         <div style="padding-bottom: 30px">
-                            Nous souhaitons vous informer que votre demande de congé
-                            du {{ formatDateRange($absence->start_date, $absence->end_date) }} a été
+                            Nous souhaitons vous informer que votre demande de document
+                            "{{ $documentType }}" soumise le {{ formatDate($documentRequest->date_of_application) }} a
+                            été
                             {{ $status }}.<br><br>
 
                             @if ($status == 'approuvée')
                                 <div
                                     style="background-color: #e8f5e9; padding: 15px; border-radius: 6px; border-left: 4px solid #4caf50;">
-                                    ✅ Félicitations ! Votre congé a été approuvé. Nous vous souhaitons un bon repos et
-                                    restons à votre disposition en cas de besoin.
+                                    ✅ Félicitations ! Votre demande de document a été approuvée.
+                                    @if ($documentRequest->document_number)
+                                        <br>Numéro de référence:
+                                        <strong>{{ $documentRequest->document_number }}</strong>
+                                    @endif
                                 </div>
                             @else
                                 <div
                                     style="background-color: #ffebee; padding: 15px; border-radius: 6px; border-left: 4px solid #f44336;">
-                                    ❌ Malheureusement, votre demande a été refusée. Pour plus de détails sur cette
-                                    décision,
-                                    nous vous invitons à contacter votre responsable.
+                                    ❌ Malheureusement, votre demande a été refusée.
+                                    @if ($comment)
+                                        <br>Commentaire: "{{ $comment }}"
+                                    @else
+                                        <br>Pour plus de détails sur cette décision, nous vous invitons à contacter
+                                        votre responsable.
+                                    @endif
                                 </div>
                             @endif
                             <br>
