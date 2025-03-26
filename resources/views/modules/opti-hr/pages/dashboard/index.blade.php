@@ -31,7 +31,7 @@
                         <div class="card-body">
                             <div class="row g-2">
                                 <div class="col-md-3">
-                                    <a href="{{ route('membres') }}"
+                                    <a href="{{ route('membres.pages') }}"
                                         class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
                                         <i class="fas fa-user-plus"></i> Ajouter un employé
                                     </a>
@@ -189,7 +189,7 @@
                                                             {{ $absence->duty->employee->last_name }}</div>
                                                     </div>
                                                 </td>
-                                                <td>{{ $absence->absenceType->label ?? 'N/A' }}</td>
+                                                <td>{{ $absence->absence_type->label ?? 'N/A' }}</td>
                                                 <td>{{ $absence->start_date->format('d M Y') }}</td>
                                                 <td>{{ $absence->end_date->format('d M Y') }}</td>
                                                 <td>{{ $absence->requested_days }}</td>
