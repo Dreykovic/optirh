@@ -27,49 +27,30 @@
 
                         <!--begin:Email content-->
                         <div style="padding-bottom: 30px; font-size: 17px;">
-                            <strong>Bonjour {{ $receiverName }} !</strong>
+                            <strong>Salut {{ $receiverName }} !!!</strong>
                         </div>
 
                         <div style="padding-bottom: 30px">
-                            Une nouvelle demande de document de {{ $requesterName }} est en attente de votre
-                            approbation.
-                            <br><br>
-                            <strong>Détails de la demande :</strong><br>
-                            - Type de document: {{ $documentType }}<br>
-                            - Date de demande: {{ $dateOfApplication }}<br>
-                            @if ($startDate)
-                                - Date de début: {{ $startDate }}<br>
-                            @endif
-                            @if ($endDate)
-                                - Date de fin: {{ $endDate }}<br>
-                            @endif
-                            @if ($reasons)
-                                - Motif: {{ $reasons }}<br>
-                            @endif
-                            <br>
-                            Veuillez consulter cette demande et prendre les mesures nécessaires pour la suite du
-                            processus.
+                            Une nouvelle demande de document de {{ $text }} nécessite votre action pour
+                            permettre
+                            la poursuite du processus. Nous vous invitons à consulter la demande et à prendre les
+                            mesures nécessaires.
+
+                            Cliquez sur le bouton ci-dessous pour accéder directement à la demande :
                         </div>
 
                         <div style="padding-bottom: 40px; text-align:center;">
                             <a href="{{ $url }}" rel="noopener" target="_blank"
                                 style="text-decoration:none;display:inline-block;text-align:center;padding:0.75575rem 1.3rem;font-size:0.925rem;line-height:1.5;border-radius:0.35rem;color:#ffffff;background-color:#5BB18A;border:0px;margin-right:0.75rem!important;font-weight:600!important;outline:none!important;vertical-align:middle"
                                 target="_blank">
-                                Traiter la demande
+                                Consulter
                             </a>
-                        </div>
-
-                        <div style="padding-bottom: 20px">
-                            Si le bouton ne fonctionne pas, vous pouvez accéder à la demande en cliquant sur le lien
-                            suivant ou en le copiant dans votre navigateur :
-                            <br>
-                            <a href="{{ $url }}" style="color: #5BB18A;">{{ $url }}</a>
                         </div>
 
                         <div style="padding-bottom: 10px">
                             Cordialement,<br>
-                            OptiHR<br>
-                            Espace Collaboratif.
+                            OPTIRH<br>
+                            ARCOP DSAF.
                         </div>
                     </div>
                 </td>
@@ -78,7 +59,7 @@
             <tr>
                 <td align="center" valign="center"
                     style="font-size: 13px; text-align:center;padding: 20px; color: #6d6e7c;">
-                    <p>© {{ date('Y') }} OptiHR. Tous droits réservés.</p>
+                    <p>ARCOP.</p>
                 </td>
             </tr>
         </tbody>
