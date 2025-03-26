@@ -419,7 +419,7 @@ class AbsenceController extends Controller
     private function handleNotifications(Absence $absence, User $receiver, bool $toEmployee)
     {
         if ($toEmployee) {
-            $url = route('absences.requests', 'ALL');
+            $url = route('absences.requests', $absence->status == "APPROVED" ? 'APPROVED' : 'REJECTED');
             Mail::send(new AbsenceRequestUpdated($absence, $url));
         } else {
             $url = route('absences.requests', 'IN_PROGRESS');

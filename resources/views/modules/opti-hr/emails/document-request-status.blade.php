@@ -39,8 +39,8 @@
 
                         <div style="padding-bottom: 30px">
                             Nous souhaitons vous informer que votre demande de document
-                            "{{ $documentType }}" soumise le {{ formatDate($documentRequest->date_of_application) }} a
-                            été
+                            "{{ $documentType }}" soumise le
+                            {{ $documentRequest->date_of_application->format('d/m/Y') }} a été
                             {{ $status }}.<br><br>
 
                             @if ($status == 'approuvée')
