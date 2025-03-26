@@ -208,10 +208,7 @@ class DocumentRequestController extends Controller
             ->where('employee_id', $currentEmployee->id)
             ->firstOrFail();
         $document_type_id = $request->input('document_type');
-        $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
-            ->where('employee_id', $currentEmployee->id)
-            ->firstOrFail();
-        $document_type_id = $request->input('document_type');
+
 
         // Obtenir le type de document pour le log
         $documentType = DocumentType::find($document_type_id);
@@ -223,7 +220,21 @@ class DocumentRequestController extends Controller
             'start_date' => $validatedData['start_date'],
             'end_date' => $validatedData['end_date'],
         ]);
+        $receiver = User::role('GRH')->first();
+        // Là où vous voulez envoyer l'email
+        $emailData = [
+            'receiverName' => $receiver->employee->last_name . " " . $receiver->employee->first_name,
+            'requesterName' => $currentEmployee->last_name . " " . $currentEmployee->first_name,
+            'documentType' => $documentRequest->document_type->name,
+            'dateOfApplication' => $documentRequest->date_of_application,
+            'startDate' => $documentRequest->start_date,
+            'endDate' => $documentRequest->end_date,
+            'reasons' => $documentRequest->reasons,
+            'url' => route('document-requests.show', $documentRequest->id)
+        ];
 
+        Mail::to('email-du-destinataire@exemple.com')
+            ->send(new DocumentRequestMail($emailData));
         $this->activityLogger->log(
             'created',
             "Création d'une demande de document de type {$documentType->label}",
