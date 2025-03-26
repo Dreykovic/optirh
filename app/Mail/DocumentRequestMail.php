@@ -35,6 +35,6 @@ class DocumentRequestMail extends Mailable
     public function build()
     {
         return $this->subject('Nouvelle demande de document')
-            ->view('emails.document-request');
+            ->view("modules.opti-hr.emails.document-request-created");
     }
 }

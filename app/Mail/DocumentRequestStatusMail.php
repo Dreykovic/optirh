@@ -31,6 +31,6 @@ class DocumentRequestStatusMail extends Mailable
     public function build()
     {
         return $this->subject('Statut de votre demande de document ' . $this->documentType)
-            ->view('emails.document-request-status');
+            ->view("modules.opti-hr.emails.document-request-status");
     }
 }
