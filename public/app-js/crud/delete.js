@@ -4,31 +4,30 @@ let AppAdminModelDeleteManager = (function () {
     let deleteButtons;
 
     const handleModelDelete = () => {
-        deleteButtons.forEach((btn) => {
-            btn.addEventListener("click", (e) => {
-                e.preventDefault();
-                const thisElement = e.target.closest(
-                    '[data-model-action="delete"]'
-                );
-                const deleteUrl = thisElement.getAttribute(
-                    "data-model-delete-url"
-                );
-                const parentSelector = thisElement.getAttribute(
-                    "data-model-parent-selector"
-                );
-                console.log(parentSelector);
+        $(document).on("click", '[data-model-action="delete"]', function (e) {
+            e.preventDefault();
 
-                const parent = thisElement.closest(parentSelector);
-                console.log(parent);
+            const $thisElement = $(this);
+            const deleteUrl = $thisElement.data("model-delete-url");
+            let parentSelector = $thisElement.data("model-parent-selector");
 
-                const value = parent.querySelector(".model-value").innerText;
-                AppModules.deleteTableItemSubmission(
-                    btn,
-                    parent,
-                    value,
-                    deleteUrl
-                );
-            });
+            // Ajuster le sélecteur si nécessaire
+            if (parentSelector === "tr.parent") {
+                parentSelector = 'tr[class*="parent"]';
+            }
+
+            const $parent = $thisElement.closest(parentSelector);
+            const $modelValueElement = $parent.find(".model-value");
+            const value = $modelValueElement.length
+                ? $modelValueElement.text()
+                : "actuel";
+
+            AppModules.deleteTableItemSubmission(
+                this,
+                $parent[0],
+                value,
+                deleteUrl
+            );
         });
     };
     return {

@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable modelUpdateFormContainer"
         id="updateHolidayForm{{ $holiday->id }}">
         <form class="modal-content" data-model-update-url="{{ route('holidays.update', $holiday->id) }}">
-            {{-- @csrf --}}
+            @csrf
 
             <div class="modal-header">
                 <h5 class="modal-title  fw-bold" id="holidayLabel">Modifier Le Jour Férié</h5>

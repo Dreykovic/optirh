@@ -22,75 +22,78 @@
         <div class="col-sm-12">
             <div class="card mb-3">
                 <div class="card-body">
-                    <table id="absenceTypesTable" class="table table-hover align-middle mb-0" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Libelle</th>
-                                <th>Description</th>
-                                @can('voir-un-all')
-                                    <th>Actions</th>
-                                @endcan
-                            </tr>
-                        </thead>
-                        <tbody>
+                    <div class="table-responsive">
 
-                            @forelse ($absenceTypes as $index => $absenceType)
-                                <tr class="parent">
-                                    <td>
-                                        <span class="fw-bold">{{ $index + 1 }}</span>
-                                    </td>
-                                    <td>
-                                        <span class="fw-bold ms-1 model-value">{{ $absenceType->label }}</span>
-                                        <!-- Libellé du type d'absence -->
-                                    </td>
-                                    <td>
-                                        {{ $absenceType->description }} <!-- Description du type d'absence -->
-                                    </td>
+                        <table id="absenceTypesTable" class="table table-hover align-middle mb-0" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Libelle</th>
+                                    <th>Description</th>
                                     @can('voir-un-all')
-                                        <td>
-                                            <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
-                                                    data-bs-target="#absenceTypeUpdate{{ $absenceType->id }}"><i
-                                                        class="icofont-edit text-success"></i></button>
-
-                                                <button type="button" class="btn btn-outline-secondary modelDeleteBtn"
-                                                    data-model-action="delete"
-                                                    data-model-delete-url={{ route('absenceTypes.destroy', $absenceType->id) }}
-                                                    data-model-parent-selector="tr.parent">
-                                                    <span class="normal-status">
-                                                        <i class="icofont-ui-delete text-danger"></i>
-                                                    </span>
-                                                    <span class="indicateur d-none">
-                                                        <span class="spinner-grow spinner-grow-sm" role="status"
-                                                            aria-hidden="true"></span>
-
-                                                    </span>
-                                                </button>
-
-                                            </div>
-                                        </td>
+                                        <th>Actions</th>
                                     @endcan
                                 </tr>
-                                @can('voir-un-all')
-                                    @include('modules.opti-hr.pages.attendances.types.edit')
-                                @endcan
-                            @empty
-                                <tr>
-                                    <td colspan="4">
+                            </thead>
+                            <tbody>
 
-                                        <x-no-data color="warning" text="Aucun Type Absence Enregistré" />
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                    {{-- 
+                                @forelse ($absenceTypes as $index => $absenceType)
+                                    <tr class="parent">
+                                        <td>
+                                            <span class="fw-bold">{{ $index + 1 }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="fw-bold ms-1 model-value">{{ $absenceType->label }}</span>
+                                            <!-- Libellé du type d'absence -->
+                                        </td>
+                                        <td>
+                                            {{ $absenceType->description }} <!-- Description du type d'absence -->
+                                        </td>
+                                        @can('voir-un-all')
+                                            <td>
+                                                <div class="btn-group" role="group" aria-label="Basic outlined example">
+                                                    <button type="button" class="btn btn-outline-secondary"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#absenceTypeUpdate{{ $absenceType->id }}"><i
+                                                            class="icofont-edit text-success"></i></button>
+
+                                                    <button type="button" class="btn btn-outline-secondary modelDeleteBtn"
+                                                        data-model-action="delete"
+                                                        data-model-delete-url={{ route('absenceTypes.destroy', $absenceType->id) }}
+                                                        data-model-parent-selector="tr.parent">
+                                                        <span class="normal-status">
+                                                            <i class="icofont-ui-delete text-danger"></i>
+                                                        </span>
+                                                        <span class="indicateur d-none">
+                                                            <span class="spinner-grow spinner-grow-sm" role="status"
+                                                                aria-hidden="true"></span>
+
+                                                        </span>
+                                                    </button>
+
+                                                </div>
+                                            </td>
+                                        @endcan
+                                    </tr>
+                                    @can('voir-un-all')
+                                        @include('modules.opti-hr.pages.attendances.types.edit')
+                                    @endcan
+                                @empty
+                                    <tr>
+                                        <td colspan="4">
+
+                                            <x-no-data color="warning" text="Aucun Type Absence Enregistré" />
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                        {{-- 
                     <!-- Paginée, affiche les liens de pagination -->
                     <div class="mt-3">
                         {{ $absenceTypes->links() }}
                     </div> --}}
-
+                    </div>
                 </div>
             </div>
         </div>

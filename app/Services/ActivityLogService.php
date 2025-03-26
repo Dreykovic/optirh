@@ -7,7 +7,7 @@ use App\Models\ActivityLog;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-class ActivityLogger
+class ActivityLogService
 {
     /**
      * Journalise une action utilisateur
@@ -26,9 +26,9 @@ class ActivityLogger
             // Enregistrer quand même mais avec un avertissement
             \Illuminate\Support\Facades\Log::warning("Code d'action de log non standard utilisé: {$action}");
         }
-
+        $user = auth()->user();
         $logData = [
-            'user_id' => Auth::id(),
+            'user_id' => $user ? $user->id : null,
             'action' => $action,
             'description' => $description,
             'ip_address' => request()->ip(),
@@ -146,5 +146,36 @@ class ActivityLogger
     public function logDownload($description, ?Model $model = null, array $additionalData = [])
     {
         return $this->log('download', $description, $model, $additionalData);
+    }
+
+    /**
+     * Supprime les logs d'activité plus anciens qu'une certaine période
+     * Cette méthode est destinée à être utilisée par une tâche planifiée
+     *
+     * @param int $days Nombre de jours à conserver
+     * @return bool
+     */
+    public function cleanup(int $days = 90)
+    {
+
+        // Calcul de la date limite
+        $cutoffDate = now()->subDays($days);
+
+        // Récupérer le nombre de logs qui seront supprimés pour le journaliser
+        $countToDelete = ActivityLog::where('created_at', '<', $cutoffDate)->count();
+
+        // Supprimer les logs plus anciens que la date limite
+        ActivityLog::where('created_at', '<', $cutoffDate)->delete();
+
+        // Journaliser l'opération
+        $this->log(
+            'deleted',
+            "Nettoyage automatique des logs d'activité plus anciens que {$days} jours",
+            null,
+            ['cutoff_date' => $cutoffDate->format('Y-m-d'), 'deleted_count' => $countToDelete]
+        );
+
+        return true;
+
     }
 }

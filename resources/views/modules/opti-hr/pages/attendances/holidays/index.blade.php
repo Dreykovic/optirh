@@ -20,76 +20,80 @@
         <div class="col-sm-12">
             <div class="card mb-3">
                 <div class="card-body">
-                    <table id="holidaysTable" class="table table-hover align-middle mb-0" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Jour Férié</th>
-                                <th> Date</th>
-                                <th>Nom</th>
-                                @can('configurer-un-férié')
-                                    <th>Action</th>
-                                @endcan
+                    <div class="table-responsive">
 
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($holidays as $index => $holiday)
-                                @php
-                                    $tdClass =
-                                        Carbon\Carbon::parse($holiday->date)->isPast() &&
-                                        !Carbon\Carbon::parse($holiday->date)->isToday()
-                                            ? 'text-danger'
-                                            : (Carbon\Carbon::parse($holiday->date)->isToday()
-                                                ? 'text-success'
-                                                : '');
-                                @endphp
-
-                                <tr class="parent">
-                                    <td class="{{ $tdClass }}">{{ $index }}</td>
-                                    <td class="{{ $tdClass }}">@dayOfWeek($holiday->date)</td>
-                                    <td class="{{ $tdClass }}">@formatDateOnly($holiday->date)</td>
-                                    <td class="{{ $tdClass }} model-value">{{ $holiday->name }}</td>
+                        <table id="holidaysTable" class="table table-hover align-middle mb-0" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Jour Férié</th>
+                                    <th> Date</th>
+                                    <th>Nom</th>
                                     @can('configurer-un-férié')
-                                        <td>
-                                            <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
-                                                    data-bs-target="#updateHolidayModal{{ $holiday->id }}"><i
-                                                        class="icofont-edit text-success"></i>
-                                                </button>
-
-                                                <button type="button" class="btn btn-outline-secondary modelDeleteBtn"
-                                                    data-model-action="delete"
-                                                    data-model-delete-url={{ route('holidays.destroy', $holiday->id) }}
-                                                    data-model-parent-selector="tr.parent">
-                                                    <span class="normal-status">
-                                                        <i class="icofont-ui-delete text-danger"></i>
-                                                    </span>
-                                                    <span class="indicateur d-none">
-                                                        <span class="spinner-grow spinner-grow-sm" role="status"
-                                                            aria-hidden="true"></span>
-
-                                                    </span>
-                                                </button>
-
-                                            </div>
-                                            @include('modules.opti-hr.pages.attendances.holidays.edit')
-                                        </td>
+                                        <th>Action</th>
                                     @endcan
 
                                 </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($holidays as $index => $holiday)
+                                    @php
+                                        $tdClass =
+                                            Carbon\Carbon::parse($holiday->date)->isPast() &&
+                                            !Carbon\Carbon::parse($holiday->date)->isToday()
+                                                ? 'text-danger'
+                                                : (Carbon\Carbon::parse($holiday->date)->isToday()
+                                                    ? 'text-success'
+                                                    : '');
+                                    @endphp
 
-                            @empty
-                                <tr>
-                                    <td colspan="5">
+                                    <tr class="parent">
+                                        <td class="{{ $tdClass }}">{{ $index }}</td>
+                                        <td class="{{ $tdClass }}">@dayOfWeek($holiday->date)</td>
+                                        <td class="{{ $tdClass }}">@formatDateOnly($holiday->date)</td>
+                                        <td class="{{ $tdClass }} model-value">{{ $holiday->name }}</td>
+                                        @can('configurer-un-férié')
+                                            <td>
+                                                <div class="btn-group" role="group" aria-label="Basic outlined example">
+                                                    <button type="button" class="btn btn-outline-secondary"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#updateHolidayModal{{ $holiday->id }}"><i
+                                                            class="icofont-edit text-success"></i>
+                                                    </button>
 
-                                        <x-no-data color="warning" text="Aucun Jour Férié Enregistré" />
-                                    </td>
-                                </tr>
-                            @endforelse
+                                                    <button type="button" class="btn btn-outline-secondary modelDeleteBtn"
+                                                        data-model-action="delete"
+                                                        data-model-delete-url={{ route('holidays.destroy', $holiday->id) }}
+                                                        data-model-parent-selector="tr.parent">
+                                                        <span class="normal-status">
+                                                            <i class="icofont-ui-delete text-danger"></i>
+                                                        </span>
+                                                        <span class="indicateur d-none">
+                                                            <span class="spinner-grow spinner-grow-sm" role="status"
+                                                                aria-hidden="true"></span>
 
-                        </tbody>
-                    </table>
+                                                        </span>
+                                                    </button>
+
+                                                </div>
+                                                @include('modules.opti-hr.pages.attendances.holidays.edit')
+                                            </td>
+                                        @endcan
+
+                                    </tr>
+
+                                @empty
+                                    <tr>
+                                        <td colspan="5">
+
+                                            <x-no-data color="warning" text="Aucun Jour Férié Enregistré" />
+                                        </td>
+                                    </tr>
+                                @endforelse
+
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

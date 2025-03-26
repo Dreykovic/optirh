@@ -11,14 +11,11 @@ use App\Models\OptiHr\Duty;
 use App\Models\OptiHr\AnnualDecision;
 use App\Models\User;
 use App\Services\AbsencePdfService;
-use App\Services\ActivityLogger;
+use App\Services\ActivityLogService;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Validation\ValidationException;
 
 class AbsenceController extends Controller
 {
@@ -26,7 +23,7 @@ class AbsenceController extends Controller
 
     public function __construct()
     {
-        parent::__construct(app(ActivityLogger::class)); // Injection automatique
+        parent::__construct(app(ActivityLogService::class)); // Injection automatique
 
 
         $this->middleware(['permission:voir-une-absence|écrire-une-absence|créer-une-absence|configurer-une-absence|voir-un-tout'], ['only' => ['index']]);
@@ -61,7 +58,7 @@ class AbsenceController extends Controller
      *
      * @param Request $request
      * @param string $stage
-     * @return \Illuminate\View\View
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function index(Request $request, $stage = 'PENDING')
     {
@@ -176,29 +173,23 @@ class AbsenceController extends Controller
 
 
         return view('modules.opti-hr.pages.attendances.absences.create', compact('absenceTypes'));
-        return view('modules.opti-hr.pages.attendances.absences.create', compact('absenceTypes'));
+
 
     }
-
     /**
-     * Calculer le nombre de jours ouvrés entre deux dates
+     * Calculer le nombre total de jours entre deux dates (y compris week-ends et jours fériés)
      *
-     * @param string $startDate
-     * @param string $endDate
-     * @return int
+     * @param string $startDate Date de début au format Y-m-d
+     * @param string $endDate Date de fin au format Y-m-d
+     * @return int Nombre total de jours
      */
     private function calculateWorkingDays($startDate, $endDate)
     {
-        $count = 0;
-        $currentDate = Carbon::parse($startDate);
+        $startDate = Carbon::parse($startDate);
         $endDate = Carbon::parse($endDate);
 
-        while ($currentDate->lte($endDate)) {
-            ++$count;
-            $currentDate->addDay();
-        }
-
-        return $count;
+        // diffInDays() retourne la différence en jours, +1 pour inclure le jour de fin
+        return $endDate->diffInDays($startDate) + 1;
     }
 
     /**
@@ -224,9 +215,7 @@ class AbsenceController extends Controller
         // Récupération de l'employé actuel et de sa mission en cours
         $currentUser = User::with('employee')->findOrFail(auth()->id());
         $currentEmployee = $currentUser->employee;
-        // Récupération de l'employé actuel et de sa mission en cours
-        $currentUser = User::with('employee')->findOrFail(auth()->id());
-        $currentEmployee = $currentUser->employee;
+
 
         $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
             ->where('employee_id', $currentEmployee->id)
@@ -254,14 +243,15 @@ class AbsenceController extends Controller
         );
 
         // Pour la notification par email (à activer si nécessaire)
-        // $receiver = $absence->duty->job->n_plus_one_job ?
-        //   $absence->duty->job->n_plus_one_job->duties->firstWhere('evolution', 'ON_GOING')->employee->users->first()
-        //   : User::role('GRH')->first();
-        // Mail::send(new AbsenceRequestCreated($receiver, $absence, route('absences.requests')));
+        $receiver = $absence->duty->job->n_plus_one_job ?
+            $absence->duty->job->n_plus_one_job->duties->firstWhere('evolution', 'ON_GOING')->employee->users->first()
+            : User::role('GRH')->first();
 
+        $this->handleNotifications($absence, $receiver, false);
         return response()->json([
             'message' => "Demande d'absence {$absenceType->label} créée avec succès.",
             'ok' => true,
+            "redirect" => route('absences.requests', 'PENDING')
         ]);
 
     }
@@ -387,7 +377,7 @@ class AbsenceController extends Controller
         );
 
         // Gestion des notifications
-        $this->handleApprovalNotifications($absence, $receiver, $toEmployee);
+        $this->handleNotifications($absence, $receiver, $toEmployee);
 
         DB::commit();
 
@@ -426,14 +416,14 @@ class AbsenceController extends Controller
      * @param bool $toEmployee
      * @return void
      */
-    private function handleApprovalNotifications(Absence $absence, User $receiver, bool $toEmployee)
+    private function handleNotifications(Absence $absence, User $receiver, bool $toEmployee)
     {
         if ($toEmployee) {
             $url = route('absences.requests', 'ALL');
-            // Mail::send(new AbsenceRequestUpdated($absence, $url));
+            Mail::send(new AbsenceRequestUpdated($absence, $url));
         } else {
             $url = route('absences.requests', 'IN_PROGRESS');
-            // Mail::send(new AbsenceRequestCreated($receiver, $absence, $url));
+            Mail::send(new AbsenceRequestCreated($receiver, $absence, $url));
         }
     }
 
@@ -473,6 +463,9 @@ class AbsenceController extends Controller
             "Rejet de la demande d'absence #{$id} - Stage: {$oldStage} → {$absence->stage}, Level: {$oldLevel} → {$absence->level}",
             $absence
         );
+        $receiver = $absence->duty->employee->users->first();
+        $toEmployee = true;
+        $this->handleNotifications($absence, $receiver, $toEmployee);
 
         return response()->json([
             'message' => "Demande de {$absence->absence_type->label} rejetée",

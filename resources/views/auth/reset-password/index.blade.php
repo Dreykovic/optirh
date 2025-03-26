@@ -1,57 +1,51 @@
 @extends('auth.base')
 
 @section('auth-content')
-    <form class="row g-1 p-3 p-md-4" id="modelAddForm" data-model-add-url="{{ route('password.update') }}">
+    <form id="modelAddForm" data-model-add-url="{{ route('password.update') }}">
         @csrf
         <input type="hidden" name="token" value="{{ $token }}">
-        <div class="col-12 text-center mb-1 mb-lg-5">
-            <h1>Réinitialiser Mot De Passe</h1>
 
-        </div>
-        <div class="col-12">
-            <div class="mb-2">
-                <label class="form-label">Adresse Email</label>
-                <input type="email" name="email" class="form-control form-control-lg" placeholder="name@example.com">
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="mb-2">
-                <label class="form-label">Nouveau Mot De Passe</label>
-                <input type="password" class="form-control form-control-lg" placeholder="***************" name="password">
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="mb-2">
-                <div class="form-label">
-                    <span class="d-flex justify-content-between align-items-center">
-                        Confirmer le mot de passe
-
-                    </span>
-                </div>
-                <input type="password" class="form-control  form-control-lg" autocomplete="off" name="password_confirmation"
-                    placeholder="***************">
-            </div>
+        <div class="text-center mb-4">
+            <h4 class="fw-bold">Réinitialiser Mot De Passe</h4>
         </div>
 
-        <div class="col-12 text-center mt-4">
-            <button type="submit" class="btn btn-lg btn-block btn-light lift text-uppercase" atl="signin"
-                id="modelAddBtn">
+        <div class="mb-3">
+            <label for="emailInput" class="form-label">Adresse Email</label>
+            <input type="email" class="form-control form-control-lg" id="emailInput" name="email"
+                placeholder="name@example.com" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="passwordInput" class="form-label">Nouveau Mot De Passe</label>
+            <input type="password" class="form-control form-control-lg" id="passwordInput" name="password"
+                placeholder="***************" required>
+        </div>
+
+        <div class="mb-4">
+            <label for="passwordConfirmInput" class="form-label">Confirmer le mot de passe</label>
+            <input type="password" class="form-control form-control-lg" id="passwordConfirmInput"
+                name="password_confirmation" placeholder="***************" required>
+        </div>
+
+        <div class="d-grid gap-2 mb-3">
+            <button type="submit" class="btn btn-dark btn-lg" id="modelAddBtn">
                 <span class="normal-status">
                     Soumettre
                 </span>
                 <span class="indicateur d-none">
-                    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                    Un Instant...
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Un instant...
                 </span>
             </button>
         </div>
-        <div class="col-12 text-center mt-4">
-            <span class="text-muted"> Déjà fait ?
 
-                <a href="{{ route('login') }}" class="text-secondary">Connectez-vous</a></span>
+        <div class="text-center mt-3">
+            <span class="text-muted">Déjà fait ? <a href="{{ route('login') }}"
+                    class="text-decoration-none">Connectez-vous</a></span>
         </div>
     </form>
 @endsection
+
 @push('js')
-    <script src={{ asset('app-js/crud/post.js') }}></script>
+    <script src="{{ asset('app-js/crud/post.js') }}"></script>
 @endpush

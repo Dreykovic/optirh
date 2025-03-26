@@ -1,46 +1,41 @@
 @extends('base')
 @section('content')
     @guest
-
-        <!-- main body area -->
-        <div class="main p-2 py-3 p-xl-5 ">
-
-            <!-- Body: Body -->
-            <div class="body d-flex p-0 p-xl-5">
-                <div class="container-xxl">
-
-                    <div class="row g-0">
-                        <div class="col-lg-6 d-none d-lg-flex justify-content-center align-items-center rounded-lg auth-h100">
-                            <div style="max-width: 25rem;">
-                                <div class="text-center mb-5">
-
-                                    <img src="{{ asset('assets/img/logo.png') }}" alt="">
-
-                                </div>
-                                <h1 class="text-center ">OptiRH</h1>
-                                <div class="mb-5">
-                                    <h2 class="color-900 text-center">
-
-                                        Gestion fluide des congés et des attendances de vos employées
-                                    </h2>
-                                </div>
-                                <!-- Image block -->
-                                <div class="">
-                                    <img src="{{ asset('assets/images/login-img.svg') }}" alt="login-img">
-                                </div>
-                            </div>
+        <div class="container-fluid p-0">
+            <div class="row g-0 min-vh-100">
+                <!-- Left side (logo) - Fixed height and scrollable if needed -->
+                <div class="col-lg-6 bg-light d-none d-lg-block">
+                    <div class="d-flex flex-column justify-content-center align-items-center h-100 p-5">
+                        <div class="text-center mb-5">
+                            <img src="{{ asset('assets/img/logo.png') }}" alt="OptiRH Logo" class="img-fluid mb-4"
+                                style="max-height: 80px; width: auto;">
+                            <h2 class="mb-4">ARCOP MAN</h2>
                         </div>
-                        <div class="col-lg-6 d-flex justify-content-center align-items-center border-0 rounded-lg auth-h100">
-                            <div class="w-100 p-3 p-md-5 card border-0 bg-dark text-light" style="max-width: 32rem;">
-                                <!-- Form -->
+                        <div class="w-75">
+                            <img src="{{ asset('assets/images/login-img.svg') }}" alt="OptiRH" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right side (form) - Fixed position and consistent padding -->
+                <div class="col-lg-6 bg-white">
+                    <div class="d-flex flex-column justify-content-center align-items-center h-100 p-4">
+                        <!-- Mobile logo -->
+                        <div class="d-block d-lg-none text-center mb-4 w-100">
+                            <img src="{{ asset('assets/img/logo.png') }}" alt="OptiRH Logo" class="img-fluid mb-3"
+                                style="max-height: 60px; width: auto;">
+                            <h3>OptiRH</h3>
+                        </div>
+
+                        <!-- Login form container with fixed width -->
+                        <div class="card shadow-sm w-100" style="max-width: 400px;">
+                            <div class="card-body p-4">
                                 @yield('auth-content')
-                                <!-- End Form -->
                             </div>
                         </div>
-                    </div> <!-- End Row -->
+                    </div>
                 </div>
             </div>
         </div>
-
     @endguest
 @endsection

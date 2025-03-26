@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Config\ActivityLogActions;
 use App\Http\Controllers\Controller;
+use App\Jobs\CleanupActivityLogsJob;
 use App\Models\ActivityLog;
 use App\Models\User;
-use App\Services\ActivityLogger;
+use App\Services\ActivityLogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -16,19 +17,19 @@ class ActivityLogController extends Controller
     /**
      * Le service de journalisation des activités
      *
-     * @var ActivityLogger
+     * @var ActivityLogService
      */
     protected $activityLogger;
 
     /**
      * Constructeur du contrôleur
      *
-     * @param ActivityLogger $activityLogger
+     * @param ActivityLogService $activityLogger
      */
-    public function __construct(ActivityLogger $activityLogger)
+    public function __construct(ActivityLogService $activityLogger)
     {
         $this->activityLogger = $activityLogger;
-        // $this->middleware(['permission:voir-une-activité|voir-un-tout'], ['only' => ['index']]);
+
     }
 
     /**
@@ -39,7 +40,7 @@ class ActivityLogController extends Controller
      */
     public function index(Request $request)
     {
-
+        CleanupActivityLogsJob::dispatch(90);
         // Récupérer l'utilisateur connecté
         $user = auth()->user();
 
@@ -124,34 +125,5 @@ class ActivityLogController extends Controller
 
 
 
-    /**
-     * Supprime les logs d'activité plus anciens qu'une certaine période
-     * Cette méthode est destinée à être utilisée par une tâche planifiée
-     *
-     * @param int $days Nombre de jours à conserver
-     * @return bool
-     */
-    public function cleanup(int $days = 90)
-    {
 
-        // Calcul de la date limite
-        $cutoffDate = now()->subDays($days);
-
-        // Récupérer le nombre de logs qui seront supprimés pour le journaliser
-        $countToDelete = ActivityLog::where('created_at', '<', $cutoffDate)->count();
-
-        // Supprimer les logs plus anciens que la date limite
-        ActivityLog::where('created_at', '<', $cutoffDate)->delete();
-
-        // Journaliser l'opération
-        $this->activityLogger->log(
-            'deleted',
-            "Nettoyage automatique des logs d'activité plus anciens que {$days} jours",
-            null,
-            ['cutoff_date' => $cutoffDate->format('Y-m-d'), 'deleted_count' => $countToDelete]
-        );
-
-        return true;
-
-    }
 }

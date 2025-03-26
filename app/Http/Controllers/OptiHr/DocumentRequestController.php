@@ -7,7 +7,7 @@ use App\Models\OptiHr\DocumentRequest;
 use App\Models\OptiHr\DocumentType;
 use App\Models\OptiHr\Duty;
 use App\Models\User;
-use App\Services\ActivityLogger;
+use App\Services\ActivityLogService;
 use App\Services\DocumentPdfService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -20,15 +20,15 @@ class DocumentRequestController extends Controller
     /**
      * Le service de journalisation des activités
      *
-     * @var ActivityLogger
+     * @var ActivityLogService
      */
     protected $activityLogger;
 
-    public function __construct(ActivityLogger $activityLogger)
+    public function __construct(ActivityLogService $activityLogger)
     {
         $this->activityLogger = $activityLogger;
 
-        $this->middleware(['permission:voir-un-document|écrire-un-document|créer-un-document|configurer-un-document|voir-un-tout'], ['only' => ['index']]);
+        $this->middleware(['permission:voir-un-document|écrire-un-document|créer-un-document|configurer-un-document|voir-un-tout'], ['only' => ['index', "download"]]);
         $this->middleware(['permission:créer-un-document|créer-un-tout'], ['only' => ['store', 'cancel', 'create']]);
     }
 
@@ -124,8 +124,8 @@ class DocumentRequestController extends Controller
         // Appliquer le filtre de recherche
         $query->when($search, function ($q) use ($search) {
             $q->whereHas('duty.employee', function ($query) use ($search) {
-                $query->where('first_name', 'ILIKE', '%'.$search.'%')
-                      ->orWhere('last_name', 'ILIKE', '%'.$search.'%');
+                $query->where('first_name', 'ILIKE', '%' . $search . '%')
+                    ->orWhere('last_name', 'ILIKE', '%' . $search . '%');
             });
         });
 
@@ -180,7 +180,7 @@ class DocumentRequestController extends Controller
         );
 
         return view('modules.opti-hr.pages.documents.main.create', compact('documentTypes'));
-        return view('modules.opti-hr.pages.documents.main.create', compact('documentTypes'));
+
 
     }
 
@@ -205,12 +205,12 @@ class DocumentRequestController extends Controller
         $currentEmployee = $currentUser->employee;
 
         $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
-                                    ->where('employee_id', $currentEmployee->id)
-                                    ->firstOrFail();
+            ->where('employee_id', $currentEmployee->id)
+            ->firstOrFail();
         $document_type_id = $request->input('document_type');
         $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
-                                    ->where('employee_id', $currentEmployee->id)
-                                    ->firstOrFail();
+            ->where('employee_id', $currentEmployee->id)
+            ->firstOrFail();
         $document_type_id = $request->input('document_type');
 
         // Obtenir le type de document pour le log

@@ -243,7 +243,7 @@ const AppModules = (function () {
                 .post(url, formData)
                 .then((response) => {
                     AppModules.hideSpinner(btn);
-
+                    console.log("response", response);
                     const { data } = response;
                     const status = data.ok ? "success" : "error";
 
@@ -258,6 +258,7 @@ const AppModules = (function () {
                     );
                 })
                 .catch((error) => {
+                    console.error("error", error);
                     AppModules.hideSpinner(btn);
 
                     const errorMessage = _private.formatErrorMessage(error);

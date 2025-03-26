@@ -19,12 +19,17 @@ let AppModelCreateManager = (function () {
         });
     };
 
-    let addModelCallback = () => {
-        location.reload();
+    let addModelCallback = (response) => {
+        if (response.redirect) {
+            location.href = response.redirect;
+        } else {
+            location.reload();
+        }
     };
     return {
         init: () => {
             addModelForm = document.querySelector("#modelAddForm");
+            console.log("Add model Form: ", addModelForm);
 
             if (!addModelForm) {
                 return;

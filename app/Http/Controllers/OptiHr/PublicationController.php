@@ -5,7 +5,7 @@ namespace App\Http\Controllers\OptiHr;
 use App\Http\Controllers\Controller;
 use App\Models\OptiHr\Publication;
 use App\Models\OptiHr\PublicationFile;
-use App\Services\ActivityLogger;
+use App\Services\ActivityLogService;
 use App\Services\PublicationFileService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -24,7 +24,7 @@ class PublicationController extends Controller
 
     public function __construct()
     {
-        parent::__construct(app(ActivityLogger::class)); // Injection automatique
+        parent::__construct(app(ActivityLogService::class)); // Injection automatique
 
         $this->fileService = new PublicationFileService();
 
@@ -203,37 +203,39 @@ class PublicationController extends Controller
      * @param int $id
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
      */
- public function preview($id)
-{
-    $file = PublicationFile::findOrFail($id);
+    public function preview($id)
+    {
+        $file = PublicationFile::findOrFail($id);
 
-    $this->activityLogger->log(
-        'preview',
-        "Prévisualisation du fichier #{$id} de la publication #{$file->publication_id}",
-        $file
-    );
+        $this->activityLogger->log(
+            'preview',
+            "Prévisualisation du fichier #{$id} de la publication #{$file->publication_id} ($file->presentation)",
+            $file
+        );
 
-    // Get the file path
-    $filePath = $this->fileService->getFile($file);
-    
-    // Get file mime type
-    $mimeType = mime_content_type($filePath);
-    
-    // For PDFs, images, and text files - display in browser
-    if (in_array($mimeType, [
-        'application/pdf', 
-        'image/jpeg', 
-        'image/png', 
-        'image/gif', 
-        'text/plain',
-        'text/html'
-    ])) {
-        return response()->file($filePath);
+        // Get the file path
+        $filePath = $this->fileService->getFile($file);
+
+        // Get file mime type
+        $mimeType = mime_content_type($filePath);
+
+        // For PDFs, images, and text files - display in browser
+        if (
+            in_array($mimeType, [
+                'application/pdf',
+                'image/jpeg',
+                'image/png',
+                'image/gif',
+                'text/plain',
+                'text/html'
+            ])
+        ) {
+            return response()->file($filePath);
+        }
+
+        // For other file types that can't be previewed, fall back to download
+        return response()->download($filePath);
     }
-    
-    // For other file types that can't be previewed, fall back to download
-    return response()->download($filePath);
-}
 
     /**
      * Supprimer une publication
