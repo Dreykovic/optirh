@@ -37,7 +37,7 @@ function initPaginator(status) {
                                             <a class="dropdown-item action-btn" 
                                                 href="#" 
                                                 data-id="${contrat.duty_id}" 
-                                                data-url="/contrats/${contrat.duty_id}/suspended" 
+                                                data-url="/opti-hr/contrats/${contrat.duty_id}/suspended"
                                                 data-action="Suspendre" 
                                                 data-message="Cette action suspendra cet employé.">
                                                 Suspendre
@@ -49,7 +49,7 @@ function initPaginator(status) {
                                             <a class="dropdown-item action-btn" 
                                                 href="#" 
                                                 data-id="${contrat.duty_id}" 
-                                                data-url="/contrats/${contrat.duty_id}/resigned" 
+                                                data-url="/opti-hr/contrats/${contrat.duty_id}/resigned" 
                                                 data-action="Démissioner" 
                                                 data-message="Cette action va marquer cet employé comme Démissionaire.">
                                                 Démissioner
@@ -61,7 +61,7 @@ function initPaginator(status) {
                                             <a class="dropdown-item action-btn" 
                                                 href="#" 
                                                 data-id="${contrat.duty_id}" 
-                                                data-url="/contrats/${contrat.duty_id}/dismissed" 
+                                                data-url="/opti-hr/contrats/${contrat.duty_id}/dismissed" 
                                                 data-action="Licencier" 
                                                 data-message="Cette action va marquer cet employé comme licencié.">
                                                 Licencier
@@ -73,7 +73,7 @@ function initPaginator(status) {
                                             <a class="dropdown-item action-btn" 
                                                 href="#" 
                                                 data-id="${contrat.duty_id}" 
-                                                data-url="/contrats/${contrat.duty_id}/ended" 
+                                                data-url="/opti-hr/contrats/${contrat.duty_id}/ended" 
                                                 data-action=" Mettre fin au contrat" 
                                                 data-message="Cette action va mettre fin au contrat de cet employé.">
                                                 Terminer
@@ -86,7 +86,7 @@ function initPaginator(status) {
                                             <a class="dropdown-item action-btn" 
                                                 href="#" 
                                                 data-id="${contrat.duty_id}" 
-                                                data-url="/contrats/${contrat.duty_id}/deleted" 
+                                                data-url="/opti-hr/contrats/${contrat.duty_id}/deleted" 
                                                 data-action="Supprimer" 
                                                 data-message="Cette action Supprimera ce contrat.">
                                                 Supprimer
@@ -98,7 +98,7 @@ function initPaginator(status) {
                                             <a class="dropdown-item action-btn" 
                                                 href="#" 
                                                 data-id="${contrat.duty_id}" 
-                                                data-url="/contrats/${contrat.duty_id}/ongoing" 
+                                                data-url="/opti-hr/contrats/${contrat.duty_id}/ongoing" 
                                                 data-action="Réintégrer" 
                                                 data-message="Cette action Réintégrera cet employé.">
                                                 Réintégrer
