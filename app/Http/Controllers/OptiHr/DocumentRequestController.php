@@ -410,7 +410,33 @@ class DocumentRequestController extends Controller
         ]);
 
     }
+    // Dans votre controller ou service
+    public function notifyRequestor(DocumentRequest $documentRequest)
+    {
+        $url = route('document-requests.show', $documentRequest->id);
+        $status = $documentRequest->status === 'APPROVED' ? 'approuvée' : 'refusée';
 
+        // Récupérer l'utilisateur qui a fait la demande
+        $requestor = $documentRequest->duty->employee->user;
+
+        Mail::send(new DocumentRequestStatus(
+            receiver: $requestor,
+            documentRequest: $documentRequest,
+            status: $status,
+            url: $url
+        ));
+    }
+    // Dans votre controller ou service
+    public function notifyApprover(DocumentRequest $documentRequest, User $approver)
+    {
+        $url = route('document-requests.show', $documentRequest->id);
+
+        Mail::send(new DocumentRequestCreated(
+            receiver: $approver,
+            documentRequest: $documentRequest,
+            url: $url
+        ));
+    }
     /**
      * Ajouter un commentaire à une demande de document
      *
