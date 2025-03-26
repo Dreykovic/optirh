@@ -318,21 +318,23 @@ class DocumentRequestController extends Controller
 
         // Mise à jour du niveau et du statut
         $documentRequest->updateLevelAndStage();
-        $documentRequest = DocumentRequest::find($id);
+        if ($documentRequest->status == 'APPROVED') {
+            # code...
 
-        // Préparer les données
-        $emailData = [
-            'receiverName' => $documentRequest->duty->employee->name, // Adaptez selon votre modèle
-            'documentRequest' => $documentRequest,
-            'documentType' => $documentRequest->document_type->name,
-            'status' => $documentRequest->status == 'APPROVED' ? 'approuvée' : 'refusée',
-            'comment' => $documentRequest->comment, // Commentaire facultatif
-            'url' => route('document-requests.show', $documentRequest->id)
-        ];
+            // Préparer les données
+            $emailData = [
+                'receiverName' => $documentRequest->duty->employee->name, // Adaptez selon votre modèle
+                'documentRequest' => $documentRequest,
+                'documentType' => $documentRequest->document_type->name,
+                'status' => $documentRequest->status == 'APPROVED' ? 'approuvée' : 'refusée',
+                'comment' => $documentRequest->comment, // Commentaire facultatif
+                'url' => route('documents.requests', "APPROVED")
+            ];
+            // Envoyer l'email
+            Mail::to($documentRequest->duty->employee->email) // Adaptez selon votre modèle
+                ->send(new DocumentRequestStatusMail($emailData));
+        }
 
-        // Envoyer l'email
-        Mail::to($documentRequest->duty->employee->email) // Adaptez selon votre modèle
-            ->send(new DocumentRequestStatusMail($emailData));
         $this->activityLogger->log(
             'approved',
             "Approbation de la demande de document #{$id} - Stage: {$oldStage} → {$documentRequest->stage}, Level: {$oldLevel} → {$documentRequest->level}",
@@ -380,7 +382,22 @@ class DocumentRequestController extends Controller
         $documentRequest->stage = 'REJECTED';
 
         $documentRequest->save();
+        if ($documentRequest->status == 'REJECTED') {
+            # code...
 
+            // Préparer les données
+            $emailData = [
+                'receiverName' => $documentRequest->duty->employee->name, // Adaptez selon votre modèle
+                'documentRequest' => $documentRequest,
+                'documentType' => $documentRequest->document_type->name,
+                'status' => $documentRequest->status == 'APPROVED' ? 'approuvée' : 'refusée',
+                'comment' => $documentRequest->comment, // Commentaire facultatif
+                'url' => route('documents.requests', "REJECTED")
+            ];
+            // Envoyer l'email
+            Mail::to($documentRequest->duty->employee->email) // Adaptez selon votre modèle
+                ->send(new DocumentRequestStatusMail($emailData));
+        }
         $this->activityLogger->log(
             'rejected',
             "Rejet de la demande de document #{$id} - Stage: {$oldStage} → {$documentRequest->stage}, Level: {$oldLevel} → {$documentRequest->level}",
