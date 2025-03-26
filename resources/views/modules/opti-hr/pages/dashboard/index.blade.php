@@ -355,6 +355,11 @@
 @endpush
 
 @push('js')
+    <script src="{{ asset('app-js/attendances/absences/table.js') }}"></script>
+    <script src="{{ asset('app-js/crud/post.js') }}"></script>
+    <script src="{{ asset('app-js/crud/put.js') }}"></script>
+    <script src="{{ asset('app-js/crud/delete.js') }}"></script>
+    <script src="{{ asset('app-js/filter/filter.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Initialisation du graphique de répartition par département
