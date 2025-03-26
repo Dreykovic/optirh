@@ -194,7 +194,7 @@
                                     <div>Decision: <span
                                             class='fw-bold text-info p-2'>{{ $appeal->decision->decision ?? 'N/A' }}</span>
                                     </div>
-                                    <div>Delai: {{ $appeal->day_count }}</div>
+                                    <div>Delai: {{ $appeal->day_count }} jrs</div>
                                 </div>
                             @empty
                                 <p>Tout est traité.</p>
