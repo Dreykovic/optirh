@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Holiday;
+use App\Models\OptiHr\Holiday;
 use Illuminate\Database\Seeder;
 
 class HolidaySeeder extends Seeder

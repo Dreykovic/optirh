@@ -19,8 +19,58 @@ class RoleController extends Controller
 
     public function get_permissions(Request $request)
     {
-        try {
-            $permissions = Permission::with([
+
+        $permissions = Permission::with([
+            'roles' => function ($query) {
+                $query->where('name', '!=', 'ADMIN');
+            },
+        ])
+            ->whereHas('roles', function ($query) {
+                $query->where('name', '!=', 'ADMIN');
+            })
+            ->orderBy('id', 'ASC')
+            ->get();
+
+        return view('modules.opti-hr.pages.users.permissions.index', compact('permissions'));
+
+    }
+
+    public function index(Request $request)
+    {
+
+        $roles = Role::with('permissions')->where('name', '!=', 'ADMIN')->orderBy('id', 'ASC')->get();
+       // $permissions = $this->trierPermissionsParCategory(Permission::orderBy('name', 'ASC')->get());
+        $permissions =Permission::orderBy('name', 'ASC')->get();
+        $currentUser = Auth::user();
+        if ($currentUser->hasRole('ADMIN')) {
+            $roles = Role::with('permissions')->orderBy('id', 'ASC')->get();
+            // $permissions = $this->trierPermissionsParCategory(Permission::orderBy('name', 'ASC')->get());
+        
+        }
+
+        return view('modules.opti-hr.pages.users.roles.index', compact('roles', 'permissions'));
+
+    }
+
+    public function show($id)
+    {
+
+        $role = Role::with(['users', 'permissions'])->findOrFail($id);
+        // dd($role);
+
+        $all_permissions = Permission::with([
+            'roles',
+        ])
+            ->whereHas('roles')
+            ->orderBy('id', 'ASC')
+            ->get();
+        $currentUser = Auth::user();
+
+        if (!$currentUser->hasRole('ADMIN')) {
+            $role = Role::with('users')->with('permissions')->where('name', '!=', 'ADMIN')->findOrFail($id);
+            // dd($role);
+
+            $all_permissions = Permission::with([
                 'roles' => function ($query) {
                     $query->where('name', '!=', 'ADMIN');
                 },
@@ -30,78 +80,14 @@ class RoleController extends Controller
                 })
                 ->orderBy('id', 'ASC')
                 ->get();
-
-            return view('pages.admin.users.permissions.index', compact('permissions'));
-        } catch (\Exception $e) {
-            // Gérez l'erreur ici, vous pouvez la logger ou retourner une réponse adaptée à l'erreur.
-            return back()->with(['error' => 'Une erreur s\'est produite. Veuillez réessayer.']);
-
-            // return back()->with(['error' => $e->getMessage()]);
         }
-    }
 
-    public function index(Request $request)
-    {
-        try {
-            $roles = Role::with('permissions')->where('name', '!=', 'ADMIN')->orderBy('id', 'ASC')->get();
-            $permissions = $this->trierPermissionsParCategory(Permission::orderBy('name', 'ASC')->get());
+        // dd($permissions);
 
-            $currentUser = Auth::user();
-            if ($currentUser->hasRole('ADMIN')) {
-                $roles = Role::with('permissions')->orderBy('id', 'ASC')->get();
-                $permissions = $this->trierPermissionsParCategory(Permission::orderBy('name', 'ASC')->get());
-            }
+     $permissions = $this->trierPermissionsParCategory($all_permissions);
 
-            return view('pages.admin.users.roles.index', compact('roles', 'permissions'));
-        } catch (\Exception $e) {
-            // Gérez l'erreur ici, vous pouvez la logger ou retourner une réponse adaptée à l'erreur.
-            // return back()->with(['error' => 'Une erreur s\'est produite. Veuillez réessayer.']);
+        return view('modules.opti-hr.pages.users.roles.details.index', compact('role', 'permissions'));
 
-            return back()->with(['error' => $e->getMessage()]);
-        }
-    }
-
-    public function show($id)
-    {
-        try {
-            $role = Role::with(['users', 'permissions'])->findOrFail($id);
-            // dd($role);
-
-            $all_permissions = Permission::with([
-                'roles',
-            ])
-                ->whereHas('roles')
-                ->orderBy('id', 'ASC')
-                ->get();
-            $currentUser = Auth::user();
-
-            if (!$currentUser->hasRole('ADMIN')) {
-                $role = Role::with('users')->with('permissions')->where('name', '!=', 'ADMIN')->findOrFail($id);
-                // dd($role);
-
-                $all_permissions = Permission::with([
-                    'roles' => function ($query) {
-                        $query->where('name', '!=', 'ADMIN');
-                    },
-                ])
-                    ->whereHas('roles', function ($query) {
-                        $query->where('name', '!=', 'ADMIN');
-                    })
-                    ->orderBy('id', 'ASC')
-                    ->get();
-            }
-
-            // dd($permissions);
-
-            $permissions = $this->trierPermissionsParCategory($all_permissions);
-
-            return view('pages.admin.users.roles.details.index', compact('role', 'permissions'));
-        } catch (\Exception $e) {
-            // Gérez l'erreur ici, vous pouvez la logger ou retourner une réponse adaptée à l'erreur.
-            return back()->with(['error' => $e->getMessage()]);
-
-            // return back()->with(['error' => 'Une erreur s\'est produite. Veuillez réessayer.']);
-        }
     }
 
     public function trierPermissionsParCategory($permissions)

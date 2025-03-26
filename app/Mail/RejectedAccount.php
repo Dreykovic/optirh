@@ -37,7 +37,7 @@ class RejectedAccount extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'emails.visitor_rejected',
+            view: 'modules.opti-hr.emails.visitor_rejected',
             with: [
                 'name' => $this->name,
             ],

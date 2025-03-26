@@ -12,7 +12,7 @@
                 </div>
                 <div class="col-12 text-center">
                     <div class="col-12 text-center">
-                        <a href="{{ route('home') }}" title=""
+                        <a href="{{ back() }}" title=""
                             class="btn btn-lg btn-block btn-light lift text-uppercase">Retourner A La Page D'Accueil</a>
                     </div>
                 </div>

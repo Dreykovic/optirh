@@ -7,7 +7,7 @@ document.querySelector('table').addEventListener('click', function(event) {
         console.log('Job ID:', jobId);
 
         const paginator = new Paginator({
-            apiUrl: `/api/membres/job/${jobId}`, // URL de l'API
+            apiUrl: `/opti-hr/api/membres/job/${jobId}`, // URL de l'API
             renderElement: document.getElementById('employee_list'), // Élément où afficher les données
             renderCallback: renderFiles, // Fonction pour rendre les fichiers        
         });

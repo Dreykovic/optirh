@@ -51,6 +51,12 @@ class RoleSeeder extends Seeder
             'créer-un-document',
             'configurer-un-document',
 
+            // Publication
+            'voir-une-publication',
+            'écrire-une-publication',
+            'créer-une-publication',
+            'configurer-une-publication',
+
             // Credentials
             'voir-un-credentials',
             'écrire-un-credentials',
@@ -68,6 +74,17 @@ class RoleSeeder extends Seeder
             'écrire-un-férié',
             'créer-un-férié',
             'configurer-un-férié',
+
+            // Logs
+            'voir-un-journal',
+            'écrire-un-journal',
+            'créer-un-journal',
+            'configurer-un-journal',
+
+            // Modules
+            'access-opti-hr',
+            'access-recours',
+            'access-all',
         ];
         $hr_permissions_list = [
             // compte
@@ -88,27 +105,57 @@ class RoleSeeder extends Seeder
             'créer-une-attendance',
             'configurer-une-attendance',
 
+            // All
+            'voir-un-all',
+            'écrire-un-all',
+            'créer-un-all',
+            'configurer-un-all',
+
             // Absence Request
             'voir-une-absence',
             'écrire-une-absence',
             'créer-une-absence',
             'configurer-une-absence',
+
             // Document Request
             'voir-un-document',
             'écrire-un-document',
             'créer-un-document',
             'configurer-un-document',
+
+            // Publication
+            'voir-une-publication',
+            'écrire-une-publication',
+            'créer-une-publication',
+            'configurer-une-publication',
+
             // Credentials
             'voir-un-credentials',
             'écrire-un-credentials',
             'créer-un-credentials',
             'configurer-un-credentials',
 
+            // Role
+            'voir-un-role',
+            'écrire-un-role',
+            'créer-un-role',
+            'configurer-un-role',
+
             // Fériés
             'voir-un-férié',
             'écrire-un-férié',
             'créer-un-férié',
             'configurer-un-férié',
+
+            // Logs
+            'voir-un-journal',
+            'écrire-un-journal',
+            'créer-un-journal',
+            'configurer-un-journal',
+
+            // Modules
+            'access-opti-hr',
+          
         ];
         $dsaf_permissions_list = [
             // compte
@@ -129,27 +176,56 @@ class RoleSeeder extends Seeder
             'créer-une-attendance',
             'configurer-une-attendance',
 
+            // All
+            'voir-un-all',
+            'écrire-un-all',
+            'créer-un-all',
+            'configurer-un-all',
+
             // Absence Request
             'voir-une-absence',
             'écrire-une-absence',
             'créer-une-absence',
             'configurer-une-absence',
+
             // Document Request
             'voir-un-document',
             'écrire-un-document',
             'créer-un-document',
             'configurer-un-document',
+
+            // Publication
+            'voir-une-publication',
+            'écrire-une-publication',
+            'créer-une-publication',
+            'configurer-une-publication',
+
             // Credentials
             'voir-un-credentials',
             'écrire-un-credentials',
             'créer-un-credentials',
             'configurer-un-credentials',
 
+            // Role
+            'voir-un-role',
+            'écrire-un-role',
+            'créer-un-role',
+            'configurer-un-role',
+
             // Fériés
             'voir-un-férié',
             'écrire-un-férié',
             'créer-un-férié',
             'configurer-un-férié',
+
+            // Logs
+            'voir-un-journal',
+            'écrire-un-journal',
+            'créer-un-journal',
+            'configurer-un-journal',
+
+            // Modules
+            'access-opti-hr',
         ];
         $dg_permissions_list = [
             // compte
@@ -160,37 +236,67 @@ class RoleSeeder extends Seeder
 
             // Employee
             'voir-un-employee',
-            'écrire-un-employee',
-            'créer-un-employee',
+            // 'écrire-un-employee',
+            // 'créer-un-employee',
             'configurer-un-employee',
 
             // Attendance
             'voir-une-attendance',
             'écrire-une-attendance',
             'créer-une-attendance',
-            'configurer-une-attendance',
+            // 'configurer-une-attendance',
+
+            // All
+            // 'voir-un-all',
+            // 'écrire-un-all',
+            // 'créer-un-all',
+            // 'configurer-un-all',
 
             // Absence Request
             'voir-une-absence',
             'écrire-une-absence',
             'créer-une-absence',
-            'configurer-une-absence',
+            // 'configurer-une-absence',
+
             // Document Request
             'voir-un-document',
             'écrire-un-document',
             'créer-un-document',
-            'configurer-un-document',
+            // 'configurer-un-document',
+
+            // Publication
+            'voir-une-publication',
+            // 'écrire-une-publication',
+            // 'créer-une-publication',
+            // 'configurer-une-publication',
+
             // Credentials
-            'voir-un-credentials',
-            'écrire-un-credentials',
-            'créer-un-credentials',
-            'configurer-un-credentials',
+            // 'voir-un-credentials',
+            // 'écrire-un-credentials',
+            // 'créer-un-credentials',
+            // 'configurer-un-credentials',
+
+            // Role
+            // 'voir-un-role',
+            // 'écrire-un-role',
+            // 'créer-un-role',
+            // 'configurer-un-role',
 
             // Fériés
-            'voir-un-férié',
-            'écrire-un-férié',
-            'créer-un-férié',
-            'configurer-un-férié',
+            // 'voir-un-férié',
+            // 'écrire-un-férié',
+            // 'créer-un-férié',
+            // 'configurer-un-férié',
+
+            // Logs
+            'voir-un-journal',
+            'écrire-un-journal',
+            'créer-un-journal',
+            'configurer-un-journal',
+
+            // Modules
+
+            'access-all',
         ];
         $employee_permissions_list = [
             // compte
@@ -208,6 +314,8 @@ class RoleSeeder extends Seeder
             'créer-une-absence',
             // Document Request
             'voir-un-document',
+            // Publication
+            'voir-une-publication',
 
             'créer-un-document',
 
@@ -216,6 +324,15 @@ class RoleSeeder extends Seeder
 
             // Fériés
             'voir-un-férié',
+
+            // Logs
+            'voir-un-journal',
+            'écrire-un-journal',
+            'créer-un-journal',
+            'configurer-un-journal',
+
+            // Modules
+            'access-opti-hr',
         ];
 
         // Création des permission

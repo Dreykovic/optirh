@@ -1,7 +1,7 @@
 
     const employeeId = document.getElementById('employeeId').value;
     const paginator = new Paginator({
-        apiUrl: `/api/files/${employeeId}`, // URL de l'API
+        apiUrl: `/opti-hr/api/files/${employeeId}`, // URL de l'API
             renderElement: document.getElementById('fileList'), // Élément où afficher les données
             renderCallback: renderFiles, // Fonction pour rendre les fichiers
             searchInput: document.getElementById('searchInput'), // Input de recherche

@@ -3,10 +3,10 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\Department;
-use App\Models\Duty;
-use App\Models\Employee;
-use App\Models\Job;
+use App\Models\OptiHr\Department;
+use App\Models\OptiHr\Duty;
+use App\Models\OptiHr\Employee;
+use App\Models\OptiHr\Job;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
@@ -25,6 +25,12 @@ class DatabaseSeeder extends Seeder
 
             DocumentTypeSeeder::class,
             HolidaySeeder::class,
+
+                //Recours Seeders
+            DacSeeder::class,
+            DecisionSeeder::class,
+            ApplicantSeeder::class,
+            AppealSeeder::class,
         ]);
         /**
          * Employees.
@@ -39,7 +45,7 @@ class DatabaseSeeder extends Seeder
             'matricule' => 'RH001',
             'first_name' => 'HR',
             'last_name' => 'Manager',
-            'email' => 'hr@example.com',
+            'email' => 'amonaaudrey16@gmail.com',
             'phone_number' => '1234567891',
             'address1' => '2 HR Lane',
             'city' => 'HR City',
@@ -65,7 +71,7 @@ class DatabaseSeeder extends Seeder
             'matricule' => 'DSAF001',
             'first_name' => 'Directeur',
             'last_name' => 'Finances',
-            'email' => 'dsaf@example.com',
+            'email' => 'amonaaudrey@hotmail.com',
             'phone_number' => '99999999',
             'address1' => '2 dsaf Lane',
             'city' => 'DSAF City',
@@ -91,7 +97,7 @@ class DatabaseSeeder extends Seeder
             'matricule' => 'DG001',
             'first_name' => 'Director',
             'last_name' => 'General',
-            'email' => 'dg@example.com',
+            'email' => 'codeurspassiones@gmail.com',
             'phone_number' => '1234567892',
             'address1' => '3 Director Avenue',
             'city' => 'Director City',

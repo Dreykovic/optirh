@@ -1,7 +1,76 @@
 <?php
 
 use Carbon\Carbon;
+/**
+ * Group publications by date and add appropriate timeline markers
+ * 
+ * @param Collection $publications The publications collection to process
+ * @return array Processed publication items with timeline markers
+ */
 
+if (!function_exists('group_publications_by_date')) {
+    function group_publications_by_date($publications)
+    {
+        $result = [];
+        $currentDate = null;
+        $today = now()->startOfDay();
+        $yesterday = now()->subDay()->startOfDay();
+
+        foreach ($publications as $publication) {
+            $pubDate = $publication->created_at->startOfDay();
+
+            // Add date marker if date changes
+            if ($currentDate === null || !$currentDate->equalTo($pubDate)) {
+                $dateLabel = '';
+
+                if ($pubDate->equalTo($today)) {
+                    $dateLabel = 'Aujourd\'hui';
+                } elseif ($pubDate->equalTo($yesterday)) {
+                    $dateLabel = 'Hier';
+                } else {
+                    $dateLabel = $pubDate->isoFormat('D MMMM YYYY');
+                }
+
+                $result[] = [
+                    'type' => 'marker',
+                    'label' => $dateLabel
+                ];
+
+                $currentDate = $pubDate;
+            }
+
+            $result[] = [
+                'type' => 'publication',
+                'data' => $publication
+            ];
+        }
+
+        return $result;
+    }
+}
+
+/**
+ * Convertit une taille en octets en une représentation lisible pour les humains
+ *
+ * @param int $bytes Taille en octets
+ * @param int $precision Nombre de chiffres après la virgule (par défaut 2)
+ * @return string Taille formatée avec unité (KB, MB, GB, etc.)
+ */
+if (!function_exists('human_filesize')) {
+    function human_filesize($bytes, $precision = 2)
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+
+        // Calcul de la taille avec la précision demandée
+        $bytes /= pow(1024, $pow);
+
+        return round($bytes, $precision) . ' ' . $units[$pow];
+    }
+}
 if (!function_exists('formatDate')) {
     /**
      * Retourne une règle de validation pour les heures d'ouverture.
@@ -46,15 +115,37 @@ if (!function_exists('numberToWords')) {
     function numberToWords($number)
     {
         $units = [
-            0 => 'zéro', 1 => 'un', 2 => 'deux', 3 => 'trois', 4 => 'quatre', 5 => 'cinq',
-            6 => 'six', 7 => 'sept', 8 => 'huit', 9 => 'neuf', 10 => 'dix',
-            11 => 'onze', 12 => 'douze', 13 => 'treize', 14 => 'quatorze', 15 => 'quinze',
-            16 => 'seize', 17 => 'dix-sept', 18 => 'dix-huit', 19 => 'dix-neuf',
+            0 => 'zéro',
+            1 => 'un',
+            2 => 'deux',
+            3 => 'trois',
+            4 => 'quatre',
+            5 => 'cinq',
+            6 => 'six',
+            7 => 'sept',
+            8 => 'huit',
+            9 => 'neuf',
+            10 => 'dix',
+            11 => 'onze',
+            12 => 'douze',
+            13 => 'treize',
+            14 => 'quatorze',
+            15 => 'quinze',
+            16 => 'seize',
+            17 => 'dix-sept',
+            18 => 'dix-huit',
+            19 => 'dix-neuf',
         ];
 
         $tens = [
-            2 => 'vingt', 3 => 'trente', 4 => 'quarante', 5 => 'cinquante',
-            6 => 'soixante', 7 => 'soixante-dix', 8 => 'quatre-vingt', 9 => 'quatre-vingt-dix',
+            2 => 'vingt',
+            3 => 'trente',
+            4 => 'quarante',
+            5 => 'cinquante',
+            6 => 'soixante',
+            7 => 'soixante-dix',
+            8 => 'quatre-vingt',
+            9 => 'quatre-vingt-dix',
         ];
 
         if ($number < 20) {
@@ -67,11 +158,11 @@ if (!function_exists('numberToWords')) {
 
             $word = $tens[$ten];
             if ($ten == 7 || $ten == 9) {
-                return $tens[$ten - 1].'-'.$units[$unit + 10];
+                return $tens[$ten - 1] . '-' . $units[$unit + 10];
             }
 
             if ($unit > 0) {
-                $word .= '-'.$units[$unit];
+                $word .= '-' . $units[$unit];
             }
 
             return $word;
@@ -81,9 +172,9 @@ if (!function_exists('numberToWords')) {
             $hundreds = (int) ($number / 100);
             $remainder = $number % 100;
 
-            $word = ($hundreds > 1 ? $units[$hundreds].'-cent' : 'cent');
+            $word = ($hundreds > 1 ? $units[$hundreds] . '-cent' : 'cent');
             if ($remainder > 0) {
-                $word .= '-'.numberToWords($remainder);
+                $word .= '-' . numberToWords($remainder);
             }
 
             return $word;
@@ -125,9 +216,9 @@ if (!function_exists('formatDateRange')) {
         $end = Carbon::parse($endDate);
 
         // Format des dates
-        $startFormatted = $start->format('d').' '.$start->locale('fr')->isoFormat('MMMM').' '.$start->format('Y');
-        $endFormatted = $end->format('d').' '.$end->locale('fr')->isoFormat('MMMM').' '.$end->format('Y');
+        $startFormatted = $start->format('d') . ' ' . $start->locale('fr')->isoFormat('MMMM') . ' ' . $start->format('Y');
+        $endFormatted = $end->format('d') . ' ' . $end->locale('fr')->isoFormat('MMMM') . ' ' . $end->format('Y');
 
-        return $startFormatted.' au '.$endFormatted;
+        return $startFormatted . ' au ' . $endFormatted;
     }
 }

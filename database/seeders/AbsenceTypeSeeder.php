@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\AbsenceType;
+use App\Models\OptiHr\AbsenceType;
 
 class AbsenceTypeSeeder extends Seeder
 {

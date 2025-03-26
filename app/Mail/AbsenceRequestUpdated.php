@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Absence;
+use App\Models\OptiHr\Absence;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -46,11 +46,11 @@ class AbsenceRequestUpdated extends Mailable implements ShouldQueue
 
         $receiverName = "{$receiverTitle} {$this->receiver->last_name} {$this->receiver->first_name}";
         $absence = $this->absence;
-        $status = $this->absence->stage == 'APPROVED' ? 'approuvé' : 'refusé';
+        $status = $this->absence->stage == 'APPROVED' ? 'approuvée' : 'refusée';
         $url = $this->url;
 
         return new Content(
-            view: 'emails.absence_request_updated',
+            view: 'modules.opti-hr.emails.absence-request-updated',
             with: compact('receiverName', 'absence', 'url', 'status')
         );
     }

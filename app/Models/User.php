@@ -3,8 +3,12 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\OptiHr\Employee;
+use App\Models\OptiHr\Publication;
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -16,6 +20,8 @@ class User extends Authenticatable
     use HasFactory;
     use Notifiable;
     use HasRoles;
+    use LogsActivity;
+
 
     /**
      * The attributes that are mass assignable.
@@ -62,6 +68,11 @@ class User extends Authenticatable
 
     public function employee(): BelongsTo
     {
-        return $this->belongsTo(Employee::class, 'employee_id');
+        return $this->belongsTo(Employee::class, foreignKey: 'employee_id');
+    }
+
+    public function publications(): HasMany
+    {
+        return $this->hasMany(Publication::class, foreignKey: 'author_id');
     }
 }
