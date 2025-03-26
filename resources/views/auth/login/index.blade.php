@@ -1,55 +1,48 @@
 @extends('auth.base')
 
 @section('auth-content')
-    <form class="row g-1 p-3 p-md-4" id="loginForm" data-login-url="{{ route('login') }}">
+    <form id="loginForm" data-login-url="{{ route('login') }}">
         @csrf
-        <div class="col-12 text-center mb-1 mb-lg-5">
-            <h1>Connexion</h1>
-            <span>Free access to our dashboard.</span>
+        <div class="text-center mb-4">
+            <h4 class="fw-bold">Connexion</h4>
         </div>
 
-        <div class="col-12">
-            <div class="mb-2">
-                <label class="form-label">Adresse Email</label>
-                <input type="email" name="email" class="form-control form-control-lg" placeholder="name@example.com">
-            </div>
+        <div class="mb-3">
+            <label for="emailInput" class="form-label">Adresse Email</label>
+            <input type="email" class="form-control form-control-lg" id="emailInput" name="email" required>
         </div>
-        <div class="col-12">
-            <div class="mb-2">
-                <div class="form-label">
-                    <span class="d-flex justify-content-between align-items-center">
-                        Mot De Passe
-                        <a class="text-secondary" href="{{ route('forgot-password') }}">Mot de passe oublié??</a>
-                    </span>
+
+        <div class="mb-3">
+            <label for="passwordInput" class="form-label">Mot de passe</label>
+            <input type="password" class="form-control form-control-lg" id="passwordInput" name="password" required>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-6">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="rememberCheck" name="remember">
+                    <label class="form-check-label" for="rememberCheck">
+                        Se souvenir de moi
+                    </label>
                 </div>
-                <input type="password" name="password" class="form-control form-control-lg" placeholder="***************">
+            </div>
+            <div class="col-6 text-end">
+                <a href="{{ route('forgot-password') }}" class="text-decoration-none">Mot de passe oublié?</a>
             </div>
         </div>
-        <div class="col-12">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" name="remember">
-                <label class="form-check-label" for="flexCheckDefault">
-                    Se souvenir de moi
-                </label>
-            </div>
-        </div>
-        <div class="col-12 text-center mt-4">
-            <button type="submit" class="btn btn-lg btn-block btn-light lift text-uppercase" atl="signin" id="loginBtn">
-                <span class="normal-status">
-                    Se
-                    Connecter
-                </span>
+
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-dark btn-lg" id="loginBtn">
+                <span class="normal-status">Se connecter</span>
                 <span class="indicateur d-none">
-                    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                    Un Instant...
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Un instant...
                 </span>
             </button>
-
-
         </div>
-
     </form>
 @endsection
+
 @push('js')
-    <script src={{ asset('app-js/auth/login.js') }}></script>
+    <script src="{{ asset('app-js/auth/login.js') }}"></script>
 @endpush

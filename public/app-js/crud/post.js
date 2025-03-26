@@ -29,6 +29,7 @@ let AppModelCreateManager = (function () {
     return {
         init: () => {
             addModelForm = document.querySelector("#modelAddForm");
+            console.log("Add model Form: ", addModelForm);
 
             if (!addModelForm) {
                 return;
