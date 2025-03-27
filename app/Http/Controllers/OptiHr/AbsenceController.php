@@ -121,8 +121,8 @@ class AbsenceController extends Controller
         // Appliquer le filtre de recherche (groupe de conditions OR)
         $query->when($search, function ($q) use ($search) {
             $q->whereHas('duty.employee', function ($query) use ($search) {
-                $query->where('first_name', 'ILIKE', '%' . $search . '%')
-                    ->orWhere('last_name', 'ILIKE', '%' . $search . '%');
+                $query->where('first_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('last_name', 'LIKE', '%' . $search . '%');
             });
         });
 
