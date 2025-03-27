@@ -110,15 +110,15 @@ class AuthController extends Controller
     private function getRedirectUrlForUser($user)
     {
         // Priorité des redirections en fonction des permissions
-        if ($user->can('access-all')) {
+        if ($user->can('access-un-all')) {
             return RouteServiceProvider::GATEWAY;
         }
 
-        if ($user->can('access-opti-hr')) {
+        if ($user->can('access-un-opti-hr')) {
             return RouteServiceProvider::OPTI_HR_HOME;
         }
 
-        if ($user->can('access-recours')) {
+        if ($user->can('access-un-recours')) {
             return RouteServiceProvider::RECOURS_HOME;
         }
 
