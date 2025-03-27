@@ -84,68 +84,6 @@ let AppAbsenceRequestCreateManager = (function () {
         });
     }
 
-    // Valider le formulaire avant soumission
-    function validateForm(e) {
-        const startDate = startDateInput.value;
-        const endDate = endDateInput.value;
-        const absenceType = absenceTypeSelect.value;
-
-        let isValid = true;
-
-        // Réinitialiser les messages d'erreur
-        document
-            .querySelectorAll(".invalid-feedback")
-            .forEach((el) => el.remove());
-        document
-            .querySelectorAll(".is-invalid")
-            .forEach((el) => el.classList.remove("is-invalid"));
-
-        // Valider le type d'absence
-        if (!absenceType) {
-            appendErrorMessage(
-                absenceTypeSelect,
-                "Veuillez sélectionner un type d'absence"
-            );
-            isValid = false;
-        }
-
-        // Valider les dates
-        if (!startDate) {
-            appendErrorMessage(startDateInput, "La date de début est requise");
-            isValid = false;
-        }
-
-        if (!endDate) {
-            appendErrorMessage(endDateInput, "La date de fin est requise");
-            isValid = false;
-        }
-
-        if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
-            appendErrorMessage(
-                endDateInput,
-                "La date de fin doit être postérieure à la date de début"
-            );
-            isValid = false;
-        }
-
-        // Si le formulaire n'est pas valide, empêcher sa soumission
-        if (!isValid) {
-            e.preventDefault();
-            return false;
-        }
-
-        return true;
-    }
-
-    // Ajouter un message d'erreur après un champ
-    function appendErrorMessage(element, message) {
-        element.classList.add("is-invalid");
-        const errorDiv = document.createElement("div");
-        errorDiv.className = "invalid-feedback";
-        errorDiv.textContent = message;
-        element.parentNode.appendChild(errorDiv);
-    }
-
     return {
         init: () => {
             // Initialiser les éléments DOM
