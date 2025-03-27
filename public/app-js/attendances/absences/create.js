@@ -216,8 +216,12 @@ let AppModelCreateManager = (function () {
         element.parentNode.appendChild(errorDiv);
     };
 
-    let addModelCallback = () => {
-        location.reload();
+    let addModelCallback = (response) => {
+        if (response.data.redirect) {
+            location.href = response.data.redirect;
+        } else {
+            location.reload();
+        }
     };
 
     return {
