@@ -18,12 +18,14 @@ class DocumentTypeSeeder extends Seeder
                 'label' => 'Attestation De Stage',
                 'description' => 'Attestation Remise en fin de stage',
                 'status' => 'ACTIVATED',
+                "type" => "NORMAL"
             ],
 
             [
                 'label' => 'Attestation de travail',
                 'description' => '',
                 'status' => 'ACTIVATED',
+                "type" => "EXCEPTIONAL"
             ],
         ];
 

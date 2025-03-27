@@ -20,8 +20,8 @@ let AppModelCreateManager = (function () {
     };
 
     let addModelCallback = (response) => {
-        if (response.redirect) {
-            location.href = response.redirect;
+        if (response.data.redirect) {
+            location.href = response.data.redirect;
         } else {
             location.reload();
         }

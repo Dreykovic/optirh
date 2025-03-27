@@ -24,8 +24,8 @@ let AppAuthManager = (function () {
     // Callback modifié pour gérer la redirection basée sur la réponse du serveur
     const loginCallback = (response) => {
         // Rediriger vers l'URL fournie par le serveur
-        if (response.redirect) {
-            window.location.href = response.redirect;
+        if (response.data.redirect) {
+            window.location.href = response.data.redirect;
         } else {
             // Fallback au cas où aucune URL de redirection n'est fournie
             window.location.reload();
