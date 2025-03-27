@@ -195,13 +195,23 @@ class DocumentRequestController extends Controller
      */
     public function store(Request $request)
     {
+        // Récupération du type de document
+        $document_type_id = $request->input('document_type');
+        $documentType = DocumentType::findOrFail($document_type_id);
 
-        // Validation des champs de la requête
-        $validatedData = $request->validate([
-            'document_type' => 'required|exists:document_types,id', // Corrigé de absence_types à document_types
-            'start_date' => 'required|date|before_or_equal:end_date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-        ]);
+        // Définir les règles de validation en fonction du type de document
+        $rules = [
+            'document_type' => 'required|exists:document_types,id',
+        ];
+
+        // Ajouter les règles de validation pour les dates sauf si type EXCEPTIONAL
+        if ($documentType->type !== 'EXCEPTIONAL') {
+            $rules['start_date'] = 'required|date|before_or_equal:end_date';
+            $rules['end_date'] = 'required|date|after_or_equal:start_date';
+        }
+
+        // Validation des champs avec les règles dynamiques
+        $validatedData = $request->validate($rules);
 
         // Récupération de l'employé actuel et de sa mission en cours
         $currentUser = User::with('employee')->findOrFail(auth()->id());
@@ -210,38 +220,61 @@ class DocumentRequestController extends Controller
         $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
             ->where('employee_id', $currentEmployee->id)
             ->firstOrFail();
-        $document_type_id = $request->input('document_type');
 
-
-        // Obtenir le type de document pour le log
-        $documentType = DocumentType::find($document_type_id);
-
-        // Enregistrement de la demande de document
-        $documentRequest = DocumentRequest::create([
+        // Préparation des données pour la création
+        $documentRequestData = [
             'duty_id' => $currentEmployeeDuty->id,
             'document_type_id' => $document_type_id,
-            'start_date' => $validatedData['start_date'],
-            'end_date' => $validatedData['end_date'],
-        ]);
+        ];
+
+        // Gestion des dates selon le type
+        if ($documentType->type === 'EXCEPTIONAL') {
+            // Pour les types EXCEPTIONALs, utiliser les dates du duty actuel
+            $documentRequestData['start_date'] = $currentEmployeeDuty->begin_date;
+
+            // Calculer la date de fin pour les documents EXCEPTIONALs
+            $today = now();
+
+            if ($currentEmployeeDuty->duration) {
+                // Calculer la date de fin théorique du duty
+                $dutyEndDate = \Carbon\Carbon::parse($currentEmployeeDuty->begin_date)
+                    ->addMonths($currentEmployeeDuty->duration);
+
+                // Si la date du jour dépasse la fin théorique du duty, on prend la date de fin du duty
+                // Sinon, on prend la date du jour
+                $documentRequestData['end_date'] = $today->gt($dutyEndDate) ? $dutyEndDate : $today;
+            } else {
+                // Si pas de durée spécifiée, utiliser la date actuelle
+                $documentRequestData['end_date'] = $today;
+            }
+        } else {
+            // Pour les types normaux, utiliser les dates fournies
+            $documentRequestData['start_date'] = $validatedData['start_date'];
+            $documentRequestData['end_date'] = $validatedData['end_date'];
+        }
+
+        // Enregistrement de la demande de document
+        $documentRequest = DocumentRequest::create($documentRequestData);
+
+        // Notification au responsable RH
         $receiver = User::role('GRH')->first();
-        // Là où vous voulez envoyer l'email
         $this->notifyApprover($documentRequest, $receiver);
+
+        // Journalisation de l'activité
         $this->activityLogger->log(
             'created',
             "Création d'une demande de document de type {$documentType->label}",
             $documentRequest
         );
 
-        $var = $documentRequest->document_type ? $documentRequest->document_type->label : '';
+        $documentTypeLabel = $documentType->label ?? 'document';
 
         return response()->json([
-            'message' => "Demande de {$var} créée avec succès.",
+            'message' => "Demande de {$documentTypeLabel} créée avec succès.",
             'ok' => true,
             'redirect' => route('documents.requests', 'PENDING')
         ]);
-
     }
-
     /**
      * Met à jour le stage et le level d'une demande de document
      *
