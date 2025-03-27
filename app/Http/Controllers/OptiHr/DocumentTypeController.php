@@ -41,13 +41,11 @@ class DocumentTypeController extends Controller
         $request->validate([
             'libelle' => 'required|string',
             'description' => 'sometimes',
-            'type' => 'sometimes',
         ]);
 
         DocumentType::create([
             'label' => $request->input('libelle'),
             'description' => $request->input('description'),
-            'type' => $request->input('type') ?? 'NORMAL',
         ]);
 
         // Redirection avec message de succès
