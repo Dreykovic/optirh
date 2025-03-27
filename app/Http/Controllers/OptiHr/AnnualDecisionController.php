@@ -53,11 +53,14 @@ class AnnualDecisionController extends Controller
     {
 
         $decision = AnnualDecision::where('state', 'current')->first();
-        $this->activityLogger->log(
-            'access',
-            "Consultation de la décision actuel {$decision->number}/{$decision->year}/{$decision->reference}",
-            $decision
-        );
+        if (!empty($decision)) {
+            $this->activityLogger->log(
+                'access',
+                "Consultation de la décision actuel {$decision->number}/{$decision->year}/{$decision->reference}",
+                $decision
+            );
+        }
+
         return view('modules.opti-hr.pages.attendances.annual-decisions.current', compact('decision'));
 
     }
