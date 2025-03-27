@@ -20,143 +20,144 @@
                     </button>
                 </div>
             </div>
+            @if (auth()->user()->hasRole('GRH'))
+                <!-- Quick Actions Section -->
+                <div class="row g-3 mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Actions rapides</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-2">
+                                    <div class="col-md-3">
+                                        <a href="{{ route('membres.pages') }}"
+                                            class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
+                                            <i class="fas fa-user-plus"></i> Ajouter un employé
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a href="{{ route('directions') }}"
+                                            class="btn btn-secondary w-100 d-flex align-items-center justify-content-center gap-2">
+                                            <i class="fas fa-building"></i> Ajouter un département
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a href="{{ route('absences.create') }}"
+                                            class="btn btn-info w-100 d-flex align-items-center justify-content-center gap-2 text-white">
+                                            <i class="fas fa-calendar-plus"></i> Enregistrer une absence
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a href="{{ route('publications.config.index') }}"
+                                            class="btn btn-success w-100 d-flex align-items-center justify-content-center gap-2">
+                                            <i class="fas fa-file-alt"></i> Nouvelle publication
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+            @can()
+                <!-- Stats Cards -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <span class="avatar rounded-circle bg-primary bg-opacity-10 p-3">
+                                            <i class="fas fa-users text-primary"></i>
+                                        </span>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="mb-0">Total des employés</h6>
+                                        <h2 class="mb-0">{{ $totalEmployees }}</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <span class="avatar rounded-circle bg-success bg-opacity-10 p-3">
+                                            <i class="fas fa-building text-success"></i>
+                                        </span>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="mb-0">Départements</h6>
+                                        <h2 class="mb-0">{{ $totalDepartments }}</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <span class="avatar rounded-circle bg-warning bg-opacity-10 p-3">
+                                            <i class="fas fa-calendar-times text-warning"></i>
+                                        </span>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="mb-0">Absences en attente</h6>
+                                        <h2 class="mb-0">{{ $pendingAbsences }}</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <span class="avatar rounded-circle bg-info bg-opacity-10 p-3">
+                                            <i class="fas fa-file-alt text-info"></i>
+                                        </span>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="mb-0">Demandes de documents</h6>
+                                        <h2 class="mb-0">{{ $pendingDocuments }}</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Quick Actions Section -->
-            <div class="row g-3 mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">Actions rapides</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row g-2">
-                                <div class="col-md-3">
-                                    <a href="{{ route('membres.pages') }}"
-                                        class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
-                                        <i class="fas fa-user-plus"></i> Ajouter un employé
-                                    </a>
-                                </div>
-                                <div class="col-md-3">
-                                    <a href="{{ route('directions') }}"
-                                        class="btn btn-secondary w-100 d-flex align-items-center justify-content-center gap-2">
-                                        <i class="fas fa-building"></i> Ajouter un département
-                                    </a>
-                                </div>
-                                <div class="col-md-3">
-                                    <a href="{{ route('absences.create') }}"
-                                        class="btn btn-info w-100 d-flex align-items-center justify-content-center gap-2 text-white">
-                                        <i class="fas fa-calendar-plus"></i> Enregistrer une absence
-                                    </a>
-                                </div>
-                                <div class="col-md-3">
-                                    <a href="{{ route('publications.config.index') }}"
-                                        class="btn btn-success w-100 d-flex align-items-center justify-content-center gap-2">
-                                        <i class="fas fa-file-alt"></i> Nouvelle publication
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Stats Cards -->
-            <div class="row g-3 mb-4">
-                <div class="col-md-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <span class="avatar rounded-circle bg-primary bg-opacity-10 p-3">
-                                        <i class="fas fa-users text-primary"></i>
-                                    </span>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h6 class="mb-0">Total des employés</h6>
-                                    <h2 class="mb-0">{{ $totalEmployees }}</h2>
-                                </div>
+                <!-- Charts Row -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Répartition des employés</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="departmentChart" height="250"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Répartition par genre</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="genderChart" height="250"></canvas>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <span class="avatar rounded-circle bg-success bg-opacity-10 p-3">
-                                        <i class="fas fa-building text-success"></i>
-                                    </span>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h6 class="mb-0">Départements</h6>
-                                    <h2 class="mb-0">{{ $totalDepartments }}</h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <span class="avatar rounded-circle bg-warning bg-opacity-10 p-3">
-                                        <i class="fas fa-calendar-times text-warning"></i>
-                                    </span>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h6 class="mb-0">Absences en attente</h6>
-                                    <h2 class="mb-0">{{ $pendingAbsences }}</h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <span class="avatar rounded-circle bg-info bg-opacity-10 p-3">
-                                        <i class="fas fa-file-alt text-info"></i>
-                                    </span>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h6 class="mb-0">Demandes de documents</h6>
-                                    <h2 class="mb-0">{{ $pendingDocuments }}</h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Charts Row -->
-            <div class="row g-3 mb-4">
-                <div class="col-md-6">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">Répartition des employés</h5>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="departmentChart" height="250"></canvas>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">Répartition par genre</h5>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="genderChart" height="250"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Absences -->
+            @endcan <!-- Recent Absences -->
             <div class="row g-3 mb-4">
                 <div class="col-12">
                     <div class="card">
