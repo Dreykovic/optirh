@@ -12,15 +12,15 @@
                     @csrf
                     <input type="hidden" name="_method" value="PUT">
                     <div class="mb-3">
-                        <label for="title" class="form-label">Titre</label>
+                        <label for="title" class="form-label required">Titre</label>
                         <input value='{{$job->title}}' type="text" class="form-control" id="title" name="title" {{ $job->title === 'DG' ? 'disabled' : '' }}>
                     </div>
                     <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
+                        <label for="description" class="form-label required">Description</label>
                         <input type="text" value='{{$job->description}}' class="form-control" id="description" name="description" {{ $job->title === 'DG' ? 'disabled' : '' }}>
                     </div>
                     <div class="mb-3">
-                        <label for="n" class="form-label">N+1</label>
+                        <label for="n" class="form-label required">N+1</label>
                         <select class="form-select" aria-label="Default select example" name="n_plus_one_job_id" value='{{$job->n_plus_one_job->id ?? ""}}'>
                             @if($job->n_plus_one_job != null && $job->n_plus_one_job->title != 'DG')
                             @foreach ($department->jobs as $jobOption)

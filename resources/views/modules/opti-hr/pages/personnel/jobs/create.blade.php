@@ -10,15 +10,15 @@
                 <form id="modelAddForm" data-model-add-url="{{ route('jobs.store') }}">
                     @csrf
                     <div class="mb-3">
-                        <label for="title" class="form-label">Titre</label>
+                        <label for="title" class="form-label required">Titre</label>
                         <input type="text" class="form-control" id="title" name='title'>
                     </div>
                     <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
+                        <label for="description" class="form-label required">Description</label>
                         <input type="text" class="form-control" id="description" name='description'>
                     </div>
                     <div class="mb-3">
-                        <label for="n" class="form-label">N+1</label>
+                        <label for="n" class="form-label required">N+1</label>
                         <select class="form-select" aria-label="Default select example" name='n_plus_one_job_id'>
                             @if($department->jobs)
                                 @foreach ($department->jobs as $job)

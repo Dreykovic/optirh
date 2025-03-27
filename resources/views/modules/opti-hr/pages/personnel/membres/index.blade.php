@@ -1,5 +1,17 @@
 @extends('modules.opti-hr.pages.base')
 @section('plugins-style')
+<style>
+        .form-text {
+            font-size: 0.875em;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+
+        .required:after {
+            content: " *";
+            color: red;
+        }
+</style>
 @endsection
 @section('admin-content')
     <div class="container-xxl">

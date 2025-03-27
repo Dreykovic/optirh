@@ -14,21 +14,21 @@
                             </div>
                                 <div class="row g-3 mb-3">
                                     <div class="col">
-                                        <label for="nom" class="form-label">Nom</label>
+                                        <label for="nom" class="form-label required">Nom</label>
                                         <input type="text" class="form-control" id="nom" value="{{$employee->first_name}}" name='first_name'> 
                                     </div>
                                     <div class="col">
-                                        <label for="prenom" class="form-label">Prénom</label>
+                                        <label for="prenom" class="form-label required">Prénom</label>
                                         <input type="text" class="form-control" id="prenom" value="{{$employee->last_name}}" name='last_name'> 
                                     </div>
                                 </div>
                                 <div class="row g-3 mb-3">
                                     <div class="col">
-                                        <label for="contact" class="form-label">Contact</label>
+                                        <label for="contact" class="form-label required">Contact</label>
                                         <input type="text" class="form-control" id="contact" value="{{$employee->phone_number}}" name='phone_number'>
                                     </div>
                                     <div class="col">
-                                        <label for="mail" class="form-label">Email</label>
+                                        <label for="mail" class="form-label required">Email</label>
                                         <input type="email" class="form-control" id="mail" value="{{$employee->email}}" name='email'>
                                     </div>
                                 </div> 

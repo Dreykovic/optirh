@@ -10,16 +10,16 @@
                         @csrf
                         <input type="hidden" name="_method" value="PUT">
                         <div class="mb-3">
-                            <label for="name" class="form-label">Sigle</label>
+                            <label for="name" class="form-label required">Sigle</label>
                             <input type="text" value="{{ $department->name }}" class="form-control" id="name" name="name" {{ $department->name === 'DG' ? 'disabled' : '' }}>
                         </div>
                         <div class="mb-3">
-                            <label for="description" class="form-label">Définition</label>
+                            <label for="description" class="form-label required">Définition</label>
                             <input type="text" value="{{ $department->description }}" class="form-control" id="description" name='description' {{ $department->name === 'DG' ? 'disabled' : '' }}>
                         </div>
                       
                         <div class="mb-3">
-                            <label for="head" class="form-label">Directeur</label>
+                            <label for="head" class="form-label ">Directeur</label>
                             <input type="text" value="{{ $department->director ? $department->director->first_name . ' ' . $department->director->last_name : 'Non assigné' }}" class="form-control" id="head" name="director_id" disabled>
                         </div>
                         <div class="modal-footer">
