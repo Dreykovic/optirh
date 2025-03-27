@@ -60,7 +60,7 @@
                     </div>
                 </div>
             @endif
-            @can('')
+            @if (auth()->user()->can('GRH') || auth()->user()->hasRole('DG'))
                 <!-- Stats Cards -->
                 <div class="row g-3 mb-4">
                     <div class="col-md-3">
@@ -157,7 +157,8 @@
                         </div>
                     </div>
                 </div>
-            @endcan <!-- Recent Absences -->
+            @endif
+            <!-- Recent Absences -->
             <div class="row g-3 mb-4">
                 <div class="col-12">
                     <div class="card">
