@@ -24,16 +24,16 @@ class RedirectIfAuthenticated
 
                 // Priorité des redirections en fonction des permissions
                 // L'accès complet a la priorité la plus élevée
-                if ($user->can('access-all')) {
+                if ($user->can('access-un-all')) {
                     return redirect(RouteServiceProvider::GATEWAY);
                 }
 
                 // Ensuite, vérifier les autres permissions dans l'ordre de priorité
-                if ($user->can('access-opti-hr')) {
+                if ($user->can('access-un-opti-hr')) {
                     return redirect(RouteServiceProvider::OPTI_HR_HOME);
                 }
 
-                if ($user->can('access-recours')) {
+                if ($user->can('access-un-recours')) {
                     return redirect(RouteServiceProvider::RECOURS_HOME);
                 }
 

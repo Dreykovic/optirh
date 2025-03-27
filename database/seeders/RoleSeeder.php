@@ -82,9 +82,9 @@ class RoleSeeder extends Seeder
             'configurer-un-journal',
 
             // Modules
-            'access-opti-hr',
-            'access-recours',
-            'access-all',
+            'access-un-opti-hr',
+            'access-un-recours',
+            'access-un-all',
         ];
         $hr_permissions_list = [
             // compte
@@ -154,8 +154,8 @@ class RoleSeeder extends Seeder
             'configurer-un-journal',
 
             // Modules
-            'access-opti-hr',
-          
+            'access-un-opti-hr',
+
         ];
         $dsaf_permissions_list = [
             // compte
@@ -225,7 +225,7 @@ class RoleSeeder extends Seeder
             'configurer-un-journal',
 
             // Modules
-            'access-opti-hr',
+            'access-un-opti-hr',
         ];
         $dg_permissions_list = [
             // compte
@@ -296,7 +296,7 @@ class RoleSeeder extends Seeder
 
             // Modules
 
-            'access-all',
+            'access-un-all',
         ];
         $employee_permissions_list = [
             // compte
@@ -332,7 +332,7 @@ class RoleSeeder extends Seeder
             'configurer-un-journal',
 
             // Modules
-            'access-opti-hr',
+            'access-un-opti-hr',
         ];
 
         // Création des permission

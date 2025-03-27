@@ -29,7 +29,7 @@
                 <!-- Applications Grid -->
                 <div class="app-grid">
 
-                    @canany(['access-all', 'access-opti-hr'])
+                    @canany(['access-un-all', 'access-un-opti-hr'])
                         <!-- OptiHR App -->
                         <a href="{{ route('opti-hr.home') }}" class="app-card">
                             <div class="app-logo">
@@ -39,7 +39,7 @@
                             <p class="app-description">Gestion des ressources humaines</p>
                         </a>
                     @endcanany
-                    @canany(['access-all', 'access-recours'])
+                    @canany(['access-un-all', 'access-un-recours'])
                         <!-- Recours App -->
                         <a href="{{ route('recours.home') }}" class="app-card">
                             <div class="app-logo">

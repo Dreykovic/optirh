@@ -38,15 +38,15 @@ class RedirectToAppropriateHome
             $currentPath = $request->path();
 
             // Vérifier si l'utilisateur est sur la bonne route selon ses permissions
-            if ($currentPath === 'recours' && !$user->hasPermissionTo('access-recours') && !$user->hasPermissionTo('access-all')) {
+            if ($currentPath === 'recours' && !$user->hasPermissionTo('access-un-recours') && !$user->hasPermissionTo('access-un-all')) {
                 return $this->redirectBasedOnPermission($user);
             }
 
-            if ($currentPath === 'opti-hr' && !$user->hasPermissionTo('access-opti-hr') && !$user->hasPermissionTo('access-all')) {
+            if ($currentPath === 'opti-hr' && !$user->hasPermissionTo('access-un-opti-hr') && !$user->hasPermissionTo('access-un-all')) {
                 return $this->redirectBasedOnPermission($user);
             }
 
-            if ($currentPath === '/' && !$user->hasPermissionTo('access-all')) {
+            if ($currentPath === '/' && !$user->hasPermissionTo('access-un-all')) {
                 return $this->redirectBasedOnPermission($user);
             }
         }
@@ -56,15 +56,15 @@ class RedirectToAppropriateHome
 
     private function redirectBasedOnPermission($user)
     {
-        if ($user->hasPermissionTo('access-all')) {
+        if ($user->hasPermissionTo('access-un-all')) {
             return redirect(RouteServiceProvider::GATEWAY);
         }
 
-        if ($user->hasPermissionTo('access-opti-hr')) {
+        if ($user->hasPermissionTo('access-un-opti-hr')) {
             return redirect(RouteServiceProvider::OPTI_HR_HOME);
         }
 
-        if ($user->hasPermissionTo('access-recours')) {
+        if ($user->hasPermissionTo('access-un-recours')) {
             return redirect(RouteServiceProvider::RECOURS_HOME);
         }
 
