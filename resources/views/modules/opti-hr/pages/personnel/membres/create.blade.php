@@ -14,22 +14,22 @@
                             <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span class='mb-4'>Identité & Adresse</span></legende>
                                 <div class="row g-3 mb-3 mt-2">
                                     <div class="col-sm-6">
-                                        <label for="last_name" class="form-label">Nom</label>
+                                        <label for="last_name" class="form-label required">Nom</label>
                                         <input type="text" class="form-control" id="last_name" name='last_name' placeholder="">
                                     </div>
                                     <div class="col-sm-6">
-                                        <label for="first_name" class="form-label">Prénoms</label>
+                                        <label for="first_name" class="form-label required">Prénoms</label>
                                         <input type="text" class="form-control" id="first_name" name='first_name'>
                                     </div>
                                 </div>
                                 <!--  -->
                                 <div class="row g-3 mb-3">
                                     <div class="col-sm-6">
-                                        <label for="email" class="form-label">Email</label>
+                                        <label for="email" class="form-label required">Email</label>
                                         <input type="email" class="form-control" id="email" name='email' placeholder="">
                                     </div>
                                     <div class="col-sm-6">
-                                        <label for="phone_number" class="form-label">Contact</label>
+                                        <label for="phone_number" class="form-label required">Contact</label>
                                         <input type="text" class="form-control" id="phone_number" name='phone_number'>
                                     </div>
                                 </div>
@@ -40,7 +40,7 @@
                                         <input type="address1" class="form-control" id="address1" name='address1' placeholder="">
                                     </div>
                                     <div class="col-sm-6">
-                                        <label for="gender" class="form-label">Genre</label>
+                                        <label for="gender" class="form-label required">Genre</label>
                                         <select class="form-select" aria-label="Default select Project Category" id="gender" name='gender'>
                                             <option selected value='MALE'>Homme</option>
                                             <option value="FEMALE">Femme</option>
@@ -54,7 +54,7 @@
                                  <!--  -->
                                  <div class="row g-3 mb-3 mt-2">
                                     <div class="col-sm-6">
-                                        <label for="department" class="form-label">Direction</label>
+                                        <label for="department" class="form-label required">Direction</label>
                                         <select class="form-select" id="department" name="department_id" onchange="loadJobs(this.value)">
                                             <option selected>choisir</option>
                                             @forelse($departments as $dept)
@@ -66,7 +66,7 @@
 
                                     </div>
                                     <div class="col-sm-6">
-                                        <label for="job" class="form-label">Poste</label>
+                                        <label for="job" class="form-label required">Poste</label>
                                         <select class="form-select" id="job" name="job_id">
                                             <!-- <option selected>choisir</option> -->
                                         </select>
@@ -77,7 +77,7 @@
                                  <!--  -->
                                  <div class="row g-3 mb-3">
                                     <div class="col-sm-6">
-                                        <label for="date" class="form-label">Date Embauche</label>
+                                        <label for="date" class="form-label required">Date Embauche</label>
                                         <input type="date" class="form-control" id="date" name='begin_date' placeholder="">
                                     </div>
                                     <div class="col-sm-6">
@@ -88,7 +88,7 @@
                                 <!-- absence_balance -->
                                  <div class='row g-3 mb-3'>
                                         <div class="col-sm-6">
-                                            <label for="type" class="form-label">Type du contrat</label>
+                                            <label for="type" class="form-label required">Type du contrat</label>
                                             <select id="type" name='type' class="form-select" aria-label="Default select Project Category">
                                                     <option value='CDI'>CDI</option>
                                                     <option value='CDD'>CDD</option>
@@ -97,7 +97,7 @@
                                             </select>
                                         </div>
                                         <div class="col-sm-6">
-                                            <label for="balance" class="form-label">Solde congé</label>
+                                            <label for="balance" class="form-label required">Solde congé</label>
                                             <input type="text" class="form-control" id="balance" name='absence_balance' placeholder="">
                                         </div>
                                  </div>

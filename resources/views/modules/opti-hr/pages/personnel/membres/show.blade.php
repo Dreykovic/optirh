@@ -3,6 +3,18 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="{{ asset('assets/plugins/datatables/responsive.dataTables.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/plugins/datatables/dataTables.bootstrap5.min.css') }}">
+    <style>
+        .form-text {
+            font-size: 0.875em;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+
+        .required:after {
+            content: " *";
+            color: red;
+        }
+</style>
 @endsection
 @section('admin-content')
     <!-- Body: Body -->

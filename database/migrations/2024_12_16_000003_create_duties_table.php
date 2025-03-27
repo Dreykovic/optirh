@@ -20,8 +20,8 @@ return new class () extends Migration {
             $table->string('comment')->nullable();
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
             $table->enum('evolution', ['ON_GOING', 'ENDED', 'CANCEL','SUSPENDED','RESIGNED', 'DISMISSED'])->default('ON_GOING');
-            $table->foreignId('job_id')->constrained()->onDelete('cascade');
-            $table->foreignId('employee_id')->constrained()->onDelete('cascade');
+            $table->foreignId('job_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('employee_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });
     }

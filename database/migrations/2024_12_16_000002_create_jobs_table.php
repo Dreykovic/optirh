@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('title')->unique();
             $table->string('description');
-            $table->foreignId('department_id')->constrained()->onDelete('cascade');
+            $table->foreignId('department_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
 
             $table->foreignId('n_plus_one_job_id')->nullable()->constrained('jobs')->onDelete('set null');
