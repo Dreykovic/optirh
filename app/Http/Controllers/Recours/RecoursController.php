@@ -62,19 +62,19 @@ class RecoursController extends Controller
             if (!empty($statuses) && is_array($statuses)) {
                 $query->where(function ($q) use ($statuses) {
                     $q->whereIn(DB::raw('appeals.analyse_status::TEXT'), $statuses)
-                      ->orWhereIn(DB::raw('decisions.decision::TEXT'), $statuses);
+                        ->orWhereIn(DB::raw('decisions.decision::TEXT'), $statuses);
                 });
             }
 
             // Recherche textuelle
             if ($search) {
                 $query->where(function ($q) use ($search) {
-                    $q->whereRaw('LOWER(appeals.object) LIKE ?', ['%'.strtolower($search).'%'])
-                    ->orWhereRaw('LOWER(dacs.reference) LIKE ?', ['%'.strtolower($search).'%'])
-                    ->orWhereRaw('LOWER(decisions.decision) LIKE ?', ['%'.strtolower($search).'%'])
-                    ->orWhereRaw('LOWER(appeals.analyse_status) LIKE ?', ['%'.strtolower($search).'%'])
-                    ->orWhereRaw('LOWER(applicants.name) LIKE ?', ['%'.strtolower($search).'%'])
-                    ->orWhereRaw("TO_CHAR(appeals.deposit_date, 'YYYY-MM-DD') LIKE ?", ['%'.$search.'%']);
+                    $q->whereRaw('LOWER(appeals.object) LIKE ?', ['%' . strtolower($search) . '%'])
+                        ->orWhereRaw('LOWER(dacs.reference) LIKE ?', ['%' . strtolower($search) . '%'])
+                        ->orWhereRaw('LOWER(decisions.decision) LIKE ?', ['%' . strtolower($search) . '%'])
+                        ->orWhereRaw('LOWER(appeals.analyse_status) LIKE ?', ['%' . strtolower($search) . '%'])
+                        ->orWhereRaw('LOWER(applicants.name) LIKE ?', ['%' . strtolower($search) . '%'])
+                        ->orWhereRaw("TO_CHAR(appeals.deposit_date, 'YYYY-MM-DD') LIKE ?", ['%' . $search . '%']);
                 });
             }
 
@@ -131,15 +131,15 @@ class RecoursController extends Controller
     //         // Recherche textuelle
     //         if (!empty($search)) {
     //             $query->where(function ($q) use ($search) {
-    //                 $q->where('object', 'ILIKE', "%$search%") // `ILIKE` pour Postgres, `LIKE` pour MySQL
+    //                 $q->where('object', 'LIKE', "%$search%") // `LIKE` pour Postgres, `LIKE` pour MySQL
     //                 ->orWhereHas('dac', function ($subQuery) use ($search) {
-    //                     $subQuery->where('reference', 'ILIKE', "%$search%");
+    //                     $subQuery->where('reference', 'LIKE', "%$search%");
     //                 })
     //                 ->orWhereHas('applicant', function ($subQuery) use ($search) {
-    //                     $subQuery->where('name', 'ILIKE', "%$search%");
+    //                     $subQuery->where('name', 'LIKE', "%$search%");
     //                 })
     //                 ->orWhereHas('decision', function ($subQuery) use ($search) {
-    //                     $subQuery->where('decision', 'ILIKE', "%$search%");
+    //                     $subQuery->where('decision', 'LIKE', "%$search%");
     //                 })
     //                 ->orWhereRaw("TO_CHAR(deposit_date, 'YYYY-MM-DD') LIKE ?", ["%$search%"]);
     //             });
