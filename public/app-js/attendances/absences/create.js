@@ -77,11 +77,11 @@ let AppAbsenceRequestCreateManager = (function () {
 
     // Configurer Select2 pour améliorer les listes déroulantes
     function setupSelect2() {
-        $(absenceTypeSelect).select2({
-            placeholder: "Sélectionnez un type d'absence",
-            allowClear: true,
-            width: "100%",
-        });
+        AppModules.initSelect2(
+            "#absenceTypeSelect",
+            "Sélectionnez un type d'absence",
+            { allowClear: true, width: "100%" }
+        );
     }
 
     return {
