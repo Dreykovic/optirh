@@ -19,11 +19,121 @@ class DutyController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function add(Request $request)
+    // {
+
+    //     // Validation des données d'entrée
+
+    //     $validatedData = $request->validate([
+    //         'duration' => 'sometimes',
+    //         'begin_date' => 'required|date',
+    //         'type' => 'required|string|max:255',
+    //         'job_id' => 'required|exists:jobs,id',
+    //         'department_id' => 'required|exists:departments,id',
+    //         'employee_id' => 'required|exists:employees,id',
+    //         'absence_balance' => 'required|numeric|min:0',
+    //         // 'force_create' => 'sometimes|boolean',
+    //     ]);
+
+    //     // Récupération de la direction et du poste
+    //     $dept = Department::find($validatedData['department_id']);
+    //     $job = Job::find($validatedData['job_id']);
+    //     $old_employee = Employee::find($validatedData['employee_id']);
+
+    //     if (!$dept || !$job) {
+    //         return response()->json(['ok' => false, 'message' => 'Direction ou poste introuvable.'], 404);
+    //     }
+
+    //     // Vérification des conditions spécifiques à la direction
+    //     if ($dept->name === 'DG' && $dept->director_id !== null && $job->title === 'DG') {
+    //         if (empty($request->input('force_create'))) {
+    //             return response()->json([
+    //                 'ok' => false,
+    //                 'message' => 'La direction générale a déjà un directeur. Voulez-vous continuer ?',
+    //                 'requires_confirmation' => true,
+    //             ], 400);
+    //         }
+    //     } elseif ($dept->director_id !== null && $job->n_plus_one_job != null && $job->n_plus_one_job->title == 'DG') {
+    //         if (empty($request->input('force_create'))) {
+    //             return response()->json([
+    //                 'ok' => false,
+    //                 'message' => 'La direction a déjà un directeur. Voulez-vous continuer ?',
+    //                 'requires_confirmation' => true,
+    //             ], 400);
+    //         }
+    //     }
+
+    //     // Création de l'employé
+    //     if (empty($request->input('force_create'))) {
+    //         // Création du devoir (Duty)
+    //         Duty::create([
+    //             'job_id' => $validatedData['job_id'],
+    //             'duration' => $validatedData['duration'],
+    //             'begin_date' => $validatedData['begin_date'],
+    //             'type' => $validatedData['type'],
+    //             'employee_id' => $old_employee->id,
+    //             'absence_balance' => $validatedData['absence_balance'],
+    //         ]);
+
+    //         // Mise à jour du directeur de la direction si applicable
+    //         if ($dept->name === 'DG' || ($job->n_plus_one_job != null && $job->n_plus_one_job->title == 'DG')) {
+    //             $dept->update(['director_id' => $old_employee->id]);
+    //         }
+    //     }
+
+    //     if ($dept->name === 'DG' && $dept->director_id !== null && $job->title === 'DG') {
+    //         if ($request->input('force_create') == true) {
+    //             $old_header = Employee::find($dept->director_id);
+    //             $old_header->update(['status' => $this->status[1]]);
+
+    //             $old_header_duty = Duty::where('employee_id', $old_header->id)->where('evolution', $this->evolutions[0]);
+    //             $old_header_duty->update([
+    //                 'evolution' => $this->evolutions[1],
+    //                 'status' => $this->status[1],
+    //             ]);
+    //             // Création de l'employé
+
+    //             // Création du devoir (Duty)
+    //             Duty::create([
+    //                 'job_id' => $validatedData['job_id'],
+    //                 'duration' => $validatedData['duration'],
+    //                 'begin_date' => $validatedData['begin_date'],
+    //                 'type' => $validatedData['type'],
+    //                 'employee_id' => $old_employee->id,
+    //                 'absence_balance' => $validatedData['absence_balance'],
+    //             ]);
+    //             $dept->update(['director_id' => $old_employee->id]);
+    //         }
+    //     } elseif ($dept->director_id !== null && $job->n_plus_one_job != null && $job->n_plus_one_job->title == 'DG') {
+    //         if ($request->input('force_create') == true) {
+    //             $old_header = Employee::find($dept->director_id);
+    //             $old_header->update(['status' => $this->status[1]]);
+
+    //             $old_header_duty = Duty::where('employee_id', $old_header->id)->where('evolution', $this->evolutions[0]);
+    //             $old_header_duty->update([
+    //                 'evolution' => $this->evolutions[1],
+    //                 'status' => $this->status[1],
+    //             ]);
+    //             // Création de l'employé
+
+    //             // Création du devoir (Duty)
+    //             Duty::create([
+    //                 'job_id' => $validatedData['job_id'],
+    //                 'duration' => $validatedData['duration'],
+    //                 'begin_date' => $validatedData['begin_date'],
+    //                 'type' => $validatedData['type'],
+    //                 'employee_id' => $old_employee->id,
+    //                 'absence_balance' => $validatedData['absence_balance'],
+    //             ]);
+    //             $dept->update(['director_id' => $old_employee->id]);
+    //         }
+    //     }
+
+    //     return response()->json(['message' => 'Contrat créé avec succès.', 'ok' => true]);
+
+    // }
     public function add(Request $request)
     {
-
-        // Validation des données d'entrée
-
         $validatedData = $request->validate([
             'duration' => 'sometimes',
             'begin_date' => 'required|date',
@@ -32,107 +142,58 @@ class DutyController extends Controller
             'department_id' => 'required|exists:departments,id',
             'employee_id' => 'required|exists:employees,id',
             'absence_balance' => 'required|numeric|min:0',
-            // 'force_create' => 'sometimes|boolean',
         ]);
-
-        // Récupération de la direction et du poste
+    
         $dept = Department::find($validatedData['department_id']);
-        $job = Job::find($validatedData['job_id']);
-        $old_employee = Employee::find($validatedData['employee_id']);
-
+        $job = Job::with('n_plus_one_job')->find($validatedData['job_id']);
+        $employee = Employee::find($validatedData['employee_id']);
+    
         if (!$dept || !$job) {
             return response()->json(['ok' => false, 'message' => 'Direction ou poste introuvable.'], 404);
         }
-
-        // Vérification des conditions spécifiques à la direction
-        if ($dept->name === 'DG' && $dept->director_id !== null && $job->title === 'DG') {
-            if (empty($request->input('force_create'))) {
-                return response()->json([
-                    'ok' => false,
-                    'message' => 'La direction générale a déjà un directeur. Voulez-vous continuer ?',
-                    'requires_confirmation' => true,
-                ], 400);
-            }
-        } elseif ($dept->director_id !== null && $job->n_plus_one_job != null && $job->n_plus_one_job->title == 'DG') {
-            if (empty($request->input('force_create'))) {
-                return response()->json([
-                    'ok' => false,
-                    'message' => 'La direction générale a déjà un directeur. Voulez-vous continuer ?',
-                    'requires_confirmation' => true,
-                ], 400);
+    
+        $isDirectorRole = $dept->name === 'DG' && $job->title === 'DG';
+        $isSubDirectorRole = $dept->director_id !== null && $job->n_plus_one_job && $job->n_plus_one_job->title === 'DG';
+    
+        if (($isDirectorRole || $isSubDirectorRole) && !$request->boolean('force_create')) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Un directeur est déjà en fonction. Voulez-vous continuer ?',
+                'requires_confirmation' => true,
+            ], 400);
+        }
+    
+        if ($request->boolean('force_create') && ($isDirectorRole || $isSubDirectorRole)) {
+            $oldDirector = Employee::find($dept->director_id);
+            if ($oldDirector) {
+                $oldDirector->update(['status' => $this->status[1] ?? 'INACTIVE']);
+                Duty::where('employee_id', $oldDirector->id)
+                    ->where('evolution', $this->evolutions[0] ?? 'ON_GOING')
+                    ->update([
+                        'evolution' => $this->evolutions[1] ?? 'ENDED',
+                        'status' => $this->status[1] ?? 'INACTIVE',
+                    ]);
             }
         }
-
-        // Création de l'employé
-        if (empty($request->input('force_create'))) {
-            // Création du devoir (Duty)
-            Duty::create([
-                'job_id' => $validatedData['job_id'],
-                'duration' => $validatedData['duration'],
-                'begin_date' => $validatedData['begin_date'],
-                'type' => $validatedData['type'],
-                'employee_id' => $old_employee->id,
-                'absence_balance' => $validatedData['absence_balance'],
-            ]);
-
-            // Mise à jour du directeur de la direction si applicable
-            if ($dept->name === 'DG' || ($job->n_plus_one_job != null && $job->n_plus_one_job->title == 'DG')) {
-                $dept->update(['director_id' => $old_employee->id]);
-            }
+    
+        // Création du devoir
+        Duty::create([
+            'job_id' => $validatedData['job_id'],
+            'duration' => $validatedData['duration'],
+            'begin_date' => $validatedData['begin_date'],
+            'type' => $validatedData['type'],
+            'employee_id' => $employee->id,
+            'absence_balance' => $validatedData['absence_balance'],
+        ]);
+    
+        // Mise à jour du directeur de la direction
+        if ($isDirectorRole || $isSubDirectorRole) {
+            $dept->update(['director_id' => $employee->id]);
         }
-
-        if ($dept->name === 'DG' && $dept->director_id !== null && $job->title === 'DG') {
-            if ($request->input('force_create') == true) {
-                $old_header = Employee::find($dept->director_id);
-                $old_header->update(['status' => $this->status[1]]);
-
-                $old_header_duty = Duty::where('employee_id', $old_header->id)->where('evolution', $this->evolutions[0]);
-                $old_header_duty->update([
-                    'evolution' => $this->evolutions[1],
-                    'status' => $this->status[1],
-                ]);
-                // Création de l'employé
-
-                // Création du devoir (Duty)
-                Duty::create([
-                    'job_id' => $validatedData['job_id'],
-                    'duration' => $validatedData['duration'],
-                    'begin_date' => $validatedData['begin_date'],
-                    'type' => $validatedData['type'],
-                    'employee_id' => $old_employee->id,
-                    'absence_balance' => $validatedData['absence_balance'],
-                ]);
-                $dept->update(['director_id' => $old_employee->id]);
-            }
-        } elseif ($dept->director_id !== null && $job->n_plus_one_job != null && $job->n_plus_one_job->title == 'DG') {
-            if ($request->input('force_create') == true) {
-                $old_header = Employee::find($dept->director_id);
-                $old_header->update(['status' => $this->status[1]]);
-
-                $old_header_duty = Duty::where('employee_id', $old_header->id)->where('evolution', $this->evolutions[0]);
-                $old_header_duty->update([
-                    'evolution' => $this->evolutions[1],
-                    'status' => $this->status[1],
-                ]);
-                // Création de l'employé
-
-                // Création du devoir (Duty)
-                Duty::create([
-                    'job_id' => $validatedData['job_id'],
-                    'duration' => $validatedData['duration'],
-                    'begin_date' => $validatedData['begin_date'],
-                    'type' => $validatedData['type'],
-                    'employee_id' => $old_employee->id,
-                    'absence_balance' => $validatedData['absence_balance'],
-                ]);
-                $dept->update(['director_id' => $old_employee->id]);
-            }
-        }
-
+    
         return response()->json(['message' => 'Contrat créé avec succès.', 'ok' => true]);
-
     }
-
+    
     public function index()
     {
         $employees = DB::table('employees')
@@ -198,7 +259,7 @@ class DutyController extends Controller
                     'departments.name as department_name'
                 )
                 ->where('duties.evolution', '=', $this->evolutions[0])
-                // ->where('employees.status', '=', $this->status[0])
+                //->where('employees.status', '=', $this->status[0])
                 ->where('duties.status', '=', $this->status[0])
                 ->orderBy('duties.created_at', 'desc');
         }

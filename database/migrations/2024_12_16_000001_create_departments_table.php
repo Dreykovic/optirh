@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->foreignId('director_id')
             ->nullable()
             ->constrained('employees')
-            ->onDelete('set null');
+            ->onUpdate('cascade')->onDelete('cascade');
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
 
             $table->timestamps();
