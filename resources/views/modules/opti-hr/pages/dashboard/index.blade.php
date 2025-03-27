@@ -60,7 +60,7 @@
                     </div>
                 </div>
             @endif
-            @if (auth()->user()->can('GRH') || auth()->user()->hasRole('DG'))
+            @if (auth()->user()->hasRole('GRH') || auth()->user()->hasRole('DG'))
                 <!-- Stats Cards -->
                 <div class="row g-3 mb-4">
                     <div class="col-md-3">
@@ -180,40 +180,64 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+
                                         @forelse($recentAbsences as $absence)
-                                            <tr>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
+                                            @php
+                                                $employee = $absence->duty->employee;
+                                                $absence_type = $absence->absence_type;
+                                            @endphp
+                                            @if (auth()->user()->employee_id === $absence->duty->employee_id ||
+                                                    (auth()->user()->employee_id !== $absence->duty->employee_id &&
+                                                        in_array($absence->level, ['ONE', 'TWO', 'THREE']) &&
+                                                        auth()->user()->hasRole('GRH')) ||
+                                                    (auth()->user()->employee_id !== $absence->duty->employee_id &&
+                                                        in_array($absence->level, ['ONE', 'TWO', 'THREE']) &&
+                                                        auth()->user()->hasRole('DSAF')) ||
+                                                    (auth()->user()->employee_id !== $absence->duty->employee_id &&
+                                                        in_array($absence->level, ['TWO', 'THREE']) &&
+                                                        auth()->user()->hasRole('DG')) ||
+                                                    ($absence->stage !== 'CANCELLED' &&
+                                                        in_array($absence->level, ['ZERO', 'ONE', 'TWO', 'THREE']) &&
+                                                        auth()->user()->employee->duties->firstWhere('evolution', 'ON_GOING')->job_id ===
+                                                            $absence->duty->job->n_plus_one_job_id) ||
+                                                    ($absence->stage !== 'CANCELLED' &&
+                                                        in_array($absence->level, ['ZERO', 'ONE', 'TWO', 'THREE']) &&
+                                                        auth()->user()->hasRole('GRH') &&
+                                                        $absence->duty->job->n_plus_one_job_id === null))
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
 
 
-                                                        <x-employee-icon :employee="$absence->duty->employee" />
-                                                        <div>{{ $absence->duty->employee->first_name }}
-                                                            {{ $absence->duty->employee->last_name }}</div>
-                                                    </div>
-                                                </td>
-                                                <td>{{ $absence->absence_type->label ?? 'N/A' }}</td>
-                                                <td>{{ $absence->start_date->format('d M Y') }}</td>
-                                                <td>{{ $absence->end_date->format('d M Y') }}</td>
-                                                <td>{{ $absence->requested_days }}</td>
-                                                <td>
-                                                    @if ($absence->stage == 'PENDING')
-                                                        <span class="badge bg-warning">En attente</span>
-                                                    @elseif($absence->stage == 'APPROVED')
-                                                        <span class="badge bg-success">Approuvée</span>
-                                                    @elseif($absence->stage == 'REJECTED')
-                                                        <span class="badge bg-danger">Rejetée</span>
-                                                    @else
-                                                        <span class="badge bg-secondary">{{ $absence->stage }}</span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @include('modules.opti-hr.pages.attendances.absences.actions')
+                                                            <x-employee-icon :employee="$absence->duty->employee" />
+                                                            <div>{{ $absence->duty->employee->first_name }}
+                                                                {{ $absence->duty->employee->last_name }}</div>
+                                                        </div>
+                                                    </td>
+                                                    <td>{{ $absence->absence_type->label ?? 'N/A' }}</td>
+                                                    <td>{{ $absence->start_date->format('d M Y') }}</td>
+                                                    <td>{{ $absence->end_date->format('d M Y') }}</td>
+                                                    <td>{{ $absence->requested_days }}</td>
+                                                    <td>
+                                                        @if ($absence->stage == 'PENDING')
+                                                            <span class="badge bg-warning">En attente</span>
+                                                        @elseif($absence->stage == 'APPROVED')
+                                                            <span class="badge bg-success">Approuvée</span>
+                                                        @elseif($absence->stage == 'REJECTED')
+                                                            <span class="badge bg-danger">Rejetée</span>
+                                                        @else
+                                                            <span class="badge bg-secondary">{{ $absence->stage }}</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @include('modules.opti-hr.pages.attendances.absences.actions')
 
 
-                                                </td>
-                                                @include('modules.opti-hr.pages.attendances.absences.request.comment')
-                                                @include('modules.opti-hr.pages.attendances.absences.details')
-                                            </tr>
+                                                    </td>
+                                                    @include('modules.opti-hr.pages.attendances.absences.request.comment')
+                                                    @include('modules.opti-hr.pages.attendances.absences.details')
+                                                </tr>
+                                            @endif
                                         @empty
                                             <tr>
                                                 <td colspan="7" class="text-center">Aucune demande d'absence récente
@@ -234,20 +258,22 @@
 
             <!-- Absence Calendar and Documents -->
             <div class="row g-3">
-                <div class="col-md-8">
-                    <div class="card h-100">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0">Calendrier des absences</h5>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="showAllAbsences">
-                                <label class="form-check-label" for="showAllAbsences">Afficher tout</label>
+                @if (auth()->user()->hasRole('GRH') || auth()->user()->hasRole('DG'))
+                    <div class="col-md-8">
+                        <div class="card h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">Calendrier des absences</h5>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="showAllAbsences">
+                                    <label class="form-check-label" for="showAllAbsences">Afficher tout</label>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="absenceCalendar"></div>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <div id="absenceCalendar"></div>
-                        </div>
                     </div>
-                </div>
+                @endif
                 <div class="col-md-4">
                     <div class="card h-100">
                         <div class="card-header">
@@ -256,28 +282,45 @@
                         <div class="card-body">
                             <div class="list-group list-group-flush">
                                 @forelse($recentDocuments as $document)
-                                    <a href="{{ route('documents.requests', ['status' => 'all', 'search', $document->duty->employee->last_mane]) }}"
-                                        class="list-group-item list-group-item-action">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <h6 class="mb-1">{{ $document->document_type->label ?? 'N/A' }}</h6>
-                                            <small>{{ $document->created_at->diffForHumans() }}</small>
-                                        </div>
-                                        <p class="mb-1">{{ $document->duty->employee->first_name }}
-                                            {{ $document->duty->employee->last_name }}</p>
-                                        <small class="text-muted">
-                                            @if ($document->stage == 'PENDING')
-                                                <span class="badge bg-secondary">En attente</span>
-                                            @elseif($document->stage == 'APPROVED')
-                                                <span class="badge bg-success">Approuvé</span>
-                                            @elseif($document->stage == 'REJECTED')
-                                                <span class="badge bg-danger">Rejeté</span>
-                                            @elseif($document->stage == 'IN_PROGRESS')
-                                                <span class="badge bg-warning">En cours de traitement</span>
-                                            @else
-                                                <span class="badge bg-secondary">{{ $document->stage }}</span>
-                                            @endif
-                                        </small>
-                                    </a>
+                                    @php
+                                        $employee = $document->duty->employee;
+                                        $document_type = $document->document_type;
+                                    @endphp
+                                    @if (auth()->user()->employee_id === $document->duty->employee_id ||
+                                            ($document->stage !== 'CANCELLED' &&
+                                                auth()->user()->employee_id !== $document->duty->employee_id &&
+                                                in_array($document->level, ['ZERO', 'ONE', 'TWO', 'THREE']) &&
+                                                auth()->user()->hasRole('GRH')) ||
+                                            ($document->stage !== 'CANCELLED' &&
+                                                auth()->user()->employee_id !== $document->duty->employee_id &&
+                                                in_array($document->level, ['ONE', 'TWO', 'THREE']) &&
+                                                auth()->user()->hasRole('DSAF')) ||
+                                            (auth()->user()->employee_id !== $document->duty->employee_id &&
+                                                in_array($document->level, ['ONE', 'TWO', 'THREE']) &&
+                                                auth()->user()->hasRole('DG')))
+                                        <a href="{{ route('documents.requests', ['status' => 'all', 'search', $document->duty->employee->last_mane]) }}"
+                                            class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">{{ $document->document_type->label ?? 'N/A' }}</h6>
+                                                <small>{{ $document->created_at->diffForHumans() }}</small>
+                                            </div>
+                                            <p class="mb-1">{{ $document->duty->employee->first_name }}
+                                                {{ $document->duty->employee->last_name }}</p>
+                                            <small class="text-muted">
+                                                @if ($document->stage == 'PENDING')
+                                                    <span class="badge bg-secondary">En attente</span>
+                                                @elseif($document->stage == 'APPROVED')
+                                                    <span class="badge bg-success">Approuvé</span>
+                                                @elseif($document->stage == 'REJECTED')
+                                                    <span class="badge bg-danger">Rejeté</span>
+                                                @elseif($document->stage == 'IN_PROGRESS')
+                                                    <span class="badge bg-warning">En cours de traitement</span>
+                                                @else
+                                                    <span class="badge bg-secondary">{{ $document->stage }}</span>
+                                                @endif
+                                            </small>
+                                        </a>
+                                    @endif
                                 @empty
                                     <div class="text-center py-3">
                                         <p class="mb-0">Aucune demande de document récente</p>
