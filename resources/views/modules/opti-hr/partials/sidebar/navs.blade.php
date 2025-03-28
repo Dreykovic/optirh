@@ -17,7 +17,7 @@
     <li class="collapsed">
         <a class="m-link {{ Str::startsWith(request()->path(), 'opti-hr/attendances') ? 'active' : '' }}"
             data-bs-toggle="collapse" data-bs-target="#attendances-navs" href="#">
-            <i class="icofont-calendar fs-5"></i> <span>Attendances</span> <span
+            <i class="icofont-calendar fs-5"></i> <span>Absences</span> <span
                 class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
         <!-- Menu: Sub menu ul -->
         <ul class="sub-menu collapse {{ Str::startsWith(request()->path(), 'opti-hr/attendances') ? 'show' : '' }}"
