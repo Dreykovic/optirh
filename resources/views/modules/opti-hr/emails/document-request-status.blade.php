@@ -40,7 +40,7 @@
                         <div style="padding-bottom: 30px">
                             Nous souhaitons vous informer que votre demande de document
                             "{{ $documentType }}" soumise le
-                            {{ $documentRequest->date_of_application->format('d/m/Y') }} a été
+                            @formatDateOnly($documentRequest->date_of_application)a été
                             {{ $status }}.<br><br>
 
                             @if ($status == 'approuvée')
