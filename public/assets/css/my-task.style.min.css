@@ -16264,9 +16264,9 @@
     --hc-bg-color: #eaf2ec; 
     
     --primary-color: #629d72; /* Vert plus profond et apaisé */
-    --success-color: #7acb7a; /* Vert validation (plus lumineux et identifiable) */
+    --success-color: #82b690; /* Aligné avec color-600 pour cohérence */
     --secondary-color: #d4a05e; /* Beige doré pour éviter la confusion avec Warning */
-    --warning-color: #f0932b; /* Orange ambré plus intense */
+    --warning-color: #ff7b00; /* Orange plus vif et contrasté */
     --error-color: #f44336; 
     --info-color: #2196f3; 
   }
@@ -16279,7 +16279,7 @@
     --color-300: #3c5543; 
     --color-400: #4a7f58; 
     --color-500: #629d72; /* Primary (plus foncé) */
-    --color-600: #7acb7a; /* Success (plus vif) */
+    --color-600: #82b690; /* Success (plus vif) */
     --color-700: #b5d4b8; 
     --color-800: #eaf2ec; 
     --color-900: #f5f9f6; 
@@ -16295,9 +16295,9 @@
     --hc-bg-color: #3c5543; 
     
     --primary-color: #629d72; /* Vert principal */
-    --success-color: #7acb7a; /* Vert vif pour le succès */
+    --success-color: #82b690; /* Aligné avec color-600 pour cohérence */
     --secondary-color: #d4a05e; /* Beige doré pour éviter la confusion avec le warning */
-    --warning-color: #f0932b; /* Orange intense */
+    --warning-color: #ff7b00; /* Orange plus vif et contrasté */
     --error-color: #f44336; 
     --info-color: #2196f3; 
   }
@@ -16318,11 +16318,11 @@
   
   [class='theme-indigo'] {
     --primary-color: #629d72; 
-    --success-color: #7acb7a; 
+    --success-color: #82b690; /* Aligné avec color-600 */
     --secondary-color: #d4a05e; 
     --warning-color: #f0932b; 
     --chart-color1: #4a7f58; 
-    --chart-color2: #f0932b; 
+    --chart-color2: #ff7b00; 
     --chart-color3: #2196f3; 
     --chart-color4: #f44336; 
     --chart-color5: #ff9800; 
@@ -16335,8 +16335,6 @@
       #f5f9f6
     );
   }
-  
-  
   .secondary-color {
     color: var(--secondary-color);
   }
