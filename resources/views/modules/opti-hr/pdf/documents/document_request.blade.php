@@ -1,347 +1,111 @@
+<!DOCTYPE html>
 <html>
 
 <head>
     <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
     <style type="text/css">
-        ol {
-            margin: 0;
-            padding: 0;
-        }
-
-        table td,
-        table th {
-            padding: 0;
-        }
-
-        .c0 {
-            padding-top: 0pt;
-            padding-bottom: 10pt;
-            line-height: 1.1500000000000001;
-            orphans: 2;
-            widows: 2;
-            text-align: left;
-            height: 11pt;
-        }
-
-        .c2 {
-            padding-top: 0pt;
-            padding-bottom: 10pt;
-            line-height: 1.1500000000000001;
-            orphans: 2;
-            widows: 2;
-            text-align: justify;
-            height: 11pt;
-        }
-
-        .c14 {
-            padding-top: 0pt;
-            padding-bottom: 0pt;
-            line-height: 1.1500000000000001;
-            orphans: 2;
-            widows: 2;
-            text-align: justify;
-            height: 11pt;
-        }
-
-        .c4 {
-            color: #000000;
-            font-weight: 400;
-            text-decoration: none;
-            vertical-align: baseline;
+        body {
+            font-family: "Lucida Bright", serif;
             font-size: 14pt;
-            font-family: "Lucida Bright";
-            font-style: normal;
-        }
-
-        .c12 {
-            padding-top: 0pt;
-            text-indent: 241pt;
-            padding-bottom: 10pt;
-            line-height: 1.1500000000000001;
-            orphans: 2;
-            widows: 2;
-            text-align: left;
-        }
-
-        .c1 {
-            color: #000000;
-            font-weight: 700;
-            text-decoration: none;
-            vertical-align: baseline;
-            font-size: 12pt;
-            font-family: "Lucida Bright";
-            font-style: normal;
-        }
-
-        .c8 {
-            padding-top: 0pt;
-            padding-bottom: 10pt;
-            line-height: 1.1500000000000001;
-            orphans: 2;
-            widows: 2;
-            text-align: justify;
-        }
-
-        .c9 {
-            padding-top: 0pt;
-            padding-bottom: 10pt;
-            line-height: 1.1500000000000001;
-            orphans: 2;
-            widows: 2;
-            text-align: center;
-        }
-
-        .c11 {
-            -webkit-text-decoration-skip: none;
-            color: #000000;
-            text-decoration: underline;
-            vertical-align: baseline;
-            text-decoration-skip-ink: none;
-            font-style: normal;
-        }
-
-        .c15 {
-            padding-top: 0pt;
-            padding-bottom: 10pt;
-            line-height: 1.1500000000000001;
-            orphans: 2;
-            widows: 2;
-            text-align: left;
-        }
-
-        .c7 {
-            padding-top: 18pt;
-            padding-bottom: 18pt;
             line-height: 1.5;
-            orphans: 2;
-            widows: 2;
-            text-align: justify;
-        }
-
-        .c5 {
-            vertical-align: super;
-            font-size: 14pt;
-            font-family: "Lucida Bright";
-            font-weight: 400;
-        }
-
-        .c6 {
-            font-size: 14pt;
-            font-weight: 700;
-            font-family: "Lucida Bright";
-        }
-
-        .c3 {
+            color: #000000;
+            margin: 0;
+            padding: 40px;
             background-color: #ffffff;
-            max-width: 453.6pt;
-            padding: 70.8pt 70.8pt 70.8pt 70.8pt;
         }
 
-        .c10 {
-            font-size: 14pt;
-            font-weight: 400;
-            font-family: "Lucida Bright";
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 50px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .c13 {
-            font-weight: 400;
-            font-family: "Lucida Bright";
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
         }
 
         .title {
-            padding-top: 24pt;
-            color: #000000;
-            font-weight: 700;
-            font-size: 36pt;
-            padding-bottom: 6pt;
-            font-family: "Calibri";
-            line-height: 1.1500000000000001;
-            page-break-after: avoid;
-            orphans: 2;
-            widows: 2;
-            text-align: left;
+            font-size: 22pt;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
         }
 
-        .subtitle {
-            padding-top: 18pt;
-            color: #666666;
-            font-size: 24pt;
-            padding-bottom: 4pt;
-            font-family: "Georgia";
-            line-height: 1.1500000000000001;
-            page-break-after: avoid;
-            font-style: italic;
-            orphans: 2;
-            widows: 2;
-            text-align: left;
+        .separator {
+            text-align: center;
+            font-weight: bold;
+            margin: 20px 0;
         }
 
-        li {
-            color: #000000;
-            font-size: 11pt;
-            font-family: "Calibri";
+        .content {
+            text-align: justify;
+            margin-bottom: 30px;
         }
 
-        p {
-            margin: 0;
-            color: #000000;
-            font-size: 11pt;
-            font-family: "Calibri";
+        .bold {
+            font-weight: bold;
         }
 
-        h1 {
-            padding-top: 24pt;
-            color: #000000;
-            font-weight: 700;
-            font-size: 24pt;
-            padding-bottom: 6pt;
-            font-family: "Calibri";
-            line-height: 1.1500000000000001;
-            page-break-after: avoid;
-            orphans: 2;
-            widows: 2;
-            text-align: left;
+        .date {
+            text-align: right;
+            margin-right: 80px;
+            margin-bottom: 60px;
         }
 
-        h2 {
-            padding-top: 18pt;
-            color: #000000;
-            font-weight: 700;
-            font-size: 18pt;
-            padding-bottom: 4pt;
-            font-family: "Calibri";
-            line-height: 1.1500000000000001;
-            page-break-after: avoid;
-            orphans: 2;
-            widows: 2;
-            text-align: left;
+        .signature {
+            text-align: right;
+            margin-right: 80px;
+            text-decoration: underline;
+            font-weight: bold;
         }
 
-        h3 {
-            padding-top: 14pt;
-            color: #000000;
-            font-weight: 700;
-            font-size: 14pt;
-            padding-bottom: 4pt;
-            font-family: "Calibri";
-            line-height: 1.1500000000000001;
-            page-break-after: avoid;
-            orphans: 2;
-            widows: 2;
-            text-align: left;
-        }
-
-        h4 {
-            padding-top: 12pt;
-            color: #000000;
-            font-weight: 700;
-            font-size: 12pt;
-            padding-bottom: 2pt;
-            font-family: "Calibri";
-            line-height: 1.1500000000000001;
-            page-break-after: avoid;
-            orphans: 2;
-            widows: 2;
-            text-align: left;
-        }
-
-        h5 {
-            padding-top: 11pt;
-            color: #000000;
-            font-weight: 700;
-            font-size: 11pt;
-            padding-bottom: 2pt;
-            font-family: "Calibri";
-            line-height: 1.1500000000000001;
-            page-break-after: avoid;
-            orphans: 2;
-            widows: 2;
-            text-align: left;
-        }
-
-        h6 {
-            padding-top: 10pt;
-            color: #000000;
-            font-weight: 700;
-            font-size: 10pt;
-            padding-bottom: 2pt;
-            font-family: "Calibri";
-            line-height: 1.1500000000000001;
-            page-break-after: avoid;
-            orphans: 2;
-            widows: 2;
-            text-align: left;
+        .logo {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 
-<body class="c3 doc-content">
-    <p class="c2"><span class="c1"></span></p>
-    <p class="c2"><span class="c1"></span></p>
-    <p class="c2"><span class="c1"></span></p>
-    <p class="c14"><span class="c1"></span></p>
-    <p class="c2"><span class="c1"></span></p>
-    <p class="c8">
-        <span
-            style="
-                    overflow: hidden;
-                    display: inline-block;
-                    margin: 0px 0px;
-                    border: 0px solid #000000;
-                    transform: rotate(0rad) translateZ(0px);
-                    -webkit-transform: rotate(0rad) translateZ(0px);
-                    width: 654px;
-                    height: 58px;
-                "><img
-                alt="" src="{{ public_path('assets/img/document-title.png') }}"
-                style="
-                        width: 654px;
-                        height: 58px;
-                        margin-left: 0px;
-                        margin-top: 0px;
-                        transform: rotate(0rad) translateZ(0px);
-                        -webkit-transform: rotate(0rad) translateZ(0px);
-                    "
-                title="" /></span>
-    </p>
-    <p class="c9">
-        <span class="c1">------------------------------------------</span>
-    </p>
-    <p class="c2"><span class="c1"></span></p>
-    <p class="c7">
-        <span class="c10">Je soussign&eacute;, {{ "{$dg->last_name} {$dg->first_name}" }}, {{ $dgJob->description }}
-            de l&rsquo;Autorit&eacute; de
-            r&eacute;gulation de la commande publique (ARCOP), atteste que </span><span class="c6">Monsieur
-            {{ " {$documentRequest->duty->employee->last_name} {$documentRequest->duty->employee->first_name}" }}
-        </span><span class="c10">travaille en qualit&eacute;
-            de{{ " {$documentRequest->duty->job->title} à la {$documentRequest->duty->job->department->description}" }}
-            de l&rsquo;ARCOP
-            depuis le {{ formatDateRange($documentRequest->start_date, $documentRequest->end_date) }} &agrave; ce
-            jour.</span>
-    </p>
-    <p class="c7" id="h.gjdgxs">
-        <span class="c10">En foi de quoi, la pr&eacute;sente attestation est
-            d&eacute;livr&eacute;e &agrave; </span><span class="c6">Monsieur
-            {{ " {$documentRequest->duty->employee->last_name} {$documentRequest->duty->employee->first_name}" }}
-        </span><span class="c4">pour
-            servir et valoir ce que de droit.</span>
-    </p>
-    <p class="c12">
-        <span class="c4">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Fait &agrave;
-            Lom&eacute;,
-            @formatDateOnly($documentRequest->date_of_approval)
-        </span>
-    </p>
-    <p class="c0"><span class="c4"></span></p>
-    <p class="c0"><span class="c4"></span></p>
-    <p class="c15">
-        <span class="c13">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span
-            class="c6 c11">{{ "{$dg->last_name} {$dg->first_name}" }}</span>
-    </p>
+<body>
+    <div class="container">
+        <div class="header">
+            <!-- Logo placeholder -->
+            <img class="logo" src="{{ public_path('assets/img/logo.png') }}" alt="Logo ARCOP" />
+            <div class="title">{{ strtoupper($documentRequest->document_type->label) }}</div>
+        </div>
+
+        <div class="separator">------------------------------------------</div>
+
+        <div class="content">
+            Je soussigné, <span class="variable">{{ "{$dg->last_name} {$dg->first_name}" }}</span>, <span
+                class="variable">{{ $dgJob->description }}</span> de l'Autorité de régulation de la commande publique
+            (ARCOP), atteste que <span class="bold">Monsieur <span
+                    class="variable">{{ " {$documentRequest->duty->employee->last_name} {$documentRequest->duty->employee->first_name}" }}</span></span>
+            travaille en qualité de <span
+                class="variable">{{ " {$documentRequest->duty->job->title} à la {$documentRequest->duty->job->department->description}" }}</span>
+            de l'ARCOP depuis le <span
+                class="variable">{{ formatDateRange($documentRequest->start_date, $documentRequest->end_date) }}</span>
+            à ce jour.
+        </div>
+
+        <div class="content">
+            En foi de quoi, la présente attestation est délivrée à <span class="bold">Monsieur <span
+                    class="variable">{{ " {$documentRequest->duty->employee->last_name} {$documentRequest->duty->employee->first_name}" }}</span></span>
+            pour servir et valoir ce que de droit.
+        </div>
+
+        <div class="date">
+            Fait à Lomé, <span class="variable">@formatDateOnly($documentRequest->date_of_approval)</span>
+        </div>
+
+        <div class="signature">
+            <span class="variable">{{ "{$dg->last_name} {$dg->first_name}" }}</span>
+        </div>
+    </div>
 </body>
 
 </html>
