@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use App\Mail\DocumentRequestCreated;
 use App\Mail\DocumentRequestStatus;
+use Carbon\Carbon;
 
 class DocumentRequestController extends Controller
 {
@@ -237,7 +238,7 @@ class DocumentRequestController extends Controller
 
             if ($currentEmployeeDuty->duration) {
                 // Calculer la date de fin théorique du duty
-                $dutyEndDate = \Carbon\Carbon::parse($currentEmployeeDuty->begin_date)
+                $dutyEndDate = Carbon::parse($currentEmployeeDuty->begin_date)
                     ->addMonths($currentEmployeeDuty->duration);
 
                 // Si la date du jour dépasse la fin théorique du duty, on prend la date de fin du duty
@@ -360,6 +361,10 @@ class DocumentRequestController extends Controller
 
                 break;
         }
+        if (!$documentRequest->date_of_application instanceof Carbon) {
+            $documentRequest->date_of_application = Carbon::parse($documentRequest->date_of_application);
+        }
+
         if ($toEmployee) {
 
             $this->notifyRequestor($documentRequest);
@@ -415,7 +420,9 @@ class DocumentRequestController extends Controller
         $documentRequest->stage = 'REJECTED';
 
         $documentRequest->save();
-        if ($documentRequest->status == 'REJECTED') {
+
+
+        if ($documentRequest->stage == 'REJECTED') {
             # code...
             $this->notifyRequestor($documentRequest);
         }
@@ -434,11 +441,14 @@ class DocumentRequestController extends Controller
     // Dans votre controller ou service
     public function notifyRequestor(DocumentRequest $documentRequest)
     {
-        $status = $documentRequest->status === 'APPROVED' ? 'approuvée' : 'refusée';
-        $url = route('documents.requests', $documentRequest->status === 'APPROVED' ? 'APPROVED' : 'REJECTED');
+        $status = $documentRequest->stage === 'APPROVED' ? 'approuvée' : 'refusée';
+        $url = route('documents.requests', $documentRequest->stage === 'APPROVED' ? 'APPROVED' : 'REJECTED');
+        if (!$documentRequest->date_of_application instanceof Carbon) {
+            $documentRequest->date_of_application = Carbon::parse($documentRequest->date_of_application);
+        }
 
         // Récupérer l'utilisateur qui a fait la demande
-        $requestor = $documentRequest->duty->employee->user;
+        $requestor = $documentRequest->duty->employee->users->first();
 
         Mail::send(new DocumentRequestStatus(
             receiver: $requestor,
