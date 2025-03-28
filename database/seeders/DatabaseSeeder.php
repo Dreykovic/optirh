@@ -177,7 +177,7 @@ class DatabaseSeeder extends Seeder
          * Duty.
          */
         $dgDuty = Duty::create([
-            'duration' => '2 months',
+            'duration' => 12,
             'begin_date' => '2023-11-20',
             'type' => 'Full-Time',
             'status' => 'ACTIVATED',
@@ -185,7 +185,7 @@ class DatabaseSeeder extends Seeder
             'employee_id' => $directorEmployee->id, // Associe à l'employé avec l'ID 5
         ], );
         $rhDuty = Duty::create([
-            'duration' => '2 months',
+            'duration' => 12,
             'begin_date' => '2023-11-20',
             'type' => 'Full-Time',
             'status' => 'ACTIVATED',
@@ -193,7 +193,7 @@ class DatabaseSeeder extends Seeder
             'employee_id' => $dsafEmployee->id, // Associe à l'employé avec l'ID 5
         ], );
         $rhDuty = Duty::create([
-            'duration' => '2 months',
+            'duration' => 12,
             'begin_date' => '2023-11-20',
             'type' => 'Full-Time',
             'status' => 'ACTIVATED',

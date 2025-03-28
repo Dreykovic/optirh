@@ -12,10 +12,10 @@ return new class () extends Migration {
     {
         Schema::create('duties', function (Blueprint $table) {
             $table->id();
-            $table->string('duration')->nullable();
+            $table->integer('duration')->default(12);
 
             $table->date('begin_date');
-            $table->integer("absence_balance")->default(0);
+            $table->integer("absence_balance")->default(30);
             $table->string('type')->nullable();
             $table->string('comment')->nullable();
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
