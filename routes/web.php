@@ -94,6 +94,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/pay', [EmployeeController::class, 'index'])->name('membres.pay');
             Route::get('/pay-form/v1', [EmployeeController::class, 'pay'])->name('membres.pay-form.v1');
             Route::get('/pay-form', [EmployeeController::class, 'paycode'])->name('membres.pay-form');
+            Route::get('/payroll', [EmployeeController::class, 'payroll'])->name('membres.payroll');
             Route::get('/contrats', [DutyController::class, 'index'])->name('contrats.index');
 
             Route::get('/pages', [EmployeeController::class, 'pages'])->name('membres.pages');

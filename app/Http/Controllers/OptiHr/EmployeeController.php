@@ -735,6 +735,9 @@ class EmployeeController extends Controller
         return response()->json($employees);
     }
     
+    function payroll(){
+        return view('modules.opti-hr.pages.personnel.membres.payroll');
+    }
     
     function pages(){
         $departments = Department::orderBy('created_at', 'desc')->get();
