@@ -1,17 +1,57 @@
 
 @extends('modules.opti-hr.pages.base')
 @section('plugins-style')
+<style>
+    .form-text {
+            font-size: 0.875em;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+
+        .required:after {
+            content: " *";
+            color: red;
+        }
+</style>
 @endsection
 @section('admin-content')
 
-    <h2>Envoi des bulletins de paie</h2>
+<div class="card m-auto p-2" style="width: 40rem;">
+  <div class="card-body">
+    <h5 class="card-title">Envoi des bulletins de paie</h5>
+    <h6 class="card-subtitle mb-2 text-muted">Dernier Envoi : {{$lastUploadDate}}</h6>
+    <input type="file" class='form-control mt-4 ' id="pdfInput" accept="application/pdf">
+    <div class="form-text required mb-4">Chargez le bullettin de paie Sage Paie</div>
+
+        <button class='btn btn-primary w-auto text-uppercase' onclick="processPDF()">
+            <span class="normal-status">
+                Envoyer
+            </span>
+            <span class="indicateur d-none">
+                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                Un Instant...
+            </span>
+
+        </button>
+  </div>
+</div>
+
+    <!-- <h2>Envoi des bulletins de paie</h2>
     <div class='d-flex'>
         <input type="file" class='form-control' id="pdfInput" accept="application/pdf">
-        <button class='btn btn-primary' onclick="processPDF()">Envoyer</button>
-    </div>
-    
- 
+        <button class='btn btn-primary' onclick="processPDF()">
+            <span class="normal-status">
+                Envoyer
+            </span>
+            <span class="indicateur d-none">
+                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                Un Instant...
+            </span>
 
+        </button>
+        <div>Dernier Envoi</div>
+    </div> -->
+    
 
 
 @endsection
@@ -42,7 +82,11 @@
         async function processPDF() {
             const fileInput = document.getElementById('pdfInput');
             if (!fileInput.files.length) {
-                alert("Veuillez sélectionner un fichier PDF.");
+                Swal.fire({
+                    icon: "warning",
+                    title: "Aucun fichier sélectionné",
+                    text: "Veuillez sélectionner un Bullettin de Paie.",
+                });
                 return;
             }
 
@@ -74,9 +118,10 @@
             };
 
             reader.readAsArrayBuffer(file);
-         }
+        }
 
-        async function sendFilesToServer(formData) {
+       
+         async function sendFilesToServer(formData) {
         try {
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
@@ -91,10 +136,19 @@
             const result = await response.json();
             if (response.ok) {
                 console.log("Fichiers envoyés avec succès :", result);
-                alert("Les fichiers ont été envoyés au serveur !");
+                Swal.fire({
+                icon: "success",
+                title: "Succès !",
+                text: "Les bullettins ont été traités avec succès.",
+            });
             } else {
                 console.error("Erreur lors de l'envoi :", result);
-                alert("Erreur lors de l'envoi des fichiers.");
+                // alert("Erreur lors de l'envoi des fichiers.");
+                Swal.fire({
+                icon: "error",
+                title: "Erreur !",
+                text: "Erreur lors de l'envoi des fichiers.",
+            });
             }
         } catch (error) {
             console.error("Erreur réseau :", error);
