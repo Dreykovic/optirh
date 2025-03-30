@@ -92,7 +92,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::prefix('membres')->group(function () {
             Route::get('/list', [EmployeeController::class, 'index'])->name('membres');
             Route::get('/pay', [EmployeeController::class, 'index'])->name('membres.pay');
-            Route::get('/pay-form/v1', [EmployeeController::class, 'pay'])->name('membres.pay-form.v1');
             Route::get('/pay-form', [EmployeeController::class, 'payroll'])->name('membres.pay-form');
             Route::get('/contrats', [DutyController::class, 'index'])->name('contrats.index');
 
@@ -137,7 +136,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::delete('/delete/{fileId}', [FileController::class, 'delete'])->name('files.delete');
             Route::get('/download/{fileId}', [FileController::class, 'download'])->name('files.download');
             Route::get('/open/{fileId}', [FileController::class, 'openFile'])->name('files.open');
-            // Route::post('/invoices', [FileController::class, 'uploadInvoices'])->name('files.invoices');
             Route::post('/invoices', [FileController::class, 'uploadBulletins'])->name('files.invoices');
         });
 
