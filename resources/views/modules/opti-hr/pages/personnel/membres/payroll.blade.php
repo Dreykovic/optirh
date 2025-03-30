@@ -1,73 +1,37 @@
-<!-- <!DOCTYPE html>
-<html lang="fr">
+<!-- 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Traitement des bulletins</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.16.0/pdf-lib.min.js"></script>
-</head>
-<body>
-    <h2>Importer un bulletin de paie</h2>
-    <input type="file" id="pdfInput" accept="application/pdf">
-    <button onclick="processPDF()">Traiter le PDF</button>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 
-    <script>
-        async function processPDF() {
-            const fileInput = document.getElementById('pdfInput');
-            if (!fileInput.files.length) {
-                alert("Veuillez sélectionner un fichier PDF.");
-                return;
-            }
+</head> -->
+@extends('modules.opti-hr.pages.base')
+@section('plugins-style')
+@endsection
+@section('admin-content')
 
-            const file = fileInput.files[0];
-            const reader = new FileReader();
+    <h2>Envoi des bulletins de paie</h2>
+    <div class='d-flex'>
+        <input type="file" class='form-control' id="pdfInput" accept="application/pdf">
+        <button class='btn btn-primary' onclick="processPDF()">Envoyer</button>
+    </div>
+    
+ 
 
-            reader.onload = async function () {
-                const pdfBytes = new Uint8Array(reader.result);
-                const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
-                const totalPages = pdfDoc.getPageCount();
 
-                for (let i = 0; i < totalPages; i++) {
-                    const newPdf = await PDFLib.PDFDocument.create();
-                    const [copiedPage] = await newPdf.copyPages(pdfDoc, [i]);
-                    newPdf.addPage(copiedPage);
 
-                    const newPdfBytes = await newPdf.save();
-                    const blob = new Blob([newPdfBytes], { type: "application/pdf" });
-
-                    // Téléchargement automatique
-                    const a = document.createElement("a");
-                    a.href = URL.createObjectURL(blob);
-                    a.download = `bulletin_page_${i + 1}.pdf`;
-                    a.click();
-                }
-
-                alert("Le PDF a été divisé avec succès !");
-            };
-
-            reader.readAsArrayBuffer(file);
-        }
-    </script>
-</body>
-</html> -->
-
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traitement des bulletins</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.16.0/pdf-lib.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-</head>
-<body>
-    <h2>Importer un bulletin de paie</h2>
-    <input type="file" id="pdfInput" accept="application/pdf">
-    <button onclick="processPDF()">Traiter le PDF</button>
-
-    <script>
-       
-        async function extractTextFromPage(pdf, pageIndex) {
+@endsection
+@push('plugins-js')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+@endpush
+@push('js')
+<script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.worker.min.js';
+          async function extractTextFromPage(pdf, pageIndex) {
             const page = await pdf.getPage(pageIndex + 1);
             const textContent = await page.getTextContent();
             let text = textContent.items.map(item => item.str).join(" ");
@@ -84,8 +48,6 @@
 
             return `page_${pageIndex + 1}`; // Si le nom n'est pas trouvé
         }
-
-
         async function processPDF() {
             const fileInput = document.getElementById('pdfInput');
             if (!fileInput.files.length) {
@@ -101,6 +63,8 @@
                 const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
                 const pdf = await pdfjsLib.getDocument({ data: pdfBytes }).promise;
                 const totalPages = pdfDoc.getPageCount();
+                
+                const formData = new FormData();
 
                 for (let i = 0; i < totalPages; i++) {
                     const employeeName = await extractTextFromPage(pdf, i);
@@ -111,19 +75,42 @@
                     const newPdfBytes = await newPdf.save();
                     const blob = new Blob([newPdfBytes], { type: "application/pdf" });
 
-                    // Téléchargement automatique
-                    const a = document.createElement("a");
-                    a.href = URL.createObjectURL(blob);
-                    a.download = `${employeeName}.pdf`;
-                    a.click();
+                    formData.append("files[]", blob, `${employeeName}.pdf`);
                 }
 
-                alert("Le PDF a été divisé et nommé avec succès !");
+                // Envoyer tous les fichiers en une seule requête
+                await sendFilesToServer(formData);
             };
 
             reader.readAsArrayBuffer(file);
+         }
+
+        async function sendFilesToServer(formData) {
+        try {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            const response = await fetch("/opti-hr/files/invoices", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": csrfToken
+                },
+                body: formData,
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                console.log("Fichiers envoyés avec succès :", result);
+                alert("Les fichiers ont été envoyés au serveur !");
+            } else {
+                console.error("Erreur lors de l'envoi :", result);
+                alert("Erreur lors de l'envoi des fichiers.");
+            }
+        } catch (error) {
+            console.error("Erreur réseau :", error);
         }
-    </script>
-</body>
-</html>
+    }
+
+ </script>
+@endpush
+
 

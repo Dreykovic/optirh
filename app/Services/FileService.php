@@ -10,11 +10,12 @@ use Smalot\PdfParser\Parser;
 use setasign\Fpdi\Fpdi;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Http\UploadedFile;
 class FileService
 {
     protected $evolutions = ['ON_GOING', 'ENDED', 'CANCEL', 'SUSPENDED', 'RESIGNED', 'DISMISSED'];
     protected $status = ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'];
+    protected $disk = 'public';
 
     public function storeFile($employeeId, $file)
     {
@@ -57,94 +58,94 @@ class FileService
         ]);
     }
 
-    public function storeFilesWithCodes(array $files)
-    {
-        $disk = 'public';
-        $success = [];
-        $failed = [];
-        $missing = [];
+    // public function storeFilesWithCodes(array $files)
+    // {
+    //     $disk = 'public';
+    //     $success = [];
+    //     $failed = [];
+    //     $missing = [];
 
-        // Récupérer les codes d'employés valides
-        $employeeCodes = Employee::pluck('id', 'code'); // ['code1' => id1, 'code2' => id2, ...]
+    //     // Récupérer les codes d'employés valides
+    //     $employeeCodes = Employee::pluck('id', 'code'); // ['code1' => id1, 'code2' => id2, ...]
 
-        $employeeCodes = Employee::whereDoesntHave('users', function ($query) {
-            $query->role('ADMIN');
-        })
-        ->whereHas('duties', function ($query) {
-            $query->where('evolution', 'ON_GOING');
-        })
-        ->where('status', $this->status[0])
-        ->pluck('id', 'code');
+    //     $employeeCodes = Employee::whereDoesntHave('users', function ($query) {
+    //         $query->role('ADMIN');
+    //     })
+    //     ->whereHas('duties', function ($query) {
+    //         $query->where('evolution', 'ON_GOING');
+    //     })
+    //     ->where('status', $this->status[0])
+    //     ->pluck('id', 'code');
 
 
 
-        // Marquer tous les employés comme sans fichier au départ
-        $employeesWithoutFiles = $employeeCodes->keys()->toArray();
+    //     // Marquer tous les employés comme sans fichier au départ
+    //     $employeesWithoutFiles = $employeeCodes->keys()->toArray();
 
-        foreach ($files as $file) {
-            // Extraire le code employé depuis le nom du fichier (par exemple "CODE123.pdf")
-            $fileName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $code = strtoupper($fileName); // Assure la correspondance sans distinction de casse
+    //     foreach ($files as $file) {
+    //         // Extraire le code employé depuis le nom du fichier (par exemple "CODE123.pdf")
+    //         $fileName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+    //         $code = strtoupper($fileName); // Assure la correspondance sans distinction de casse
 
-            if (!isset($employeeCodes[$code])) {
-                // Si le code ne correspond pas, ajouter aux échecs
-                $failed[] = $file->getClientOriginalName();
-                continue;
-            }
+    //         if (!isset($employeeCodes[$code])) {
+    //             // Si le code ne correspond pas, ajouter aux échecs
+    //             $failed[] = $file->getClientOriginalName();
+    //             continue;
+    //         }
 
-            $employeeId = $employeeCodes[$code];
-            $folder = "employees/{$employeeId}";
+    //         $employeeId = $employeeCodes[$code];
+    //         $folder = "employees/{$employeeId}";
 
-            // Créer le répertoire si nécessaire
-            if (!Storage::disk($disk)->exists($folder)) {
-                Storage::disk($disk)->makeDirectory($folder);
-            }
+    //         // Créer le répertoire si nécessaire
+    //         if (!Storage::disk($disk)->exists($folder)) {
+    //             Storage::disk($disk)->makeDirectory($folder);
+    //         }
 
-            $extension = strtolower($file->getClientOriginalExtension());
-            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+    //         $extension = strtolower($file->getClientOriginalExtension());
+    //         $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
 
-            // Générer un nom unique si nécessaire
-            $counter = 1;
-            $finalName = $originalName;
-            while (Storage::disk($disk)->exists("$folder/$finalName.$extension")) {
-                $finalName = "{$originalName}_{$counter}";
-                $counter++;
-            }
+    //         // Générer un nom unique si nécessaire
+    //         $counter = 1;
+    //         $finalName = $originalName;
+    //         while (Storage::disk($disk)->exists("$folder/$finalName.$extension")) {
+    //             $finalName = "{$originalName}_{$counter}";
+    //             $counter++;
+    //         }
 
-            // Enregistrer le fichier
-            try {
-                $path = $file->storeAs($folder, "$finalName.$extension", $disk);
+    //         // Enregistrer le fichier
+    //         try {
+    //             $path = $file->storeAs($folder, "$finalName.$extension", $disk);
 
-                // Sauvegarder les informations dans la base de données
-                File::create([
-                    'employee_id' => $employeeId,
-                    'name' => "$finalName.$extension",
-                    'display_name' => "bulletin_" . now()->format('d-m-Y') . ".$extension",
-                    'path' => $path,
-                    'url' => Storage::url($path),
-                    'mime_type' => $file->getClientMimeType(),
-                    'status' => $this->status[0],
-                ]);
+    //             // Sauvegarder les informations dans la base de données
+    //             File::create([
+    //                 'employee_id' => $employeeId,
+    //                 'name' => "$finalName.$extension",
+    //                 'display_name' => "bulletin_" . now()->format('d-m-Y') . ".$extension",
+    //                 'path' => $path,
+    //                 'url' => Storage::url($path),
+    //                 'mime_type' => $file->getClientMimeType(),
+    //                 'status' => $this->status[0],
+    //             ]);
 
-                $success[] = $code;
-                $employeesWithoutFiles = array_diff($employeesWithoutFiles, [$code]);
-            } catch (\Exception $e) {
-                // En cas d'erreur, ajouter aux échecs
-                $failed[] = $file->getClientOriginalName();
-            }
-        }
+    //             $success[] = $code;
+    //             $employeesWithoutFiles = array_diff($employeesWithoutFiles, [$code]);
+    //         } catch (\Exception $e) {
+    //             // En cas d'erreur, ajouter aux échecs
+    //             $failed[] = $file->getClientOriginalName();
+    //         }
+    //     }
 
-        // Les employés sans fichiers
-        foreach ($employeesWithoutFiles as $code) {
-            $missing[] = $code;
-        }
+    //     // Les employés sans fichiers
+    //     foreach ($employeesWithoutFiles as $code) {
+    //         $missing[] = $code;
+    //     }
 
-        return [
-            'success' => $success,
-            'failed' => $failed,
-            'missing' => $missing,
-        ];
-    }
+    //     return [
+    //         'success' => $success,
+    //         'failed' => $failed,
+    //         'missing' => $missing,
+    //     ];
+    // }
 
 
 
@@ -196,96 +197,69 @@ class FileService
     }
 
 
-
-    public function storeFilesFromSinglePdf($pdfFile)
+    public function processBulletin(UploadedFile $file)
     {
-        $disk = 'public';
-        $success = [];
-        $failed = [];
-        $missing = [];
+        $fileName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $employeeName = strtoupper($fileName);
 
-        // Charger les employés avec leur nom formaté
-        // $employeeNames = Employee::pluck('id', 'name')->mapWithKeys(function ($id, $name) {
-        //     return [strtoupper(trim($name)) => $id];
-        // });
-        $employeeNames = Employee::select('id', DB::raw("UPPER(CONCAT(last_name, ' ', first_name)) AS full_name"))
-            ->pluck('id', 'full_name')
-            ->mapWithKeys(function ($id, $fullName) {
-                return [trim($fullName) => $id]; // Supprime les espaces en trop
-            });
+        // Trouver l'employé
+        $employee = $this->findEmployeeByName($employeeName);
 
-        //Extraire le texte du PDF
-        $parser = new Parser();
-        $pdf = $parser->parseFile($pdfFile->getRealPath());
-        $text = $pdf->getText();
-
-        Log::info('Texte extrait du PDF:', ['content' => substr($text, 0, 500)]);
-
-        // Trouver les noms des employés dans le texte
-        preg_match_all('/\n(M|Mme)\s+([A-ZÉÈÊÀÇ\s-]+)/', $text, $matches, PREG_OFFSET_CAPTURE);
-        Log::info('Noms détectés:', $matches[2]);
-        $sections = [];
-
-        foreach ($matches[2] as $index => $match) {
-            $name = strtoupper(trim($match[0]));
-            $position = $match[1];
-
-            if (isset($employeeNames[$name])) {
-                $sections[] = [
-                    'name' => $name,
-                    'employee_id' => $employeeNames[$name],
-                    'position' => $position
-                ];
-            }
+        if (!$employee) {
+            return [
+                'success' => false,
+                'file' => $file->getClientOriginalName(),
+                'message' => 'Employé introuvable',
+            ];
         }
 
-        // Découper le PDF en fichiers séparés
-        $pdf = new Fpdi();
-        $pdf->setSourceFile($pdfFile->getRealPath());
-        $totalPages = $pdf->setSourceFile($pdfFile->getRealPath());
-
-        foreach ($sections as $index => $section) {
-            $employeeId = $section['employee_id'];
-            $folder = "employees/{$employeeId}";
-
-            // Créer le dossier si nécessaire
-            if (!Storage::disk($disk)->exists($folder)) {
-                Storage::disk($disk)->makeDirectory($folder);
-            }
-
-            // Créer le fichier PDF pour cet employé
-            $pdf->AddPage();
-            $tplIdx = $pdf->importPage($index + 1);
-            $pdf->useTemplate($tplIdx);
-
-            $fileName = "bulletin_" . now()->format('d-m-Y') . ".pdf";
-            $path = "$folder/$fileName";
-
-            Storage::disk($disk)->put($path, $pdf->Output('', 'S'));
-
-            // Sauvegarde en base de données
-            File::create([
-                'employee_id' => $employeeId,
-                'name' => $fileName,
-                'display_name' => "Bulletin de paie",
-                'path' => $path,
-                'url' => Storage::url($path),
-                'mime_type' => 'application/pdf',
-                'status' => $this->status[0],
-            ]);
-
-            $success[] = $section['name'];
+        // Stockage du fichier
+        $folder = "employees/{$employee->id}";
+        if (!Storage::disk($this->disk)->exists($folder)) {
+            Storage::disk($this->disk)->makeDirectory($folder);
         }
 
-        // Trouver les employés sans fichier
-        $missing = array_diff($employeeNames->keys()->toArray(), $success);
+        $extension = $file->getClientOriginalExtension();
+        $uniqueName = "bulletin_" . now()->format('d-m-Y') . ".$extension";
+        $path = $file->storeAs($folder, $uniqueName, $this->disk);
+
+        // Sauvegarde en base de données
+        File::create([
+            'employee_id' => $employee->id,
+            'name' => $uniqueName,
+            'display_name' => $uniqueName,
+            'path' => $path,
+            'url' => Storage::url($path),
+            'mime_type' => $file->getClientMimeType(),
+            'status' => $this->status[0],
+        ]);
 
         return [
-            'success' => $success,
-            'failed' => $failed,
-            'missing' => $missing,
+            'success' => true,
+            'employee' => "{$employee->last_name} {$employee->first_name}",
+            'file' => $file->getClientOriginalName(),
         ];
     }
+
+
+/**
+     * Recherche un employé par nom en tenant compte du fait que `first_name` peut contenir plusieurs prénoms.
+     */
+    private function findEmployeeByName($employeeName)
+    {
+        $parts = explode('_', $employeeName);
+        if (count($parts) < 2) {
+            return null;
+        }
+
+        $lastName = $parts[0]; // Le premier élément est le nom de famille
+        $firstName = $parts[1]; // Le premier prénom
+
+        return Employee::where('last_name', $lastName)
+            ->whereRaw("first_name LIKE ?", ["$firstName%"])
+            ->first();
+    }
+   
 
 
 
