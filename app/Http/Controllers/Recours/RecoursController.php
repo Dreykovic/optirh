@@ -346,47 +346,37 @@ class RecoursController extends Controller
     }
 
 
-    // public function accepted(Request $request, $id)
-    // {
-    //     try {
-    //         $appeal = Appeal::find($id);
-
-    //         $decision = Decision::create([
-    //             'decision' => 'EN COURS',
-    //             'date' => now(), // Utilisation correcte de now()
-    //         ]);
-
-    //         $appeal->decision_id = $decision->id;
-    //         $appeal->analyse_status = 'ACCEPTE';
-    //         $appeal->save();
-
-    //         return response()->json(['message' => 'Recours accepté avec succès.', 'ok' => true], 200);
-    //     } catch (\Throwable $th) {
-    //         return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
-    //     }
-    // }
-
-    // public function rejected(Request $request, $id)
-    // {
-    //     try {
-    //         $appeal = Appeal::find($id);
-
-    //         $decision = Decision::create([
-    //             'decision' => $request->input('decision'), // Récupère la raison du rejet
-    //             'date' => now(),
-    //         ]);
-
-    //         $appeal->decision_id = $decision->id;
-    //         $appeal->analyse_status = 'IRRECEVABLE';
-    //         $appeal->save();
-
-    //         return response()->json(['message' => 'Recours rejeté avec succès.', 'ok' => true], 200);
-    //     } catch (\Throwable $th) {
-    //         return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
-    //     }
-    // }
-
     public function rejected(Request $request, $id)
+{
+    try {
+        $appeal = Appeal::findOrFail($id);
+
+        $decisionData = [
+            'decision' => $request->input('decision'), // Récupère la raison du rejet
+            'decision_ref' => $request->input('decision_ref'), // Récupère le numéro de décision
+            'date' => now(),
+        ];
+
+        if ($request->hasFile('decision_file')) {
+            $file = $request->file('decision_file');
+            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension(); // Générer un nom de fichier unique
+            $filePath = $file->storeAs('decisions', $fileName, 'public'); // Stocke avec un nom unique
+            $decisionData['file_path'] = $filePath;
+        }
+
+        $decision = Decision::create($decisionData);
+
+        $appeal->decision_id = $decision->id;
+        $appeal->analyse_status = 'IRRECEVABLE';
+        $appeal->save();
+
+        return response()->json(['message' => 'Recours irrecevable avec succès.', 'ok' => true], 200);
+    } catch (\Throwable $th) {
+        return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+    }
+}
+
+public function crd(Request $request, $id)
 {
     try {
         $appeal = Appeal::findOrFail($id);

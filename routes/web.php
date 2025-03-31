@@ -345,6 +345,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/delete/{id}', [RecoursController::class, 'destroy'])->name('recours.delete');
         Route::put('/accepted/{id}', [RecoursController::class, 'accepted'])->name('recours.accepted');
         Route::put('/rejected/{id}', [RecoursController::class, 'rejected'])->name('recours.rejected');
+        Route::put('/crd/{id}', [RecoursController::class, 'crd'])->name('recours.crd');
 
         Route::get('/api/data', [RecoursController::class, 'appeal_loading'])->name('recours.loaging');
         Route::post('/store', [RecoursController::class, 'store'])->name('recours.store');

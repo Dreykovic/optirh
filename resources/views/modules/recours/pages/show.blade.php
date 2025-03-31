@@ -104,12 +104,12 @@
                         </div>
                     @endif
 
-                    @if($appeal->decision->decision == 'SUSPENDU')
+                    @if($appeal->analyse_status == 'RECEVABLE' && $appeal->decision->decision == 'SUSPENDU')
                         <div class='mx-2'>
-                            <form id="rejected-form" action="{{ route('recours.rejected', $appeal->id) }}" method="post">
+                            <form id="crd-form" action="{{ route('recours.crd', $appeal->id) }}" method="post">
                                 @csrf
                                 <input type="hidden" name="_method" value="PUT">
-                                <button type="button" id="rejected-btn" class="btn btn-outline-info">Décision du CRD</button>
+                                <button type="button" id="crd-btn" class="btn btn-outline-info">Décision du CRD</button>
                             </form>
                         </div>
                     @endif
@@ -330,5 +330,6 @@
     <!-- <script src="{{ asset('app-js/personnel/contrats/actions.js') }}"></script> -->
     <script src="{{ asset('app-js/recours/accepte.js') }}"></script>
     <script src="{{ asset('app-js/recours/rejete.js') }}"></script>
+    <script src="{{ asset('app-js/recours/crd.js') }}"></script>
     <script src="{{ asset('app-js/recours/delete.js') }}"></script>
 @endpush

@@ -14,8 +14,15 @@ return new class extends Migration
         Schema::create('decisions', function (Blueprint $table) {
             $table->id();
             $table->string('decision');
-            $table->string('decision_ref')->nullable();
-            $table->string('decision_file')->nullable();
+
+            $table->string('rejected_ref')->nullable();
+            $table->string('suspended_ref')->nullable();
+            $table->string('decided_ref')->nullable();
+            
+            $table->string('rejected_file')->nullable();
+            $table->string('suspended_file')->nullable();
+            $table->string('decided_file')->nullable();
+
             $table->date('date')->nullable();
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
 
