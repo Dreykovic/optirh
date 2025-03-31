@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(response => response.json())
                 .then(data => {
                     if (data.ok) {
-                        Swal.fire("Rejeté !", "Le recours a été rejeté avec succès.", "success")
+                        Swal.fire("Rejeté !", "Recours irrecevable avec succès.", "success")
                         .then(() => {
                             window.location.reload();
                         });

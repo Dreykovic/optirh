@@ -47,7 +47,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('accepted-btn').addEventListener('click', function () {
         Swal.fire({
-            title: "Êtes-vous sûr d'accepter ce recours ?",
+            title: "Êtes-vous sûr de la recevabilité du recours ?",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#28a745",
@@ -65,9 +65,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             `,
             preConfirm: () => {
-                const decisionRef = document.getElementById('decision-ref').value.trim();
+                const decisionRef = document.getElementById('decision-ref').value;
                 const decisionFile = document.getElementById('decision-file').files[0];
-
+                
                 if (!decisionRef) {
                     Swal.showValidationMessage("Veuillez saisir un numéro de décision");
                     return false;
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(response => response.json())
                 .then(data => {
                     if (data.ok) {
-                        Swal.fire("Accepté !", "Le recours a été accepté avec succès.", "success")
+                        Swal.fire("Accepté !", "Recours recevable avec succès.", "success")
                         .then(() => {
                             window.location.reload();
                         });

@@ -307,23 +307,64 @@ class RecoursController extends Controller
 
     public function accepted(Request $request, $id)
     {
+       
         try {
-            $appeal = Appeal::find($id);
+            $appeal = Appeal::findOrFail($id);
 
-            $decision = Decision::create([
-                'decision' => 'EN COURS',
-                'date' => now(), // Utilisation correcte de now()
+            // Validation des champs
+            $request->validate([
+                'decision_ref' => 'string|max:255',
+                'decision_file' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
             ]);
 
+            $decisionData = [
+                'decision' => 'SUSPENDU', // Statut initial
+                'decision_ref' => $request->input('decision_ref'),
+                'date' => now(),
+            ];
+
+            // Gestion du fichier si présent
+            if ($request->hasFile('decision_file')) {
+                $file = $request->file('decision_file');
+                $filename = 'decision_' . time() . '_' . $file->getClientOriginalName(); // Génération d'un nom unique
+                $filePath = $file->storeAs('decisions', $filename, 'public'); // Sauvegarde dans /storage/app/public/decisions
+                $decisionData['file_path'] = $filePath;
+            }
+
+            // Création de la décision
+            $decision = Decision::create($decisionData);
+
+            // Mise à jour du recours
             $appeal->decision_id = $decision->id;
-            $appeal->analyse_status = 'ACCEPTE';
+            $appeal->analyse_status = 'RECEVABLE';
             $appeal->save();
 
-            return response()->json(['message' => 'Recours accepté avec succès.', 'ok' => true], 200);
+            return response()->json(['message' => 'Recours recevable avec succès.', 'ok' => true], 200);
         } catch (\Throwable $th) {
             return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
     }
+
+
+    // public function accepted(Request $request, $id)
+    // {
+    //     try {
+    //         $appeal = Appeal::find($id);
+
+    //         $decision = Decision::create([
+    //             'decision' => 'EN COURS',
+    //             'date' => now(), // Utilisation correcte de now()
+    //         ]);
+
+    //         $appeal->decision_id = $decision->id;
+    //         $appeal->analyse_status = 'ACCEPTE';
+    //         $appeal->save();
+
+    //         return response()->json(['message' => 'Recours accepté avec succès.', 'ok' => true], 200);
+    //     } catch (\Throwable $th) {
+    //         return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+    //     }
+    // }
 
     // public function rejected(Request $request, $id)
     // {
@@ -369,7 +410,7 @@ class RecoursController extends Controller
         $appeal->analyse_status = 'IRRECEVABLE';
         $appeal->save();
 
-        return response()->json(['message' => 'Recours rejeté avec succès.', 'ok' => true], 200);
+        return response()->json(['message' => 'Recours irrecevable avec succès.', 'ok' => true], 200);
     } catch (\Throwable $th) {
         return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
     }
