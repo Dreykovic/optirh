@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('decisions', function (Blueprint $table) {
             $table->id();
             $table->string('decision');
+            $table->string('decision_ref')->nullable();
+            $table->string('decision_file')->nullable();
             $table->date('date')->nullable();
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
 

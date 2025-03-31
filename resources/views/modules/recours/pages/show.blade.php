@@ -19,10 +19,10 @@
                         <div class="card shadow-sm h-100">
                             <div class="card-body">
                                 <h5 class="fw-bold text-primary">Recours</h5>
-                                @if ($appeal->analyse_status == 'ACCEPTE')
+                                @if ($appeal->analyse_status == 'RECEVABLE')
                                     <p><strong>Étude :</strong> <span
                                             class="badge bg-success p-2">{{ $appeal->analyse_status }}</span></p>
-                                @elseif($appeal->analyse_status == 'REJETE')
+                                @elseif($appeal->analyse_status == 'IRRECEVABLE')
                                     <p><strong>Étude :</strong> <span
                                             class="badge bg-danger p-2">{{ $appeal->analyse_status }}</span></p>
                                 @else
@@ -57,7 +57,7 @@
                             <!-- Section Marché -->
                             <div class="card shadow-sm flex-grow-1 mb-2">
                                 <div class="card-body">
-                                    <h5 class="fw-bold text-primary">Marché</h5>
+                                    <h5 class="fw-bold text-primary">DAC</h5>
                                     <p><strong>N° :</strong> {{ $appeal->dac->reference }}</p>
                                     <p><strong>Objet :</strong> {{ $appeal->dac->object }}</p>
                                     <p><strong>A C :</strong> {{ $appeal->dac->ac }}</p>
@@ -92,14 +92,14 @@
                             <form id="accepted-form" action="{{ route('recours.accepted', $appeal->id) }}" method="post">
                                 @csrf
                                 <input type="hidden" name="_method" value="PUT">
-                                <button type="button" id="accepted-btn" class="btn btn-outline-warning">Accepter</button>
+                                <button type="button" id="accepted-btn" class="btn btn-outline-warning">Recevable</button>
                             </form>
                         </div>
                         <div class='mx-2'>
                             <form id="rejected-form" action="{{ route('recours.rejected', $appeal->id) }}" method="post">
                                 @csrf
                                 <input type="hidden" name="_method" value="PUT">
-                                <button type="button" id="rejected-btn" class="btn btn-outline-info">Rejeter</button>
+                                <button type="button" id="rejected-btn" class="btn btn-outline-info">Non Recevable</button>
                             </form>
                         </div>
                     @endif
@@ -283,7 +283,7 @@
 @endpush
 @push('js')
     <script src="{{ asset('app-js/crud/put.js') }}"></script>
-    <script src="{{ asset('app-js/personnel/contrats/actions.js') }}"></script>
+    <!-- <script src="{{ asset('app-js/personnel/contrats/actions.js') }}"></script> -->
     <script src="{{ asset('app-js/recours/accepte.js') }}"></script>
     <script src="{{ asset('app-js/recours/rejete.js') }}"></script>
     <script src="{{ asset('app-js/recours/delete.js') }}"></script>

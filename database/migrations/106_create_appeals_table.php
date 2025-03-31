@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('appeals', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', ['DAC', 'PROCESS', 'RESULTS', 'OTHERS'])->default('RESULTS');
+            $table->enum('type', ['PROCESS', 'RESULTS', 'OTHERS'])->default('RESULTS');
             $table->date('deposit_date');
             $table->time('deposit_hour');
             $table->string('object')->nullable();
+            $table->string('analyse_ref')->nullable();
+            $table->string('analyse_file')->nullable();
             $table->integer('day_count')->default(0);
-            $table->enum('analyse_status', ['EN_COURS', 'ACCEPTE', 'REJETE', 'HORS COMPETENCE'])->default('EN_COURS');
+            $table->enum('analyse_status', ['EN_COURS', 'RECEVABLE', 'IRRECEVABLE', 'INCOMPETENCE'])->default('EN_COURS');
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
 
             $table->foreignId('dac_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
