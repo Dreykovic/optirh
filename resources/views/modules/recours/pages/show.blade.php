@@ -104,7 +104,15 @@
                         </div>
                     @endif
 
-
+                    @if($appeal->decision->decision == 'SUSPENDU')
+                        <div class='mx-2'>
+                            <form id="rejected-form" action="{{ route('recours.rejected', $appeal->id) }}" method="post">
+                                @csrf
+                                <input type="hidden" name="_method" value="PUT">
+                                <button type="button" id="rejected-btn" class="btn btn-outline-info">Décision du CRD</button>
+                            </form>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -147,7 +155,7 @@
                             <!--  -->
                             <fieldset class=" p-3 mb-2">
                                 <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span
-                                        class='mb-4'>Marché</span></legende>
+                                        class='mb-4'>Dac</span></legende>
                                 <div class="row g-3 mb-3 mt-2">
                                     <div class="col-sm-4">
                                         <label for="last_name" class="form-label">N°: </label>
@@ -198,7 +206,7 @@
 
                             </fieldset>
 
-                            <fieldset class=" p-3 shadow-sm   mb-2">
+                            <fieldset class=" p-3  mb-2">
                                 <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span
                                         class='mb-4'>Recours</span></legende>
                                 <div class="row g-3 mb-3 mt-2">
@@ -253,7 +261,43 @@
                                             <input type="date" value='' class="form-control" id="birth_date" name='birth_date'>
                                         </div> -->
                             </fieldset>
-
+                            <!--  -->
+                            <fieldset class=" p-3 mb-2">
+                                <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span
+                                        class='mb-4'>Mails de Suspension</span></legende>
+                                <div class="row g-3 mb-3 mt-2">
+                                   
+                                    <div class="col-sm-6">
+                                        <label for="" class="form-label">Date d'Envoi</label>
+                                        <input type="date" class="form-control" 
+                                            id="" name=''>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="" class="form-label">Date de Réponse convenue</label>
+                                        <input type="date" class="form-control"
+                                            id="" name=''>
+                                    </div>
+                                </div>
+                                <!--  -->
+                            </fieldset>
+                            <fieldset class=" p-3 mb-2">
+                                <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span
+                                        class='mb-4'>Approbation</span></legende>
+                                <div class="row g-3 mb-3 mt-2">
+                                   
+                                    <div class="col-sm-6">
+                                        <label for="" class="form-label">Date Notif.</label>
+                                        <input type="date" class="form-control" 
+                                            id="" name=''>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="" class="form-label">Date Pub.</label>
+                                        <input type="date" class="form-control"
+                                            id="" name=''>
+                                    </div>
+                                </div>
+                                <!--  -->
+                            </fieldset>
                             <!--  -->
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-lg btn-block lift text-uppercase btn-secondary"
