@@ -29,6 +29,10 @@ class Appeal extends Model
         'created_by',
         'applicant_id',
         'last_updated_by',
+        'notif_date',
+        'message_date',
+        'response_date',
+        'publish_date'
     ];
 
     public function decision(): BelongsTo

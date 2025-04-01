@@ -261,7 +261,8 @@
                                             <input type="date" value='' class="form-control" id="birth_date" name='birth_date'>
                                         </div> -->
                             </fieldset>
-                            <!--  -->
+                            <!-- mails -->
+                             @if($appeal->analyse_status == 'RECEVABLE' && $appeal->decision->decision == 'SUSPENDU')
                             <fieldset class=" p-3 mb-2">
                                 <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span
                                         class='mb-4'>Mails de Suspension</span></legende>
@@ -270,16 +271,18 @@
                                     <div class="col-sm-6">
                                         <label for="" class="form-label">Date d'Envoi</label>
                                         <input type="date" class="form-control" 
-                                            id="" name=''>
+                                            id="" name='message_date'>
                                     </div>
                                     <div class="col-sm-6">
                                         <label for="" class="form-label">Date de Réponse convenue</label>
                                         <input type="date" class="form-control"
-                                            id="" name=''>
+                                            id="" name='response_date'>
                                     </div>
                                 </div>
                                 <!--  -->
                             </fieldset>
+                            @endif
+                            @if($appeal->analyse_status=='RECEVABLE' && $appeal->decision->decision !== 'SUSPENDU')
                             <fieldset class=" p-3 mb-2">
                                 <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span
                                         class='mb-4'>Approbation</span></legende>
@@ -288,16 +291,17 @@
                                     <div class="col-sm-6">
                                         <label for="" class="form-label">Date Notif.</label>
                                         <input type="date" class="form-control" 
-                                            id="" name=''>
+                                            id="" name='notif_date'>
                                     </div>
                                     <div class="col-sm-6">
                                         <label for="" class="form-label">Date Pub.</label>
                                         <input type="date" class="form-control"
-                                            id="" name=''>
+                                            id="" name='publish_date'>
                                     </div>
                                 </div>
                                 <!--  -->
                             </fieldset>
+                            @endif
                             <!--  -->
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-lg btn-block lift text-uppercase btn-secondary"

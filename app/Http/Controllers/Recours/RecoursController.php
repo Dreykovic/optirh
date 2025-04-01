@@ -10,6 +10,8 @@ use App\Models\Recours\Decision;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class RecoursController extends Controller
 {
@@ -244,6 +246,11 @@ class RecoursController extends Controller
                 'reference' => 'required|string|max:255',
                 'appeal_object' => 'required|string|max:500',
                 'decision' => 'nullable|string|max:255',
+                'notif_date' => 'nullable|date',
+                'message_date' => 'nullable|date',
+                'response_date' => 'nullable|date',
+                'publish_date' => 'nullable|date',
+
             ]);
 
             list($date, $time) = explode('T', $validatedData['date_depot']);
@@ -256,6 +263,10 @@ class RecoursController extends Controller
                 'deposit_hour' => $time,
                 'deposit_date' => $date,
                 'object' => $validatedData['appeal_object'],
+                'notif_date' => $validatedData['notif_date'],
+                'message_date' => $validatedData['message_date'],
+                'response_date' => $validatedData['response_date'],
+                'publish_date' => $validatedData['publish_date'],
             ]);
             $dac->update([
                 'reference' => $validatedData['reference'],
@@ -305,76 +316,298 @@ class RecoursController extends Controller
         }
     }
 
-    public function accepted(Request $request, $id)
-    {
+    // public function accepted(Request $request, $id)
+    // {
        
-        try {
-            $appeal = Appeal::findOrFail($id);
+    //     try {
+    //         $appeal = Appeal::findOrFail($id);
 
-            // Validation des champs
-            $request->validate([
-                'decision_ref' => 'string|max:255',
-                'decision_file' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
-            ]);
+    //         // Validation des champs
+    //         $request->validate([
+    //             'suspended_ref' => 'string|max:255',
+    //             'suspended_file' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+    //         ]);
 
-            $decisionData = [
-                'decision' => 'SUSPENDU', // Statut initial
-                'decision_ref' => $request->input('decision_ref'),
-                'date' => now(),
-            ];
+    //         $decisionData = [
+    //             'decision' => 'SUSPENDU', // Statut initial
+    //             'suspended_ref' => $request->input('suspended_ref'),
+    //             'date' => now(),
+    //         ];
 
-            // Gestion du fichier si présent
-            if ($request->hasFile('decision_file')) {
-                $file = $request->file('decision_file');
-                $filename = 'decision_' . time() . '_' . $file->getClientOriginalName(); // Génération d'un nom unique
-                $filePath = $file->storeAs('decisions', $filename, 'public'); // Sauvegarde dans /storage/app/public/decisions
-                $decisionData['file_path'] = $filePath;
+    //         // Gestion du fichier si présent
+    //         if ($request->hasFile('suspended_file')) {
+    //             $file = $request->file('suspended_file');
+    //             $filename = 'decision_' . time() . '_' . $file->getClientOriginalName(); // Génération d'un nom unique
+    //             $filePath = $file->storeAs('decisions', $filename, 'public'); // Sauvegarde dans /storage/app/public/decisions
+    //             $decisionData['file_path'] = $filePath;
+    //         }
+
+    //         // Création de la décision
+    //         $decision = Decision::create($decisionData);
+
+    //         // Mise à jour du recours
+    //         $appeal->decision_id = $decision->id;
+    //         $appeal->analyse_status = 'RECEVABLE';
+    //         $appeal->save();
+
+    //         return response()->json(['message' => 'Recours recevable avec succès.', 'ok' => true], 200);
+    //     } catch (\Throwable $th) {
+    //         return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+    //     }
+    // }
+
+// public function accepted(Request $request, $id)
+// {
+//     try {
+//         $appeal = Appeal::findOrFail($id);
+
+//         // Validation des champs
+//         $request->validate([
+//             'suspended_ref' => 'string|max:255',
+//             'suspended_file' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+//         ]);
+
+//         $decisionData = [
+//             'decision' => 'SUSPENDU', // Statut initial
+//             'suspended_ref' => $request->input('suspended_ref'),
+//             'date' => now(),
+//         ];
+
+//         $disk = 'public';
+//         $folder = "decisions";
+
+//         // Vérifier et créer le dossier si nécessaire
+//         if (!Storage::disk($disk)->exists($folder)) {
+//             Storage::disk($disk)->makeDirectory($folder);
+//             Log::info("Dossier $folder créé.");
+//         }
+
+//         // Gestion du fichier si présent
+//         if ($request->hasFile('suspended_file')) {
+//             $file = $request->file('suspended_file');
+
+//             // Vérifier si le fichier est valide
+//             if (!$file->isValid()) {
+//                 Log::error("Fichier invalide pour le recours ID: $id");
+//                 return response()->json(['ok' => false, 'message' => 'Le fichier est invalide'], 400);
+//             }
+
+//             $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+//             $extension = strtolower($file->getClientOriginalExtension());
+//             $fileName = $originalName;
+//             $counter = 1;
+
+//             // Gérer les conflits de noms de fichiers
+//             while (Storage::disk($disk)->exists("$folder/$fileName.$extension")) {
+//                 $fileName = "{$originalName}_{$counter}";
+//                 $counter++;
+//             }
+
+//             // Sauvegarde du fichier
+//             $path = $file->storeAs($folder, "$fileName.$extension", $disk);
+
+//             // Vérifier que le fichier a bien été stocké
+//             if (!Storage::disk($disk)->exists($path)) {
+//                 Log::error("Échec de l'enregistrement du fichier pour le recours ID: " . $id);
+//                 return response()->json(['ok' => false, 'message' => 'Erreur lors de l\'enregistrement du fichier'], 500);
+//             }
+
+//             // Stocker le chemin d'accès dans la décision
+//             $decisionData['file_path'] = "storage/$path";
+//         }
+
+//         // Création de la décision
+//         $decision = Decision::create($decisionData);
+
+//         // Mise à jour du recours
+//         $appeal->decision_id = $decision->id;
+//         $appeal->analyse_status = 'RECEVABLE';
+//         $appeal->save();
+
+//         Log::info("Recours ID $id marqué comme recevable avec fichier: " . ($decisionData['file_path'] ?? 'Aucun fichier'));
+
+//         return response()->json([
+//             'message' => 'Recours recevable avec succès.',
+//             'file_path' => $decisionData['file_path'] ?? null,
+//             'ok' => true
+//         ], 200);
+//     } catch (\Throwable $th) {
+//         Log::error("Erreur lors de l'acceptation du recours ID $id: " . $th->getMessage());
+//         return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+//     }
+// }
+
+public function accepted(Request $request, $id)
+{
+    try {
+        $appeal = Appeal::findOrFail($id);
+
+        // Validation des champs
+        $request->validate([
+            'suspended_ref' => 'string|max:255',
+            'suspended_file' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+        ]);
+
+        $decisionData = [
+            'decision' => 'SUSPENDU', // Statut initial
+            'suspended_ref' => $request->input('suspended_ref'),
+            'date' => now(),
+        ];
+
+        $disk = 'public';
+        $folder = "decisions";
+
+        // Vérifier et créer le dossier si nécessaire
+        if (!Storage::disk($disk)->exists($folder)) {
+            Storage::disk($disk)->makeDirectory($folder);
+            Log::info("Dossier $folder créé.");
+        }
+
+        // Vérification si un fichier est envoyé
+        Log::info("Vérification du fichier reçu :", ['hasFile' => $request->hasFile('suspended_file')]);
+
+        if ($request->hasFile('suspended_file')) {
+            $file = $request->file('suspended_file');
+
+            // Vérifier si le fichier est valide
+            Log::info("Le fichier est valide :", ['isValid' => $file->isValid()]);
+
+            if (!$file->isValid()) {
+                Log::error("Fichier invalide pour le recours ID: $id");
+                return response()->json(['ok' => false, 'message' => 'Le fichier est invalide'], 400);
             }
 
-            // Création de la décision
-            $decision = Decision::create($decisionData);
+            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $extension = strtolower($file->getClientOriginalExtension());
+            $fileName = $originalName;
+            $counter = 1;
 
-            // Mise à jour du recours
-            $appeal->decision_id = $decision->id;
-            $appeal->analyse_status = 'RECEVABLE';
-            $appeal->save();
+            // Gérer les conflits de noms de fichiers
+            while (Storage::disk($disk)->exists("$folder/$fileName.$extension")) {
+                $fileName = "{$originalName}_{$counter}";
+                $counter++;
+            }
 
-            return response()->json(['message' => 'Recours recevable avec succès.', 'ok' => true], 200);
-        } catch (\Throwable $th) {
-            return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
+            // Sauvegarde du fichier
+            $path = $file->storeAs($folder, "$fileName.$extension", $disk);
+
+            // Vérifier que le fichier a bien été stocké
+            Log::info("Chemin de stockage généré :", ['path' => $path ?? 'Échec']);
+
+            if (!Storage::disk($disk)->exists($path)) {
+                Log::error("Échec de l'enregistrement du fichier pour le recours ID: " . $id);
+                return response()->json(['ok' => false, 'message' => 'Erreur lors de l\'enregistrement du fichier'], 500);
+            }
+
+            // Stocker le chemin d'accès dans la décision
+            $decisionData['suspended_file'] = "storage/$path";
         }
+
+        // Création de la décision
+        $decision = Decision::create($decisionData);
+
+        // Mise à jour du recours
+        $appeal->decision_id = $decision->id;
+        $appeal->analyse_status = 'RECEVABLE';
+        $appeal->save();
+
+        Log::info("Recours ID $id marqué comme recevable avec fichier: " . ($decisionData['file_path'] ?? 'Aucun fichier'));
+
+        return response()->json([
+            'message' => 'Recours recevable avec succès.',
+            'suspended_file' => $decisionData['suspended_file'] ?? null,
+            'ok' => true
+        ], 200);
+    } catch (\Throwable $th) {
+        Log::error("Erreur lors de l'acceptation du recours ID $id: " . $th->getMessage());
+        return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
     }
+}
 
 
-    public function rejected(Request $request, $id)
+public function rejected(Request $request, $id)
 {
     try {
         $appeal = Appeal::findOrFail($id);
 
         $decisionData = [
-            'decision' => $request->input('decision'), // Récupère la raison du rejet
-            'decision_ref' => $request->input('decision_ref'), // Récupère le numéro de décision
+            'decision' => $request->input('decision'),
+            'rejected_ref' => $request->input('rejected_ref'),
             'date' => now(),
         ];
 
-        if ($request->hasFile('decision_file')) {
-            $file = $request->file('decision_file');
-            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension(); // Générer un nom de fichier unique
-            $filePath = $file->storeAs('decisions', $fileName, 'public'); // Stocke avec un nom unique
-            $decisionData['file_path'] = $filePath;
+        $disk = 'public';
+        $folder = "decisions";
+
+        // Vérifier si un fichier a été reçu
+        if (!$request->hasFile('rejected_file')) {
+            Log::error('Aucun fichier reçu pour le recours ID: ' . $id);
+            return response()->json(['ok' => false, 'message' => 'Aucun fichier reçu'], 400);
         }
 
+        $file = $request->file('rejected_file');
+
+        // Vérifier si le fichier est valide
+        if (!$file->isValid()) {
+            Log::error('Fichier invalide pour le recours ID: ' . $id);
+            return response()->json(['ok' => false, 'message' => 'Le fichier est invalide'], 400);
+        }
+
+        // Vérifier et créer le dossier si nécessaire
+        if (!Storage::disk($disk)->exists($folder)) {
+            Storage::disk($disk)->makeDirectory($folder);
+            Log::info("Dossier $folder créé.");
+        }
+
+        $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $extension = strtolower($file->getClientOriginalExtension());
+        $fileName = $originalName;
+        $counter = 1;
+
+        // Gérer les conflits de noms de fichiers
+        while (Storage::disk($disk)->exists("$folder/$fileName.$extension")) {
+            $fileName = "{$originalName}_{$counter}";
+            $counter++;
+        }
+
+        // Enregistrer le fichier
+        $path = $file->storeAs($folder, "$fileName.$extension", $disk);
+
+        // Vérifier si le fichier a bien été stocké
+        if (!Storage::disk($disk)->exists($path)) {
+            Log::error("Échec de l'enregistrement du fichier pour le recours ID: " . $id);
+            return response()->json(['ok' => false, 'message' => 'Erreur lors de l\'enregistrement du fichier'], 500);
+        }
+
+        // Stocker le chemin dans la décision
+        $decisionData['rejected_file'] = "storage/$path";
+
+        // Enregistrer la décision
         $decision = Decision::create($decisionData);
 
+        // Mettre à jour l'état du recours
         $appeal->decision_id = $decision->id;
         $appeal->analyse_status = 'IRRECEVABLE';
         $appeal->save();
 
-        return response()->json(['message' => 'Recours irrecevable avec succès.', 'ok' => true], 200);
+        Log::info("Recours ID $id marqué comme irrecevable avec fichier: $path");
+
+        return response()->json([
+            'message' => 'Recours irrecevable avec succès.',
+            'rejected_file' => "storage/$path",
+            'ok' => true
+        ], 200);
+
     } catch (\Throwable $th) {
+        Log::error("Erreur lors du rejet du recours ID $id: " . $th->getMessage());
         return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
     }
 }
+
+
+
+
+
 
 public function crd(Request $request, $id)
 {
@@ -383,12 +616,12 @@ public function crd(Request $request, $id)
 
         $decisionData = [
             'decision' => $request->input('decision'), // Récupère la raison du rejet
-            'decision_ref' => $request->input('decision_ref'), // Récupère le numéro de décision
+            'decided_ref' => $request->input('decided_ref'), // Récupère le numéro de décision
             'date' => now(),
         ];
 
-        if ($request->hasFile('decision_file')) {
-            $file = $request->file('decision_file');
+        if ($request->hasFile('decided_file')) {
+            $file = $request->file('decided_file');
             $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension(); // Générer un nom de fichier unique
             $filePath = $file->storeAs('decisions', $fileName, 'public'); // Stocke avec un nom unique
             $decisionData['file_path'] = $filePath;

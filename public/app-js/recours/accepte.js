@@ -57,16 +57,16 @@ document.addEventListener('DOMContentLoaded', function () {
             html: `
                 <div>
                     <label class='form-label'>Décision N°:</label>
-                    <input class='form-control' id='decision-ref' name='decision_ref' type="text">
+                    <input class='form-control' id='suspended-ref' name='suspended_ref' type="text">
                 </div>
                 <div>
                     <label class='form-label'>Fichier</label>
-                    <input class='form-control' id='decision-file' name='decision_file' type="file">
+                    <input class='form-control' id='suspended-file' name='suspended_file' type="file">
                 </div>
             `,
             preConfirm: () => {
-                const decisionRef = document.getElementById('decision-ref').value;
-                const decisionFile = document.getElementById('decision-file').files[0];
+                const decisionRef = document.getElementById('suspended-ref').value;
+                const decisionFile = document.getElementById('suspended-file').files[0];
                 
                 if (!decisionRef) {
                     Swal.showValidationMessage("Veuillez saisir un numéro de décision");
@@ -82,9 +82,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (result.isConfirmed) {
                 const form = document.getElementById('accepted-form');
                 const formData = new FormData(form);
-                formData.append('decision_ref', result.value.decisionRef);
+                formData.append('suspended_ref', result.value.decisionRef);
                 if (result.value.decisionFile) {
-                    formData.append('decision_file', result.value.decisionFile);
+                    formData.append('suspended_file', result.value.decisionFile);
                 }
 
                 fetch(form.action, {

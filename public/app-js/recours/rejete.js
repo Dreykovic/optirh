@@ -120,18 +120,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
                 <div>
                     <label class='form-label'>Décision N°:</label>
-                    <input class='form-control' id='decision-ref' name='decision_ref' type="text">
+                    <input class='form-control' id='rejected-ref' name='rejected_ref' type="text">
                 </div>
                 <div>
                     <label class='form-label'>Fichier</label>
-                    <input class='form-control' id='decision-file' name='decision_file' type="file">
+                    <input class='form-control' id='rejected-file' name='rejected_file' type="file">
                 </div>
             `,
             preConfirm: () => {
                 const selectedReason = document.getElementById('rejection-reason').value;
                 const otherReason = document.getElementById('other-reason').value;
-                const decisionRef = document.getElementById('decision-ref').value;
-                const decisionFile = document.getElementById('decision-file').files[0];
+                const decisionRef = document.getElementById('rejected-ref').value;
+                const decisionFile = document.getElementById('rejected-file').files[0];
 
                 if (!selectedReason) {
                     Swal.showValidationMessage("Veuillez choisir une raison");
@@ -162,9 +162,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 const form = document.getElementById('rejected-form');
                 const formData = new FormData(form);
                 formData.append('decision', result.value.decision);
-                formData.append('decision_ref', result.value.decisionRef);
+                formData.append('rejected_ref', result.value.decisionRef);
                 if (result.value.decisionFile) {
-                    formData.append('decision_file', result.value.decisionFile);
+                    formData.append('rejected_file', result.value.decisionFile);
                 }
 
                 fetch(form.action, {

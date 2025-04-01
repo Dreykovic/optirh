@@ -27,18 +27,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
                 <div>
                     <label class='form-label'>Décision N°:</label>
-                    <input class='form-control' id='decision-ref' name='decision_ref' type="text">
+                    <input class='form-control' id='decided-ref' name='decided_ref' type="text">
                 </div>
                 <div>
                     <label class='form-label'>Fichier</label>
-                    <input class='form-control' id='decision-file' name='decision_file' type="file">
+                    <input class='form-control' id='decided-file' name='decided_file' type="file">
                 </div>
             `,
             preConfirm: () => {
                 const selectedReason = document.getElementById('crd-reason').value;
                 const otherReason = document.getElementById('other-reason').value;
-                const decisionRef = document.getElementById('decision-ref').value;
-                const decisionFile = document.getElementById('decision-file').files[0];
+                const decisionRef = document.getElementById('decided-ref').value;
+                const decisionFile = document.getElementById('decided-file').files[0];
 
                 if (!selectedReason) {
                     Swal.showValidationMessage("Veuillez choisir une raison");
@@ -69,9 +69,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 const form = document.getElementById('crd-form');
                 const formData = new FormData(form);
                 formData.append('decision', result.value.decision);
-                formData.append('decision_ref', result.value.decisionRef);
+                formData.append('decided_ref', result.value.decisionRef);
                 if (result.value.decisionFile) {
-                    formData.append('decision_file', result.value.decisionFile);
+                    formData.append('decided_file', result.value.decisionFile);
                 }
 
                 fetch(form.action, {

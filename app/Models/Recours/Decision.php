@@ -20,6 +20,12 @@ class Decision extends Model
         'status',
         'created_by',
         'last_updated_by',
+        'rejected_ref',
+        'suspended_ref',
+        'decided_ref',
+        'rejected_file',
+        'suspended_file',
+        'decided_file'
     ];
 
     public function appeals(): HasMany

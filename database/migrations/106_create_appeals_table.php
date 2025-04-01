@@ -17,8 +17,12 @@ return new class extends Migration
             $table->date('deposit_date');
             $table->time('deposit_hour');
             $table->string('object')->nullable();
-            $table->string('analyse_ref')->nullable();
-            $table->string('analyse_file')->nullable();
+            $table->date('notif_date')->nullable();
+            $table->date('response_date')->nullable();
+            $table->date('message_date')->nullable();
+            $table->date('publish_date')->nullable();
+            // $table->string('analyse_ref')->nullable();
+            // $table->string('analyse_file')->nullable();
             $table->integer('day_count')->default(0);
             $table->enum('analyse_status', ['EN_COURS', 'RECEVABLE', 'IRRECEVABLE', 'INCOMPETENCE'])->default('EN_COURS');
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
