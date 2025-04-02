@@ -89,9 +89,9 @@
                             </form>
                         </div>
                         <div class='mx-2'>
-                            <form id="accepted-form" action="{{ route('recours.accepted', $appeal->id) }}" method="post">
+                            <form id="suspended-form" action="{{ route('recours.accepted', $appeal->id) }}" method="post">
                                 @csrf
-                                <input type="hidden" name="_method" value="PUT">
+                                <!-- <input type="hidden" name="_method" value="PUT"> -->
                                 <button type="button" id="accepted-btn" class="btn btn-outline-warning">Recevable</button>
                             </form>
                         </div>
