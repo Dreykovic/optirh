@@ -33,7 +33,7 @@ renderCallback: (recours) => {
             <td class="${appeal.analyse_status=='RECEVABLE'? 'text-success':(appeal.analyse_status=='IRRECEVABLE'?'text-danger':'text-warning')} fw-bold" >
                 ${appeal.analyse_status}
             </td>
-            <td class='text-info fw-bold'>${appeal.decision ?? 'N/A'}</td>
+            <td class='text-info fw-bold'>${appeal.decided ?? appeal.suspended ?? 'N/A'}</td>
             
             <td>
                 <a href="/recours/show/${appeal.id}">

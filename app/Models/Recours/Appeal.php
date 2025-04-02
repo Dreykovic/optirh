@@ -35,9 +35,14 @@ class Appeal extends Model
         'publish_date'
     ];
 
-    public function decision(): BelongsTo
+   
+    public function decided(): BelongsTo
     {
-        return $this->belongsTo(Decision::class, 'decision_id');
+        return $this->belongsTo(Decision::class, 'decided_id');
+    }
+    public function suspended(): BelongsTo
+    {
+        return $this->belongsTo(Decision::class, 'suspended_id');
     }
 
     public function dac(): BelongsTo

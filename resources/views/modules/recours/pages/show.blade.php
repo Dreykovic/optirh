@@ -30,7 +30,7 @@
                                             class="badge bg-warning p-2">{{ $appeal->analyse_status }}</span></p>
                                 @endif
                                 <p><strong>Décision :</strong> <span
-                                        class="badge bg-info p-2">{{ $appeal->decision->decision ?? 'N/A' }}</span></p>
+                                        class="badge bg-info p-2">{{ $appeal->decided->decision ?? $appeal->suspended->decision ?? 'N/A' }}</span></p>
                                 <p><strong>Durée Écoulée :</strong> {{ $appeal->day_count }} jrs</p>
                                 <p><strong>Contestation :</strong>
                                     @if ($appeal->type == 'RESULTS')
@@ -98,17 +98,17 @@
                         <div class='mx-2'>
                             <form id="rejected-form" action="{{ route('recours.rejected', $appeal->id) }}" method="post">
                                 @csrf
-                                <input type="hidden" name="_method" value="PUT">
+                                <!-- <input type="hidden" name="_method" value="PUT"> -->
                                 <button type="button" id="rejected-btn" class="btn btn-outline-info">Non Recevable</button>
                             </form>
                         </div>
                     @endif
 
-                    @if($appeal->analyse_status == 'RECEVABLE' && $appeal->decision->decision == 'SUSPENDU')
+                    @if($appeal->analyse_status == 'RECEVABLE' && $appeal->decided == 'null')
                         <div class='mx-2'>
                             <form id="crd-form" action="{{ route('recours.crd', $appeal->id) }}" method="post">
                                 @csrf
-                                <input type="hidden" name="_method" value="PUT">
+                                <!-- <input type="hidden" name="_method" value="PUT"> -->
                                 <button type="button" id="crd-btn" class="btn btn-outline-info">Décision du CRD</button>
                             </form>
                         </div>
@@ -137,17 +137,7 @@
                             <input type="hidden" name="_method" value="PUT">
                             <div class="modal-header d-fex justify-content-between">
                                 <h5 class="modal-title  fw-bold" id="edit1Label">Modifier</h5>
-                                @if ($appeal->decision && $appeal->decision->decision == 'EN COURS')
-                                    <div class='d-flex justify-items-center mx-auto'>
-                                        <label for="decision" class='form-label mx-2 mt-2'>Décision: </label>
-                                        <select class='form-control' name="decision" id="decision">
-                                            <option value="" selected>choisir</option>
-                                            <option value="FONDE">FONDE</option>
-                                            <option value="NON FONDE">NON FONDE</option>
-                                            <option value="DESISTEMENT">DESISTEMENT</option>
-                                        </select>
-                                    </div>
-                                @endif
+                                
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
 
@@ -262,7 +252,7 @@
                                         </div> -->
                             </fieldset>
                             <!-- mails -->
-                             @if($appeal->analyse_status == 'RECEVABLE' && $appeal->decision->decision == 'SUSPENDU')
+                             @if($appeal->analyse_status == 'RECEVABLE')
                             <fieldset class=" p-3 mb-2">
                                 <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span
                                         class='mb-4'>Mails de Suspension</span></legende>
@@ -282,7 +272,7 @@
                                 <!--  -->
                             </fieldset>
                             @endif
-                            @if($appeal->analyse_status=='RECEVABLE' && $appeal->decision->decision !== 'SUSPENDU')
+                            @if($appeal->decided)
                             <fieldset class=" p-3 mb-2">
                                 <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span
                                         class='mb-4'>Approbation</span></legende>

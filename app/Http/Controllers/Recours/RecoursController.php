@@ -41,11 +41,19 @@ class RecoursController extends Controller
 
             // Construire la requête
             $query = DB::table('appeals')
-                ->join('dacs', 'appeals.dac_id', '=', 'dacs.id')
-                ->leftJoin('applicants', 'appeals.applicant_id', '=', 'applicants.id')
-                ->leftJoin('decisions', 'appeals.decision_id', '=', 'decisions.id')
-                ->select('appeals.*', 'dacs.reference', 'applicants.name as applicant', 'decisions.decision')
-                ->orderBy('created_at', 'desc');
+            ->join('dacs', 'appeals.dac_id', '=', 'dacs.id')
+            ->leftJoin('applicants', 'appeals.applicant_id', '=', 'applicants.id')
+            ->leftJoin('decisions as decided', 'appeals.decided_id', '=', 'decided.id')
+            ->leftJoin('decisions as suspended', 'appeals.suspended_id', '=', 'suspended.id')
+            ->select(
+                'appeals.*',
+                'dacs.reference',
+                'applicants.name as applicant',
+                'decided.decision as decided',
+                'suspended.decision as suspended'
+            )
+            ->orderBy('appeals.created_at', 'desc');
+        
 
             // Filtrer entre deux dates
             if ($startDate && $endDate) {
@@ -91,77 +99,7 @@ class RecoursController extends Controller
             ], 500);
         }
     }
-    // public function appeal_loading(Request $request)
-    // {
-    //     try {
-    //         $search = $request->input('search', '');
-    //         $limit = $request->input('limit', 5);
-    //         $page = $request->input('page', 1);
-    //         $startDate = $request->input('startDate', null);
-    //         $endDate = $request->input('endDate', null);
-    //         $statuses = $request->input('statusOptions', '');
-
-    //         // Convertir les statuts en tableau s'ils sont fournis sous forme de string
-    //         if (!empty($statuses)) {
-    //             $statuses = explode(',', $statuses);
-    //         }
-
-    //         // Construire la requête Eloquent
-    //         $query = Appeal::with(['dac', 'applicant', 'decision'])
-    //             ->select('appeals.*')
-    //             ->orderByDesc('created_at');
-
-    //         // Filtrer par dates
-    //         if ($startDate && $endDate) {
-    //             $query->whereBetween('deposit_date', [$startDate, $endDate]);
-    //         } elseif ($startDate) {
-    //             $query->where('deposit_date', '>=', $startDate);
-    //         } elseif ($endDate) {
-    //             $query->where('deposit_date', '<=', $endDate);
-    //         }
-
-    //         // Filtrer par statuts
-    //         if (!empty($statuses) && is_array($statuses)) {
-    //             $query->where(function ($q) use ($statuses) {
-    //                 $q->whereIn('analyse_status', $statuses)
-    //                 ->orWhereHas('decision', function ($subQuery) use ($statuses) {
-    //                     $subQuery->whereIn('decision', $statuses);
-    //                 });
-    //             });
-    //         }
-
-    //         // Recherche textuelle
-    //         if (!empty($search)) {
-    //             $query->where(function ($q) use ($search) {
-    //                 $q->where('object', 'LIKE', "%$search%") // `LIKE` pour Postgres, `LIKE` pour MySQL
-    //                 ->orWhereHas('dac', function ($subQuery) use ($search) {
-    //                     $subQuery->where('reference', 'LIKE', "%$search%");
-    //                 })
-    //                 ->orWhereHas('applicant', function ($subQuery) use ($search) {
-    //                     $subQuery->where('name', 'LIKE', "%$search%");
-    //                 })
-    //                 ->orWhereHas('decision', function ($subQuery) use ($search) {
-    //                     $subQuery->where('decision', 'LIKE', "%$search%");
-    //                 })
-    //                 ->orWhereRaw("TO_CHAR(deposit_date, 'YYYY-MM-DD') LIKE ?", ["%$search%"]);
-    //             });
-    //         }
-
-    //         // Ajouter la pagination
-    //         $appeals = $query->paginate($limit);
-
-    //         return response()->json($appeals);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'error' => 'Erreur lors du chargement des données',
-    //             'message' => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
-
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         $dacs = Dac::orderBy('created_at', 'desc')->get();
@@ -378,7 +316,7 @@ public function rejected(Request $request, $id)
         $decision = Decision::create($decisionData);
 
         // Mettre à jour l'état du recours
-        $appeal->decision_id = $decision->id;
+        $appeal->decided_id = $decision->id;
         $appeal->analyse_status = 'IRRECEVABLE';
         $appeal->save();
 
@@ -461,7 +399,7 @@ public function accepted(Request $request, $id)
         $decision = Decision::create($decisionData);
 
         // Mettre à jour l'état du recours
-        $appeal->decision_id = $decision->id;
+        $appeal->suspended_id = $decision->id;
         $appeal->analyse_status = 'RECEVABLE';
         $appeal->save();
 
@@ -480,10 +418,6 @@ public function accepted(Request $request, $id)
 }
 
 
-
-
-
-
 public function crd(Request $request, $id)
 {
     try {
@@ -495,24 +429,70 @@ public function crd(Request $request, $id)
             'date' => now(),
         ];
 
+        $disk = 'public';
+        $folder = "decisions";
+
+        // Vérifier si un fichier a été reçu
         if ($request->hasFile('decided_file')) {
             $file = $request->file('decided_file');
-            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension(); // Générer un nom de fichier unique
-            $filePath = $file->storeAs('decisions', $fileName, 'public'); // Stocke avec un nom unique
-            $decisionData['file_path'] = $filePath;
+
+            // Vérifier si le fichier est valide
+            if (!$file->isValid()) {
+                Log::error('Fichier invalide pour le recours ID: ' . $id);
+                return response()->json(['ok' => false, 'message' => 'Le fichier est invalide'], 400);
+            }
+
+            // Vérifier et créer le dossier si nécessaire
+            if (!Storage::disk($disk)->exists($folder)) {
+                Storage::disk($disk)->makeDirectory($folder);
+                Log::info("Dossier $folder créé.");
+            }
+
+            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $extension = strtolower($file->getClientOriginalExtension());
+            $fileName = $originalName;
+            $counter = 1;
+
+            // Gérer les conflits de noms de fichiers
+            while (Storage::disk($disk)->exists("$folder/$fileName.$extension")) {
+                $fileName = "{$originalName}_{$counter}";
+                $counter++;
+            }
+
+            // Enregistrer le fichier
+            $path = $file->storeAs($folder, "$fileName.$extension", $disk);
+
+            // Vérifier si le fichier a bien été stocké
+            if (!Storage::disk($disk)->exists($path)) {
+                Log::error("Échec de l'enregistrement du fichier pour le recours ID: " . $id);
+                return response()->json(['ok' => false, 'message' => 'Erreur lors de l\'enregistrement du fichier'], 500);
+            }
+
+            // Stocker le chemin dans la décision
+            $decisionData['decided_file'] = "storage/$path";
         }
 
+        // Enregistrer la décision
         $decision = Decision::create($decisionData);
 
-        $appeal->decision_id = $decision->id;
-        $appeal->analyse_status = 'IRRECEVABLE';
+        // Mettre à jour l'état du recours
+        $appeal->decided_id = $decision->id;
         $appeal->save();
 
-        return response()->json(['message' => 'Recours irrecevable avec succès.', 'ok' => true], 200);
+        Log::info("Recours ID $id marqué comme irrecevable avec fichier: $path");
+
+        return response()->json([
+            'message' => 'Recours irrecevable avec succès.',
+            'decided_file' => isset($path) ? "storage/$path" : null,
+            'ok' => true
+        ], 200);
+
     } catch (\Throwable $th) {
+        Log::error("Erreur lors du traitement du recours ID $id: " . $th->getMessage());
         return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
     }
 }
+
 
 
 
