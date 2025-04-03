@@ -64,17 +64,86 @@ class RecoursController extends Controller
                 $query->where('appeals.deposit_date', '<=', $endDate);
             }
 
+            // if (!empty($statuses)) {
+            //     $statuses = explode(',', $statuses); // Transformation en tableau
+            //     // \Log::info('Statuts transformés en tableau : ', $statuses);
+            // }
+
+            // if (!empty($statuses) && is_array($statuses)) {
+            //     $query->where(function ($q) use ($statuses) {
+            //         $q->whereIn(DB::raw('appeals.analyse_status::TEXT'), $statuses)
+            //             ->orWhereIn(DB::raw('decisions.decision::TEXT'), $statuses);
+            //     });
+            // }
+            // if (!empty($statuses)) {
+            //     $statuses = explode(',', $statuses); // Transformation en tableau
+            // }
+            
+            // if (!empty($statuses) && is_array($statuses)) {
+            //     $query->where(function ($q) use ($statuses) {
+            //         foreach ($statuses as $status) {
+            //             switch ($status) {
+            //                 case 'EN_COURS':
+            //                     $q->orWhere('appeals.analyse_status', 'EN_COURS');
+            //                     break;
+            //                 case 'RECEVABLE':
+            //                     $q->orWhere('appeals.analyse_status', 'RECEVABLE');
+            //                     break;
+            //                 case 'IRRECEVABLE':
+            //                     $q->orWhere('appeals.analyse_status', 'IRRECEVABLE');
+            //                     break;
+            //                 case 'SUSPENDU':
+            //                     $q->orWhereNotNull('appeals.suspended_id')
+            //                       ->whereHas('suspended', function ($sq) {
+            //                           $sq->where('decision', 'SUSPENDU');
+            //                       });
+            //                     break;
+            //                 case 'CLOTURE':
+            //                     $q->orWhereNotNull('appeals.decided_id')
+            //                       ->whereHas('decided', function ($sq) {
+            //                           $sq->whereNotNull('decision');
+            //                       });
+            //                     break;
+            //             }
+            //         }
+            //     });
+            // }
+            
             if (!empty($statuses)) {
                 $statuses = explode(',', $statuses); // Transformation en tableau
-                // \Log::info('Statuts transformés en tableau : ', $statuses);
             }
-
+            
             if (!empty($statuses) && is_array($statuses)) {
                 $query->where(function ($q) use ($statuses) {
-                    $q->whereIn(DB::raw('appeals.analyse_status::TEXT'), $statuses)
-                        ->orWhereIn(DB::raw('decisions.decision::TEXT'), $statuses);
+                    foreach ($statuses as $status) {
+                        switch ($status) {
+                            case 'EN_COURS':
+                                $q->orWhere('appeals.analyse_status', 'EN_COURS');
+                                break;
+                            case 'RECEVABLE':
+                                $q->orWhere('appeals.analyse_status', 'RECEVABLE');
+                                break;
+                            case 'IRRECEVABLE':
+                                $q->orWhere('appeals.analyse_status', 'IRRECEVABLE');
+                                break;
+                            case 'SUSPENDU':
+                                $q->orWhereNotNull('appeals.suspended_id')
+                                  ->whereHas('suspended', function ($sq) {
+                                      $sq->where('decision', 'SUSPENDU');
+                                  });
+                                break;
+                            case 'CLOTURE':
+                                $q->orWhereNotNull('appeals.decided_id')
+                                  ->whereHas('decided', function ($sq) {
+                                      $sq->whereNotNull('decision');
+                                  });
+                                break;
+                        }
+                    }
                 });
             }
+            
+            //
 
             // Recherche textuelle
             if ($search) {
