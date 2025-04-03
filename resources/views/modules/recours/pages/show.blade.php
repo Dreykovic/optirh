@@ -133,6 +133,7 @@
                                 <span>Ref : {{$appeal->suspended->suspended_ref}}</span>
                                 <span><a href="#" onclick="showPdf('{{ asset('storage/' . $appeal->suspended->suspended_file) }}')"><i class="icofont-file-pdf fs-3 text-danger"></i></a></span>
                             </div>
+                            <p class='text-center'>Demande d'informations complémentaires</p>
                             <div class='d-flex justify-content-between'>
                                 <div>
                                     <span>Date Envoi de Mail : </span>
