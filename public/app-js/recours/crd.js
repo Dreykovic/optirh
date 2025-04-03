@@ -1,27 +1,24 @@
 
 document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('rejected-btn').addEventListener('click', function () {
+    document.getElementById('crd-btn').addEventListener('click', function () {
         Swal.fire({
-            title: "Êtes-vous sûr de l'irrecevabilité de ce recours ?",
+            title: "Êtes-vous sûr de cette décision ?",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#d33",
             cancelButtonColor: "#3085d6",
-            confirmButtonText: "Oui, Irrecevable !",
+            confirmButtonText: "Oui, Décider !",
             cancelButtonText: "Annuler",
             html: `
                 <div>
                     <label class='form-label'>Raisons</label>
-                    <select class='form-control' id="rejection-reason" name='decision'>
+                    <select class='form-control' id="crd-reason" name='decision'>
                         <option value="" disabled selected>Choisissez une raison</option>
-                        <option value="Incompétence">Incompétence</option>
-                        <option value="Forclusion">Forclusion</option>
-                        <option value="Défaut de Capacité">Défaut de Capacité</option>
-                        <option value="Défaut de Qualité">Défaut de Qualité</option>
-                        <option value="Défaut d'intérêt à agir">Défaut d'intérêt à agir</option>
-                        <option value="Cas non prévu par la loi">Cas non prévu par la loi</option>
-                        <option value="Absence de recours préalable">Absence de recours préalable</option>
+                        <option value="Fonde">Fonde</option>
+                        <option value="Non Fonde">Non Fonde</option>
+                        <option value="Desistement">Desistement</option>
                         <option value="Autre">Autre</option>
+                        
                     </select>
                 </div>
                 <div id='other-reason-container' style='display:none;'>
@@ -30,18 +27,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
                 <div>
                     <label class='form-label'>Décision N°:</label>
-                    <input class='form-control' id='rejected-ref' name='rejected_ref' type="text">
+                    <input class='form-control' id='decided-ref' name='decided_ref' type="text">
                 </div>
                 <div>
                     <label class='form-label'>Fichier</label>
-                    <input class='form-control' id='rejected-file' name='rejected_file' type="file">
+                    <input class='form-control' id='decided-file' name='decided_file' type="file">
                 </div>
             `,
             preConfirm: () => {
-                const selectedReason = document.getElementById('rejection-reason').value;
+                const selectedReason = document.getElementById('crd-reason').value;
                 const otherReason = document.getElementById('other-reason').value;
-                const decisionRef = document.getElementById('rejected-ref').value;
-                const decisionFile = document.getElementById('rejected-file').files[0];
+                const decisionRef = document.getElementById('decided-ref').value;
+                const decisionFile = document.getElementById('decided-file').files[0];
 
                 if (!selectedReason) {
                     Swal.showValidationMessage("Veuillez choisir une raison");
@@ -63,18 +60,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 };
             },
             didOpen: () => {
-                document.getElementById('rejection-reason').addEventListener('change', function () {
+                document.getElementById('crd-reason').addEventListener('change', function () {
                     document.getElementById('other-reason-container').style.display = this.value === "Autre" ? "block" : "none";
                 });
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                const form = document.getElementById('rejected-form');
+                const form = document.getElementById('crd-form');
                 const formData = new FormData(form);
                 formData.append('decision', result.value.decision);
-                formData.append('rejected_ref', result.value.decisionRef);
+                formData.append('decided_ref', result.value.decisionRef);
                 if (result.value.decisionFile) {
-                    formData.append('rejected_file', result.value.decisionFile);
+                    formData.append('decided_file', result.value.decisionFile);
                 }
 
                 fetch(form.action, {

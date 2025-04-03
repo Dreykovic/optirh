@@ -92,8 +92,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::prefix('membres')->group(function () {
             Route::get('/list', [EmployeeController::class, 'index'])->name('membres');
             Route::get('/pay', [EmployeeController::class, 'index'])->name('membres.pay');
-            Route::get('/pay-form/v1', [EmployeeController::class, 'pay'])->name('membres.pay-form.v1');
-            Route::get('/pay-form', [EmployeeController::class, 'paycode'])->name('membres.pay-form');
+            Route::get('/pay-form', [EmployeeController::class, 'payroll'])->name('membres.pay-form');
             Route::get('/contrats', [DutyController::class, 'index'])->name('contrats.index');
 
             Route::get('/pages', [EmployeeController::class, 'pages'])->name('membres.pages');
@@ -137,7 +136,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::delete('/delete/{fileId}', [FileController::class, 'delete'])->name('files.delete');
             Route::get('/download/{fileId}', [FileController::class, 'download'])->name('files.download');
             Route::get('/open/{fileId}', [FileController::class, 'openFile'])->name('files.open');
-            Route::post('/invoices', [FileController::class, 'uploadInvoices'])->name('files.invoices');
+            Route::post('/invoices', [FileController::class, 'uploadBulletins'])->name('files.invoices');
         });
 
         Route::get('/api/files/{employeeId}', [FileController::class, 'getFiles']);
@@ -344,8 +343,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/new', [RecoursController::class, 'create'])->name('recours.new');
         Route::put('/update/{id}', [RecoursController::class, 'update'])->name('recours.update');
         Route::delete('/delete/{id}', [RecoursController::class, 'destroy'])->name('recours.delete');
-        Route::put('/accepted/{id}', [RecoursController::class, 'accepted'])->name('recours.accepted');
-        Route::put('/rejected/{id}', [RecoursController::class, 'rejected'])->name('recours.rejected');
+        Route::post('/accepted/{id}', [RecoursController::class, 'accepted'])->name('recours.accepted');
+        Route::post('/rejected/{id}', [RecoursController::class, 'rejected'])->name('recours.rejected');
+        Route::post('/crd/{id}', [RecoursController::class, 'crd'])->name('recours.crd');
 
         Route::get('/api/data', [RecoursController::class, 'appeal_loading'])->name('recours.loaging');
         Route::post('/store', [RecoursController::class, 'store'])->name('recours.store');

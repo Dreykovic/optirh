@@ -40,7 +40,7 @@
                             <i class="bi bi-three-dots-vertical" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
                             <ul class="dropdown-menu border-0 shadow bg-primary">                               
                                 <li>
-                                    <form action="/files/delete/${file.id}" method="POST" onsubmit="return confirm('Confirmer la suppression ?');">
+                                    <form action="/opti-hr/files/delete/${file.id}" method="POST" onsubmit="return confirm('Confirmer la suppression ?');">
                                         <input type="hidden" name="_method" value="DELETE">
                                         <input type="hidden" name="_token" value="${csrfToken}">
                                         <button type="submit" class="dropdown-item text-light">Supprimer</button>
@@ -59,7 +59,7 @@
                                             <h5 class="modal-title" id="">Modifier Document</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
-                                        <form data-model-update-url="/files/rename/${file.id}">
+                                        <form data-model-update-url="/opti-hr/files/rename/${file.id}">
                                             @csrf
                                                 <input type="hidden" name="_method" value="PUT">
                                             <div class="">

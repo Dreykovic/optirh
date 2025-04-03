@@ -29,11 +29,20 @@ class Appeal extends Model
         'created_by',
         'applicant_id',
         'last_updated_by',
+        'notif_date',
+        'message_date',
+        'response_date',
+        'publish_date'
     ];
 
-    public function decision(): BelongsTo
+   
+    public function decided(): BelongsTo
     {
-        return $this->belongsTo(Decision::class, 'decision_id');
+        return $this->belongsTo(Decision::class, 'decided_id');
+    }
+    public function suspended(): BelongsTo
+    {
+        return $this->belongsTo(Decision::class, 'suspended_id');
     }
 
     public function dac(): BelongsTo

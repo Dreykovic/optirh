@@ -27,10 +27,10 @@ class DatabaseSeeder extends Seeder
             HolidaySeeder::class,
 
                 //Recours Seeders
-            DacSeeder::class,
-            DecisionSeeder::class,
-            ApplicantSeeder::class,
-            AppealSeeder::class,
+            // DacSeeder::class,
+            // DecisionSeeder::class,
+            // ApplicantSeeder::class,
+            // AppealSeeder::class,
         ]);
         /**
          * Employees.

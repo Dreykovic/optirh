@@ -10,7 +10,7 @@
                 <input type="hidden" name="_method" value="POST">
 
                 <div class="mb-3 ">
-                    <label for="dac" class="form-label fs-5">Marché N° : </label>
+                    <label for="dac" class="form-label fs-5">DAC N° : </label>
                     <div class='d-flex justify-content-between align-items-center'>
                         <input class="form-control mx-2" list="dacOptions" id="dacDataList" placeholder="Rechercher..."
                             autocomplete="off">
@@ -34,7 +34,6 @@
                     <!-- <input type="text" class="form-control" id="type_recours" name="type_recours"> -->
                     <select name="type" id="type_recours" class="form-control">
                         <option value="RESULTS" selected>Ses résultats Provisoirs</option>
-                        <option value="DAC">Son DAC</option>
                         <option value="PROCESS">Sa Procédure/ Son déroulement</option>
                         <option value="OTHERS">Autre</option>
                     </select>
@@ -144,6 +143,10 @@
                         <input type="text" class="form-control mb-2" id="nif" name='nif'>
                         <label for="phone" class='fs-5'>Téléphone</label>
                         <input type="text" class="form-control mb-2" id="phone" name='phone_number'>
+
+                        <label for="mail" class='fs-5'>E-mail</label>
+                        <input type="email" class="form-control mb-2" id="mail" name='email'>
+
                         <label for="adresse" class='fs-5'>Adresse</label>
                         <input type="text" class="form-control" id="adresse" name='address'>
                     </div>

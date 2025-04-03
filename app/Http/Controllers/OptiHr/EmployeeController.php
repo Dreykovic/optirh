@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+
 
 // class EmployeeController extends Controller
 // {
@@ -735,7 +737,17 @@ class EmployeeController extends Controller
         return response()->json($employees);
     }
     
-    
+    function payroll(){
+      
+        $lastRecord = File::latest('created_at')->first();
+        $lastUploadDate = $lastRecord 
+            ? Carbon::parse($lastRecord->created_at)->translatedFormat('j F Y à H:i') 
+            : 'Aucun Envoi';
+
+
+            return view('modules.opti-hr.pages.personnel.membres.payroll', compact('lastUploadDate'));
+        }
+        
     function pages(){
         $departments = Department::orderBy('created_at', 'desc')->get();
         $query = DB::table('employees')
@@ -972,7 +984,7 @@ class EmployeeController extends Controller
                 'phone_number' => 'required|string|max:255|unique:employees,phone_number',
                 'address1' => 'nullable|string|max:255',
                 'gender' => 'required|in:MALE,FEMALE',
-                'duration' => 'sometimes',
+                'duration' => 'nullable',
                 'begin_date' => 'required|date',
                 'type' => 'required|string|max:255',
                 'job_id' => 'required|exists:jobs,id',
@@ -1036,7 +1048,8 @@ class EmployeeController extends Controller
             // Création du devoir
             Duty::create([
                 'job_id' => $validatedData['job_id'],
-                'duration' => $validatedData['duration'],
+                // 'duration' => $validatedData['duration'],
+                'duration' => $validatedData['duration'] ?? 0,
                 'begin_date' => $validatedData['begin_date'],
                 'type' => $validatedData['type'],
                 'employee_id' => $emp->id,

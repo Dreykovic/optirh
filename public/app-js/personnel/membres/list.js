@@ -25,7 +25,7 @@
                             </td>
                             <td>${employee.phone_number}</td>
                             <td>${employee.email}</td>
-                            <td>${employee.address1}</td>
+                            <td>${employee.address1 ?? ''}</td>
                             <td>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Actions</button>

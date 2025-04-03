@@ -41,17 +41,17 @@
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="statusEnCours" value='EN_COURS'
                                         name='filterStatus'>
-                                    <label class="form-check-label" for="etude">En cours</label>
+                                    <label class="form-check-label" for="etude">En analyse</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="statusAccepte" value='ACCEPTE'
+                                    <input class="form-check-input" type="checkbox" id="statusAccepte" value='RECEVABLE'
                                         name='filterStatus'>
-                                    <label class="form-check-label" for="statusAccepte">Accepté</label>
+                                    <label class="form-check-label" for="statusAccepte">Recevables</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="statusRejete" value='REJETE'
+                                    <input class="form-check-input" type="checkbox" id="statusRejete" value='NON RECEVABLE'
                                         name='filterStatus'>
-                                    <label class="form-check-label" for="statusRejete">Rejeté</label>
+                                    <label class="form-check-label" for="statusRejete">Irrecevables</label>
                                 </div>
 
                                 <hr class="my-2">
@@ -59,16 +59,16 @@
                                 <!-- Decisions -->
                                 <strong>Décisions</strong>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="decisionEnCours" value='EN COURS'
+                                    <input class="form-check-input" type="checkbox" id="decisionEnCours" value='SUSPENDU'
                                         name='filterStatus'>
-                                    <label class="form-check-label" for="decisionEnCours">En cours</label>
+                                    <label class="form-check-label" for="decisionEnCours">Suspendus</label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="decisionForclusion"
-                                        value='FORCLUSION' name='filterStatus'>
-                                    <label class="form-check-label" for="decisionForclusion">Forclusion</label>
+                                        value='CLOTURE' name='filterStatus'>
+                                    <label class="form-check-label" for="decisionForclusion">Cloturés</label>
                                 </div>
-                                <div class="form-check">
+                                <!-- <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="decisionIrrecevable"
                                         value='IRRECEVABLE' name='filterStatus'>
                                     <label class="form-check-label" for="irrecevable">Irrécevabilité</label>
@@ -82,8 +82,8 @@
                                     <input class="form-check-input" type="checkbox" id="decisionNonFonde" value='NON FONDE'
                                         name='filterStatus'>
                                     <label class="form-check-label" for="decisionNonFonde">Non Fondé</label>
-                                </div>
-                                <div class="form-check">
+                                </div> -->
+                                <!-- <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="decisionDesistement"
                                         value='DESISTEMENT' name='filterStatus'>
                                     <label class="form-check-label" for="statusDesistement">Désistement</label>
@@ -92,7 +92,7 @@
                                     <input class="form-check-input" type="checkbox" id="statusIncompetence"
                                         value='HORS COMPETENCE' name='filterStatus'>
                                     <label class="form-check-label" for="statusIncompetence">Hors Compétence</label>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
 
