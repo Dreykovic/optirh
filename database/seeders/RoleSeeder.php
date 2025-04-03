@@ -15,6 +15,7 @@ class RoleSeeder extends Seeder
     {
         // ensemble des permissions
         $permissions_list = [
+            'send-paie',
             // compte
             'voir-un-compte',
             'écrire-un-compte',
@@ -87,6 +88,7 @@ class RoleSeeder extends Seeder
             'access-un-all',
         ];
         $hr_permissions_list = [
+            'send-paie',
             // compte
             'voir-un-compte',
             'écrire-un-compte',
