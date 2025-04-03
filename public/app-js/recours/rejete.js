@@ -30,11 +30,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
                 <div>
                     <label class='form-label'>Décision N°:</label>
-                    <input class='form-control' id='rejected-ref' name='rejected_ref' type="text">
+                    <input class='form-control' id='rejected-ref' name='decided_ref' type="text">
                 </div>
                 <div>
                     <label class='form-label'>Fichier</label>
-                    <input class='form-control' id='rejected-file' name='rejected_file' type="file">
+                    <input class='form-control' id='rejected-file' name='decided_file' type="file">
                 </div>
             `,
             preConfirm: () => {
@@ -72,9 +72,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 const form = document.getElementById('rejected-form');
                 const formData = new FormData(form);
                 formData.append('decision', result.value.decision);
-                formData.append('rejected_ref', result.value.decisionRef);
+                formData.append('decided_ref', result.value.decisionRef);
                 if (result.value.decisionFile) {
-                    formData.append('rejected_file', result.value.decisionFile);
+                    formData.append('decided_file', result.value.decisionFile);
                 }
 
                 fetch(form.action, {
