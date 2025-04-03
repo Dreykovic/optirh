@@ -19,10 +19,10 @@
                         <div class="card shadow-sm h-100">
                             <div class="card-body">
                                 <h5 class="fw-bold text-primary">Recours</h5>
-                                @if ($appeal->analyse_status == 'ACCEPTE')
+                                @if ($appeal->analyse_status == 'RECEVABLE')
                                     <p><strong>Étude :</strong> <span
                                             class="badge bg-success p-2">{{ $appeal->analyse_status }}</span></p>
-                                @elseif($appeal->analyse_status == 'REJETE')
+                                @elseif($appeal->analyse_status == 'IRRECEVABLE')
                                     <p><strong>Étude :</strong> <span
                                             class="badge bg-danger p-2">{{ $appeal->analyse_status }}</span></p>
                                 @else
@@ -30,7 +30,7 @@
                                             class="badge bg-warning p-2">{{ $appeal->analyse_status }}</span></p>
                                 @endif
                                 <p><strong>Décision :</strong> <span
-                                        class="badge bg-info p-2">{{ $appeal->decision->decision ?? 'N/A' }}</span></p>
+                                        class="badge bg-info p-2">{{ $appeal->decided->decision ?? $appeal->suspended->decision ?? 'N/A' }}</span></p>
                                 <p><strong>Durée Écoulée :</strong> {{ $appeal->day_count }} jrs</p>
                                 <p><strong>Contestation :</strong>
                                     @if ($appeal->type == 'RESULTS')
@@ -57,7 +57,7 @@
                             <!-- Section Marché -->
                             <div class="card shadow-sm flex-grow-1 mb-2">
                                 <div class="card-body">
-                                    <h5 class="fw-bold text-primary">Marché</h5>
+                                    <h5 class="fw-bold text-primary">DAC</h5>
                                     <p><strong>N° :</strong> {{ $appeal->dac->reference }}</p>
                                     <p><strong>Objet :</strong> {{ $appeal->dac->object }}</p>
                                     <p><strong>A C :</strong> {{ $appeal->dac->ac }}</p>
@@ -89,22 +89,30 @@
                             </form>
                         </div>
                         <div class='mx-2'>
-                            <form id="accepted-form" action="{{ route('recours.accepted', $appeal->id) }}" method="post">
+                            <form id="suspended-form" action="{{ route('recours.accepted', $appeal->id) }}" method="post">
                                 @csrf
-                                <input type="hidden" name="_method" value="PUT">
-                                <button type="button" id="accepted-btn" class="btn btn-outline-warning">Accepter</button>
+                                <!-- <input type="hidden" name="_method" value="PUT"> -->
+                                <button type="button" id="accepted-btn" class="btn btn-outline-warning">Recevable</button>
                             </form>
                         </div>
                         <div class='mx-2'>
                             <form id="rejected-form" action="{{ route('recours.rejected', $appeal->id) }}" method="post">
                                 @csrf
-                                <input type="hidden" name="_method" value="PUT">
-                                <button type="button" id="rejected-btn" class="btn btn-outline-info">Rejeter</button>
+                                <!-- <input type="hidden" name="_method" value="PUT"> -->
+                                <button type="button" id="rejected-btn" class="btn btn-outline-info">Non Recevable</button>
                             </form>
                         </div>
                     @endif
 
-
+                    @if($appeal->analyse_status == 'RECEVABLE' && !$appeal->decided)
+                        <div class='mx-2'>
+                            <form id="crd-form" action="{{ route('recours.crd', $appeal->id) }}" method="post">
+                                @csrf
+                                <!-- <input type="hidden" name="_method" value="PUT"> -->
+                                <button type="button" id="crd-btn" class="btn btn-outline-info">Décision du CRD</button>
+                            </form>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -129,17 +137,7 @@
                             <input type="hidden" name="_method" value="PUT">
                             <div class="modal-header d-fex justify-content-between">
                                 <h5 class="modal-title  fw-bold" id="edit1Label">Modifier</h5>
-                                @if ($appeal->decision && $appeal->decision->decision == 'EN COURS')
-                                    <div class='d-flex justify-items-center mx-auto'>
-                                        <label for="decision" class='form-label mx-2 mt-2'>Décision: </label>
-                                        <select class='form-control' name="decision" id="decision">
-                                            <option value="" selected>choisir</option>
-                                            <option value="FONDE">FONDE</option>
-                                            <option value="NON FONDE">NON FONDE</option>
-                                            <option value="DESISTEMENT">DESISTEMENT</option>
-                                        </select>
-                                    </div>
-                                @endif
+                                
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
 
@@ -147,7 +145,7 @@
                             <!--  -->
                             <fieldset class=" p-3 mb-2">
                                 <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span
-                                        class='mb-4'>Marché</span></legende>
+                                        class='mb-4'>Dac</span></legende>
                                 <div class="row g-3 mb-3 mt-2">
                                     <div class="col-sm-4">
                                         <label for="last_name" class="form-label">N°: </label>
@@ -198,7 +196,7 @@
 
                             </fieldset>
 
-                            <fieldset class=" p-3 shadow-sm   mb-2">
+                            <fieldset class=" p-3  mb-2">
                                 <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span
                                         class='mb-4'>Recours</span></legende>
                                 <div class="row g-3 mb-3 mt-2">
@@ -253,7 +251,47 @@
                                             <input type="date" value='' class="form-control" id="birth_date" name='birth_date'>
                                         </div> -->
                             </fieldset>
-
+                            <!-- mails -->
+                             @if($appeal->analyse_status == 'RECEVABLE')
+                            <fieldset class=" p-3 mb-2">
+                                <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span
+                                        class='mb-4'>Mails de Suspension</span></legende>
+                                <div class="row g-3 mb-3 mt-2">
+                                   
+                                    <div class="col-sm-6">
+                                        <label for="" class="form-label">Date d'Envoi</label>
+                                        <input type="date" class="form-control" 
+                                            id="" name='message_date'>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="" class="form-label">Date de Réponse convenue</label>
+                                        <input type="date" class="form-control"
+                                            id="" name='response_date'>
+                                    </div>
+                                </div>
+                                <!--  -->
+                            </fieldset>
+                            @endif
+                            @if($appeal->decided)
+                            <fieldset class=" p-3 mb-2">
+                                <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span
+                                        class='mb-4'>Approbation</span></legende>
+                                <div class="row g-3 mb-3 mt-2">
+                                   
+                                    <div class="col-sm-6">
+                                        <label for="" class="form-label">Date Notif.</label>
+                                        <input type="date" class="form-control" 
+                                            id="" name='notif_date'>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="" class="form-label">Date Pub.</label>
+                                        <input type="date" class="form-control"
+                                            id="" name='publish_date'>
+                                    </div>
+                                </div>
+                                <!--  -->
+                            </fieldset>
+                            @endif
                             <!--  -->
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-lg btn-block lift text-uppercase btn-secondary"
@@ -283,8 +321,9 @@
 @endpush
 @push('js')
     <script src="{{ asset('app-js/crud/put.js') }}"></script>
-    <script src="{{ asset('app-js/personnel/contrats/actions.js') }}"></script>
+    <!-- <script src="{{ asset('app-js/personnel/contrats/actions.js') }}"></script> -->
     <script src="{{ asset('app-js/recours/accepte.js') }}"></script>
     <script src="{{ asset('app-js/recours/rejete.js') }}"></script>
+    <script src="{{ asset('app-js/recours/crd.js') }}"></script>
     <script src="{{ asset('app-js/recours/delete.js') }}"></script>
 @endpush

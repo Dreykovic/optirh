@@ -12,11 +12,10 @@ class DecisionSeeder extends Seeder
         DB::table('decisions')->insert([
             ['decision' => 'FONDE', 'date' => now(), 'status' => 'ACTIVATED', 'created_at' => now(), 'updated_at' => now()],
             ['decision' => 'NON FONDE', 'date' => now(), 'status' => 'ACTIVATED', 'created_at' => now(), 'updated_at' => now()],
-            ['decision' => 'HORS COMPETENCE', 'date' => now(), 'status' => 'ACTIVATED', 'created_at' => now(), 'updated_at' => now()],
-            ['decision' => 'IRRECEVABLE', 'date' => now(), 'status' => 'ACTIVATED', 'created_at' => now(), 'updated_at' => now()],
+            ['decision' => 'INCOMPETENCE', 'date' => now(), 'status' => 'ACTIVATED', 'created_at' => now(), 'updated_at' => now()],
             ['decision' => 'FORCLUSION', 'date' => now(), 'status' => 'ACTIVATED', 'created_at' => now(), 'updated_at' => now()],
             ['decision' => 'DESISTEMENT', 'date' => now(), 'status' => 'ACTIVATED', 'created_at' => now(), 'updated_at' => now()],
-            ['decision' => 'EN COURS', 'date' => now(), 'status' => 'ACTIVATED', 'created_at' => now(), 'updated_at' => now()],
+            ['decision' => 'SUSPENDU', 'date' => now(), 'status' => 'ACTIVATED', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }

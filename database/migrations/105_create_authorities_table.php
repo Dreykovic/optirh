@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('authorities', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('email');
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
 
             $table->unsignedBigInteger('created_by')->nullable();

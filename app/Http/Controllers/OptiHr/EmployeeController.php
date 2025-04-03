@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+
 
 // class EmployeeController extends Controller
 // {
@@ -735,7 +737,17 @@ class EmployeeController extends Controller
         return response()->json($employees);
     }
     
-    
+    function payroll(){
+      
+        $lastRecord = File::latest('created_at')->first();
+        $lastUploadDate = $lastRecord 
+            ? Carbon::parse($lastRecord->created_at)->translatedFormat('j F Y à H:i') 
+            : 'Aucun Envoi';
+
+
+            return view('modules.opti-hr.pages.personnel.membres.payroll', compact('lastUploadDate'));
+        }
+        
     function pages(){
         $departments = Department::orderBy('created_at', 'desc')->get();
         $query = DB::table('employees')
