@@ -69,8 +69,11 @@
                                 <div class="card-body">
                                     <h5 class="fw-bold text-primary">Requérant</h5>
                                     <p><strong>Dénomination :</strong> {{ $appeal->applicant->name }}</p>
+                                    <p><strong>NIF :</strong> {{ $appeal->applicant->nif }}</p>
                                     <p><strong>Adresse :</strong> {{ $appeal->applicant->address }}</p>
                                     <p><strong>Téléphone :</strong> {{ $appeal->applicant->phone_number }}</p>
+                                    <p><strong>Mail :</strong> {{ $appeal->applicant->email }}</p>
+
                                 </div>
                             </div>
                         </div>
@@ -114,14 +117,87 @@
                         </div>
                     @endif
                 </div>
+                <!-- acc -->
+
+                <div class="accordion accordion-flush" id="accordionFlushExample">
+                    @if($appeal->suspended)
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                            Décision de Suspension #1
+                        </button>
+                        </h2>
+                        <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                        <div class="accordion-body">
+                            <div class='d-flex justify-content-between mb-3'>
+                                <span>{{$appeal->suspended->suspended_ref}}</span>
+                                <span><a href="#" onclick="showPdf('{{ asset('storage/' . $appeal->suspended->suspended_file) }}')">PDF</a></span>
+                            </div>
+                            <div class='d-flex justify-content-between'>
+                                <div>
+                                    <span>Date Mail : </span>
+                                    <span>{{$appeal->message_date}}</span>
+                                </div>
+                                <div>
+                                    <span>Date Reponse : </span>
+                                    <span>{{$appeal->response_date}}</span>
+                                </div>
+                            </div>
+                        </div>                        
+                    </div>
+                    </div>
+                    @endif
+                    @if($appeal->decided)
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                            Décision d'Approbation #2
+                        </button>
+                        </h2>
+                        <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                        <div class="accordion-body">
+                          
+                            <div class='d-flex justify-content-between mb-3'>
+                                <span>{{$appeal->decided->decided_ref}}</span>
+                                <span><a href="#" onclick="showPdf('{{ asset('storage/' . $appeal->decided->decided_file) }}')">PDF</a></span>
+                            </div>
+                            <div class='d-flex justify-content-between'>
+                                <div>
+                                    <span>Date Notif. : </span>
+                                    <span>{{$appeal->notif_date}}</span>
+                                </div>
+                                <div>
+                                    <span>Date Pub. : </span>
+                                    <span>{{$appeal->publish_date}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>  
+                    @endif
+                </div>
+
+                <!-- acc -->
+
+
             </div>
         </div>
-        <!--  -->
-        <!-- <div class="card col-lg-2 border-0">
-            <h5 class='text-center mt-2'>Change Log</h5>
-        </div> -->
+        
     </div>
-
+<!-- Modal Bootstrap -->
+<div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pdfModalLabel">Aperçu du PDF</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <iframe id="pdfFrame" src="" width="100%" height="500px"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
 
 
     <!-- modals -->
@@ -170,27 +246,37 @@
                                 <legende class="w-auto px-2 fs-6 shadow-4 text-muted fw-bold shadow"><span
                                         class='mb-4'>Requérant</span></legende>
                                 <div class="row g-3 mb-3 mt-2">
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-4">
                                         <label for="last_name" class="form-label">Dénomination</label>
                                         <input type="text" class="form-control" id="last_name"
                                             value='{{ $appeal->applicant->name }}' name='name' placeholder="">
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-4">
                                         <label for="last_name" class="form-label">NIF</label>
                                         <input type="text" class="form-control" id="last_name"
                                             value='{{ $appeal->applicant->nif }}' name='nif' placeholder="">
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-4">
                                         <label for="first_name" class="form-label">Adresse</label>
                                         <input type="text" class="form-control"
                                             value='{{ $appeal->applicant->address }}' id="first_name" name='address'>
                                     </div>
-                                    <div class="col-sm-3">
-                                        <label for="birth_date" class="form-label">Téléphone</label>
+                                    
+                                </div>
+
+                                <div class="row g-3 mb-3 mt-2">
+                                    <div class="col-sm-6">
+                                        <label for="tel" class="form-label">Téléphone</label>
                                         <input type="text" value='{{ $appeal->applicant->phone_number }}'
-                                            class="form-control" id="birth_date" name='phone_number'>
+                                            class="form-control" id="tel" name='phone_number'>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="mail" class="form-label">E-mail</label>
+                                        <input type="text" value='{{ $appeal->applicant->email }}'
+                                            class="form-control" id="mail" name='email'>
                                     </div>
                                 </div>
+
                                 <!--  -->
 
 
@@ -261,12 +347,12 @@
                                     <div class="col-sm-6">
                                         <label for="" class="form-label">Date d'Envoi</label>
                                         <input type="date" class="form-control" 
-                                            id="" name='message_date'>
+                                            id="" name='message_date' value='{{$appeal->message_date}}'>
                                     </div>
                                     <div class="col-sm-6">
                                         <label for="" class="form-label">Date de Réponse convenue</label>
                                         <input type="date" class="form-control"
-                                            id="" name='response_date'>
+                                            id="" name='response_date' value='{{$appeal->response_date}}'>
                                     </div>
                                 </div>
                                 <!--  -->
@@ -281,12 +367,12 @@
                                     <div class="col-sm-6">
                                         <label for="" class="form-label">Date Notif.</label>
                                         <input type="date" class="form-control" 
-                                            id="" name='notif_date'>
+                                            id="" name='notif_date' value='{{$appeal->notif_date}}'>
                                     </div>
                                     <div class="col-sm-6">
                                         <label for="" class="form-label">Date Pub.</label>
                                         <input type="date" class="form-control"
-                                            id="" name='publish_date'>
+                                            id="" name='publish_date' value='{{$appeal->publish_date}}'>
                                     </div>
                                 </div>
                                 <!--  -->
@@ -326,4 +412,11 @@
     <script src="{{ asset('app-js/recours/rejete.js') }}"></script>
     <script src="{{ asset('app-js/recours/crd.js') }}"></script>
     <script src="{{ asset('app-js/recours/delete.js') }}"></script>
+    <script>
+    function showPdf(pdfUrl) {
+        document.getElementById("pdfFrame").src = pdfUrl;
+        var modal = new bootstrap.Modal(document.getElementById("pdfModal"));
+        modal.show();
+    }
+</script>
 @endpush

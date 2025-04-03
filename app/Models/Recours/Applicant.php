@@ -22,6 +22,7 @@ class Applicant extends Model
         'created_by',
         'last_updated_by',
         'nif',
+        'email'
     ];
 
     public function appeals(): HasMany
