@@ -173,13 +173,14 @@
                         <span>Membres </span>
                     </a>
                 </li>
-
+                @can('send-paie')
                 <li>
                     <a class="ms-link {{ Str::startsWith(request()->path(), 'opti-hr/membres/pay-form') ? 'active' : '' }}"
                         href="{{ route('membres.pay-form') }}">
                         <span>Envoi de bulletins de paie </span>
                     </a>
                 </li>
+                @endcan
                 <li>
                     <a class="ms-link {{ Str::startsWith(request()->path(), 'opti-hr/membres/contrats') ? 'active' : '' }}"
                         href="{{ route('contrats.index') }}">

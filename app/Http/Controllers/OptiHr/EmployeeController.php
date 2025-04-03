@@ -984,7 +984,7 @@ class EmployeeController extends Controller
                 'phone_number' => 'required|string|max:255|unique:employees,phone_number',
                 'address1' => 'nullable|string|max:255',
                 'gender' => 'required|in:MALE,FEMALE',
-                'duration' => 'sometimes',
+                'duration' => 'nullable',
                 'begin_date' => 'required|date',
                 'type' => 'required|string|max:255',
                 'job_id' => 'required|exists:jobs,id',
@@ -1048,7 +1048,8 @@ class EmployeeController extends Controller
             // Création du devoir
             Duty::create([
                 'job_id' => $validatedData['job_id'],
-                'duration' => $validatedData['duration'],
+                // 'duration' => $validatedData['duration'],
+                'duration' => $validatedData['duration'] ?? 0,
                 'begin_date' => $validatedData['begin_date'],
                 'type' => $validatedData['type'],
                 'employee_id' => $emp->id,
