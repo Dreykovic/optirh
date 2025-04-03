@@ -31,19 +31,30 @@ class HomeController extends Controller
         //     ->get();
         $on_going = Appeal::with(['dac', 'applicant', 'decided', 'suspended'])
         ->where('analyse_status', 'EN_COURS')
-        ->orWhereHas('decided', function ($query) {
-            $query->where('decision', 'EN COURS');
-        })
         ->orWhereHas('suspended', function ($query) {
-            $query->where('decision', 'EN COURS');
+            $query->where('decision', 'SUSPENDU');
+        })->whereHas('decided', function ($query) {
+            $query->where('decision', '');
         })
         ->orderByDesc('day_count')
+        ->get();
+        //
+        $suspended = Appeal::with(['dac', 'applicant', 'decided', 'suspended'])
+        ->whereHas('suspended', function ($query) {
+            $query->where('decision', 'SUSPENDU');
+        })->WhereHas('decided', function ($query) {
+            $query->where('decision', '');
+        })
+        ->get();
+        $on_going_analysed = Appeal::with(['dac', 'applicant', 'decided', 'suspended'])
+        ->where('analyse_status', 'EN_COURS')
         ->get();
 
 
         $rejected_count = Appeal::where('analyse_status', 'IRRECEVABLE')->count();
         $accepted_count = Appeal::where('analyse_status', 'RECEVABLE')->count();
-        $on_going_count = $on_going->count();
+        $on_going_count = $on_going_analysed->count();
+        $suspended_count = $suspended->count();
         //
         // Vérification des dates envoyées par l'utilisateur
         $startDate = $request->input('start_date');
@@ -58,8 +69,8 @@ class HomeController extends Controller
             COUNT(*) as count
         ')
         ->where(function ($query) {
-            $query->where('decided.decision', '!=', 'EN COURS')
-                ->orWhere('suspended.decision', '!=', 'EN COURS');
+            $query->where('decided.decision', '!=', 'SUSPENDU')
+                ->orWhere('suspended.decision', '!=', 'SUSPENDU');
         })
         ->groupBy('decision_group');
 
@@ -86,6 +97,6 @@ class HomeController extends Controller
                 ],
             ]);
 
-        return view('modules.recours.pages.dashboard', compact('rejected_count', 'accepted_count', 'on_going', 'on_going_count', 'chart', 'startDate', 'endDate'));
+        return view('modules.recours.pages.dashboard', compact('rejected_count', 'accepted_count', 'on_going', 'on_going_count', 'chart', 'startDate', 'endDate','suspended_count'));
     }
 }

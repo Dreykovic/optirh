@@ -11,7 +11,7 @@
                                 <div class="card ">
                                     <div class="card-body">
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar lg  rounded-1 no-thumbnail bg-lightyellow color-defult"><i
+                                            <div class="avatar lg  rounded-1 no-thumbnail color-defult"><i
                                                     class="icofont-paperclip fs-5"></i></div>
                                             <div class="flex-fill ms-4">
                                                 <div class="">En Analyse</div>
@@ -25,11 +25,11 @@
                                 <div class="card ">
                                     <div class="card-body">
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar lg  rounded-1 no-thumbnail bg-success color-defult"><i
+                                            <div class="avatar lg  rounded-1 no-thumbnail color-defult"><i
                                                     class="icofont-paperclip fs-5"></i></div>
                                             <div class="flex-fill ms-4">
                                                 <div class="">Suspendus</div>
-                                                <h5 class="mb-0 ">{{ $accepted_count }}</h5>
+                                                <h5 class="mb-0 ">{{ $suspended_count }}</h5>
                                             </div>
                                         </div>
                                     </div>
@@ -39,7 +39,7 @@
                                 <div class="card ">
                                     <div class="card-body">
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar lg  rounded-1 no-thumbnail bg-success color-defult"><i
+                                            <div class="avatar lg  rounded-1 no-thumbnail color-defult"><i
                                                     class="icofont-paperclip fs-5"></i></div>
                                             <div class="flex-fill ms-4">
                                                 <div class="">Recevables</div>
@@ -53,7 +53,7 @@
                                 <div class="card ">
                                     <div class="card-body">
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar lg  rounded-1 no-thumbnail bg-danger color-defult"><i
+                                            <div class="avatar lg  rounded-1 no-thumbnail color-defult"><i
                                                     class="icofont-paperclip fs-5"></i></div>
                                             <div class="flex-fill ms-4">
                                                 <div class="">Non Recevables</div>
@@ -105,10 +105,10 @@
                                     <div class='fw-bold'><a href="{{ route('recours.show', $appeal->id) }}"><span
                                                 class='fs-5'>@</span>{{ $appeal->dac->reference }}</a></div>
                                     <div>
-                                        @if ($appeal->analyse_status == 'ACCEPTE')
+                                        @if ($appeal->analyse_status == 'RECEVABLE')
                                             Etude: <span
                                                 class="fw-bold text-success p-2">{{ $appeal->analyse_status }}</span>
-                                        @elseif($appeal->analyse_status == 'REJETE')
+                                        @elseif($appeal->analyse_status == 'IRRECEVABLE')
                                             Etude: <span
                                                 class="fw-bold text-danger p-2">{{ $appeal->analyse_status }}</span>
                                         @else
