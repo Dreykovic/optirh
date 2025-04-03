@@ -124,22 +124,22 @@
                     <div class="accordion-item">
                         <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                            Décision de Suspension #1
+                            Décision de Suspension
                         </button>
                         </h2>
                         <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                             <div class='d-flex justify-content-between mb-3'>
-                                <span>{{$appeal->suspended->suspended_ref}}</span>
-                                <span><a href="#" onclick="showPdf('{{ asset('storage/' . $appeal->suspended->suspended_file) }}')">PDF</a></span>
+                                <span>Ref : {{$appeal->suspended->suspended_ref}}</span>
+                                <span><a href="#" onclick="showPdf('{{ asset('storage/' . $appeal->suspended->suspended_file) }}')"><i class="icofont-file-pdf fs-3 text-danger"></i></a></span>
                             </div>
                             <div class='d-flex justify-content-between'>
                                 <div>
-                                    <span>Date Mail : </span>
+                                    <span>Date Envoi de Mail : </span>
                                     <span>{{$appeal->message_date}}</span>
                                 </div>
                                 <div>
-                                    <span>Date Reponse : </span>
+                                    <span>Date Reponse Convenue : </span>
                                     <span>{{$appeal->response_date}}</span>
                                 </div>
                             </div>
@@ -151,23 +151,23 @@
                     <div class="accordion-item">
                         <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-                            Décision d'Approbation #2
+                            Décision d'Approbation
                         </button>
                         </h2>
                         <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                           
                             <div class='d-flex justify-content-between mb-3'>
-                                <span>{{$appeal->decided->decided_ref}}</span>
-                                <span><a href="#" onclick="showPdf('{{ asset('storage/' . $appeal->decided->decided_file) }}')">PDF</a></span>
+                                <span>Ref : {{$appeal->decided->decided_ref}}</span>
+                                <span><a href="#" onclick="showPdf('{{ asset('storage/' . $appeal->decided->decided_file) }}')"><i class="icofont-file-pdf fs-3 text-danger"></i></a></span>
                             </div>
                             <div class='d-flex justify-content-between'>
                                 <div>
-                                    <span>Date Notif. : </span>
+                                    <span>Date Notification : </span>
                                     <span>{{$appeal->notif_date}}</span>
                                 </div>
                                 <div>
-                                    <span>Date Pub. : </span>
+                                    <span>Date Publication : </span>
                                     <span>{{$appeal->publish_date}}</span>
                                 </div>
                             </div>
