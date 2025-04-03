@@ -104,7 +104,7 @@
                         </div>
                     @endif
 
-                    @if($appeal->analyse_status == 'RECEVABLE' && $appeal->decided == 'null')
+                    @if($appeal->analyse_status == 'RECEVABLE' && !$appeal->decided)
                         <div class='mx-2'>
                             <form id="crd-form" action="{{ route('recours.crd', $appeal->id) }}" method="post">
                                 @csrf
