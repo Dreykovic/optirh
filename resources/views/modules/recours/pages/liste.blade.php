@@ -49,7 +49,7 @@
                                     <label class="form-check-label" for="statusAccepte">Recevables</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="statusRejete" value='NON RECEVABLE'
+                                    <input class="form-check-input" type="checkbox" id="statusRejete" value='IRRECEVABLE'
                                         name='filterStatus'>
                                     <label class="form-check-label" for="statusRejete">Irrecevables</label>
                                 </div>
@@ -68,31 +68,7 @@
                                         value='CLOTURE' name='filterStatus'>
                                     <label class="form-check-label" for="decisionForclusion">Cloturés</label>
                                 </div>
-                                <!-- <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="decisionIrrecevable"
-                                        value='IRRECEVABLE' name='filterStatus'>
-                                    <label class="form-check-label" for="irrecevable">Irrécevabilité</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="decisionFonde" value='FONDE'
-                                        name='filterStatus'>
-                                    <label class="form-check-label" for="decisionFonde">Fondé</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="decisionNonFonde" value='NON FONDE'
-                                        name='filterStatus'>
-                                    <label class="form-check-label" for="decisionNonFonde">Non Fondé</label>
-                                </div> -->
-                                <!-- <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="decisionDesistement"
-                                        value='DESISTEMENT' name='filterStatus'>
-                                    <label class="form-check-label" for="statusDesistement">Désistement</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="statusIncompetence"
-                                        value='HORS COMPETENCE' name='filterStatus'>
-                                    <label class="form-check-label" for="statusIncompetence">Hors Compétence</label>
-                                </div> -->
+                              
                             </div>
                         </div>
 

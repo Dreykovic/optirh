@@ -15,11 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('decision');
 
-            $table->string('rejected_ref')->nullable();
             $table->string('suspended_ref')->nullable();
             $table->string('decided_ref')->nullable();
             
-            $table->string('rejected_file')->nullable();
             $table->string('suspended_file')->nullable();
             $table->string('decided_file')->nullable();
 

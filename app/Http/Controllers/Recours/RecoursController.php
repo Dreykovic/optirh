@@ -64,17 +64,86 @@ class RecoursController extends Controller
                 $query->where('appeals.deposit_date', '<=', $endDate);
             }
 
+            // if (!empty($statuses)) {
+            //     $statuses = explode(',', $statuses); // Transformation en tableau
+            //     // \Log::info('Statuts transformés en tableau : ', $statuses);
+            // }
+
+            // if (!empty($statuses) && is_array($statuses)) {
+            //     $query->where(function ($q) use ($statuses) {
+            //         $q->whereIn(DB::raw('appeals.analyse_status::TEXT'), $statuses)
+            //             ->orWhereIn(DB::raw('decisions.decision::TEXT'), $statuses);
+            //     });
+            // }
+            // if (!empty($statuses)) {
+            //     $statuses = explode(',', $statuses); // Transformation en tableau
+            // }
+            
+            // if (!empty($statuses) && is_array($statuses)) {
+            //     $query->where(function ($q) use ($statuses) {
+            //         foreach ($statuses as $status) {
+            //             switch ($status) {
+            //                 case 'EN_COURS':
+            //                     $q->orWhere('appeals.analyse_status', 'EN_COURS');
+            //                     break;
+            //                 case 'RECEVABLE':
+            //                     $q->orWhere('appeals.analyse_status', 'RECEVABLE');
+            //                     break;
+            //                 case 'IRRECEVABLE':
+            //                     $q->orWhere('appeals.analyse_status', 'IRRECEVABLE');
+            //                     break;
+            //                 case 'SUSPENDU':
+            //                     $q->orWhereNotNull('appeals.suspended_id')
+            //                       ->whereHas('suspended', function ($sq) {
+            //                           $sq->where('decision', 'SUSPENDU');
+            //                       });
+            //                     break;
+            //                 case 'CLOTURE':
+            //                     $q->orWhereNotNull('appeals.decided_id')
+            //                       ->whereHas('decided', function ($sq) {
+            //                           $sq->whereNotNull('decision');
+            //                       });
+            //                     break;
+            //             }
+            //         }
+            //     });
+            // }
+            
             if (!empty($statuses)) {
                 $statuses = explode(',', $statuses); // Transformation en tableau
-                // \Log::info('Statuts transformés en tableau : ', $statuses);
             }
-
+            
             if (!empty($statuses) && is_array($statuses)) {
                 $query->where(function ($q) use ($statuses) {
-                    $q->whereIn(DB::raw('appeals.analyse_status::TEXT'), $statuses)
-                        ->orWhereIn(DB::raw('decisions.decision::TEXT'), $statuses);
+                    foreach ($statuses as $status) {
+                        switch ($status) {
+                            case 'EN_COURS':
+                                $q->orWhere('appeals.analyse_status', 'EN_COURS');
+                                break;
+                            case 'RECEVABLE':
+                                $q->orWhere('appeals.analyse_status', 'RECEVABLE');
+                                break;
+                            case 'IRRECEVABLE':
+                                $q->orWhere('appeals.analyse_status', 'IRRECEVABLE');
+                                break;
+                            case 'SUSPENDU':
+                                $q->orWhereNotNull('appeals.suspended_id')
+                                  ->whereHas('suspended', function ($sq) {
+                                      $sq->where('decision', 'SUSPENDU');
+                                  });
+                                break;
+                            case 'CLOTURE':
+                                $q->orWhereNotNull('appeals.decided_id')
+                                  ->whereHas('decided', function ($sq) {
+                                      $sq->whereNotNull('decision');
+                                  });
+                                break;
+                        }
+                    }
                 });
             }
+            
+            //
 
             // Recherche textuelle
             if ($search) {
@@ -188,7 +257,7 @@ class RecoursController extends Controller
                 'message_date' => 'nullable|date',
                 'response_date' => 'nullable|date',
                 'publish_date' => 'nullable|date',
-
+                'email' => 'nullable|email'
             ]);
 
             list($date, $time) = explode('T', $validatedData['date_depot']);
@@ -201,10 +270,11 @@ class RecoursController extends Controller
                 'deposit_hour' => $time,
                 'deposit_date' => $date,
                 'object' => $validatedData['appeal_object'],
-                'notif_date' => $validatedData['notif_date'],
-                'message_date' => $validatedData['message_date'],
-                'response_date' => $validatedData['response_date'],
-                'publish_date' => $validatedData['publish_date'],
+                'notif_date' => $validatedData['notif_date'] ?? null,
+                'message_date' => $validatedData['message_date'] ?? null,
+                'response_date' => $validatedData['response_date'] ?? null,
+                'publish_date' => $validatedData['publish_date'] ?? null,
+                
             ]);
             $dac->update([
                 'reference' => $validatedData['reference'],
@@ -216,6 +286,7 @@ class RecoursController extends Controller
                 'name' => $validatedData['name'],
                 'address' => $validatedData['address'],
                 'phone_number' => $validatedData['phone_number'],
+                'email' => $validatedData['email'] ?? null,
                 // 'created_by' =>  Auth::user()->employee->id ?? null
             ]);
             if ($request->input('decision')) {
@@ -262,7 +333,7 @@ public function rejected(Request $request, $id)
 
         $decisionData = [
             'decision' => $request->input('decision'),
-            'rejected_ref' => $request->input('rejected_ref'),
+            'decided_ref' => $request->input('decided_ref'),
             'date' => now(),
         ];
 
@@ -270,12 +341,12 @@ public function rejected(Request $request, $id)
         $folder = "decisions";
 
         // Vérifier si un fichier a été reçu
-        if (!$request->hasFile('rejected_file')) {
+        if (!$request->hasFile('decided_file')) {
             Log::error('Aucun fichier reçu pour le recours ID: ' . $id);
             return response()->json(['ok' => false, 'message' => 'Aucun fichier reçu'], 400);
         }
 
-        $file = $request->file('rejected_file');
+        $file = $request->file('decided_file');
 
         // Vérifier si le fichier est valide
         if (!$file->isValid()) {
@@ -310,7 +381,8 @@ public function rejected(Request $request, $id)
         }
 
         // Stocker le chemin dans la décision
-        $decisionData['rejected_file'] = "storage/$path";
+        $decisionData['decided_file'] = $path;
+        // $decisionData['decided_file'] = "storage/$path";
 
         // Enregistrer la décision
         $decision = Decision::create($decisionData);
@@ -324,7 +396,7 @@ public function rejected(Request $request, $id)
 
         return response()->json([
             'message' => 'Recours irrecevable avec succès.',
-            'rejected_file' => "storage/$path",
+            'decided_file' => $path,
             'ok' => true
         ], 200);
 
@@ -393,7 +465,7 @@ public function accepted(Request $request, $id)
         }
 
         // Stocker le chemin dans la décision
-        $decisionData['suspended_file'] = "storage/$path";
+        $decisionData['suspended_file'] = $path;
 
         // Enregistrer la décision
         $decision = Decision::create($decisionData);
@@ -407,7 +479,7 @@ public function accepted(Request $request, $id)
 
         return response()->json([
             'message' => 'Recours recevable avec succès.',
-            'suspended_file' => "storage/$path",
+            'suspended_file' => $path,
             'ok' => true
         ], 200);
 
@@ -469,7 +541,7 @@ public function crd(Request $request, $id)
             }
 
             // Stocker le chemin dans la décision
-            $decisionData['decided_file'] = "storage/$path";
+            $decisionData['decided_file'] = $path;
         }
 
         // Enregistrer la décision
@@ -483,7 +555,7 @@ public function crd(Request $request, $id)
 
         return response()->json([
             'message' => 'Recours irrecevable avec succès.',
-            'decided_file' => isset($path) ? "storage/$path" : null,
+            'decided_file' => isset($path) ? $path : null,
             'ok' => true
         ], 200);
 
