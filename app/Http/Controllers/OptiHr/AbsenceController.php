@@ -31,27 +31,55 @@ class AbsenceController extends Controller
         $this->middleware(['permission:écrire-une-absence|écrire-un-tout'], ['only' => ['approve', 'reject', 'comment']]);
     }
 
-    /**
-     * Télécharger le PDF d'une absence
-     *
-     * @param int $absenceId L'identifiant de l'absence
-     * @return mixed
-     */
-    public function download($absenceId)
-    {
+   /**
+ * Télécharger le PDF d'une absence
+ *
+ * @param int $absenceId L'identifiant de l'absence
+ * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response
+ */
+public function download($absenceId)
+{
+    try {
         $absence = Absence::findOrFail($absenceId);
         $decision = AnnualDecision::where('state', 'current')->first();
+        
+        if (!$decision) {
+            $this->activityLogger->log(
+                'error',
+                "Échec du téléchargement du PDF d'absence #{$absence->id}: Aucune décision annuelle active",
+                $absence
+            );
+            
+            return response()->json([
+                'error' => 'Aucune décision annuelle active trouvée',
+                'message' => 'Impossible de générer le PDF sans décision annuelle'
+            ], 404);
+        }
+        
         $absencePdf = new AbsencePdfService();
-
+        
         $this->activityLogger->log(
             'download',
             "Téléchargement du PDF d'absence #{$absence->id}",
             $absence
         );
-
+        
         return $absencePdf->generate($absence, $decision);
-
+    } catch (\Exception $e) {
+        // Log l'erreur
+        $this->activityLogger->log(
+            'error',
+            "Erreur lors du téléchargement du PDF d'absence #{$absenceId}: " . $e->getMessage(),
+            isset($absence) ? $absence : null
+        );
+        
+        return response()->json([
+            'error' => 'Erreur lors de la génération du PDF',
+            'message' => $e->getMessage()
+        ], 500);
     }
+}
+
 
     /**
      * Afficher la liste des absences filtrée par étape

@@ -1,0 +1,92 @@
+.
+├── app
+│   ├── Config
+│   │   └── ActivityLogActions.php
+│   ├── Console
+│   │   ├── Commands
+│   │   │   ├── CleanupActivityLogs.php
+│   │   │   ├── SendDailyAppealReminderEmail.php
+│   │   │   ├── UpdateAbsenceBalance.php
+│   │   │   └── UpdateAppealDayCount.php
+│   │   └── Kernel.php
+│   ├── Exceptions
+│   │   └── Handler.php
+│   ├── Http
+│   │   ├── Controllers
+│   │   │   ├── ActivityLogController.php
+│   │   │   ├── AuthController.php
+│   │   │   ├── Controller.php
+│   │   │   ├── HomeController.php
+│   │   │   ├── OptiHr
+│   │   │   │   ├── AbsenceController.php
+│   │   │   │   ├── AbsenceTypeController.php
+│   │   │   │   ├── ...
+│   │   │   ├── Recours
+│   │   │   │   ├── DacController.php
+│   │   │   │   ├── RecoursController.php
+│   │   │   │   └── StatsController.php
+│   │   │   ├── RoleController.php
+│   │   │   └── UserController.php
+│   │   ├── Kernel.php
+│   │   ├── Middleware
+│   │   └── Requests
+│   │       └── StoreAccounteRequest.php
+│   ├── Jobs
+│   │   └── CleanupActivityLogsJob.php
+│   ├── Mail
+│   │   ├── AbsenceRequestCreated.php
+│   ├── Models
+│   │   ├── ActivityLog.php
+│   │   ├── OptiHr
+│   │   │   ├── Absence.php
+│   │   │   ├── AbsenceType.php
+│   │   │   ├── ...
+│   │   ├── Recours
+│   │   │   ├── Appeal.php
+│   │   │   ├── ...
+│   │   └── User.php
+│   ├── Observers
+│   │   └── EmployeeObserver.php
+│   ├── Providers
+│   ├── Services
+│   ├── Traits
+│   │   └── LogsActivity.php
+│   └── Utils
+│       └── helpers.php
+├── architecture.txt
+├── artisan
+├── bootstrap/
+├── composer.json
+├── composer.lock
+├── database/
+├── lang/
+├── package.json
+├── package-lock.json
+├── palette.scss
+├── phpunit.xml
+├── README.md
+├── resources
+│   ├── css/
+│   ├── js/
+│   ├── lang/
+│   └── views
+│       ├── auth
+│       ├── base.blade.php
+│       ├── components
+│       ├── errors
+
+│       └── modules
+│           ├── gateway
+│           ├── opti-hr
+│           │   ├── emails
+│           │   ├── pages
+│           │   ├── partials
+│           │   └── pdf└── ztext
+│               ├── partials
+│               └── pdf
+├── routes
+├── tests
+├── vite.config.js
+├── vite-module-loader.js
+
+
