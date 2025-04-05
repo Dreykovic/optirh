@@ -127,16 +127,13 @@ class RecoursController extends Controller
                                 $q->orWhere('appeals.analyse_status', 'IRRECEVABLE');
                                 break;
                             case 'SUSPENDU':
-                                $q->orWhereNotNull('appeals.suspended_id')
-                                  ->whereHas('suspended', function ($sq) {
-                                      $sq->where('decision', 'SUSPENDU');
-                                  });
+                                $q->orWhere(function ($sub) {
+                                    $sub->whereNotNull('appeals.suspended_id')
+                                        ->whereNull('appeals.decided_id');
+                                });
                                 break;
                             case 'CLOTURE':
-                                $q->orWhereNotNull('appeals.decided_id')
-                                  ->whereHas('decided', function ($sq) {
-                                      $sq->whereNotNull('decision');
-                                  });
+                                $q->orWhereNotNull('appeals.decided_id');
                                 break;
                         }
                     }
