@@ -86,7 +86,7 @@ class HomeController extends Controller
        
         $chart = (new LarapexChart())
             ->setTitle('Nombre de recours par décision')
-            ->setType('bar') // Type en barres
+            ->setType('area') // line area* donut radar*  heatmap radialBar
             // ->setColors(['#FFDAB9', '#FFA07A', '#FF8C00']) // Couleurs personnalisées
             ->setColors(['#FFE5B4', '#FFC87C', '#FFA500']) // Beige orangé, orange clair, orange moyen
             ->setLabels($decisions->keys()->toArray()) // Catégories sur l'axe X

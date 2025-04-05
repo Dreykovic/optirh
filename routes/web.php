@@ -351,6 +351,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/store', [RecoursController::class, 'store'])->name('recours.store');
         Route::post('/dacs/store', [DacController::class, 'dacStore'])->name('dac.store');
         Route::post('/applicants/store', [DacController::class, 'applicantStore'])->name('applicant.store');
-        Route::get('/stats', [StatsController::class, 'index'])->name('stats.index');
+        // Route::get('/stats', [StatsController::class, 'index'])->name('stats.index');
     });
 });

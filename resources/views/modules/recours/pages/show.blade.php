@@ -130,18 +130,19 @@
                         <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                             <div class='d-flex justify-content-between mb-3'>
+                                <span>Décision</span>
                                 <span>Ref : {{$appeal->suspended->suspended_ref}}</span>
                                 <span><a href="#" onclick="showPdf('{{ asset('storage/' . $appeal->suspended->suspended_file) }}')"><i class="icofont-file-pdf fs-3 text-danger"></i></a></span>
                             </div>
-                            <p class='text-center'>Demande d'informations complémentaires</p>
                             <div class='d-flex justify-content-between'>
+                                <span>Informations complémentaires</span>
                                 <div>
                                     <span>Date Envoi de Mail : </span>
-                                    <span>{{$appeal->message_date}}</span>
+                                    <span>{{$appeal->message_date ?? 'Non spécifiée'}}</span>
                                 </div>
                                 <div>
                                     <span>Date Reponse Convenue : </span>
-                                    <span>{{$appeal->response_date}}</span>
+                                    <span>{{$appeal->response_date ?? 'Non spécifiée'}}</span>
                                 </div>
                             </div>
                         </div>                        
@@ -159,17 +160,19 @@
                         <div class="accordion-body">
                           
                             <div class='d-flex justify-content-between mb-3'>
+                                <span>Décision</span>
                                 <span>Ref : {{$appeal->decided->decided_ref}}</span>
                                 <span><a href="#" onclick="showPdf('{{ asset('storage/' . $appeal->decided->decided_file) }}')"><i class="icofont-file-pdf fs-3 text-danger"></i></a></span>
                             </div>
                             <div class='d-flex justify-content-between'>
+                                <span>Dates</span>
                                 <div>
-                                    <span>Date Notification : </span>
-                                    <span>{{$appeal->notif_date}}</span>
+                                    <span>Notification : </span>
+                                    <span>{{$appeal->notif_date ?? 'Non spécifiée'}}</span>
                                 </div>
                                 <div>
-                                    <span>Date Publication : </span>
-                                    <span>{{$appeal->publish_date}}</span>
+                                    <span>Publication : </span>
+                                    <span>{{$appeal->publish_date ?? 'Non spécifiée'}}</span>
                                 </div>
                             </div>
                         </div>

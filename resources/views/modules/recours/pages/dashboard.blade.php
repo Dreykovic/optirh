@@ -14,8 +14,8 @@
                                             <div class="avatar lg  rounded-1 no-thumbnail color-defult"><i
                                                     class="icofont-paperclip fs-5"></i></div>
                                             <div class="flex-fill ms-4">
-                                                <div class="">En Analyse</div>
                                                 <h5 class="mb-0 ">{{ $on_going_count }}</h5>
+                                                <div class="text-muted">En Analyse</div>
                                             </div>
                                         </div>
                                     </div>
@@ -28,8 +28,8 @@
                                             <div class="avatar lg  rounded-1 no-thumbnail color-defult"><i
                                                     class="icofont-paperclip fs-5"></i></div>
                                             <div class="flex-fill ms-4">
-                                                <div class="">Suspendus</div>
                                                 <h5 class="mb-0 ">{{ $suspended_count }}</h5>
+                                                <div class="text-muted">Suspendus</div>
                                             </div>
                                         </div>
                                     </div>
@@ -42,22 +42,22 @@
                                             <div class="avatar lg  rounded-1 no-thumbnail color-defult"><i
                                                     class="icofont-paperclip fs-5"></i></div>
                                             <div class="flex-fill ms-4">
-                                                <div class="">Recevables</div>
                                                 <h5 class="mb-0 ">{{ $accepted_count }}</h5>
+                                                <div class="text-muted">Recevables</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-12 col-lg-3 col-xl-3 col-xxl-3">
-                                <div class="card ">
+                                <div class="card">
                                     <div class="card-body">
                                         <div class="d-flex align-items-center">
                                             <div class="avatar lg  rounded-1 no-thumbnail color-defult"><i
                                                     class="icofont-paperclip fs-5"></i></div>
                                             <div class="flex-fill ms-4">
-                                                <div class="">Non Recevables</div>
                                                 <h5 class="mb-0 ">{{ $rejected_count }}</h5>
+                                                <div class="text-muted">Non Recevables</div>
                                             </div>
                                         </div>
                                     </div>
