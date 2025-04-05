@@ -15,11 +15,11 @@
                                 <div class="row g-3 mb-3">
                                     <div class="col">
                                         <label for="nom" class="form-label required">Nom</label>
-                                        <input type="text" class="form-control" id="nom" value="{{$employee->first_name}}" name='first_name'> 
+                                        <input type="text" class="form-control" id="nom" value="{{$employee->last_name}}" name='last_name'> 
                                     </div>
                                     <div class="col">
                                         <label for="prenom" class="form-label required">Prénom</label>
-                                        <input type="text" class="form-control" id="prenom" value="{{$employee->last_name}}" name='last_name'> 
+                                        <input type="text" class="form-control" id="prenom" value="{{$employee->first_name}}" name='first_name'> 
                                     </div>
                                 </div>
                                 <div class="row g-3 mb-3">
