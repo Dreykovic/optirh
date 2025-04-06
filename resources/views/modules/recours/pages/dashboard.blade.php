@@ -117,7 +117,7 @@
                                         @endif
                                     </div>
                                     <div>Decision: <span
-                                            class='fw-bold text-info p-2'>{{ $appeal->decision->decision ?? 'N/A' }}</span>
+                                            class='fw-bold text-info p-2'>{{ $appeal->decided->decision ?? $appeal->suspended->decision ?? 'N/A' }}</span>
                                     </div>
                                     <div>Delai: {{ $appeal->day_count }} jrs</div>
                                 </div>

@@ -30,22 +30,35 @@ class HomeController extends Controller
         //     ->orderByDesc('day_count')
         //     ->get();
         $on_going = Appeal::with(['dac', 'applicant', 'decided', 'suspended'])
-        ->where('analyse_status', 'EN_COURS')
-        ->orWhereHas('suspended', function ($query) {
-            $query->where('decision', 'SUSPENDU');
-        })->whereHas('decided', function ($query) {
-            $query->where('decision', '');
+        ->where(function ($query) {
+            $query->where('analyse_status', 'EN_COURS')
+                ->orWhere(function ($query) {
+                    $query->whereHas('suspended', function ($query) {
+                        $query->where('decision', 'SUSPENDU');
+                    })
+                    ->where(function ($query) {
+                        $query->whereHas('decided', function ($sub) {
+                            $sub->where('decision', '');
+                        })->orWhereDoesntHave('decided');
+                    });
+                });
         })
         ->orderByDesc('day_count')
         ->get();
+
         //
         $suspended = Appeal::with(['dac', 'applicant', 'decided', 'suspended'])
         ->whereHas('suspended', function ($query) {
             $query->where('decision', 'SUSPENDU');
-        })->WhereHas('decided', function ($query) {
-            $query->where('decision', '');
+        })
+        ->where(function ($query) {
+            $query->whereHas('decided', function ($sub) {
+                $sub->where('decision', '');
+            })->orWhereDoesntHave('decided');
         })
         ->get();
+    
+
         $on_going_analysed = Appeal::with(['dac', 'applicant', 'decided', 'suspended'])
         ->where('analyse_status', 'EN_COURS')
         ->get();

@@ -104,7 +104,8 @@ class RecoursController extends Controller
                 $query->where(function ($q) use ($search) {
                     $q->whereRaw('LOWER(appeals.object) LIKE ?', ['%' . strtolower($search) . '%'])
                         ->orWhereRaw('LOWER(dacs.reference) LIKE ?', ['%' . strtolower($search) . '%'])
-                        ->orWhereRaw('LOWER(decisions.decision) LIKE ?', ['%' . strtolower($search) . '%'])
+                        ->orWhereRaw('LOWER(suspended.decision) LIKE ?', ['%' . strtolower($search) . '%'])
+                        ->orWhereRaw('LOWER(decided.decision) LIKE ?', ['%' . strtolower($search) . '%'])
                         ->orWhereRaw('LOWER(appeals.analyse_status) LIKE ?', ['%' . strtolower($search) . '%'])
                         ->orWhereRaw('LOWER(applicants.name) LIKE ?', ['%' . strtolower($search) . '%'])
                         ->orWhereRaw("TO_CHAR(appeals.deposit_date, 'YYYY-MM-DD') LIKE ?", ['%' . $search . '%']);
