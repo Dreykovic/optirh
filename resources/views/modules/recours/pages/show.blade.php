@@ -79,7 +79,7 @@
                         </div>
                     </div>
                 </div>
-
+                @can('appeal-actions')
                 <!-- Boutons en bas -->
                 <div class='d-flex p-4 mt-4 '>
                     <!-- Bouton de suppression -->
@@ -117,6 +117,7 @@
                         </div>
                     @endif
                 </div>
+                @endcan
                 <!-- acc -->
 
                 <div class="accordion accordion-flush" id="accordionFlushExample">
