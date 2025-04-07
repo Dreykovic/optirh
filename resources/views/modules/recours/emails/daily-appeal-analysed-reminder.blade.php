@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Rappel: Recours en cours</title>
+    <title>Rappel: Recours en cours d'analyse</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -51,9 +51,9 @@
 <body>
 
 <div class="container">
-    <h2>🔔 Rappel: Recours en cours</h2>
+    <h2> Rappel: Recours en cours d'analyse</h2>
     <p>Bonjour,</p>
-    <p>Voici les recours qui sont en cours depuis plus de sept (7) jours :</p>
+    <p>Voici les recours qui sont en cours d'analyse: </p>
 
     <ul>
         @foreach ($appeals as $appeal)

@@ -5,7 +5,7 @@ namespace App\Mail;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class DailyAppealReminderMail extends Mailable
+class DailyAppealAnalysedReminderMail extends Mailable
 {
     use SerializesModels;
 
@@ -18,8 +18,8 @@ class DailyAppealReminderMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Rappel: Recours en cours depuis plus de 7 jours')
-                    ->view('modules.recours.emails.daily-appeal-reminder')
+        return $this->subject("Rappel: Recours en cours d'analyse")
+                    ->view('modules.recours.emails.daily-appeal-analysed-reminder')
                     ->with([
                         'appeals' => $this->appeals,
                     ]);

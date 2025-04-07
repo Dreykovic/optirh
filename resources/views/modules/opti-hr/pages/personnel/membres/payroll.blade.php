@@ -23,7 +23,7 @@
     <input type="file" class='form-control mt-4 ' id="pdfInput" accept="application/pdf">
     <div class="form-text required mb-4">Chargez le bullettin de paie Sage Paie</div>
 
-        <button class='btn btn-primary w-auto text-uppercase' onclick="processPDF()">
+        <button class='btn btn-primary w-auto text-uppercase' onclick="processPDF()" id="submitBtn">
             <span class="normal-status">
                 Envoyer
             </span>
@@ -81,12 +81,26 @@
         }
         async function processPDF() {
             const fileInput = document.getElementById('pdfInput');
+            //
+            const btn = document.getElementById('submitBtn');
+            const normalStatus = btn.querySelector('.normal-status');
+            const spinnerStatus = btn.querySelector('.indicateur');
+
+            // Afficher le spinner
+            normalStatus.classList.add('d-none');
+            spinnerStatus.classList.remove('d-none');
+            btn.disabled = true;
+            //
             if (!fileInput.files.length) {
                 Swal.fire({
                     icon: "warning",
                     title: "Aucun fichier sélectionné",
                     text: "Veuillez sélectionner un Bullettin de Paie.",
                 });
+                normalStatus.classList.remove('d-none');
+                spinnerStatus.classList.add('d-none');
+                btn.disabled = false;
+
                 return;
             }
 
@@ -115,47 +129,123 @@
 
                 // Envoyer tous les fichiers en une seule requête
                 await sendFilesToServer(formData);
+                // ✅ Rétablir l’état du bouton et masquer le spinner
+                normalStatus.classList.remove('d-none');
+                spinnerStatus.classList.add('d-none');
+                btn.disabled = false;
+
+                // ✅ Réinitialiser l'input fichier
+                fileInput.value = "";
+                //
             };
 
             reader.readAsArrayBuffer(file);
         }
 
        
-         async function sendFilesToServer(formData) {
-        try {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        //  async function sendFilesToServer(formData) {
+        //     try {
+        //         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-            const response = await fetch("/opti-hr/files/invoices", {
-                method: "POST",
-                headers: {
-                    "X-CSRF-TOKEN": csrfToken
-                },
-                body: formData,
-            });
+        //         const response = await fetch("/opti-hr/files/invoices", {
+        //             method: "POST",
+        //             headers: {
+        //                 "X-CSRF-TOKEN": csrfToken
+        //             },
+        //             body: formData,
+        //         });
 
-            const result = await response.json();
-            if (response.ok) {
-                console.log("Fichiers envoyés avec succès :", result);
+        //         const result = await response.json();
+        //         if (response.ok) {
+        //             console.log("Fichiers envoyés avec succès :", result);
+        //             Swal.fire({
+        //             icon: "success",
+        //             title: "Succès !",
+        //             text: "Les bullettins ont été traités avec succès.",
+        //         });
+        //         } else {
+        //             console.error("Erreur lors de l'envoi :", result);
+        //             // alert("Erreur lors de l'envoi des fichiers.");
+        //             Swal.fire({
+        //             icon: "error",
+        //             title: "Erreur !",
+        //             text: "Erreur lors de l'envoi des fichiers.",
+        //         });
+        //         }
+        //     } catch (error) {
+        //         console.error("Erreur réseau :", error);
+        //     }
+        // }
+        async function sendFilesToServer(formData) {
+            try {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                const response = await fetch("/opti-hr/files/invoices", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRF-TOKEN": csrfToken
+                    },
+                    body: formData,
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    console.log("Fichiers envoyés avec succès :", result);
+
+                    let successCount = 0;
+                    let errorRows = '';
+                    let successRows = '';
+
+                    result.forEach(item => {
+                        if (item.success) {
+                            successCount++;
+                            // successRows += `<tr><td>${item.employee}</td><td>${item.file}</td></tr>`;
+                        } else {
+                            errorRows += `<tr><td>${item.file}</td><td>${item.message}</td></tr>`;
+                        }
+                    });
+
+                    let htmlContent = `
+                        <div style="text-align:center;">
+                            <p class='text-success'><span>${successCount} bullettins envoyés avec succès.</span></p>
+
+                            ${errorRows ? `
+                                <p class=""><strong>Envois échoués :</strong></p>
+                                <table class="table table-bordered table-sm text-danger">
+                                    <thead><tr><th>Fichier</th><th>Erreur</th></tr></thead>
+                                    <tbody>${errorRows}</tbody>
+                                </table>` : ''
+                            }
+                        </div>
+                    `;
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "Résultat d'envoi",
+                        html: htmlContent,
+                        // width: '60rem'
+                    });
+
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Erreur !",
+                        text: "Erreur lors de l'envoi des fichiers.",
+                    });
+                }
+            } catch (error) {
+                console.error("Erreur réseau :", error);
                 Swal.fire({
-                icon: "success",
-                title: "Succès !",
-                text: "Les bullettins ont été traités avec succès.",
-            });
-            } else {
-                console.error("Erreur lors de l'envoi :", result);
-                // alert("Erreur lors de l'envoi des fichiers.");
-                Swal.fire({
-                icon: "error",
-                title: "Erreur !",
-                text: "Erreur lors de l'envoi des fichiers.",
-            });
+                    icon: "error",
+                    title: "Erreur réseau !",
+                    text: error.message,
+                });
             }
-        } catch (error) {
-            console.error("Erreur réseau :", error);
         }
-    }
 
- </script>
+
+</script>
 @endpush
 
 

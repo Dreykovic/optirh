@@ -13,59 +13,42 @@ class StatsController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
-    {
-        // Vérification des dates envoyées par l'utilisateur
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+    // public function index(Request $request)
+    // {
+    //     // Vérification des dates envoyées par l'utilisateur
+    //     $startDate = $request->input('start_date');
+    //     $endDate = $request->input('end_date');
 
-        // Base de requête : Toutes les années si pas de filtre
-        $query = Appeal::join('decisions', 'appeals.decision_id', '=', 'decisions.id')
-            ->selectRaw("
-                CASE 
-                    WHEN decisions.decision IN ('FORCLUSION', 'IRRECEVABLE', 'HORS COMPETENCE') THEN 'REJETE'
-                    ELSE decisions.decision
-                END as decision_group,
-                COUNT(*) as count
-            ")
-            ->groupBy('decision_group');
+    //     // Base de requête : Toutes les années si pas de filtre
+    //     $query = Appeal::join('decisions', 'appeals.decision_id', '=', 'decisions.id')
+    //         ->selectRaw("
+    //             CASE 
+    //                 WHEN decisions.decision IN ('FORCLUSION', 'IRRECEVABLE', 'HORS COMPETENCE') THEN 'REJETE'
+    //                 ELSE decisions.decision
+    //             END as decision_group,
+    //             COUNT(*) as count
+    //         ")
+    //         ->groupBy('decision_group');
 
-        // $query = Appeal::join('decisions', 'appeals.decision_id', '=', 'decisions.id')
-        // ->selectRaw("
-        //     decisions.decision as decision_group,
-        //     COUNT(*) as count
-        // ")
-        // ->groupBy('decisions.decision');
+    //     if ($startDate && $endDate) {
+    //         $query->whereBetween('deposit_date', [$startDate, $endDate]);
+    //     }
 
-        // Appliquer le filtre uniquement si l'utilisateur envoie des dates
-        if ($startDate && $endDate) {
-            $query->whereBetween('deposit_date', [$startDate, $endDate]);
-        }
+    //     $decisions = $query->pluck('count', 'decision_group');
+    //     $chart = (new LarapexChart())
+    //         ->setTitle('Nombre de recours par décision')
+    //         ->setType('area') // line area
+    //         ->setLabels($decisions->keys()->toArray()) // Catégories sur l'axe X
+    //         ->setDataset([
+    //             [
+    //                 'name' => 'Nombre de recours',
+    //                 'data' => $decisions->values()->toArray(),
+    //             ],
+    //         ]);
 
-        $decisions = $query->pluck('count', 'decision_group');
-        // dd($decisions);
-
-        // Création du graphique
-
-        // $chart = (new LarapexChart)
-        //     ->setTitle('Nombre de recours par décision')
-        //     ->setType('bar') // Forcer le type en barres
-        //     ->setLabels($decisions->keys()->toArray())
-        //     ->setDataset($decisions->values()->toArray());
-        $chart = (new LarapexChart())
-            ->setTitle('Nombre de recours par décision')
-            ->setType('bar') // Type en barres
-            ->setLabels($decisions->keys()->toArray()) // Catégories sur l'axe X
-            ->setDataset([
-                [
-                    'name' => 'Nombre de recours',
-                    'data' => $decisions->values()->toArray(),
-                ],
-            ]);
-
-        // dump($chart);
-        return view('modules.recours.pages.stats', compact('chart', 'startDate', 'endDate'));
-    }
+    //     dump($chart);
+    //     return view('modules.recours.pages.stats', compact('chart', 'startDate', 'endDate'));
+    // }
 
     /**
      * Show the form for creating a new resource.

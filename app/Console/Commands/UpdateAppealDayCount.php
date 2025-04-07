@@ -14,8 +14,8 @@ class UpdateAppealDayCount extends Command
     public function handle()
     {
         $appeals = Appeal::where('analyse_status', 'EN_COURS')
-            ->orWhereHas('decision', function ($query) {
-                $query->where('decision', 'EN COURS');
+            ->orWhereHas('suspended', function ($query) {
+                $query->where('decision', 'SUSPENDU');
             })
             ->get();
 

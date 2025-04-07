@@ -39,6 +39,36 @@ class DatabaseSeeder extends Seeder
         $dgRole = Role::where(['name' => 'DG'])->first();
         $employeeRole = Role::where(['name' => 'EMPLOYEE'])->first();
         $dsafRole = Role::where(['name' => 'DSAF'])->first();
+        $adminRole = Role::where(['name' => 'ADMIN'])->first();
+
+        //ADMIN
+        $adminEmployee = Employee::create([
+            'matricule' => 'AD001',
+            'first_name' => 'ADMIN',
+            'last_name' => 'Admin',
+            'email' => 'admin@admin.com',
+            'phone_number' => '22230680',
+            'address1' => 'SALAM ASSURAVCE',
+            'city' => 'Lome',
+            'state' => 'Togo',
+            'country' => 'Togo',
+            'birth_date' => '1985-02-15',
+            'nationality' => 'Togolaise',
+            'status' => 'ACTIVATED',
+            'code' => 'MH-01',
+        ]);
+
+        $adminUser = User::create([
+            'username' => 'admin',
+            'email' => 'admin@admin.com',
+            'profile' => 'ADMIN',
+            'status' => 'ACTIVATED',
+            'password' => bcrypt('admin_password'),
+            'employee_id' => $adminEmployee->id,
+        ]);
+        $adminUser->syncRoles([$adminRole->id]);
+
+
 
         // Création d'un responsable RH
         $hrEmployee = Employee::create([

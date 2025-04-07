@@ -77,9 +77,12 @@
                                     <em>Et {{ $remainingPermissionsCount }} de plus...</em>
                                 </div>
                             @endif
-                            <a href="{{ route('roles.details', $role->id) }}" class="btn btn-outline-success my-1 me-2">
+                            <a href="" class="btn btn-outline-success my-1 me-2">
                                 <span class="  p-1 rounded">
                                     Plus de Détails</span> </a>
+                                    <!-- <a href="{{ route('roles.details', $role->id) }}" class="btn btn-outline-success my-1 me-2">
+                                <span class="  p-1 rounded">
+                                    Plus de Détails</span> </a>         -->
 
                         </div>
 
