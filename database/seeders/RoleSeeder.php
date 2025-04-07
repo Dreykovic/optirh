@@ -16,6 +16,7 @@ class RoleSeeder extends Seeder
         // ensemble des permissions
         $permissions_list = [
             'send-paie',
+            'appeal-actions',
             // compte
             'voir-un-compte',
             'écrire-un-compte',
@@ -336,6 +337,80 @@ class RoleSeeder extends Seeder
             // Modules
             'access-un-opti-hr',
         ];
+        //recours actors
+        $standart_permissions_list = [
+            // compte
+            'voir-un-compte',
+            'écrire-un-compte',
+            'créer-un-compte',
+            'configurer-un-compte',
+
+            // Attendance
+            'voir-une-attendance',
+
+            // Absence Request
+            'voir-une-absence',
+
+            'créer-une-absence',
+            // Document Request
+            'voir-un-document',
+            // Publication
+            'voir-une-publication',
+
+            'créer-un-document',
+
+            // Credentials
+            'écrire-un-credentials',
+
+            // Fériés
+            'voir-un-férié',
+
+            // Logs
+            'voir-un-journal',
+            'écrire-un-journal',
+            'créer-un-journal',
+            'configurer-un-journal',
+
+            // Modules
+            'access-un-all',
+        ];
+        $draj_permissions_list = [
+            // compte
+            'voir-un-compte',
+            'écrire-un-compte',
+            'créer-un-compte',
+            'configurer-un-compte',
+
+            // Attendance
+            'voir-une-attendance',
+
+            // Absence Request
+            'voir-une-absence',
+
+            'créer-une-absence',
+            // Document Request
+            'voir-un-document',
+            // Publication
+            'voir-une-publication',
+
+            'créer-un-document',
+
+            // Credentials
+            'écrire-un-credentials',
+
+            // Fériés
+            'voir-un-férié',
+
+            // Logs
+            'voir-un-journal',
+            'écrire-un-journal',
+            'créer-un-journal',
+            'configurer-un-journal',
+
+            // Modules
+            'access-un-all',
+            'appeal-actions',
+        ];
 
         // Création des permission
         foreach ($permissions_list as $permission) {
@@ -347,6 +422,8 @@ class RoleSeeder extends Seeder
         $dg = Role::create(['name' => 'DG']);
         $employee = Role::create(['name' => 'EMPLOYEE']);
         $dsaf = Role::create(['name' => 'DSAF']);
+        $standart = Role::create(['name' => 'standart']);
+        $draj = Role::create(['name' => 'DRAJ']);
 
         // Récupération des permissions
         $all_permissions = Permission::all();
@@ -355,6 +432,8 @@ class RoleSeeder extends Seeder
         $dsaf_permissions = $all_permissions->whereIn('name', $dsaf_permissions_list);
         $dg_permissions = $all_permissions->whereIn('name', $dg_permissions_list);
         $employee_permissions = $all_permissions->whereIn('name', $employee_permissions_list);
+        $standart_permissions = $all_permissions->whereIn('name', $standart_permissions_list);
+        $draj_permissions = $all_permissions->whereIn('name', $draj_permissions_list);
 
         // Synchronisation de chaque permission aux roles créés
         $admin->syncPermissions($admin_permissions);
@@ -362,5 +441,7 @@ class RoleSeeder extends Seeder
         $dg->syncPermissions($dg_permissions);
         $employee->syncPermissions($employee_permissions);
         $dsaf->syncPermissions($dsaf_permissions);
+        $standart->syncPermissions($standart_permissions);
+        $draj->syncPermissions($draj_permissions);
     }
 }

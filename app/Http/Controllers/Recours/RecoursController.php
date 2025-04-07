@@ -64,51 +64,8 @@ class RecoursController extends Controller
                 $query->where('appeals.deposit_date', '<=', $endDate);
             }
 
-            // if (!empty($statuses)) {
-            //     $statuses = explode(',', $statuses); // Transformation en tableau
-            //     // \Log::info('Statuts transformés en tableau : ', $statuses);
-            // }
-
-            // if (!empty($statuses) && is_array($statuses)) {
-            //     $query->where(function ($q) use ($statuses) {
-            //         $q->whereIn(DB::raw('appeals.analyse_status::TEXT'), $statuses)
-            //             ->orWhereIn(DB::raw('decisions.decision::TEXT'), $statuses);
-            //     });
-            // }
-            // if (!empty($statuses)) {
-            //     $statuses = explode(',', $statuses); // Transformation en tableau
-            // }
             
-            // if (!empty($statuses) && is_array($statuses)) {
-            //     $query->where(function ($q) use ($statuses) {
-            //         foreach ($statuses as $status) {
-            //             switch ($status) {
-            //                 case 'EN_COURS':
-            //                     $q->orWhere('appeals.analyse_status', 'EN_COURS');
-            //                     break;
-            //                 case 'RECEVABLE':
-            //                     $q->orWhere('appeals.analyse_status', 'RECEVABLE');
-            //                     break;
-            //                 case 'IRRECEVABLE':
-            //                     $q->orWhere('appeals.analyse_status', 'IRRECEVABLE');
-            //                     break;
-            //                 case 'SUSPENDU':
-            //                     $q->orWhereNotNull('appeals.suspended_id')
-            //                       ->whereHas('suspended', function ($sq) {
-            //                           $sq->where('decision', 'SUSPENDU');
-            //                       });
-            //                     break;
-            //                 case 'CLOTURE':
-            //                     $q->orWhereNotNull('appeals.decided_id')
-            //                       ->whereHas('decided', function ($sq) {
-            //                           $sq->whereNotNull('decision');
-            //                       });
-            //                     break;
-            //             }
-            //         }
-            //     });
-            // }
-            
+         
             if (!empty($statuses)) {
                 $statuses = explode(',', $statuses); // Transformation en tableau
             }
@@ -127,16 +84,13 @@ class RecoursController extends Controller
                                 $q->orWhere('appeals.analyse_status', 'IRRECEVABLE');
                                 break;
                             case 'SUSPENDU':
-                                $q->orWhereNotNull('appeals.suspended_id')
-                                  ->whereHas('suspended', function ($sq) {
-                                      $sq->where('decision', 'SUSPENDU');
-                                  });
+                                $q->orWhere(function ($sub) {
+                                    $sub->whereNotNull('appeals.suspended_id')
+                                        ->whereNull('appeals.decided_id');
+                                });
                                 break;
                             case 'CLOTURE':
-                                $q->orWhereNotNull('appeals.decided_id')
-                                  ->whereHas('decided', function ($sq) {
-                                      $sq->whereNotNull('decision');
-                                  });
+                                $q->orWhereNotNull('appeals.decided_id');
                                 break;
                         }
                     }
@@ -150,7 +104,8 @@ class RecoursController extends Controller
                 $query->where(function ($q) use ($search) {
                     $q->whereRaw('LOWER(appeals.object) LIKE ?', ['%' . strtolower($search) . '%'])
                         ->orWhereRaw('LOWER(dacs.reference) LIKE ?', ['%' . strtolower($search) . '%'])
-                        ->orWhereRaw('LOWER(decisions.decision) LIKE ?', ['%' . strtolower($search) . '%'])
+                        ->orWhereRaw('LOWER(suspended.decision) LIKE ?', ['%' . strtolower($search) . '%'])
+                        ->orWhereRaw('LOWER(decided.decision) LIKE ?', ['%' . strtolower($search) . '%'])
                         ->orWhereRaw('LOWER(appeals.analyse_status) LIKE ?', ['%' . strtolower($search) . '%'])
                         ->orWhereRaw('LOWER(applicants.name) LIKE ?', ['%' . strtolower($search) . '%'])
                         ->orWhereRaw("TO_CHAR(appeals.deposit_date, 'YYYY-MM-DD') LIKE ?", ['%' . $search . '%']);
