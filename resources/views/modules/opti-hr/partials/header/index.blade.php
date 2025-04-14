@@ -24,7 +24,18 @@
 
                 <a type="button" class="btn btn-primary" href="{{ route('absences.create') }}">Demander Un
                     Congés</a>
+
+                <!-- Ajout du solde de congés -->
+                <div class="leave-balance-container">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span class="leave-balance-label">Solde de congés: </span>
+                    <span
+                        class="leave-balance-value">{{ auth()->user()->employee->duties->firstWhere('evolution', 'ON_GOING')->absence_balance ?? 0 }}
+                        jour(s)</span>
+                </div>
+                <!-- Fin ajout -->
             </div>
+
         </div>
     </nav>
 </div>
