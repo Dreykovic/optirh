@@ -14,6 +14,8 @@ return new class extends Migration {
             $table->id();
             $table->string('label');
             $table->text('description')->nullable();
+            $table->boolean('is_deductible')->default(true); // Nouvel attribut pour indiquer si l'absence est déductible du solde de congés
+
             $table->enum('type', ['EXCEPTIONAL', 'NORMAL'])->default('NORMAL');
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
             $table->timestamps();

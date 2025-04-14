@@ -383,6 +383,8 @@ public function download($absenceId)
             case 'TWO':
                 $absence->stage = 'APPROVED';
                 $absence->level = 'THREE';
+                $absence->duty->absence_balance -= $absence->requested_days;
+                $absence->duty->save();
                 $toEmployee = true;
                 $this->assignAbsenceNumber($absence);
                 break;
@@ -390,6 +392,8 @@ public function download($absenceId)
             default:
                 $absence->stage = 'APPROVED';
                 $absence->level = 'THREE';
+                $absence->duty->absence_balance -= $absence->requested_days;
+                $absence->duty->save();
                 $toEmployee = true;
                 $this->assignAbsenceNumber($absence);
                 break;
