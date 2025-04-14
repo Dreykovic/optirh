@@ -29,6 +29,8 @@ return new class () extends Migration {
             $table->string('proof')->nullable();
             $table->text('comment')->nullable();
             $table->bigInteger('absence_number')->nullable();
+            $table->boolean('is_deductible')->default(true); // Nouvel attribut pour indiquer si l'absence est déductible du solde de congés
+
             $table->foreignIdFor(Duty::class)->nullable()->constrained()->onDelete('cascade');
             $table->foreignIdFor(AbsenceType::class)->nullable()->constrained()->onDelete('set null'); // Clé étrangère vers le type d'absence
 

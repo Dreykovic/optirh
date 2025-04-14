@@ -3,6 +3,8 @@
         <p class="mb-0 text-end line-height-sm "><span class="font-weight-bold">{{ auth()->user()->username }}</span></p>
         <small>{{ auth()->user()->getRoleNames()->first() }}</small>
     </div>
+
+
     <a class=" dropdown-toggle pulse p-0" href="#" role="button" data-bs-toggle="dropdown" data-bs-display="static">
 
         <i class="icofont icofont-business-man-alt-2 avatar lg rounded-circle img-thumbnail fs-3    "></i>
@@ -16,7 +18,7 @@
                     <div class="flex-fill ms-3">
                         <p class="mb-0"><span class="font-weight-bold">{{ auth()->user()->username }}</span>
                         </p>
-                        <small class="">{{ auth()->user()->eamil }}</small>
+                        <small class="">{{ auth()->user()->email }}</small>
                     </div>
                 </div>
 

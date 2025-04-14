@@ -19,7 +19,7 @@ class AbsenceTypeSeeder extends Seeder
             [
                 'label' => 'annuel',
                 'description' => 'Absence pour congés payés annuels',
-                'status' => 'ACTIVATED'
+                'status' => 'ACTIVATED',
             ],
 
             [
@@ -32,7 +32,9 @@ class AbsenceTypeSeeder extends Seeder
             [
                 'label' => 'exceptionnel',
                 'description' => 'Absence pour une raison spécifique',
-                'status' => 'ACTIVATED'
+                'status' => 'ACTIVATED',
+                "type"=>"EXCEPTIONAL",
+
             ]
         ];
 
