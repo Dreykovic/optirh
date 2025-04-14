@@ -15,7 +15,7 @@ return new class () extends Migration {
             $table->integer('duration')->default(0);
 
             $table->date('begin_date');
-            $table->integer("absence_balance")->default(0);
+            $table->integer("absence_balance")->default(30);
             $table->string('type')->nullable();
             $table->string('comment')->nullable();
             $table->enum('status', ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'])->default('ACTIVATED');
