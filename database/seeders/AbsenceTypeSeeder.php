@@ -20,12 +20,16 @@ class AbsenceTypeSeeder extends Seeder
                 'label' => 'annuel',
                 'description' => 'Absence pour congés payés annuels',
                 'status' => 'ACTIVATED',
+                'is_deductible' => true,
             ],
 
             [
                 'label' => 'maternité',
                 'description' => 'Congé accordé pour les salariées enceintes',
-                'status' => 'ACTIVATED'
+                'status' => 'ACTIVATED',
+                "type"=>"EXCEPTIONAL",
+
+                "is_deductible"=>false
             ],
 
 
@@ -34,6 +38,7 @@ class AbsenceTypeSeeder extends Seeder
                 'description' => 'Absence pour une raison spécifique',
                 'status' => 'ACTIVATED',
                 "type"=>"EXCEPTIONAL",
+                "is_deductible"=>false
 
             ]
         ];
