@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Mail\DailyAppealAnalysedReminderMail;
 use Illuminate\Console\Command;
 use App\Models\Recours\Appeal;
 use Carbon\Carbon;
@@ -43,12 +44,12 @@ class SendDailyAppealSuspendedReminderEmail extends Command
         }
 
         // Envoyer un seul email avec tous les recours
-        $this->sendAppealReminderEmail($appeals);
+        $this->sendAppealReminderEmail($appeals,$emails);
 
         $this->info('Email de rappel envoyé.');
     }
 
-    private function sendAppealReminderEmail($appeals)
+    private function sendAppealReminderEmail($appeals,$emails)
     {
         // Remplacer par l'adresse email de la personne à avertir
         // $emailRecipient = 'fayssologbone@gmail.com'; // Remplacer par l'adresse de la personne concernée
