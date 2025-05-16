@@ -9,12 +9,12 @@
             <div
                 class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
                 <h3 class="fw-bold mb-0">Types Absences</h3>
-                @can('voir-un-all')
+                @if (auth()->user()->hasRole('GRH'))
                     <div class="col-auto d-flex w-sm-100">
                         <button type="button" class="btn btn-dark btn-set-task w-sm-100" data-bs-toggle="modal"
                             data-bs-target="#absenceTypeAdd"><i class="icofont-plus-circle me-2 fs-6"></i>Ajouter</button>
                     </div>
-                @endcan
+                @endif
             </div>
         </div>
     </div> <!-- Row end  -->
@@ -30,9 +30,11 @@
                                     <th>#</th>
                                     <th>Libelle</th>
                                     <th>Description</th>
-                                    @can('voir-un-all')
+                                    <th>Déductible</th>
+                                    @if (auth()->user()->hasRole('GRH'))
                                         <th>Actions</th>
-                                    @endcan
+                                    @endif
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -49,7 +51,14 @@
                                         <td>
                                             {{ $absenceType->description }} <!-- Description du type d'absence -->
                                         </td>
-                                        @can('voir-un-all')
+                                        <td>
+                                            @if ($absenceType->is_deductible)
+                                                <span class="badge bg-success">Oui</span>
+                                            @else
+                                                <span class="badge bg-danger">Non</span>
+                                            @endif
+                                        </td>
+                                        @if (auth()->user()->hasRole('GRH'))
                                             <td>
                                                 <div class="btn-group" role="group" aria-label="Basic outlined example">
                                                     <button type="button" class="btn btn-outline-secondary"
@@ -73,34 +82,29 @@
 
                                                 </div>
                                             </td>
-                                        @endcan
+                                        @endif
+
                                     </tr>
-                                    @can('voir-un-all')
+                                    @if (auth()->user()->hasRole('GRH'))
                                         @include('modules.opti-hr.pages.attendances.types.edit')
-                                    @endcan
+                                    @endif
                                 @empty
                                     <tr>
-                                        <td colspan="4">
-
+                                        <td colspan="5">
                                             <x-no-data color="warning" text="Aucun Type Absence Enregistré" />
                                         </td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
-                        {{-- 
-                    <!-- Paginée, affiche les liens de pagination -->
-                    <div class="mt-3">
-                        {{ $absenceTypes->links() }}
-                    </div> --}}
                     </div>
                 </div>
             </div>
         </div>
     </div><!-- Row End -->
-    @can('voir-un-all')
+    @if (auth()->user()->hasRole('GRH'))
         @include('modules.opti-hr.pages.attendances.types.create')
-    @endcan
+    @endif
 @endsection
 @push('plugins-js')
     <script src={{ asset('assets/bundles/dataTables.bundle.js') }}></script>

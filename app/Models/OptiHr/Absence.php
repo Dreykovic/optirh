@@ -29,6 +29,7 @@ class Absence extends Model
         'proof',
         'comment',
         'duty_id',
+        'is_deductible0'
     ];
 
     public function duty(): BelongsTo
