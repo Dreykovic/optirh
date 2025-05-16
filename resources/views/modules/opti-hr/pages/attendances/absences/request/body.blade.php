@@ -48,9 +48,9 @@
                 </div>
             </div>
             
-            <!-- Indicateur de déductibilité -->
+            <!-- Indicateur de déductibilité - Modifié pour utiliser le champ is_deductible de l'absence -->
             <div class="deductibility-indicator px-3">
-                @if($absence->absence_type->is_deductible)
+                @if($absence->is_deductible)
                     <div class="d-flex align-items-center">
                         <span class="badge rounded-pill bg-warning bg-opacity-25 text-black border border-warning px-3 py-2 me-2">
                             <i class="icofont-minus-circle me-1"></i>Déductible
@@ -63,6 +63,14 @@
                             <i class="icofont-plus-circle me-1"></i>Non déductible
                         </span>
                         <span class="text-muted small">Pas d'impact sur le solde</span>
+                    </div>
+                @endif
+                
+                <!-- Ajout d'un indicateur si la déductibilité diffère du type d'absence -->
+                @if($absence->is_deductible != $absence->absence_type->is_deductible)
+                    <div class="small text-info mt-1">
+                        <i class="icofont-info-circle"></i>
+                        Déductibilité modifiée manuellement
                     </div>
                 @endif
             </div>
@@ -116,7 +124,7 @@
                         <div>
                             <div class="text-muted small">Solde disponible</div>
                             <div class="fw-bold text-success">{{ $absence->duty->absence_balance }} jour{{ $absence->duty->absence_balance > 1 ? 's' : '' }}</div>
-                            @if($absence->absence_type->is_deductible && $absence->stage === 'APPROVED')
+                            @if($absence->is_deductible && $absence->stage === 'APPROVED')
                                 <div class="text-muted small mt-1">
                                     <span class="text-warning">
                                         <i class="icofont-minus-circle"></i>
@@ -197,7 +205,5 @@
         </div>
 
        
-        
-     
     </div>
 </div>
