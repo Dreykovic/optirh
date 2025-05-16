@@ -34,35 +34,24 @@ class AbsenceTypeController extends Controller
      */
     public function store(Request $request)
     {
-
-        // Valider les fichiers et l'image
+        // Validate all inputs in a single validation call
         $request->validate([
             'libelle' => 'required|string',
             'description' => 'sometimes',
             'type' => 'sometimes',
+            'is_deductible' => 'sometimes|boolean',
         ]);
 
-        // Valider les fichiers et l'image
-        $request->validate([
-            'libelle' => 'required|string',
-            'description' => 'sometimes',
-            'type' => 'sometimes',
-        ]);
-
+        // Create absence type only once
         AbsenceType::create([
             'label' => $request->input('libelle'),
             'description' => $request->input('description'),
             'type' => $request->input('type') ?? 'NORMAL',
-        ]);
-        AbsenceType::create([
-            'label' => $request->input('libelle'),
-            'description' => $request->input('description'),
-            'type' => $request->input('type') ?? 'NORMAL',
+            'is_deductible' => $request->input('is_deductible') ?? true,
         ]);
 
-        // Redirection avec message de succès
+        // Return success response
         return response()->json(['message' => 'Type Absence créé avec succès.', 'ok' => true]);
-
     }
 
 
@@ -72,53 +61,36 @@ class AbsenceTypeController extends Controller
      */
     public function update(Request $request, $absenceTypeId)
     {
-
-        // Valider les fichiers et l'image
+        // Validate inputs
         $request->validate([
             'libelle' => 'required|string',
             'description' => 'sometimes',
             'type' => 'sometimes',
+            'is_deductible' => 'sometimes|boolean',
         ]);
-        $absenceType = AbsenceType::find($absenceTypeId);
+
+        // Find record or fail with 404
+        $absenceType = AbsenceType::findOrFail($absenceTypeId);
+
+        // Update record
         $absenceType->label = $request->input('libelle');
         $absenceType->description = $request->input('description');
         $absenceType->type = $request->input('type') ?? $absenceType->type;
-
-        // Valider les fichiers et l'image
-        $request->validate([
-            'libelle' => 'required|string',
-            'description' => 'sometimes',
-            'type' => 'sometimes',
-        ]);
-        $absenceType = AbsenceType::find($absenceTypeId);
-        $absenceType->label = $request->input('libelle');
-        $absenceType->description = $request->input('description');
-        $absenceType->type = $request->input('type') ?? $absenceType->type;
+        $absenceType->is_deductible = $request->has('is_deductible') ?
+            $request->boolean('is_deductible') : $absenceType->is_deductible;
 
         $absenceType->save();
-        $absenceType->save();
 
-        // Redirection avec message de succès
+        // Return success response
         return response()->json(['message' => 'Type Absence mis à jour avec succès.', 'ok' => true]);
-
-        // Redirection avec message de succès
-        return response()->json(['message' => 'Type Absence mis à jour avec succès.', 'ok' => true]);
-
     }
-
     /**
      * Remove the specified resource from storage.
      */
     public function destroy($id)
     {
-
         \DB::table('absence_types')->where('id', $id)->delete();
 
-        \DB::table('absence_types')->where('id', $id)->delete();
-
-        return response()->json(['ok' => true, 'message' => 'Le type d\absence a été retiré avec succès.']);
-
-        return response()->json(['ok' => true, 'message' => 'Le type d\absence a été retiré avec succès.']);
-
+        return response()->json(['ok' => true, 'message' => 'Le type d\'absence a été retiré avec succès.']);
     }
 }
