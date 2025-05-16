@@ -71,7 +71,7 @@
                 data-bs-target="#absenceCommentAdd{{ $absence->id }}" role="button">
                 <i class="icofont-comment"></i>
 
-                <span class="d-none d-sm-none d-md-inline">Commenter</span>
+                <span class="d-none d-sm-none d-md-inline">Configurer</span>
             </a>
             </div>
         </li>
