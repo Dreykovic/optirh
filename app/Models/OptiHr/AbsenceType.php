@@ -13,6 +13,7 @@ class AbsenceType extends Model
         'label',
         'description',
         'type',
+        'is_deductible'
     ];
 
     public function absences(): HasMany

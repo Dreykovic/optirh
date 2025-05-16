@@ -44,7 +44,7 @@
 
             <button class="btn btn-outline-primary me-2 lift" data-bs-toggle="modal"
                 data-bs-target="#absenceCommentAdd{{ $absence->id }}">
-                <i class="icofont-comment me-1"></i>Commenter
+                <i class="icofont-comment me-1"></i>Configurer
             </button>
         @endif
 

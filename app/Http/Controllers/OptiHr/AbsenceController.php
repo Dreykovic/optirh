@@ -19,12 +19,9 @@ use Illuminate\Support\Facades\Mail;
 
 class AbsenceController extends Controller
 {
-
-
     public function __construct()
     {
         parent::__construct(app(ActivityLogService::class)); // Injection automatique
-
 
         $this->middleware(['permission:voir-une-absence|écrire-une-absence|créer-une-absence|configurer-une-absence|voir-un-tout'], ['only' => ['index']]);
         $this->middleware(['permission:créer-une-absence|créer-un-tout'], ['only' => ['store', 'cancel', 'create']]);
@@ -32,54 +29,53 @@ class AbsenceController extends Controller
     }
 
    /**
- * Télécharger le PDF d'une absence
- *
- * @param int $absenceId L'identifiant de l'absence
- * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response
- */
-public function download($absenceId)
-{
-    try {
-        $absence = Absence::findOrFail($absenceId);
-        $decision = AnnualDecision::where('state', 'current')->first();
-        
-        if (!$decision) {
+    * Télécharger le PDF d'une absence
+    *
+    * @param int $absenceId L'identifiant de l'absence
+    * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response
+    */
+    public function download($absenceId)
+    {
+        try {
+            $absence = Absence::findOrFail($absenceId);
+            $decision = AnnualDecision::where('state', 'current')->first();
+            
+            if (!$decision) {
+                $this->activityLogger->log(
+                    'error',
+                    "Échec du téléchargement du PDF d'absence #{$absence->id}: Aucune décision annuelle active",
+                    $absence
+                );
+                
+                return response()->json([
+                    'error' => 'Aucune décision annuelle active trouvée',
+                    'message' => 'Impossible de générer le PDF sans décision annuelle'
+                ], 404);
+            }
+            
+            $absencePdf = new AbsencePdfService();
+            
             $this->activityLogger->log(
-                'error',
-                "Échec du téléchargement du PDF d'absence #{$absence->id}: Aucune décision annuelle active",
+                'download',
+                "Téléchargement du PDF d'absence #{$absence->id}",
                 $absence
             );
             
+            return $absencePdf->generate($absence, $decision);
+        } catch (\Exception $e) {
+            // Log l'erreur
+            $this->activityLogger->log(
+                'error',
+                "Erreur lors du téléchargement du PDF d'absence #{$absenceId}: " . $e->getMessage(),
+                isset($absence) ? $absence : null
+            );
+            
             return response()->json([
-                'error' => 'Aucune décision annuelle active trouvée',
-                'message' => 'Impossible de générer le PDF sans décision annuelle'
-            ], 404);
+                'error' => 'Erreur lors de la génération du PDF',
+                'message' => $e->getMessage()
+            ], 500);
         }
-        
-        $absencePdf = new AbsencePdfService();
-        
-        $this->activityLogger->log(
-            'download',
-            "Téléchargement du PDF d'absence #{$absence->id}",
-            $absence
-        );
-        
-        return $absencePdf->generate($absence, $decision);
-    } catch (\Exception $e) {
-        // Log l'erreur
-        $this->activityLogger->log(
-            'error',
-            "Erreur lors du téléchargement du PDF d'absence #{$absenceId}: " . $e->getMessage(),
-            isset($absence) ? $absence : null
-        );
-        
-        return response()->json([
-            'error' => 'Erreur lors de la génération du PDF',
-            'message' => $e->getMessage()
-        ], 500);
     }
-}
-
 
     /**
      * Afficher la liste des absences filtrée par étape
@@ -106,12 +102,7 @@ public function download($absenceId)
         // Récupérer les filtres de recherche
         $type = $request->input('type');
         $search = $request->input('search');
-        // Récupérer les filtres de recherche
-        $type = $request->input('type');
-        $search = $request->input('search');
 
-        // Récupérer les types d'absences (éviter de faire la requête à chaque appel)
-        $absence_types = AbsenceType::all();
         // Récupérer les types d'absences (éviter de faire la requête à chaque appel)
         $absence_types = AbsenceType::all();
 
@@ -130,7 +121,6 @@ public function download($absenceId)
 
         // Retourner la vue avec les données nécessaires
         return view('modules.opti-hr.pages.attendances.absences.index', compact('absences', 'stage', 'absence_types'));
-
     }
 
     /**
@@ -161,10 +151,6 @@ public function download($absenceId)
         $query->when($type, function ($q) use ($type) {
             $q->where('absence_type_id', $type);
         });
-        // Filtrer par type d'absence, si précisé
-        $query->when($type, function ($q) use ($type) {
-            $q->where('absence_type_id', $type);
-        });
 
         // Filtrer par stage si le stage n'est pas "ALL"
         $query->when($stage !== 'ALL', function ($q) use ($stage) {
@@ -185,7 +171,7 @@ public function download($absenceId)
     {
         // Appliquer la pagination seulement pour certains stages
         return (in_array($stage, ['PENDING', 'IN_PROGRESS']))
-            ? $query->paginate(2)
+            ? $query->paginate(10) // Augmenté à 10 pour une meilleure visibilité des demandes
             : $query->get();
     }
 
@@ -197,13 +183,9 @@ public function download($absenceId)
     public function create()
     {
         $absenceTypes = AbsenceType::all();
-
-
-
         return view('modules.opti-hr.pages.attendances.absences.create', compact('absenceTypes'));
-
-
     }
+
     /**
      * Calculer le nombre total de jours entre deux dates (y compris week-ends et jours fériés)
      *
@@ -235,6 +217,7 @@ public function download($absenceId)
             'start_date' => 'required|date|before_or_equal:end_date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'reasons' => 'nullable|string|max:1000',
+            'is_deductible' => 'sometimes|boolean',
         ]);
 
         // Calcul du nombre de jours d'absence
@@ -244,14 +227,32 @@ public function download($absenceId)
         $currentUser = User::with('employee')->findOrFail(auth()->id());
         $currentEmployee = $currentUser->employee;
 
-
         $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
             ->where('employee_id', $currentEmployee->id)
             ->firstOrFail();
         $absence_type_id = $request->input('absence_type');
 
-        // Obtenir le type d'absence pour le log
+        // Obtenir le type d'absence pour le log et la déductibilité
         $absenceType = AbsenceType::find($absence_type_id);
+
+        // Définir la déductibilité selon les critères spécifiés
+        // Si explicitement fourni dans la requête, utiliser cette valeur
+        // Sinon, utiliser la valeur par défaut du type d'absence
+        $isDeductible = $request->has('is_deductible') 
+            ? $request->boolean('is_deductible') 
+            : $absenceType->is_deductible;
+
+        // Vérification du solde de congés si l'absence est déductible
+        if ($isDeductible && $workingDays > $currentEmployeeDuty->absence_balance) {
+            // On pourrait choisir de bloquer la demande ici ou juste avertir
+            // Pour l'instant, on continue mais on log l'avertissement
+            $this->activityLogger->log(
+                'warning',
+                "Création d'une demande d'absence de {$workingDays} jours avec un solde disponible de {$currentEmployeeDuty->absence_balance} jours",
+                null,
+                ['employee_id' => $currentEmployee->id]
+            );
+        }
 
         // Enregistrement de la demande d'absence
         $absence = Absence::create([
@@ -262,26 +263,32 @@ public function download($absenceId)
             'end_date' => $validatedData['end_date'],
             'reasons' => $validatedData['reasons'],
             'requested_days' => $workingDays,
+            'is_deductible' => $isDeductible,
+            'date_of_application' => Carbon::now(),
+            'status' => 'PENDING',
+            'stage' => 'PENDING', 
+            'level' => 'ZERO',
         ]);
 
         $this->activityLogger->log(
             'created',
-            "Création d'une demande d'absence de type {$absenceType->label}",
+            "Création d'une demande d'absence de type {$absenceType->label} " . 
+            ($isDeductible ? 'déductible' : 'non déductible'),
             $absence
         );
 
-        // Pour la notification par email (à activer si nécessaire)
+        // Pour la notification par email
         $receiver = $absence->duty->job->n_plus_one_job ?
             $absence->duty->job->n_plus_one_job->duties->firstWhere('evolution', 'ON_GOING')->employee->users->first()
             : User::role('GRH')->first();
 
         $this->handleNotifications($absence, $receiver, false);
+        
         return response()->json([
             'message' => "Demande d'absence {$absenceType->label} créée avec succès.",
             'ok' => true,
             "redirect" => route('absences.requests', 'PENDING')
         ]);
-
     }
 
     /**
@@ -302,7 +309,6 @@ public function download($absenceId)
         $workingDays = $this->calculateWorkingDays($validatedData['start_date'], $validatedData['end_date']);
 
         return response()->json(['working_days' => $workingDays]);
-
     }
 
     /**
@@ -330,9 +336,6 @@ public function download($absenceId)
         // Mettre à jour les champs stage et level
         $absence->stage = $validatedData['stage'];
         $absence->level = $validatedData['level'];
-        // Mettre à jour les champs stage et level
-        $absence->stage = $validatedData['stage'];
-        $absence->level = $validatedData['level'];
 
         // Sauvegarder les modifications
         $absence->save();
@@ -347,7 +350,6 @@ public function download($absenceId)
             'message' => 'Stage and level updated successfully.',
             'ok' => true,
         ]);
-
     }
 
     /**
@@ -359,66 +361,131 @@ public function download($absenceId)
     public function approve($id)
     {
         DB::beginTransaction();
+        try {
+            // Rechercher l'absence par ID
+            $absence = Absence::findOrFail($id);
+            $oldStage = $absence->stage;
+            $oldLevel = $absence->level;
 
-        // Rechercher l'absence par ID
-        $absence = Absence::findOrFail($id);
-        $oldStage = $absence->stage;
-        $oldLevel = $absence->level;
+            $receiver = User::role('GRH')->first();
+            $toEmployee = false;
 
-        $receiver = User::role('GRH')->first();
-        $toEmployee = false;
+            switch ($absence->level) {
+                case 'ZERO':
+                    $absence->stage = 'IN_PROGRESS';
+                    $absence->level = 'ONE';
+                    break;
 
-        switch ($absence->level) {
-            case 'ZERO':
-                $absence->stage = 'IN_PROGRESS';
-                $absence->level = 'ONE';
-                break;
+                case 'ONE':
+                    $absence->stage = 'IN_PROGRESS';
+                    $absence->level = 'TWO';
+                    $receiver = User::role('DG')->first();
+                    break;
 
-            case 'ONE':
-                $absence->stage = 'IN_PROGRESS';
-                $absence->level = 'TWO';
-                $receiver = User::role('DG')->first();
-                break;
+                case 'TWO':
+                    $absence->stage = 'APPROVED';
+                    $absence->level = 'THREE';
+                    
+                    // Déduction du solde si applicable (en fonction du flag is_deductible de l'absence)
+                    if ($absence->is_deductible) {
+                        // Vérifier le solde avant de déduire
+                        if ($absence->duty->absence_balance < $absence->requested_days) {
+                            $this->activityLogger->log(
+                                'warning',
+                                "Approbation d'une absence déductible avec solde insuffisant: {$absence->duty->absence_balance} jours disponibles, {$absence->requested_days} jours demandés",
+                                $absence
+                            );
+                        }
+                        
+                        $absence->duty->absence_balance -= $absence->requested_days;
+                        $absence->duty->save();
+                        
+                        $this->activityLogger->log(
+                            'updated',
+                            "Déduction de {$absence->requested_days} jours du solde de congés - Nouveau solde: {$absence->duty->absence_balance}",
+                            $absence
+                        );
+                    } else {
+                        $this->activityLogger->log(
+                            'info',
+                            "Absence non déductible approuvée - Aucune déduction du solde de congés",
+                            $absence
+                        );
+                    }
+                    
+                    $toEmployee = true;
+                    $this->assignAbsenceNumber($absence);
+                    break;
 
-            case 'TWO':
-                $absence->stage = 'APPROVED';
-                $absence->level = 'THREE';
-                $absence->duty->absence_balance -= $absence->requested_days;
-                $absence->duty->save();
-                $toEmployee = true;
-                $this->assignAbsenceNumber($absence);
-                break;
+                default:
+                    $absence->stage = 'APPROVED';
+                    $absence->level = 'THREE';
+                    
+                    // Déduction du solde si applicable
+                    if ($absence->is_deductible) {
+                        // Vérifier le solde avant de déduire
+                        if ($absence->duty->absence_balance < $absence->requested_days) {
+                            $this->activityLogger->log(
+                                'warning',
+                                "Approbation d'une absence déductible avec solde insuffisant: {$absence->duty->absence_balance} jours disponibles, {$absence->requested_days} jours demandés",
+                                $absence
+                            );
+                        }
+                        
+                        $absence->duty->absence_balance -= $absence->requested_days;
+                        $absence->duty->save();
+                        
+                        $this->activityLogger->log(
+                            'updated',
+                            "Déduction de {$absence->requested_days} jours du solde de congés - Nouveau solde: {$absence->duty->absence_balance}",
+                            $absence
+                        );
+                    } else {
+                        $this->activityLogger->log(
+                            'info',
+                            "Absence non déductible approuvée - Aucune déduction du solde de congés",
+                            $absence
+                        );
+                    }
+                    
+                    $toEmployee = true;
+                    $this->assignAbsenceNumber($absence);
+                    break;
+            }
 
-            default:
-                $absence->stage = 'APPROVED';
-                $absence->level = 'THREE';
-                $absence->duty->absence_balance -= $absence->requested_days;
-                $absence->duty->save();
-                $toEmployee = true;
-                $this->assignAbsenceNumber($absence);
-                break;
+            // Sauvegarder les changements
+            $absence->save();
+
+            $this->activityLogger->log(
+                'approved',
+                "Approbation de la demande d'absence #{$id} - Stage: {$oldStage} → {$absence->stage}, Level: {$oldLevel} → {$absence->level}",
+                $absence
+            );
+
+            // Gestion des notifications
+            $this->handleNotifications($absence, $receiver, $toEmployee);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Demande de congé acceptée',
+                'ok' => true,
+                'absence' => $absence
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            $this->activityLogger->log(
+                'error',
+                "Erreur lors de l'approbation de la demande d'absence #{$id}: " . $e->getMessage(),
+                isset($absence) ? $absence : null
+            );
+            
+            return response()->json([
+                'message' => "Erreur lors de l'approbation de la demande: " . $e->getMessage(),
+                'ok' => false
+            ], 500);
         }
-
-        // Sauvegarder les changements
-        $absence->save();
-
-        $this->activityLogger->log(
-            'approved',
-            "Approbation de la demande d'absence #{$id} - Stage: {$oldStage} → {$absence->stage}, Level: {$oldLevel} → {$absence->level}",
-            $absence
-        );
-
-        // Gestion des notifications
-        $this->handleNotifications($absence, $receiver, $toEmployee);
-
-        DB::commit();
-
-        return response()->json([
-            'message' => 'Demande de congé acceptée',
-            'ok' => true,
-            'absence' => $absence
-        ]);
-
     }
 
     /**
@@ -451,7 +518,7 @@ public function download($absenceId)
     private function handleNotifications(Absence $absence, User $receiver, bool $toEmployee)
     {
         if ($toEmployee) {
-            $url = route('absences.requests', $absence->status == "APPROVED" ? 'APPROVED' : 'REJECTED');
+            $url = route('absences.requests', $absence->stage == "APPROVED" ? 'APPROVED' : 'REJECTED');
             Mail::send(new AbsenceRequestUpdated($absence, $url));
         } else {
             $url = route('absences.requests', 'IN_PROGRESS');
@@ -503,11 +570,10 @@ public function download($absenceId)
             'message' => "Demande de {$absence->absence_type->label} rejetée",
             'ok' => true,
         ]);
-
     }
 
     /**
-     * Ajouter un commentaire à une absence
+     *  Modifier le statut de déductibilité d'une absence
      *
      * @param Request $request
      * @param int $id
@@ -515,30 +581,85 @@ public function download($absenceId)
      */
     public function comment(Request $request, $id)
     {
+      
         // Valider les entrées
         $request->validate([
-            'comment' => 'sometimes',
+            'is_deductible' => 'required|boolean',
+                        'comment' => 'sometimes',
+
         ]);
 
         // Rechercher l'absence par ID
         $absence = Absence::findOrFail($id);
-        $oldComment = $absence->comment;
+        
+        // Vérifier si l'absence est déjà approuvée et était déductible
+        if ($absence->stage === 'APPROVED' && $absence->is_deductible && !$request->boolean('is_deductible')) {
+            // L'absence passe de déductible à non déductible
+            // On doit rembourser les jours déduits précédemment
+            $absence->duty->absence_balance += $absence->requested_days;
+            $absence->duty->save();
+            
+            $this->activityLogger->log(
+                'updated',
+                "Remboursement de {$absence->requested_days} jours au solde de congés - Nouveau solde: {$absence->duty->absence_balance}",
+                $absence
+            );
+        } 
+        // Vérifier si l'absence est déjà approuvée et n'était pas déductible
+        else if ($absence->stage === 'APPROVED' && !$absence->is_deductible && $request->boolean('is_deductible')) {
+            // L'absence passe de non déductible à déductible
+            // On doit déduire les jours
+            if ($absence->duty->absence_balance < $absence->requested_days) {
+                $this->activityLogger->log(
+                    'warning',
+                    "Déduction avec solde insuffisant: {$absence->duty->absence_balance} jours disponibles, {$absence->requested_days} jours demandés",
+                    $absence
+                );
+            }
+            
+            $absence->duty->absence_balance -= $absence->requested_days;
+            $absence->duty->save();
+            
+            $this->activityLogger->log(
+                'updated',
+                "Déduction de {$absence->requested_days} jours du solde de congés - Nouveau solde: {$absence->duty->absence_balance}",
+                $absence
+            );
+        }
+        
+        // Mettre à jour le statut de déductibilité
+        $oldDeductibility = $absence->is_deductible;
+        $absence->is_deductible = $request->boolean('is_deductible');
+                $oldComment = $absence->comment;
 
-        $absence->comment = $request->input('comment') ?? null;
+          $absence->comment = $request->input('comment') ?? null;
         $absence->save();
 
+
+
+       
         $this->activityLogger->log(
-            'commented',
-            "Ajout/Modification d'un commentaire sur l'absence #{$id}",
+            'updated',
+            "Modification du statut de déductibilité de l'absence #{$id} - Déductible: " . 
+            ($oldDeductibility ? 'Oui' : 'Non') . " → " . 
+            ($absence->is_deductible ? 'Oui' : 'Non'),
             $absence
         );
-
+        
         return response()->json([
-            'message' => "Commentaire ajouté à la demande de {$absence->absence_type->label}",
+            'message' => "Statut de déductibilité mis à jour",
             'ok' => true,
         ]);
 
     }
+
+
+       
+
+      
+
+       
+    
 
     /**
      * Annuler une demande d'absence
@@ -548,36 +669,67 @@ public function download($absenceId)
      */
     public function cancel($id)
     {
-        // Rechercher l'absence par ID
-        $absence = Absence::findOrFail($id);
-        $oldStage = $absence->stage;
+        try {
+            DB::beginTransaction();
+            
+            // Rechercher l'absence par ID
+            $absence = Absence::findOrFail($id);
+            $oldStage = $absence->stage;
 
-        if ($absence->level != 'ZERO') {
+            // Vérifier si l'annulation est possible
+            if ($absence->level != 'ZERO') {
+                $this->activityLogger->log(
+                    'denied',
+                    "Tentative d'annulation d'une demande d'absence #{$id} non annulable",
+                    $absence
+                );
+
+                return response()->json([
+                    'ok' => false,
+                    'message' => "Vous ne pouvez plus annuler cette demande de {$absence->absence_type->label}.",
+                ], 403);
+            }
+
+            // Si l'absence était approuvée et déductible, rembourser les jours
+            if ($absence->stage === 'APPROVED' && $absence->is_deductible) {
+                $absence->duty->absence_balance += $absence->requested_days;
+                $absence->duty->save();
+                
+                $this->activityLogger->log(
+                    'updated',
+                    "Remboursement de {$absence->requested_days} jours au solde de congés suite à annulation - Nouveau solde: {$absence->duty->absence_balance}",
+                    $absence
+                );
+            }
+
+            $absence->stage = 'CANCELLED';
+            $absence->save();
+
             $this->activityLogger->log(
-                'denied',
-                "Tentative d'annulation d'une demande d'absence #{$id} non annulable",
+                'cancelled',
+                "Annulation de la demande d'absence #{$id} - Stage: {$oldStage} → {$absence->stage}",
                 $absence
             );
+            
+            DB::commit();
 
             return response()->json([
-                'ok' => false,
-                'message' => "Vous ne pouvez plus annuler cette demande de {$absence->absence_type->label}.",
-            ], 403);
+                'message' => "Demande de {$absence->absence_type->label} annulée",
+                'ok' => true,
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            $this->activityLogger->log(
+                'error',
+                "Erreur lors de l'annulation de la demande d'absence #{$id}: " . $e->getMessage(),
+                isset($absence) ? $absence : null
+            );
+            
+            return response()->json([
+                'message' => "Erreur lors de l'annulation de la demande: " . $e->getMessage(),
+                'ok' => false
+            ], 500);
         }
-
-        $absence->stage = 'CANCELLED';
-        $absence->save();
-
-        $this->activityLogger->log(
-            'cancelled',
-            "Annulation de la demande d'absence #{$id} - Stage: {$oldStage} → {$absence->stage}",
-            $absence
-        );
-
-        return response()->json([
-            'message' => "Demande de {$absence->absence_type->label} annulée",
-            'ok' => true,
-        ]);
-
     }
 }
