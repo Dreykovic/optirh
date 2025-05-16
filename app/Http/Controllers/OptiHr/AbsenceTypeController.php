@@ -71,18 +71,17 @@ class AbsenceTypeController extends Controller
 
         // Find record or fail with 404
         $absenceType = AbsenceType::findOrFail($absenceTypeId);
-
         // Update record
         $absenceType->label = $request->input('libelle');
         $absenceType->description = $request->input('description');
         $absenceType->type = $request->input('type') ?? $absenceType->type;
-        $absenceType->is_deductible = $request->has('is_deductible') ?
-            $request->boolean('is_deductible') : $absenceType->is_deductible;
+
+        $absenceType->is_deductible = $request->input('is_deductible',false) ;
 
         $absenceType->save();
 
         // Return success response
-        return response()->json(['message' => 'Type Absence mis à jour avec succès.', 'ok' => true]);
+        return response()->json(['message' => 'Type Absence mis à jour avec succès.'.$request->input('is_deductible'), 'ok' => true]);
     }
     /**
      * Remove the specified resource from storage.

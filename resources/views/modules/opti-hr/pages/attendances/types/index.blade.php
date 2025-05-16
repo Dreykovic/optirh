@@ -31,9 +31,7 @@
                                     <th>Libelle</th>
                                     <th>Description</th>
                                     <th>Déductible</th>
-                                    @can('voir-un-all')
                                         <th>Actions</th>
-                                    @endcan
                                 </tr>
                             </thead>
                             <tbody>
@@ -57,7 +55,6 @@
                                                 <span class="badge bg-danger">Non</span>
                                             @endif
                                         </td>
-                                        @can('voir-un-all')
                                             <td>
                                                 <div class="btn-group" role="group" aria-label="Basic outlined example">
                                                     <button type="button" class="btn btn-outline-secondary"
@@ -81,11 +78,8 @@
 
                                                 </div>
                                             </td>
-                                        @endcan
                                     </tr>
-                                    @can('voir-un-all')
                                         @include('modules.opti-hr.pages.attendances.types.edit')
-                                    @endcan
                                 @empty
                                     <tr>
                                         <td colspan="5">
