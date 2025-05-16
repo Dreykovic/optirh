@@ -9,12 +9,12 @@
             <div
                 class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
                 <h3 class="fw-bold mb-0">Types Absences</h3>
-                @can('voir-un-all')
+                @if (auth()->user()->hasRole('GRH'))
                     <div class="col-auto d-flex w-sm-100">
                         <button type="button" class="btn btn-dark btn-set-task w-sm-100" data-bs-toggle="modal"
                             data-bs-target="#absenceTypeAdd"><i class="icofont-plus-circle me-2 fs-6"></i>Ajouter</button>
                     </div>
-                @endcan
+                @endif
             </div>
         </div>
     </div> <!-- Row end  -->
@@ -31,7 +31,10 @@
                                     <th>Libelle</th>
                                     <th>Description</th>
                                     <th>Déductible</th>
+                                    @if (auth()->user()->hasRole('GRH'))
                                         <th>Actions</th>
+                                    @endif
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -49,12 +52,13 @@
                                             {{ $absenceType->description }} <!-- Description du type d'absence -->
                                         </td>
                                         <td>
-                                            @if($absenceType->is_deductible)
+                                            @if ($absenceType->is_deductible)
                                                 <span class="badge bg-success">Oui</span>
                                             @else
                                                 <span class="badge bg-danger">Non</span>
                                             @endif
                                         </td>
+                                        @if (auth()->user()->hasRole('GRH'))
                                             <td>
                                                 <div class="btn-group" role="group" aria-label="Basic outlined example">
                                                     <button type="button" class="btn btn-outline-secondary"
@@ -78,8 +82,12 @@
 
                                                 </div>
                                             </td>
+                                        @endif
+
                                     </tr>
+                                    @if (auth()->user()->hasRole('GRH'))
                                         @include('modules.opti-hr.pages.attendances.types.edit')
+                                    @endif
                                 @empty
                                     <tr>
                                         <td colspan="5">
@@ -94,9 +102,9 @@
             </div>
         </div>
     </div><!-- Row End -->
-    @can('voir-un-all')
+    @if (auth()->user()->hasRole('GRH'))
         @include('modules.opti-hr.pages.attendances.types.create')
-    @endcan
+    @endif
 @endsection
 @push('plugins-js')
     <script src={{ asset('assets/bundles/dataTables.bundle.js') }}></script>
