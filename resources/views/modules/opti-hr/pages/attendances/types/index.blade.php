@@ -30,6 +30,7 @@
                                     <th>#</th>
                                     <th>Libelle</th>
                                     <th>Description</th>
+                                    <th>Déductible</th>
                                     @can('voir-un-all')
                                         <th>Actions</th>
                                     @endcan
@@ -48,6 +49,13 @@
                                         </td>
                                         <td>
                                             {{ $absenceType->description }} <!-- Description du type d'absence -->
+                                        </td>
+                                        <td>
+                                            @if($absenceType->is_deductible)
+                                                <span class="badge bg-success">Oui</span>
+                                            @else
+                                                <span class="badge bg-danger">Non</span>
+                                            @endif
                                         </td>
                                         @can('voir-un-all')
                                             <td>
@@ -80,19 +88,13 @@
                                     @endcan
                                 @empty
                                     <tr>
-                                        <td colspan="4">
-
+                                        <td colspan="5">
                                             <x-no-data color="warning" text="Aucun Type Absence Enregistré" />
                                         </td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
-                        {{-- 
-                    <!-- Paginée, affiche les liens de pagination -->
-                    <div class="mt-3">
-                        {{ $absenceTypes->links() }}
-                    </div> --}}
                     </div>
                 </div>
             </div>
