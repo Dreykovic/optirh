@@ -372,53 +372,87 @@ const AppModelCreateManager = (function() {
         if (!formElement || !submitButton) return;
         
         // Afficher l'indicateur de chargement
-        const normalStatus = submitButton.querySelector(".normal-status");
-        const loadingIndicator = submitButton.querySelector(".indicateur");
+        // const normalStatus = submitButton.querySelector(".normal-status");
+        // const loadingIndicator = submitButton.querySelector(".indicateur");
         
-        if (normalStatus) normalStatus.classList.add("d-none");
-        if (loadingIndicator) loadingIndicator.classList.remove("d-none");
-        submitButton.disabled = true;
+        // if (normalStatus) normalStatus.classList.add("d-none");
+        // if (loadingIndicator) loadingIndicator.classList.remove("d-none");
+        // submitButton.disabled = true;
         
         // Récupérer les données et l'URL
         const formData = new FormData(formElement);
         const submitUrl = formElement.getAttribute("data-model-add-url");
-        
+        if (!submitUrl) {
+            console.error("L'URL de soumission n'est pas définie");
+            return;
+        }
+        // Utilisons votre module AppModules mais avec un callback personnalisé
+        AppModules.submitFromBtn(
+            submitButton,
+            formData,
+            submitUrl,
+            loginCallback
+            );
         // Envoyer la requête
-        fetch(submitUrl, {
-            method: "POST",
-            body: formData,
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || ""
-            }
-        })
-        .then(response => {
-            if (!response.ok) throw new Error("Erreur réseau");
-            return response.json();
-        })
-        .then(data => {
-            if (data.ok) {
-                // Succès
-                showNotification("success", data.message || "Demande soumise avec succès");
+        // fetch(submitUrl, {
+        //     method: "POST",
+        //     body: formData,
+        //     headers: {
+        //         "X-Requested-With": "XMLHttpRequest",
+        //         "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || ""
+        //     }
+        // })
+        // .then(response => {
+        //     if (!response.ok) throw new Error("Erreur réseau");
+        //     return response.json();
+        // })
+        // .then(data => {
+        //     if (data.ok) {
+        //         // Succès
+        //         showNotification("success", data.message || "Demande soumise avec succès");
                 
-                // Redirection
-                if (data.redirect) {
-                    setTimeout(() => { window.location.href = data.redirect; }, 1000);
-                } else {
-                    setTimeout(() => { window.location.reload(); }, 1000);
-                }
-            } else {
-                // Erreur
-                showNotification("error", data.message || "Une erreur est survenue");
-                resetSubmitButton();
-            }
-        })
-        .catch(error => {
-            console.error("Erreur:", error);
-            showNotification("error", "Une erreur est survenue lors de la soumission");
-            resetSubmitButton();
-        });
+        //         // Redirection
+        //         if (data.redirect) {
+        //             setTimeout(() => { window.location.href = data.redirect; }, 1000);
+        //         } else {
+        //             setTimeout(() => { window.location.reload(); }, 1000);
+        //         }
+        //     } else {
+        //         // Erreur
+        //         showNotification("error", data.message || "Une erreur est survenue");
+        //         resetSubmitButton();
+        //     }
+        // })
+        // .catch(error => {
+        //     console.error("Erreur:", error);
+        //     showNotification("error", "Une erreur est survenue lors de la soumission");
+        //     resetSubmitButton();
+        // });
     }
+
+
+
+    // Callback modifié pour gérer la redirection basée sur la réponse du serveur
+    const loginCallback = (response) => {
+        // Rediriger vers l'URL fournie par le serveur
+       
+        if (response.data.ok) {
+            // Succès
+            showNotification("success", response.data.message || "Demande soumise avec succès");
+
+            // Redirection
+            if (response.data.redirect) {
+                setTimeout(() => { window.location.href = response.data.redirect; }, 1000);
+            } else {
+                setTimeout(() => { window.location.reload(); }, 1000);
+            }
+        } else {
+            // Erreur
+            showNotification("error", response.data.message || "Une erreur est survenue");
+            resetSubmitButton();
+        }
+    };
+
     
     /**
      * Réinitialise le bouton de soumission
