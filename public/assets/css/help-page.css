@@ -1,0 +1,263 @@
+        .help-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--body-color);
+        }
+        .help-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--color-700) 100%);
+            color: var(--color-fff);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+        }
+        .help-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: var(--color-fff);
+        }
+        .help-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            color: var(--color-fff);
+        }
+        .guide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .guide-card {
+            background: var(--card-color);
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+        .guide-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(98, 157, 114, 0.15);
+            border-color: var(--primary-color);
+        }
+        .guide-header {
+            background: linear-gradient(135deg, var(--success-color) 0%, var(--primary-color) 100%);
+            color: var(--color-fff);
+            padding: 25px;
+            position: relative;
+        }
+        .guide-header h3 {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--color-fff);
+        }
+        .guide-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+            color: var(--color-fff);
+        }
+        .guide-content {
+            padding: 25px;
+            background: var(--card-color);
+        }
+        .guide-description {
+            color: var(--text-color);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .steps-preview {
+            background: var(--color-200);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        .steps-preview h5 {
+            color: var(--hc-font-color);
+            margin: 0 0 10px 0;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        .step-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+        .step-number {
+            background: var(--primary-color);
+            color: var(--color-fff);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+        .guide-button {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--color-700) 100%);
+            color: var(--color-fff);
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(98, 157, 114, 0.3);
+        }
+        .guide-button:hover {
+            color: var(--color-fff);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(98, 157, 114, 0.4);
+            background: linear-gradient(135deg, var(--color-700) 0%, var(--color-800) 100%);
+        }
+        .guide-button i {
+            margin-right: 8px;
+        }
+        .quick-links {
+            background: var(--card-color);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+        }
+        .quick-links h2 {
+            color: var(--text-color);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .quick-link {
+            background: var(--color-200);
+            padding: 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .quick-link:hover {
+            background: var(--color-300);
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        .quick-link h4 {
+            margin: 0 0 8px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--hc-font-color);
+        }
+        .quick-link p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+        .support-section {
+            background: linear-gradient(135deg, var(--color-300) 0%, var(--color-400) 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 30px;
+            border: 1px solid var(--border-color);
+        }
+        .support-section h2 {
+            color: var(--text-color);
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        .support-section p {
+            color: var(--text-color);
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+        .support-button {
+            background: var(--error-color);
+            color: var(--color-fff);
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+        }
+        .support-button:hover {
+            color: var(--color-fff);
+            background: #d32f2f;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
+        }
+        .support-button.success {
+            background: var(--success-color);
+            box-shadow: 0 4px 15px rgba(130, 182, 144, 0.3);
+        }
+        .support-button.success:hover {
+            background: var(--primary-color);
+            box-shadow: 0 6px 20px rgba(130, 182, 144, 0.4);
+        }
+        .badge {
+            background: rgba(255,255,255,0.2);
+            color: var(--color-fff);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+        }
+        
+        /* Variantes pour les différents guides */
+        .guide-card:nth-child(2) .guide-header {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--warning-color) 100%);
+        }
+        .guide-card:nth-child(3) .guide-header {
+            background: linear-gradient(135deg, var(--info-color) 0%, var(--primary-color) 100%);
+        }
+        .guide-card:nth-child(4) .guide-header {
+            background: linear-gradient(135deg, var(--color-400) 0%, var(--color-500) 100%);
+        }
+        
+        @media (max-width: 768px) {
+            .help-header h1 {
+                font-size: 2rem;
+            }
+            .help-header p {
+                font-size: 1rem;
+            }
+            .guide-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    
