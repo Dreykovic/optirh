@@ -158,8 +158,16 @@
                     </div>
                 </div>
             @endif
-            @if (auth()->user()->employee->duties->firstWhere('evolution', 'ON_GOING'))
-          
+            @if (auth()->user()->HasRole('ADMIN'))
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <div class="card">
+                      
+                    </div>
+                </div>
+            </div>
+
+            @else
                 
           
                  <!-- Recent Absences -->
@@ -260,7 +268,139 @@
                 </div>
             </div>
 
-           
+            <!-- Absence Calendar and Documents -->
+            <div class="row g-3">
+                @if (auth()->user()->hasRole('GRH') || auth()->user()->hasRole('DG'))
+                    <div class="col-md-8">
+                        <div class="card h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">Calendrier des absences</h5>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="showAllAbsences">
+                                    <label class="form-check-label" for="showAllAbsences">Afficher tout</label>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="absenceCalendar"></div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Documents récents</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="list-group list-group-flush">
+                                @forelse($recentDocuments as $document)
+                                    @php
+                                        $employee = $document->duty->employee;
+                                        $document_type = $document->document_type;
+                                    @endphp
+                                    @if (auth()->user()->employee_id === $document->duty->employee_id ||
+                                            ($document->stage !== 'CANCELLED' &&
+                                                auth()->user()->employee_id !== $document->duty->employee_id &&
+                                                in_array($document->level, ['ZERO', 'ONE', 'TWO', 'THREE']) &&
+                                                auth()->user()->hasRole('GRH')) ||
+                                            ($document->stage !== 'CANCELLED' &&
+                                                auth()->user()->employee_id !== $document->duty->employee_id &&
+                                                in_array($document->level, ['ONE', 'TWO', 'THREE']) &&
+                                                auth()->user()->hasRole('DSAF')) ||
+                                            (auth()->user()->employee_id !== $document->duty->employee_id &&
+                                                in_array($document->level, ['ONE', 'TWO', 'THREE']) &&
+                                                auth()->user()->hasRole('DG')))
+                                        <a href="{{ route('documents.requests', ['status' => 'all', 'search', $document->duty->employee->last_mane]) }}"
+                                            class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">{{ $document->document_type->label ?? 'N/A' }}</h6>
+                                                <small>{{ $document->created_at->diffForHumans() }}</small>
+                                            </div>
+                                            <p class="mb-1">{{ $document->duty->employee->first_name }}
+                                                {{ $document->duty->employee->last_name }}</p>
+                                            <small class="text-muted">
+                                                @if ($document->stage == 'PENDING')
+                                                    <span class="badge bg-secondary">En attente</span>
+                                                @elseif($document->stage == 'APPROVED')
+                                                    <span class="badge bg-success">Approuvé</span>
+                                                @elseif($document->stage == 'REJECTED')
+                                                    <span class="badge bg-danger">Rejeté</span>
+                                                @elseif($document->stage == 'IN_PROGRESS')
+                                                    <span class="badge bg-warning">En cours de traitement</span>
+                                                @else
+                                                    <span class="badge bg-secondary">{{ $document->stage }}</span>
+                                                @endif
+                                            </small>
+                                        </a>
+                                    @endif
+                                @empty
+                                    <div class="text-center py-3">
+                                        <p class="mb-0">Aucune demande de document récente</p>
+                                    </div>
+                                @endforelse
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ route('documents.requests', 'ALL') }}" class="btn btn-sm btn-primary">Voir
+                                tous les documents</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Publications -->
+            <div class="row g-3 mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Publications récentes</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                @forelse($recentPublications as $publication)
+                                    <div class="col-md-4">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h5 class="card-title">{{ $publication->title }}</h5>
+                                                <p class="card-text">{{ Str::limit($publication->content, 100) }}</p>
+                                            </div>
+                                            <div class="card-footer">
+                                                <small class="text-muted">Publié
+                                                    {{ $publication->published_at->diffForHumans() }} par
+                                                    {{ $publication->author->username }}</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="col-12">
+                                        <div class="text-center py-5">
+                                            <p class="mb-0">Aucune publication récente</p>
+                                        </div>
+                                    </div>
+                                @endforelse
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ route('publications.config.index') }}" class="btn btn-sm btn-primary">Voir
+                                toutes les publications</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toast Notification -->
+            <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+                <div id="refreshToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <strong class="me-auto">Tableau de bord</strong>
+                        <small>À l'instant</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fermer"></button>
+                    </div>
+                    <div class="toast-body">
+                        Les données du tableau de bord ont été actualisées.
+                    </div>
+                </div>
+            </div>
             @endif
            
         </div>

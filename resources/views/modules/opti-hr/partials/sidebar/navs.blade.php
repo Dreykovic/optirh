@@ -28,12 +28,17 @@
                     <span>Soumettre Une Demande</span>
                 </a>
             </li>
+                        @if (auth()->user()->employee->duties->firstWhere('evolution', 'ON_GOING'))
+
             <li>
+                    
+            
                 <a class="ms-link {{ Str::startsWith(request()->path(), 'opti-hr/attendances/absences/requests') ? 'active' : '' }}"
                     href="{{ route('absences.requests') }}">
                     <span>Liste </span>
                 </a>
             </li>
+                @endif
             @can('configurer-une-absence')
                 <li>
                     <a class="ms-link {{ Request::is('opti-hr/attendances/absence-types/list') ? 'active' : '' }}"
@@ -192,6 +197,9 @@
 
         </li>
     @endcan
+                 @if (auth()->user()->employee->duties->firstWhere('evolution', 'ON_GOING'))
+
+          
     <!-- Data -->
 
     <li class="collapsed">
@@ -217,6 +225,7 @@
 
     </li>
 
+                @endif
 
     <!-- Help -->
     <li>
