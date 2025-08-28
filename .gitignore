@@ -18,4 +18,27 @@ yarn-error.log
 /.idea
 /.env.without.docker
 
+# Additional cleanup
+*.log
+*.tmp
+*.temp
+*~
+.DS_Store
+Thumbs.db
+*.cache
+*.bak
+*.swp
+*.orig
+*.pid
+.vscode/
+.vs/
+*.sublime-*
+.sass-cache/
+.nyc_output
+coverage/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+*$py.class
+
 
