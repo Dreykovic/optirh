@@ -1,0 +1,205 @@
+name: ✨ Demande de Fonctionnalité
+description: Proposer une nouvelle fonctionnalité ou amélioration pour OPTIRH
+title: "[FEATURE] "
+labels: ["enhancement", "feature-request", "triage"]
+assignees:
+  - Dreykovic
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de proposer cette amélioration ! Vos idées nous aident à faire évoluer OPTIRH dans la bonne direction.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Vérifications préalables
+      description: Veuillez confirmer les points suivants
+      options:
+        - label: J'ai vérifié qu'il n'existe pas déjà une demande similaire
+          required: true
+        - label: J'ai consulté la roadmap du projet
+          required: true
+        - label: Cette fonctionnalité n'existe pas déjà dans l'application
+          required: true
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: Module concerné
+      description: À quel module cette fonctionnalité s'adresserait-elle ?
+      options:
+        - OptiHR - Gestion du personnel
+        - OptiHR - Gestion des absences
+        - OptiHR - Demandes de documents
+        - OptiHR - Publications
+        - OptiHR - Tableaux de bord
+        - Recours - Soumission de recours
+        - Recours - Traitement des recours
+        - Authentification/Sécurité
+        - API REST
+        - Interface utilisateur
+        - Administration système
+        - Nouveau module
+        - Transversal (plusieurs modules)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priorité souhaitée
+      description: Quelle est l'importance de cette fonctionnalité ?
+      options:
+        - Critique - Bloquant pour l'utilisation
+        - Élevée - Très utile pour les utilisateurs
+        - Moyenne - Amélioration appréciable
+        - Faible - Nice-to-have
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type de fonctionnalité
+      description: Quel type d'ajout proposez-vous ?
+      options:
+        - Nouvelle fonctionnalité complète
+        - Amélioration d'une fonctionnalité existante
+        - Nouvelle API/endpoint
+        - Amélioration de l'interface utilisateur
+        - Optimisation des performances
+        - Intégration avec système externe
+        - Fonctionnalité d'administration
+        - Fonctionnalité de reporting
+        - Autre
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problème ou besoin
+      description: Quel problème cette fonctionnalité résoudrait-elle ?
+      placeholder: |
+        Exemple : Actuellement, il n'est pas possible de planifier des absences récurrentes (comme des congés partiels chaque vendredi). Les utilisateurs doivent créer une demande pour chaque vendredi individuellement, ce qui est fastidieux.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solution proposée
+      description: Comment imaginez-vous cette fonctionnalité ?
+      placeholder: |
+        Exemple : Ajouter une option "Récurrence" dans le formulaire de demande d'absence avec :
+        - Choix du type : hebdomadaire, mensuel, personnalisé
+        - Sélection des jours (lundi, mardi, etc.)
+        - Date de fin de récurrence
+        - Aperçu des dates générées avant validation
+    validations:
+      required: true
+
+  - type: textarea
+    id: user_story
+    attributes:
+      label: User Story
+      description: Décrivez la fonctionnalité du point de vue utilisateur
+      placeholder: |
+        En tant que : employé
+        Je veux : pouvoir créer des demandes d'absence récurrentes
+        Afin de : ne pas avoir à saisir individuellement chaque occurrence d'un congé répétitif
+        
+        Critères d'acceptation :
+        - [ ] Je peux sélectionner un motif de récurrence
+        - [ ] Je peux voir un aperçu des dates générées
+        - [ ] Chaque occurrence peut être modifiée individuellement après création
+    validations:
+      required: true
+
+  - type: textarea
+    id: mockup
+    attributes:
+      label: Maquette ou wireframe
+      description: Si vous avez une idée précise de l'interface, décrivez-la ou joignez une image
+      placeholder: |
+        Interface proposée :
+        1. Checkbox "Absence récurrente" dans le formulaire
+        2. Quand cochée, affichage des options :
+           - Dropdown "Fréquence" (Hebdomadaire/Mensuelle/Personnalisée)
+           - Checkboxes pour les jours de la semaine
+           - Date picker "Jusqu'au"
+        3. Bouton "Prévisualiser" qui affiche la liste des dates
+        4. Validation normale avec toutes les dates générées
+
+  - type: dropdown
+    id: user_types
+    attributes:
+      label: Types d'utilisateurs concernés
+      description: Qui bénéficierait de cette fonctionnalité ?
+      multiple: true
+      options:
+        - Employés
+        - Managers/Superviseurs
+        - RH/Administrateurs
+        - Direction
+        - Utilisateurs API
+        - Administrateurs système
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considérées
+      description: Avez-vous pensé à d'autres approches pour résoudre ce problème ?
+      placeholder: |
+        - Alternative 1 : Permettre la duplication de demandes existantes
+        - Alternative 2 : Créer des modèles de demandes réutilisables
+        - Alternative 3 : Intégration avec un calendrier externe
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact et bénéfices attendus
+      description: Quels seraient les bénéfices de cette fonctionnalité ?
+      placeholder: |
+        - Gain de temps pour les utilisateurs (estimation : 80% de temps en moins pour les absences récurrentes)
+        - Réduction des erreurs de saisie
+        - Meilleure adoption de l'outil
+        - Diminution de la charge de travail des RH
+
+  - type: textarea
+    id: technical_considerations
+    attributes:
+      label: Considérations techniques
+      description: Y a-t-il des aspects techniques particuliers à considérer ?
+      placeholder: |
+        - Peut nécessiter des modifications du modèle Absence
+        - Impact sur les validations et workflows existants
+        - Considérer les performances pour les récurrences longues
+        - Interface API à adapter
+
+  - type: dropdown
+    id: breaking_changes
+    attributes:
+      label: Changements impactants
+      description: Cette fonctionnalité nécessiterait-elle des changements majeurs ?
+      options:
+        - Non - Ajout transparent
+        - Mineur - Modifications mineures
+        - Majeur - Changements significatifs
+        - Breaking - Cassure de compatibilité
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Informations supplémentaires
+      description: Toute autre information utile (références, exemples d'autres systèmes, etc.)
+      placeholder: |
+        - Référence : Système similaire dans [nom du logiciel]
+        - Documentation : [liens vers specs externes]
+        - Retours utilisateurs : [feedbacks collectés]

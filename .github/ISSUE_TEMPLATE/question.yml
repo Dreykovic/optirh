@@ -1,0 +1,150 @@
+name: ❓ Question ou Support
+description: Poser une question sur l'utilisation ou la configuration d'OPTIRH
+title: "[QUESTION] "
+labels: ["question", "support"]
+assignees:
+  - Dreykovic
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Avant de poser votre question, veuillez consulter la [documentation](https://github.com/Dreykovic/optirh/tree/main/docs) qui pourrait déjà contenir la réponse.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Vérifications préalables
+      description: Veuillez confirmer les points suivants
+      options:
+        - label: J'ai consulté la documentation utilisateur
+          required: true
+        - label: J'ai cherché dans les issues existantes
+          required: true
+        - label: Ma question n'est pas déjà traitée dans la FAQ
+          required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Catégorie de la question
+      description: Quel type de question posez-vous ?
+      options:
+        - Utilisation - Comment faire X ?
+        - Configuration - Paramétrage du système
+        - Installation - Problème de déploiement
+        - API - Utilisation de l'API REST
+        - Développement - Contribution au projet
+        - Sécurité - Questions de sécurité
+        - Performance - Optimisation
+        - Intégration - Connexion avec autres systèmes
+        - Documentation - Clarification de la doc
+        - Autre
+    validations:
+      required: true
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: Module concerné (si applicable)
+      description: À quel module votre question se rapporte-t-elle ?
+      options:
+        - Non spécifique
+        - OptiHR - Gestion du personnel
+        - OptiHR - Gestion des absences
+        - OptiHR - Demandes de documents
+        - OptiHR - Publications
+        - OptiHR - Tableaux de bord
+        - Recours - Soumission de recours
+        - Recours - Traitement des recours
+        - Authentification/Connexion
+        - API REST
+        - Administration système
+        - Interface générale
+
+  - type: dropdown
+    id: user_role
+    attributes:
+      label: Votre rôle
+      description: Quel est votre rôle dans l'utilisation d'OPTIRH ?
+      options:
+        - Utilisateur final (employé)
+        - Manager/Superviseur
+        - Administrateur RH
+        - Administrateur système
+        - Développeur/Intégrateur
+        - Autre
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Votre question
+      description: Posez votre question de manière claire et détaillée
+      placeholder: |
+        Exemple : Comment puis-je configurer le système pour que les demandes d'absence de plus de 5 jours nécessitent une validation supplémentaire par la direction ?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexte
+      description: Donnez des informations sur votre situation ou cas d'usage
+      placeholder: |
+        - Environnement : Production/Test/Développement
+        - Version OPTIRH : v1.0.0
+        - Nombre d'utilisateurs : ~50
+        - Organisation : PME/Grande entreprise/Administration
+        - Cas d'usage spécifique : ...
+
+  - type: textarea
+    id: attempted
+    attributes:
+      label: Ce que vous avez déjà essayé
+      description: Quelles solutions avez-vous déjà tentées ?
+      placeholder: |
+        - Consulté la documentation section X
+        - Essayé de modifier le paramètre Y
+        - Contacté l'administrateur système
+        - Recherché sur Google avec les mots-clés...
+
+  - type: textarea
+    id: expected_outcome
+    attributes:
+      label: Résultat souhaité
+      description: Quel résultat espérez-vous obtenir ?
+      placeholder: |
+        Je voudrais que les demandes d'absence longues déclenchent automatiquement un workflow de validation étendu incluant la direction.
+
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: Urgence
+      description: À quel point cette question est-elle urgente pour vous ?
+      options:
+        - Faible - Curiosité ou amélioration future
+        - Moyenne - Souhait d'améliorer l'utilisation
+        - Élevée - Problème qui gêne le travail quotidien
+        - Critique - Bloquant pour l'utilisation
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Captures d'écran (optionnel)
+      description: Si applicable, ajoutez des captures d'écran pour illustrer votre question
+      placeholder: Glissez-déposez vos images ici ou utilisez le bouton "Attach files"
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Informations supplémentaires
+      description: Toute autre information qui pourrait être utile
+      placeholder: |
+        - Messages d'erreur observés
+        - Comportement différent attendu
+        - Contraintes particulières de votre organisation
+        - Références à d'autres systèmes similaires

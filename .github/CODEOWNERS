@@ -1,0 +1,82 @@
+# Code Owners - OPTIRH
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global owners - responsables de l'ensemble du projet
+* @Dreykovic
+
+# Documentation
+/docs/ @Dreykovic
+*.md @Dreykovic
+
+# Configuration et infrastructure
+/.github/ @Dreykovic
+/docker/ @Dreykovic
+/nginx @Dreykovic
+docker-compose.yml @Dreykovic
+Dockerfile @Dreykovic
+
+# Configuration Laravel
+/.env.example @Dreykovic
+/config/ @Dreykovic
+/bootstrap/ @Dreykovic
+artisan @Dreykovic
+
+# Base de données
+/database/ @Dreykovic
+
+# Backend - Modèles et contrôleurs principaux
+/app/Models/ @Dreykovic
+/app/Http/Controllers/ @Dreykovic
+/app/Services/ @Dreykovic
+
+# Module OptiHR
+/app/Http/Controllers/OptiHr/ @Dreykovic
+/app/Models/OptiHr/ @Dreykovic
+/resources/views/modules/opti-hr/ @Dreykovic
+
+# Module Recours
+/app/Http/Controllers/Recours/ @Dreykovic
+/app/Models/Recours/ @Dreykovic
+/resources/views/modules/recours/ @Dreykovic
+/Modules/Recours/ @Dreykovic
+
+# Sécurité et authentification
+/app/Http/Middleware/ @Dreykovic
+/app/Http/Controllers/AuthController.php @Dreykovic
+/config/auth.php @Dreykovic
+/config/sanctum.php @Dreykovic
+/config/permission.php @Dreykovic
+
+# API
+/routes/api.php @Dreykovic
+/app/Http/Controllers/Api/ @Dreykovic
+
+# Tests
+/tests/ @Dreykovic
+phpunit.xml @Dreykovic
+
+# Frontend et assets
+/resources/js/ @Dreykovic
+/resources/css/ @Dreykovic
+/public/app-js/ @Dreykovic
+/public/assets/ @Dreykovic
+package.json @Dreykovic
+vite.config.js @Dreykovic
+
+# Emails et notifications
+/app/Mail/ @Dreykovic
+/resources/views/modules/*/emails/ @Dreykovic
+/config/mail.php @Dreykovic
+
+# Jobs et queues
+/app/Jobs/ @Dreykovic
+/app/Console/Commands/ @Dreykovic
+/config/queue.php @Dreykovic
+
+# Langues et traductions
+/lang/ @Dreykovic
+/resources/lang/ @Dreykovic
+
+# Fichiers de configuration des dépendances
+composer.json @Dreykovic
+composer.lock @Dreykovic
