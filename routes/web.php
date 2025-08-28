@@ -1,11 +1,29 @@
 <?php
 
+/**
+ * Routes Web - OPTIRH
+ * 
+ * Ce fichier définit toutes les routes web de l'application OPTIRH.
+ * Les routes sont organisées par groupes selon leur fonction :
+ * - Authentification (guest)
+ * - Application principale (auth)
+ *   - Module OptiHR (gestion RH)
+ *   - Module Recours (gestion des recours administratifs)
+ * 
+ * @author OPTIRH Team
+ * @version 1.0
+ */
+
+// Importation des contrôleurs
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
+
+// Contrôleurs du module OptiHR
 use App\Http\Controllers\OptiHr\AbsenceController;
 use App\Http\Controllers\OptiHr\AbsenceTypeController;
 use App\Http\Controllers\OptiHr\AnnualDecisionController;
+use App\Http\Controllers\OptiHr\DashboardController;
 use App\Http\Controllers\OptiHr\DepartmentController;
 use App\Http\Controllers\OptiHr\DocumentRequestController;
 use App\Http\Controllers\OptiHr\DocumentTypeController;
@@ -15,37 +33,42 @@ use App\Http\Controllers\OptiHr\FileController;
 use App\Http\Controllers\OptiHr\HolidayController;
 use App\Http\Controllers\OptiHr\JobController;
 use App\Http\Controllers\OptiHr\PublicationController;
+
+// Contrôleurs du module Recours
 use App\Http\Controllers\Recours\DacController;
 use App\Http\Controllers\Recours\RecoursController;
 use App\Http\Controllers\Recours\StatsController;
+
+// Contrôleurs système
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\OptiHr\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Routes d'Authentification (Utilisateurs non connectés)
 |--------------------------------------------------------------------------
 |
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
+| Ces routes sont accessibles uniquement aux utilisateurs non connectés.
+| Elles gèrent la connexion, l'inscription et la réinitialisation 
+| de mot de passe.
 |
 */
-
 Route::group(['middleware' => 'guest'], function () {
-    /*
-     * Auth
+    
+    // === CONNEXION ===
+    
+    /**
+     * Affichage du formulaire de connexion
+     * GET /login
      */
-    Route::get(
-        '/login',
-        [AuthController::class, 'login']
-    )->name('login');
-    Route::post(
-        '/login',
-        [AuthController::class, 'logUser']
-    );
+    Route::get('/login', [AuthController::class, 'login'])->name('login');
+    
+    /**
+     * Traitement de la connexion
+     * POST /login
+     */
+    Route::post('/login', [AuthController::class, 'logUser']);
 
     Route::get('/login/forgot-password', [AuthController::class, 'forgotPasswordFormGet'])->name('forgot-password');
     Route::post('/forgot-password', [AuthController::class, 'sendEmail'])->name('send.mail');
