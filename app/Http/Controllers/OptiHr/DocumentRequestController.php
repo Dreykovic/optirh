@@ -4,6 +4,7 @@ namespace App\Http\Controllers\OptiHr;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DocumentRequestMail;
 use App\Http\Controllers\Controller;
+use App\Traits\SendsEmails;
 use App\Models\OptiHr\DocumentRequest;
 use App\Models\OptiHr\DocumentType;
 use App\Models\OptiHr\Duty;
@@ -21,6 +22,7 @@ use Carbon\Carbon;
 
 class DocumentRequestController extends Controller
 {
+    use SendsEmails;
     /**
      * Le service de journalisation des activités
      *
@@ -259,7 +261,15 @@ class DocumentRequestController extends Controller
 
         // Notification au responsable RH
         $receiver = User::role('GRH')->first();
-        $this->notifyApprover($documentRequest, $receiver);
+        if ($receiver) {
+            $this->notifyApprover($documentRequest, $receiver);
+        } else {
+            $this->activityLogger->log(
+                'warning',
+                "Aucun utilisateur avec le rôle GRH trouvé pour la notification de la demande de document #{$documentRequest->id}",
+                $documentRequest
+            );
+        }
 
         // Journalisation de l'activité
         $this->activityLogger->log(
@@ -441,31 +451,102 @@ class DocumentRequestController extends Controller
     // Dans votre controller ou service
     public function notifyRequestor(DocumentRequest $documentRequest)
     {
-        $status = $documentRequest->stage === 'APPROVED' ? 'approuvée' : 'refusée';
-        $url = route('documents.requests', $documentRequest->stage === 'APPROVED' ? 'APPROVED' : 'REJECTED');
-        if (!$documentRequest->date_of_application instanceof Carbon) {
-            $documentRequest->date_of_application = Carbon::parse($documentRequest->date_of_application);
+        try {
+            $status = $documentRequest->stage === 'APPROVED' ? 'approuvée' : 'refusée';
+            $url = route('documents.requests', $documentRequest->stage === 'APPROVED' ? 'APPROVED' : 'REJECTED');
+            if (!$documentRequest->date_of_application instanceof Carbon) {
+                $documentRequest->date_of_application = Carbon::parse($documentRequest->date_of_application);
+            }
+
+            // Récupérer l'utilisateur qui a fait la demande
+            $requestor = $documentRequest->duty->employee->users->first();
+            
+            // Vérifier que le demandeur a une adresse email valide
+            if (!$requestor || !$requestor->email) {
+                $this->activityLogger->log(
+                    'warning',
+                    "Impossible d'envoyer l'email pour la demande de document #{$documentRequest->id}: demandeur sans email",
+                    $documentRequest
+                );
+                return;
+            }
+            
+            // Créer et envoyer le mail de manière sécurisée
+            $mailable = new DocumentRequestStatus(
+                receiver: $requestor,
+                documentRequest: $documentRequest,
+                status: $status,
+                url: $url
+            );
+            
+            $sent = $this->sendEmail($mailable, true);
+            
+            if ($sent) {
+                $this->activityLogger->log(
+                    'info',
+                    "Email de statut envoyé pour la demande de document #{$documentRequest->id}",
+                    $documentRequest,
+                    ['to' => $requestor->email, 'status' => $status]
+                );
+            } else {
+                $this->activityLogger->log(
+                    'error',
+                    "Échec de l'envoi d'email pour la demande de document #{$documentRequest->id}",
+                    $documentRequest
+                );
+            }
+        } catch (\Exception $e) {
+            $this->activityLogger->log(
+                'error',
+                "Erreur lors de l'envoi de notification pour la demande de document #{$documentRequest->id}: " . $e->getMessage(),
+                $documentRequest
+            );
         }
-
-        // Récupérer l'utilisateur qui a fait la demande
-        $requestor = $documentRequest->duty->employee->users->first();
-
-        Mail::send(new DocumentRequestStatus(
-            receiver: $requestor,
-            documentRequest: $documentRequest,
-            status: $status,
-            url: $url
-        ));
     }
     // Dans votre controller ou service
     public function notifyApprover(DocumentRequest $documentRequest, User $approver)
     {
-        $url = route('documents.requests', 'IN_PROGRESS');
-        Mail::send(new DocumentRequestCreated(
-            receiver: $approver,
-            documentRequest: $documentRequest,
-            url: $url
-        ));
+        try {
+            // Vérifier que l'approbateur a une adresse email valide
+            if (!$approver || !$approver->email) {
+                $this->activityLogger->log(
+                    'warning',
+                    "Impossible d'envoyer l'email à l'approbateur pour la demande de document #{$documentRequest->id}: email manquant",
+                    $documentRequest
+                );
+                return;
+            }
+            
+            $url = route('documents.requests', 'IN_PROGRESS');
+            $mailable = new DocumentRequestCreated(
+                receiver: $approver,
+                documentRequest: $documentRequest,
+                url: $url
+            );
+            
+            $sent = $this->sendEmail($mailable, true);
+            
+            if ($sent) {
+                $this->activityLogger->log(
+                    'info',
+                    "Email envoyé à l'approbateur pour la demande de document #{$documentRequest->id}",
+                    $documentRequest,
+                    ['to' => $approver->email]
+                );
+            } else {
+                $this->activityLogger->log(
+                    'error',
+                    "Échec de l'envoi d'email à l'approbateur pour la demande de document #{$documentRequest->id}",
+                    $documentRequest
+                );
+            }
+        } catch (\Exception $e) {
+            $this->activityLogger->log(
+                'error',
+                "Erreur lors de l'envoi à l'approbateur pour la demande de document #{$documentRequest->id}: " . $e->getMessage(),
+                $documentRequest
+            );
+        }
     }
     /**
      * Ajouter un commentaire à une demande de document

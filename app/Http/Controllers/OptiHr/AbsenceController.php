@@ -12,6 +12,7 @@ use App\Models\OptiHr\AnnualDecision;
 use App\Models\User;
 use App\Services\AbsencePdfService;
 use App\Services\ActivityLogService;
+use App\Traits\SendsEmails;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Mail;
 
 class AbsenceController extends Controller
 {
+    use SendsEmails;
     public function __construct()
     {
         parent::__construct(app(ActivityLogService::class)); // Injection automatique
@@ -517,12 +519,71 @@ class AbsenceController extends Controller
      */
     private function handleNotifications(Absence $absence, User $receiver, bool $toEmployee)
     {
-        if ($toEmployee) {
-            $url = route('absences.requests', $absence->stage == "APPROVED" ? 'APPROVED' : 'REJECTED');
-            Mail::send(new AbsenceRequestUpdated($absence, $url));
-        } else {
-            $url = route('absences.requests', 'IN_PROGRESS');
-            Mail::send(new AbsenceRequestCreated($receiver, $absence, $url));
+        try {
+            // Vérifier que le destinataire a une adresse email valide
+            if (!$receiver || !$receiver->email) {
+                $this->activityLogger->log(
+                    'warning',
+                    "Impossible d'envoyer l'email pour l'absence #{$absence->id}: destinataire sans email",
+                    $absence,
+                    ['receiver_id' => $receiver?->id]
+                );
+                return;
+            }
+            
+            // Valider l'adresse email
+            if (!filter_var($receiver->email, FILTER_VALIDATE_EMAIL)) {
+                $this->activityLogger->log(
+                    'warning',
+                    "Email invalide pour l'envoi de notification d'absence #{$absence->id}",
+                    $absence,
+                    ['email' => $receiver->email]
+                );
+                return;
+            }
+            
+            // Préparer le mail approprié
+            if ($toEmployee) {
+                $url = route('absences.requests', $absence->stage == "APPROVED" ? 'APPROVED' : 'REJECTED');
+                $mailable = new AbsenceRequestUpdated($absence, $url);
+            } else {
+                $url = route('absences.requests', 'IN_PROGRESS');
+                $mailable = new AbsenceRequestCreated($receiver, $absence, $url);
+            }
+            
+            // Envoyer l'email avec le système sécurisé
+            $sent = $this->sendEmail($mailable, true); // true pour utiliser la queue si disponible
+            
+            if ($sent) {
+                $this->activityLogger->log(
+                    'info',
+                    "Email de notification envoyé pour l'absence #{$absence->id}",
+                    $absence,
+                    [
+                        'to' => $receiver->email,
+                        'type' => $toEmployee ? 'update' : 'creation'
+                    ]
+                );
+            } else {
+                $this->activityLogger->log(
+                    'error',
+                    "Échec de l'envoi d'email pour l'absence #{$absence->id}",
+                    $absence,
+                    ['to' => $receiver->email]
+                );
+            }
+            
+        } catch (\Exception $e) {
+            // Log l'erreur mais ne pas bloquer le processus
+            $this->activityLogger->log(
+                'error',
+                "Erreur lors de l'envoi de notification pour l'absence #{$absence->id}: " . $e->getMessage(),
+                $absence,
+                [
+                    'error' => $e->getMessage(),
+                    'receiver' => $receiver->email ?? 'unknown'
+                ]
+            );
         }
     }
 
