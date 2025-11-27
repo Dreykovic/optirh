@@ -79,10 +79,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /**
      * File input change event
+     * We need to capture files before the input is potentially cleared
      */
     if (fileInput) {
         fileInput.addEventListener('change', function() {
-            handleFiles(this.files);
+            // Only process if files were actually selected
+            if (this.files && this.files.length > 0) {
+                // Copy files to array before processing
+                const newFiles = Array.from(this.files);
+                handleFiles(newFiles);
+            }
         });
     }
 
@@ -96,9 +102,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /**
-     * Reset form after successful submission
+     * Sync files before form submission
      */
     if (form) {
+        form.addEventListener('submit', function(e) {
+            // Ensure file input has all selected files before submission
+            updateFileInput();
+        });
+
         // Listen for custom event from post.js
         document.addEventListener('publicationCreated', function() {
             resetForm();
@@ -138,12 +149,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /**
      * Process and validate files
+     * @param {FileList|Array} files - Files to process
      */
     function handleFiles(files) {
         const validFiles = [];
         const errors = [];
 
-        Array.from(files).forEach(file => {
+        // Ensure we have an array
+        const fileArray = Array.isArray(files) ? files : Array.from(files);
+
+        fileArray.forEach(file => {
             // Check file type
             if (!ALLOWED_TYPES.includes(file.type)) {
                 errors.push(`${file.name}: Type de fichier non autorisé`);
