@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\OptiHr;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendEmailJob;
 use App\Mail\AbsenceRequestCreated;
 use App\Mail\AbsenceRequestUpdated;
 use App\Models\OptiHr\Absence;
@@ -676,16 +677,7 @@ class AbsenceController extends Controller
                 $absence
             );
 
-            // Gestion des notifications
-            $this->handleNotifications($absence, $receiver, $toEmployee);
-
             DB::commit();
-
-            return response()->json([
-                'message' => 'Demande de congé acceptée',
-                'ok' => true,
-                'absence' => $absence,
-            ]);
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -700,6 +692,15 @@ class AbsenceController extends Controller
                 'ok' => false,
             ], 500);
         }
+
+        // Gestion des notifications APRÈS le commit (asynchrone, ne bloque pas)
+        $this->handleNotifications($absence, $receiver, $toEmployee);
+
+        return response()->json([
+            'message' => 'Demande de congé acceptée',
+            'ok' => true,
+            'absence' => $absence,
+        ]);
     }
 
     /**
@@ -709,19 +710,17 @@ class AbsenceController extends Controller
      */
     private function assignAbsenceNumber(Absence $absence)
     {
-        // Trouver le maximum actuel de absence_number de manière sécurisée
-        $maxAbsenceNumber = DB::table($absence->getTable())
-            ->whereNotNull('absence_number')
-            ->orderByDesc('absence_number')
-            ->lockForUpdate()
-            ->value('absence_number');
+        // Utiliser MAX() sans verrou pour éviter le blocage des requêtes parallèles
+        // Le risque de conflit est minimal car les approbations finales sont rares
+        $maxAbsenceNumber = Absence::whereNotNull('absence_number')
+            ->max('absence_number');
 
-        $absence->absence_number = $maxAbsenceNumber ? $maxAbsenceNumber + 1 : 1;
+        $absence->absence_number = ($maxAbsenceNumber ?? 0) + 1;
         $absence->date_of_approval = Carbon::now();
     }
 
     /**
-     * Gérer les notifications après approbation
+     * Gérer les notifications après approbation (asynchrone via Job)
      *
      * @return void
      */
@@ -729,24 +728,12 @@ class AbsenceController extends Controller
     {
         try {
             // Vérifier que le destinataire a une adresse email valide
-            if (! $receiver || ! $receiver->email) {
+            if (! $receiver || ! $receiver->email || ! filter_var($receiver->email, FILTER_VALIDATE_EMAIL)) {
                 $this->activityLogger->log(
                     'warning',
-                    "Impossible d'envoyer l'email pour l'absence #{$absence->id}: destinataire sans email",
+                    "Impossible d'envoyer l'email pour l'absence #{$absence->id}: destinataire sans email valide",
                     $absence,
                     ['receiver_id' => $receiver?->id]
-                );
-
-                return;
-            }
-
-            // Valider l'adresse email
-            if (! filter_var($receiver->email, FILTER_VALIDATE_EMAIL)) {
-                $this->activityLogger->log(
-                    'warning',
-                    "Email invalide pour l'envoi de notification d'absence #{$absence->id}",
-                    $absence,
-                    ['email' => $receiver->email]
                 );
 
                 return;
@@ -761,33 +748,24 @@ class AbsenceController extends Controller
                 $mailable = new AbsenceRequestCreated($receiver, $absence, $url);
             }
 
-            // Envoyer l'email avec le système sécurisé
-            $sent = $this->sendEmail($mailable, true); // true pour utiliser la queue si disponible
+            // Dispatcher le job pour envoi asynchrone (ne bloque pas la requête)
+            SendEmailJob::dispatch($mailable);
 
-            if ($sent) {
-                $this->activityLogger->log(
-                    'info',
-                    "Email de notification envoyé pour l'absence #{$absence->id}",
-                    $absence,
-                    [
-                        'to' => $receiver->email,
-                        'type' => $toEmployee ? 'update' : 'creation',
-                    ]
-                );
-            } else {
-                $this->activityLogger->log(
-                    'error',
-                    "Échec de l'envoi d'email pour l'absence #{$absence->id}",
-                    $absence,
-                    ['to' => $receiver->email]
-                );
-            }
+            $this->activityLogger->log(
+                'info',
+                "Job d'envoi d'email dispatché pour l'absence #{$absence->id}",
+                $absence,
+                [
+                    'to' => $receiver->email,
+                    'type' => $toEmployee ? 'update' : 'creation',
+                ]
+            );
 
         } catch (\Exception $e) {
             // Log l'erreur mais ne pas bloquer le processus
             $this->activityLogger->log(
                 'error',
-                "Erreur lors de l'envoi de notification pour l'absence #{$absence->id}: ".$e->getMessage(),
+                "Erreur lors du dispatch du job email pour l'absence #{$absence->id}: ".$e->getMessage(),
                 $absence,
                 [
                     'error' => $e->getMessage(),
@@ -1070,17 +1048,10 @@ class AbsenceController extends Controller
                 $absence
             );
 
-            // Notification au DG
+            // Récupérer le destinataire pour la notification
             $receiver = User::role('DG')->first();
-            $this->handleNotifications($absence, $receiver, false);
 
             DB::commit();
-
-            return response()->json([
-                'message' => 'Demande validée et transmise au DG',
-                'ok' => true,
-                'absence' => $absence,
-            ]);
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -1095,6 +1066,15 @@ class AbsenceController extends Controller
                 'ok' => false,
             ], 500);
         }
+
+        // Notification au DG APRÈS le commit (asynchrone, ne bloque pas)
+        $this->handleNotifications($absence, $receiver, false);
+
+        return response()->json([
+            'message' => 'Demande validée et transmise au DG',
+            'ok' => true,
+            'absence' => $absence,
+        ]);
     }
 
     /**

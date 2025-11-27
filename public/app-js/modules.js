@@ -221,6 +221,33 @@ const AppModules = (function () {
         },
 
         /**
+         * Affiche une notification toast discrète (en haut à droite)
+         * @param {String} message - Le message à afficher
+         * @param {String} status - Le statut (success, error, warning, info)
+         * @param {String} title - Le titre personnalisé (optionnel)
+         * @returns {Promise} La promesse de SweetAlert2
+         */
+        showToast: (message = "", status = "success", title = null) => {
+            const titles = {
+                success: "Succès",
+                error: "Erreur",
+                warning: "Attention",
+                info: "Info",
+            };
+
+            return Swal.fire({
+                icon: status,
+                title: title || titles[status] || "Notification",
+                text: message,
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+            });
+        },
+
+        /**
          * Soumet un formulaire via AJAX
          * @param {HTMLElement} btn - Le bouton de soumission
          * @param {FormData|Object} formData - Les données du formulaire
@@ -243,19 +270,18 @@ const AppModules = (function () {
                 .post(url, formData)
                 .then((response) => {
                     AppModules.hideSpinner(btn);
-                    console.log("response", response);
                     const { data } = response;
                     const status = data.ok ? "success" : "error";
 
-                    AppModules.showConfirmAlert(data.message, status).then(
-                        (result) => {
-                            if (result.isDismissed || result.isConfirmed) {
-                                if (typeof callback === "function") {
-                                    callback(response);
-                                }
-                            }
+                    // Utiliser toast au lieu de showConfirmAlert
+                    AppModules.showToast(data.message, status);
+
+                    // Callback après un court délai pour laisser le temps de voir le toast
+                    setTimeout(() => {
+                        if (typeof callback === "function") {
+                            callback(response);
                         }
-                    );
+                    }, 500);
                 })
                 .catch((error) => {
                     console.error("error", error);
@@ -263,13 +289,14 @@ const AppModules = (function () {
 
                     const errorMessage = _private.formatErrorMessage(error);
 
-                    AppModules.showConfirmAlert(errorMessage).then((result) => {
-                        if (result.isDismissed || result.isConfirmed) {
-                            if (typeof callback === "function") {
-                                callback({ error });
-                            }
+                    // Toast d'erreur
+                    AppModules.showToast(errorMessage, "error");
+
+                    setTimeout(() => {
+                        if (typeof callback === "function") {
+                            callback({ error });
                         }
-                    });
+                    }, 500);
                 });
         },
 
