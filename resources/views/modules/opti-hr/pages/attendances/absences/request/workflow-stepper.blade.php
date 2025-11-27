@@ -40,8 +40,11 @@
     ];
 
     // Mapping niveau vers index
-    $levelToIndex = ['ZERO' => 0, 'ONE' => 1, 'TWO' => 2, 'THREE' => 3];
-    $currentLevelIndex = $levelToIndex[$absence->level] ?? 0;
+    // Le level indique le niveau atteint APRÈS validation
+    // Pour l'affichage, on veut montrer l'étape EN ATTENTE (donc +1)
+    // ZERO = en attente N+1 (index 1), ONE = en attente GRH (index 2), etc.
+    $levelToIndex = ['ZERO' => 1, 'ONE' => 2, 'TWO' => 3, 'THREE' => 3];
+    $currentLevelIndex = $levelToIndex[$absence->level] ?? 1;
 
     // État de la demande
     $isApproved = $absence->stage === 'APPROVED';

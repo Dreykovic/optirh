@@ -48,24 +48,57 @@
                 </div>
             </div>
             
-            <!-- Indicateur de déductibilité - Modifié pour utiliser le champ is_deductible de l'absence -->
+            <!-- Indicateur de déductibilité avec toggle pour GRH -->
             <div class="deductibility-indicator px-3">
-                @if($absence->is_deductible)
-                    <div class="d-flex align-items-center">
-                        <span class="badge rounded-pill bg-warning bg-opacity-25 text-black border border-warning px-3 py-2 me-2">
-                            <i class="icofont-minus-circle me-1"></i>Déductible
+                @if(auth()->user()->hasRole('GRH'))
+                    <!-- Toggle inline pour le GRH -->
+                    <div class="d-flex align-items-center deductibility-toggle-container"
+                         data-absence-id="{{ $absence->id }}"
+                         data-url="{{ route('absences.deductibility', $absence->id) }}">
+                        <div class="form-check form-switch me-2">
+                            <input class="form-check-input deductibility-switch"
+                                   type="checkbox"
+                                   role="switch"
+                                   id="deductibilitySwitch{{ $absence->id }}"
+                                   {{ $absence->is_deductible ? 'checked' : '' }}>
+                        </div>
+                        <label for="deductibilitySwitch{{ $absence->id }}" class="deductibility-label mb-0">
+                            @if($absence->is_deductible)
+                                <span class="badge rounded-pill bg-warning bg-opacity-25 text-black border border-warning px-3 py-2">
+                                    <i class="icofont-minus-circle me-1"></i>Déductible
+                                </span>
+                            @else
+                                <span class="badge rounded-pill bg-success bg-opacity-25 text-black border border-success px-3 py-2">
+                                    <i class="icofont-plus-circle me-1"></i>Non déductible
+                                </span>
+                            @endif
+                        </label>
+                        <span class="deductibility-spinner ms-2 d-none">
+                            <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
                         </span>
-                        <span class="text-muted small">Impact sur le solde</span>
+                    </div>
+                    <div class="small text-muted mt-1">
+                        <i class="icofont-hand-drag me-1"></i>Cliquez pour modifier
                     </div>
                 @else
-                    <div class="d-flex align-items-center">
-                        <span class="badge rounded-pill bg-success bg-opacity-25 text-black border border-success px-3 py-2 me-2">
-                            <i class="icofont-plus-circle me-1"></i>Non déductible
-                        </span>
-                        <span class="text-muted small">Pas d'impact sur le solde</span>
-                    </div>
+                    <!-- Affichage simple pour les autres rôles -->
+                    @if($absence->is_deductible)
+                        <div class="d-flex align-items-center">
+                            <span class="badge rounded-pill bg-warning bg-opacity-25 text-black border border-warning px-3 py-2 me-2">
+                                <i class="icofont-minus-circle me-1"></i>Déductible
+                            </span>
+                            <span class="text-muted small">Impact sur le solde</span>
+                        </div>
+                    @else
+                        <div class="d-flex align-items-center">
+                            <span class="badge rounded-pill bg-success bg-opacity-25 text-black border border-success px-3 py-2 me-2">
+                                <i class="icofont-plus-circle me-1"></i>Non déductible
+                            </span>
+                            <span class="text-muted small">Pas d'impact sur le solde</span>
+                        </div>
+                    @endif
                 @endif
-                
+
                 <!-- Ajout d'un indicateur si la déductibilité diffère du type d'absence -->
                 @if($absence->is_deductible != $absence->absence_type->is_deductible)
                     <div class="small text-info mt-1">

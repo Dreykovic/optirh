@@ -33,6 +33,9 @@
 <!-- Comment Modal -->
 @include('modules.opti-hr.pages.attendances.absences.request.comment')
 
+<!-- Reject Modal -->
+@include('modules.opti-hr.pages.attendances.absences.request.reject-modal')
+
 <style>
     /* Custom styles for the absence management UI */
     .absence-card {
@@ -149,6 +152,105 @@
                 const isExpanded = this.getAttribute('aria-expanded') === 'true';
                 this.querySelector('.btn-text').textContent = isExpanded ? 'Voir les détails' :
                     'Masquer les détails';
+            });
+        });
+
+        // Handler pour le toggle de déductibilité (GRH uniquement)
+        const deductibilitySwitches = document.querySelectorAll('.deductibility-switch');
+        deductibilitySwitches.forEach(switchEl => {
+            switchEl.addEventListener('change', function() {
+                const container = this.closest('.deductibility-toggle-container');
+                const url = container.dataset.url;
+                const absenceId = container.dataset.absenceId;
+                const isDeductible = this.checked;
+                const spinner = container.querySelector('.deductibility-spinner');
+                const label = container.querySelector('.deductibility-label');
+
+                // Afficher le spinner
+                spinner.classList.remove('d-none');
+                this.disabled = true;
+
+                // Envoyer la requête AJAX
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        is_deductible: isDeductible
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        // Mettre à jour le label
+                        if (isDeductible) {
+                            label.innerHTML = `
+                                <span class="badge rounded-pill bg-warning bg-opacity-25 text-black border border-warning px-3 py-2">
+                                    <i class="icofont-minus-circle me-1"></i>Déductible
+                                </span>
+                            `;
+                        } else {
+                            label.innerHTML = `
+                                <span class="badge rounded-pill bg-success bg-opacity-25 text-black border border-success px-3 py-2">
+                                    <i class="icofont-plus-circle me-1"></i>Non déductible
+                                </span>
+                            `;
+                        }
+
+                        // Afficher une notification de succès
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Mis à jour',
+                                text: data.message,
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                        }
+                    } else {
+                        // Remettre l'état précédent en cas d'erreur
+                        switchEl.checked = !isDeductible;
+
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erreur',
+                                text: data.message || 'Une erreur est survenue',
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    // Remettre l'état précédent
+                    switchEl.checked = !isDeductible;
+
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erreur',
+                            text: 'Une erreur est survenue lors de la mise à jour',
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }
+                })
+                .finally(() => {
+                    // Masquer le spinner et réactiver le switch
+                    spinner.classList.add('d-none');
+                    switchEl.disabled = false;
+                });
             });
         });
 

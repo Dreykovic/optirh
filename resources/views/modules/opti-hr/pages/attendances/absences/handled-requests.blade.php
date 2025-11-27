@@ -114,6 +114,7 @@
                                         </td>
                                     </tr>
                                     @include('modules.opti-hr.pages.attendances.absences.request.comment')
+                                    @include('modules.opti-hr.pages.attendances.absences.request.reject-modal')
                                     @include('modules.opti-hr.pages.attendances.absences.details')
                                 @endif
 

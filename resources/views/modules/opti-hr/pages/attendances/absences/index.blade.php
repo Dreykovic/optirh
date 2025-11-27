@@ -62,6 +62,11 @@
         {{-- À traiter: Cartes Accordion avec Stepper --}}
         @include('modules.opti-hr.pages.attendances.absences.unhandled-requests')
     @endif
+
+    {{-- Modal de solde insuffisant (GRH uniquement) --}}
+    @if(auth()->user()->hasRole('GRH'))
+        @include('modules.opti-hr.pages.attendances.absences.request.insufficient-balance-modal')
+    @endif
 @endsection
 
 @push('plugins-js')
@@ -74,4 +79,7 @@
     <script src="{{ asset('app-js/crud/put.js') }}"></script>
     <script src="{{ asset('app-js/crud/delete.js') }}"></script>
     <script src="{{ asset('app-js/filter/filter.js') }}"></script>
+    @if(auth()->user()->hasRole('GRH'))
+        <script src="{{ asset('app-js/attendances/absences/approve.js') }}"></script>
+    @endif
 @endpush

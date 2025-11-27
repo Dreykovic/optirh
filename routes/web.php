@@ -198,8 +198,10 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::get('/request/create', [AbsenceController::class, 'create'])->name('absences.create');
                 Route::post('/request/save', [AbsenceController::class, 'store'])->name('absences.save');
                 Route::post('/request/approve/{absenceId}', [AbsenceController::class, 'approve'])->name('absences.approve');
+                Route::post('/request/approve-with-option/{absenceId}', [AbsenceController::class, 'approveWithOption'])->name('absences.approveWithOption');
                 Route::post('/request/reject/{absenceId}', [AbsenceController::class, 'reject'])->name('absences.reject');
                 Route::post('/request/comment/{absenceId}', [AbsenceController::class, 'comment'])->name('absences.comment');
+                Route::post('/request/deductibility/{absenceId}', [AbsenceController::class, 'updateDeductibility'])->name('absences.deductibility');
                 Route::post('/request/cancel/{absenceId}', [AbsenceController::class, 'cancel'])->name('absences.cancel');
                 Route::get('/request/download/{absenceId}', [AbsenceController::class, 'download'])->name('absences.download');
             });

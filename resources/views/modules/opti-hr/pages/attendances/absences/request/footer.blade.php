@@ -28,23 +28,16 @@
                 </form>
             </div>
 
-            <div class="modelUpdateFormContainer me-2" id="absenceRejectForm{{ $absence->id }}">
-                <form data-model-update-url="{{ route('absences.reject', $absence->id) }}">
-                    <button type="submit" class="btn btn-danger lift modelUpdateBtn">
-                        <span class="normal-status">
-                            <i class="icofont-close me-1"></i>Rejeter
-                        </span>
-                        <span class="indicateur d-none">
-                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                            Un instant...
-                        </span>
-                    </button>
-                </form>
-            </div>
+            <!-- Bouton Rejeter - ouvre le modal de rejet -->
+            <button class="btn btn-danger lift me-2" data-bs-toggle="modal"
+                data-bs-target="#absenceReject{{ $absence->id }}">
+                <i class="icofont-close me-1"></i>Rejeter
+            </button>
 
+            <!-- Bouton Commenter - ouvre le modal de commentaire -->
             <button class="btn btn-outline-primary me-2 lift" data-bs-toggle="modal"
-                data-bs-target="#absenceCommentAdd{{ $absence->id }}">
-                <i class="icofont-comment me-1"></i>Configurer
+                data-bs-target="#absenceComment{{ $absence->id }}">
+                <i class="icofont-comment me-1"></i>Commenter
             </button>
         @endif
 
