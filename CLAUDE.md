@@ -4,220 +4,126 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-OPTIRH is a comprehensive human resources management platform built with Laravel 10, offering modular solutions for personnel management, absence tracking, HR documents, and administrative appeals.
+OPTIRH is an HR management platform built with Laravel 10, PHP 8.1+, and MySQL 8.0+. It provides modular solutions for personnel management, absence tracking, HR documents, and administrative appeals (Recours).
 
 ## Development Commands
 
-### Core Development
 ```bash
-# Install dependencies
-composer install
-npm install
+# Install & setup
+composer install && npm install
+cp .env.example .env && php artisan key:generate
+php artisan migrate --seed
 
-# Run development server
-php artisan serve
-npm run dev
+# Run development
+php artisan serve        # Backend at http://localhost:8000
+npm run dev              # Vite dev server with HMR
 
-# Build assets for production
-npm run build
+# Testing
+php artisan test                          # All tests
+php artisan test --filter=FeatureName     # Single test
+php artisan test tests/Feature            # Feature tests only
 
-# Run database migrations and seeders
-php artisan migrate
-php artisan migrate:fresh --seed  # Reset and seed database
-php artisan db:seed              # Run seeders only
+# Code formatting
+./vendor/bin/pint                         # Fix code style
+./vendor/bin/pint --test                  # Check only
 
-# Generate application key
-php artisan key:generate
-```
-
-### Code Quality & Testing
-```bash
-# Run tests
-php artisan test
-php artisan test --filter=FeatureName  # Run specific test
-php artisan test tests/Feature        # Run feature tests only
-php artisan test tests/Unit           # Run unit tests only
-
-# Code formatting (Laravel Pint)
-./vendor/bin/pint
-./vendor/bin/pint --test  # Check without fixing
-
-# Clear all caches
-php artisan cache:clear
-php artisan config:clear
-php artisan route:clear
-php artisan view:clear
+# Clear caches (after config changes)
 php artisan optimize:clear
-```
-
-### Module Management
-```bash
-# Create new module
-php artisan module:make ModuleName
-
-# Module commands
-php artisan module:list
-php artisan module:enable ModuleName
-php artisan module:disable ModuleName
 ```
 
 ### Custom Artisan Commands
 ```bash
-# Activity log cleanup
-php artisan cleanup:activity-logs
-
-# Appeal management
-php artisan appeals:update-day-count
-php artisan appeals:send-daily-reminder
-
-# Absence balance update
-php artisan duties:update-absence-balance
+php artisan cleanup:activity-logs              # Clean old activity logs
+php artisan appeals:update-day-count           # Update appeal day counts
+php artisan appeals:send-daily-reminder        # Send appeal reminders
+php artisan duties:update-absence-balance      # Update absence balances
+php artisan test:mail-system                   # Test email system
+php artisan monitor:failed-mails               # Monitor failed emails
 ```
 
 ### Docker Development
 ```bash
-# Start Docker containers
-docker-compose up -d
-
-# Stop containers
-docker-compose down
-
-# Access PHP container
-docker exec -it optirh-app bash
-
-# Access MySQL
-docker exec -it optirh-mysql mysql -u root -p
+docker-compose up -d                           # Start containers
+docker exec -it optirh-app bash                # Access PHP container
+docker exec -it optirh-mysql mysql -u root -p  # Access MySQL
 ```
 
 ## Architecture Overview
 
-### Modular Structure
-The application uses **Laravel Modules** (nwidart/laravel-modules) for separation of concerns:
-- **OptiHr Module**: Core HR functionality (employees, absences, documents, publications)
-- **Recours Module**: Administrative appeals management system
+### Module Structure
+Two main modules organized under `app/Models/`, `app/Http/Controllers/`, and `resources/views/`:
+- **OptiHr**: Core HR (employees, departments, jobs, absences, documents, publications)
+- **Recours**: Administrative appeals (applicants, appeals, authorities, DAC decisions)
 
-### Key Architectural Patterns
+### Key Patterns
 
-1. **MVC with Service Layer**
-   - Controllers handle HTTP requests and responses (`app/Http/Controllers/`)
-   - Models represent database entities with Eloquent ORM (`app/Models/`)
-   - Services contain business logic and complex operations (`app/Services/`)
-   - Observers handle model events (`app/Observers/`)
+**Service Layer**: Business logic in `app/Services/`:
+- `AbsencePdfService`, `DocumentPdfService` - PDF generation
+- `FileService`, `PublicationFileService` - File handling
+- `MailService` - Email operations with retry logic
+- `ActivityLogService` - Audit logging
 
-2. **Permission System**
-   - Uses Spatie Laravel Permission package
-   - Role-based access control with granular permissions
-   - Middleware-based route protection
-   - Predefined roles: Admin, HR Manager, Finance Director, General Director
+**Jobs & Queues**: Background processing in `app/Jobs/`:
+- `SendEmailJob` - Async email sending with retries
+- `CleanupActivityLogsJob` - Scheduled log cleanup
 
-3. **Multi-tenancy Approach**
-   - Employee-based data isolation
-   - Department-level hierarchical structure (DG, DSAF, etc.)
-   - Company-wide reporting capabilities
+**Observer**: `app/Observers/EmployeeObserver.php` handles employee model events.
 
-### Database Architecture
-- **OptiHr Tables**: employees, departments, jobs, absences, absence_types, document_requests, document_types, publications, holidays, annual_decisions, files, duties
-- **Recours Tables**: applicants, appeals, authorities, personnals, dacs, decisions, comments
-- **System Tables**: users, roles, permissions, activity_log, model_has_roles, model_has_permissions
+### Permission System (Spatie)
+Roles defined in `database/seeders/RoleSeeder.php`:
+- **ADMIN**: Full access
+- **GRH**: HR Manager - personnel, absences, documents, publications
+- **DSAF**: Finance Director - limited HR access, absence approvals
+- **DG**: General Director - approvals, all module access
+- **EMPLOYEE**: Self-service only
+- **DRAJ**: Appeals management (`appeal-actions` permission)
 
-### Key Integrations
-- **PDF Generation**: DomPDF for documents, FPDI for PDF manipulation, FPDF for custom PDFs
-- **File Management**: Local storage with file table tracking
-- **Email Notifications**: Laravel Mail with queued jobs (Mailpit for local development)
-- **Charts & Analytics**: Larapex Charts and ConsoleTV Charts for dashboards
-- **Authentication**: Laravel Sanctum for API authentication
+Permissions follow French naming: `voir-un-{resource}`, `écrire-un-{resource}`, `créer-un-{resource}`, `configurer-un-{resource}`, `access-un-{module}`
 
-### API Endpoints
-Web-based API endpoints (in `routes/web.php`):
-- `/opti-hr/api/files/{employeeId}` - Employee file management
-- `/opti-hr/api/jobs/{departmentId}` - Department job listings
-- `/opti-hr/api/membres/job/{id}` - Employee-job relationships
-- `/recours/api/data` - Appeals data loading
+### Route Structure (routes/web.php)
+All routes under `auth` middleware:
+- `/opti-hr/*` - HR module (dashboard, membres, attendances, documents, publications)
+- `/recours/*` - Appeals module
+- `/opti-hr/api/*` - Internal AJAX endpoints for dynamic data
 
-### Scheduled Tasks
-Configured in `app/Console/Kernel.php`:
-- **Yearly**: Update absence balances (Dec 31, 00:00)
-- **Hourly**: Update appeal day counts (8am-6pm)
-- **Daily**: Send appeal reminders (12:00)
-- **Weekly**: Cleanup activity logs (Sundays, 01:00)
+### Hierarchical Approval Flow
+Jobs have `n_plus_one_job_id` for manager chain. Absences and documents follow approval workflow: pending → approved/rejected by hierarchy level.
 
-### Frontend Architecture
-- **Blade Templates** with component-based structure
-- **Bootstrap 5** for responsive UI
-- **Vite** for asset bundling and hot reload
-- **JavaScript ES6+** for interactive features
-- **AJAX** for dynamic interactions without page reload
+### Scheduled Tasks (app/Console/Kernel.php)
+- **Yearly** (Dec 31): `duties:update-absence-balance`
+- **Hourly** (8am-6pm): `appeals:update-day-count`
+- **Daily** (12:00): Appeal reminders
+- **Weekly** (Sun 01:00): Activity log cleanup (90 days retention)
 
-### Security Considerations
-- CSRF protection on all forms
-- XSS prevention through Blade escaping
-- SQL injection prevention via Eloquent ORM
-- File upload validation and sanitization
-- Permission checks at controller and view levels
-- Secure password hashing with bcrypt
+## Key Files
 
-## Important Conventions
+### Helpers (app/Utils/helpers.php)
+- `group_publications_by_date()` - Timeline grouping
+- `human_filesize()` - File size formatting
+- `formatDate()`, `formatDateRange()` - French date formatting
+- `numberToWords()` - French number conversion
+- `calculateWorkingDays()` - Working days calculation
+- `getFileIcon()`, `getFileIconClass()` - File type icons
 
-### Code Style
-- **PHP**: Laravel Pint for formatting (PSR-12 standard)
-- **Naming**: Controllers use PascalCase, methods use camelCase
-- **Database**: Tables use snake_case, foreign keys follow `table_id` pattern
-- **Routes**: RESTful resource routes with middleware grouping
-- **Indentation**: 4 spaces for PHP, 2 spaces for YAML
+### Database Seeders
+Run `php artisan migrate:fresh --seed` to create:
+- Default roles and permissions
+- Admin user (admin@admin.com / admin_password in dev)
+- Sample departments (DG, DSAF) and jobs
+- Absence types, document types, holidays
 
-### Directory Structure
-- **Models**: `app/Models/ModuleName/`
-- **Controllers**: `app/Http/Controllers/ModuleName/`
-- **Views**: `resources/views/module-name/`
-- **Migrations**: `database/migrations/`
-- **Seeders**: `database/seeders/`
-- **Custom Commands**: `app/Console/Commands/`
-- **Mail Classes**: `app/Mail/`
-- **Jobs**: `app/Jobs/`
+## Conventions
 
-### Environment Configuration
-- **Database**: PostgreSQL (production), MySQL (Docker development)
-- **Queue Driver**: sync (default), supports database/redis
-- **Cache Driver**: file (default)
-- **Session Driver**: file with 120-minute lifetime
-- **Mail**: SMTP configuration required
+- **Code Style**: Laravel Pint (PSR-12)
+- **Language**: French for UI, permissions, and comments
+- **Models**: `app/Models/OptiHr/` and `app/Models/Recours/`
+- **Controllers**: `app/Http/Controllers/OptiHr/` and `app/Http/Controllers/Recours/`
+- **Views**: `resources/views/modules/opti-hr/` and `resources/views/modules/recours/`
+- **Foreign keys**: `{table}_id` pattern (e.g., `employee_id`, `job_id`)
 
-### Testing Environment
-- **Test Database**: SQLite in-memory (configurable)
-- **Test Directories**: `tests/Feature/` and `tests/Unit/`
-- **Test Command**: `php artisan test`
+## Git Workflow
 
-### Localization
-- **Primary Language**: French (fr)
-- **Translation Files**: `lang/fr/`
-- **Locale Configuration**: `config/app.php`
-
-## Key Services and Helpers
-
-### Custom Helper Functions
-Located in `app/Utils/helpers.php`:
-- Utility functions for common operations
-- Date/time formatting helpers
-- Permission checking helpers
-
-### Service Classes
-Located in `app/Services/`:
-- Business logic separation from controllers
-- Complex operations and calculations
-- External API integrations
-
-### Observer Classes
-Located in `app/Observers/`:
-- Model event handlers
-- Automatic logging and auditing
-- Cascade operations
-
-## Development Workflow
-
-1. **Branch from develop**: All features branch from develop
-2. **Run migrations**: `php artisan migrate`
-3. **Seed test data**: `php artisan db:seed`
-4. **Start dev server**: `php artisan serve` and `npm run dev`
-5. **Format code**: `./vendor/bin/pint` before committing
-6. **Run tests**: `php artisan test` before merging
-7. **Clear caches**: `php artisan optimize:clear` after config changes
+1. Branch from `develop`
+2. Format code: `./vendor/bin/pint`
+3. Run tests: `php artisan test`
+4. Merge to `develop`, then `main` via release branches

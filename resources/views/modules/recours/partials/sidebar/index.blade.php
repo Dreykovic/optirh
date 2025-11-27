@@ -1,2 +1,9 @@
-<x-sidebar appName="Recours" appRoute="recours.home" logoPath="assets/img/recours-logo.png" logoWidth="60" logoHeight="60"
-    navModule="recours" />
+<x-sidebar
+    appName="Recours"
+    appSubtitle="Suivi des recours"
+    appRoute="recours.home"
+    logoPath="assets/img/recours-logo.png"
+    logoWidth="44"
+    logoHeight="44"
+    navModule="recours"
+/>

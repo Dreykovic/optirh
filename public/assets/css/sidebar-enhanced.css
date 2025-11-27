@@ -1,0 +1,623 @@
+/**
+ * Enhanced Sidebar Styles - OPTIRH
+ * Amélioration UI/UX de la barre latérale
+ *
+ * Variables utilisées (définies dans my-task.style.min.css):
+ * --primary-color, --secondary-color, --white-color, --text-color
+ *
+ * Typography Scale (based on 16px root):
+ * - xs:   11px (0.6875rem)
+ * - sm:   13px (0.8125rem)
+ * - base: 14px (0.875rem)
+ * - md:   15px (0.9375rem)
+ * - lg:   16px (1rem)
+ * - xl:   18px (1.125rem)
+ */
+
+/* ==========================================================================
+   CSS Variables - Sidebar Specific
+   ========================================================================== */
+
+:root {
+    /* Font Family */
+    --sidebar-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+    /* Spacing */
+    --sidebar-padding-x: 1rem;
+    --sidebar-padding-y: 1.5rem;
+    --menu-item-padding-x: 0.75rem;
+    --menu-item-padding-y: 0.5rem;
+    --submenu-padding-left: 2.25rem;
+
+    /* Typography - Standard Scale */
+    --sidebar-font-size-xs: 0.6875rem;   /* 11px - section titles */
+    --sidebar-font-size-sm: 0.8125rem;   /* 13px - submenu items */
+    --sidebar-font-size-base: 0.875rem;  /* 14px - main menu items */
+    --sidebar-font-size-md: 0.9375rem;   /* 15px - hover states */
+    --sidebar-font-size-lg: 1rem;        /* 16px - brand name */
+    --sidebar-font-size-xl: 1.125rem;    /* 18px - large headings */
+
+    /* Font Weights */
+    --sidebar-font-weight-normal: 400;
+    --sidebar-font-weight-medium: 500;
+    --sidebar-font-weight-semibold: 600;
+
+    /* Line Heights */
+    --sidebar-line-height-tight: 1.25;
+    --sidebar-line-height-normal: 1.5;
+
+    /* Letter Spacing */
+    --sidebar-letter-spacing-tight: -0.01em;
+    --sidebar-letter-spacing-normal: 0;
+    --sidebar-letter-spacing-wide: 0.05em;
+
+    /* Colors - Sidebar specific */
+    --sidebar-text-color: rgba(255, 255, 255, 0.9);
+    --sidebar-text-muted: rgba(255, 255, 255, 0.55);
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.08);
+    --sidebar-active-bg: rgba(255, 255, 255, 0.12);
+    --sidebar-divider-color: rgba(255, 255, 255, 0.12);
+    --sidebar-section-color: rgba(255, 255, 255, 0.45);
+
+    /* Transitions */
+    --sidebar-transition: all 0.2s ease-in-out;
+
+    /* Border radius */
+    --sidebar-radius-sm: 6px;
+    --sidebar-radius-md: 8px;
+    --sidebar-radius-lg: 12px;
+
+    /* Icon sizes */
+    --sidebar-icon-size: 18px;
+    --sidebar-arrow-size: 12px;
+}
+
+/* ==========================================================================
+   Sidebar Container
+   ========================================================================== */
+
+.sidebar {
+    padding: var(--sidebar-padding-y) var(--sidebar-padding-x);
+    font-family: var(--sidebar-font-family);
+    font-size: var(--sidebar-font-size-base);
+    line-height: var(--sidebar-line-height-normal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==========================================================================
+   Sidebar Header - Logo & Brand
+   ========================================================================== */
+
+.sidebar-header {
+    padding: 0 0.25rem;
+}
+
+.sidebar-header .brand-icon {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.5rem;
+    border-radius: var(--sidebar-radius-md);
+    transition: var(--sidebar-transition);
+}
+
+.sidebar-header .brand-icon:hover {
+    background-color: var(--sidebar-hover-bg);
+}
+
+.sidebar-header .logo-wrapper {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--white-color);
+    border-radius: var(--sidebar-radius-md);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.sidebar-header .logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 4px;
+}
+
+.sidebar-header .brand-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.sidebar-header .logo-text {
+    font-size: var(--sidebar-font-size-lg);
+    font-weight: var(--sidebar-font-weight-semibold);
+    color: var(--white-color);
+    line-height: var(--sidebar-line-height-tight);
+    letter-spacing: var(--sidebar-letter-spacing-tight);
+}
+
+.sidebar-header .logo-subtitle {
+    font-size: var(--sidebar-font-size-xs);
+    color: var(--sidebar-text-muted);
+    font-weight: var(--sidebar-font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: var(--sidebar-letter-spacing-wide);
+    margin-top: 2px;
+}
+
+/* ==========================================================================
+   Sidebar Divider
+   ========================================================================== */
+
+.sidebar-divider {
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--sidebar-divider-color) 20%,
+        var(--sidebar-divider-color) 80%,
+        transparent 100%
+    );
+    margin: 0 0.5rem;
+}
+
+/* ==========================================================================
+   Navigation Menu List
+   ========================================================================== */
+
+.sidebar-nav {
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin: 0 -0.25rem;
+    padding: 0 0.25rem;
+
+    /* Custom scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: var(--sidebar-divider-color) transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+    background-color: var(--sidebar-divider-color);
+    border-radius: 4px;
+}
+
+.sidebar .menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* ==========================================================================
+   Menu Section Headers
+   ========================================================================== */
+
+.menu-list .menu-section {
+    padding: 1.25rem var(--menu-item-padding-x) 0.5rem;
+    pointer-events: none;
+}
+
+.menu-list .menu-section:first-child {
+    padding-top: 0.25rem;
+}
+
+.menu-list .section-title {
+    font-size: var(--sidebar-font-size-xs);
+    font-weight: var(--sidebar-font-weight-semibold);
+    color: var(--sidebar-section-color);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    line-height: var(--sidebar-line-height-tight);
+}
+
+/* ==========================================================================
+   Menu Items
+   ========================================================================== */
+
+.menu-list .menu-item {
+    margin-bottom: 2px;
+}
+
+/* Main link styles */
+.menu-list .m-link {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: var(--menu-item-padding-y) var(--menu-item-padding-x);
+    color: var(--sidebar-text-color);
+    font-size: var(--sidebar-font-size-base);
+    font-weight: var(--sidebar-font-weight-normal);
+    line-height: var(--sidebar-line-height-normal);
+    letter-spacing: var(--sidebar-letter-spacing-normal);
+    text-decoration: none;
+    border-radius: var(--sidebar-radius-sm);
+    transition: var(--sidebar-transition);
+    position: relative;
+}
+
+.menu-list .m-link:hover {
+    background-color: var(--sidebar-hover-bg);
+    color: var(--white-color);
+}
+
+.menu-list .m-link.active {
+    background-color: var(--sidebar-active-bg);
+    color: var(--secondary-color);
+    font-weight: var(--sidebar-font-weight-medium);
+}
+
+/* Active indicator bar */
+.menu-list .m-link.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 60%;
+    background-color: var(--secondary-color);
+    border-radius: 0 2px 2px 0;
+}
+
+/* Icon styles */
+.menu-list .m-link i:first-child,
+.menu-list .m-link [class^='icofont-']:first-child {
+    font-size: var(--sidebar-icon-size);
+    width: var(--sidebar-icon-size);
+    text-align: center;
+    flex-shrink: 0;
+    opacity: 0.85;
+    transition: var(--sidebar-transition);
+}
+
+.menu-list .m-link:hover i:first-child,
+.menu-list .m-link.active i:first-child {
+    opacity: 1;
+}
+
+/* Text label */
+.menu-list .m-link span:not(.arrow) {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Arrow icon for submenus */
+.menu-list .m-link .arrow {
+    font-size: var(--sidebar-arrow-size);
+    opacity: 0.5;
+    transition: transform 0.2s ease;
+    margin-left: auto;
+}
+
+.menu-list .menu-item.expanded .m-link .arrow,
+.menu-list .m-link[aria-expanded="true"] .arrow {
+    transform: rotate(180deg);
+}
+
+/* ==========================================================================
+   Submenus
+   ========================================================================== */
+
+.menu-list .sub-menu {
+    list-style: none;
+    padding: 0.25rem 0 0.5rem 0;
+    margin: 0;
+    position: relative;
+}
+
+/* Vertical line indicator */
+.menu-list .sub-menu::before {
+    content: '';
+    position: absolute;
+    left: calc(var(--menu-item-padding-x) + var(--sidebar-icon-size) / 2);
+    top: 0.25rem;
+    bottom: 0.5rem;
+    width: 1px;
+    background-color: var(--sidebar-divider-color);
+}
+
+/* Submenu links */
+.menu-list .sub-menu .ms-link {
+    display: flex;
+    align-items: center;
+    padding: 0.4375rem var(--menu-item-padding-x);
+    padding-left: var(--submenu-padding-left);
+    color: var(--sidebar-text-color);
+    font-size: var(--sidebar-font-size-sm);
+    font-weight: var(--sidebar-font-weight-normal);
+    line-height: var(--sidebar-line-height-normal);
+    letter-spacing: var(--sidebar-letter-spacing-normal);
+    text-decoration: none;
+    border-radius: var(--sidebar-radius-sm);
+    transition: var(--sidebar-transition);
+    position: relative;
+}
+
+.menu-list .sub-menu .ms-link:hover {
+    background-color: var(--sidebar-hover-bg);
+    color: var(--white-color);
+}
+
+.menu-list .sub-menu .ms-link.active {
+    color: var(--secondary-color);
+    font-weight: var(--sidebar-font-weight-medium);
+    background-color: var(--sidebar-active-bg);
+}
+
+/* Dot indicator for submenu items */
+.menu-list .sub-menu .ms-link::before {
+    content: '';
+    position: absolute;
+    left: calc(var(--menu-item-padding-x) + var(--sidebar-icon-size) / 2 - 3px);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--sidebar-divider-color);
+    transition: var(--sidebar-transition);
+}
+
+.menu-list .sub-menu .ms-link:hover::before,
+.menu-list .sub-menu .ms-link.active::before {
+    background-color: var(--secondary-color);
+}
+
+/* ==========================================================================
+   Sidebar Footer
+   ========================================================================== */
+
+.sidebar-footer {
+    border-top: 1px solid var(--sidebar-divider-color);
+    padding-top: 1rem;
+    margin-top: 1rem;
+}
+
+/* Theme toggle */
+.theme-toggle-wrapper {
+    padding: 0.5rem var(--menu-item-padding-x);
+}
+
+.theme-toggle-wrapper .form-switch {
+    margin: 0;
+    padding-left: 0;
+}
+
+.theme-toggle-wrapper .form-check-input {
+    width: 2.5rem;
+    height: 1.25rem;
+    margin-right: 0.5rem;
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+}
+
+.theme-toggle-wrapper .form-check-input:checked {
+    background-color: var(--secondary-color);
+}
+
+.theme-toggle-wrapper .form-check-input:focus {
+    box-shadow: none;
+    border: none;
+}
+
+.theme-toggle-wrapper .form-check-label {
+    font-size: var(--sidebar-font-size-sm);
+    font-weight: var(--sidebar-font-weight-normal);
+    color: var(--sidebar-text-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    line-height: var(--sidebar-line-height-normal);
+}
+
+.theme-toggle-wrapper .form-check-label i {
+    font-size: var(--sidebar-font-size-base);
+}
+
+/* Portal link */
+.portal-link {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: var(--menu-item-padding-y) var(--menu-item-padding-x);
+    color: var(--sidebar-text-color);
+    font-size: var(--sidebar-font-size-sm);
+    font-weight: var(--sidebar-font-weight-normal);
+    line-height: var(--sidebar-line-height-normal);
+    text-decoration: none;
+    border-radius: var(--sidebar-radius-sm);
+    transition: var(--sidebar-transition);
+    margin-bottom: 0.5rem;
+}
+
+.portal-link:hover {
+    background-color: var(--sidebar-hover-bg);
+    color: var(--white-color);
+}
+
+.portal-link i {
+    font-size: var(--sidebar-icon-size);
+    opacity: 0.85;
+}
+
+/* Collapse button */
+.sidebar-mini-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.5rem;
+    color: var(--sidebar-text-muted);
+    background: transparent;
+    border: 1px solid var(--sidebar-divider-color);
+    border-radius: var(--sidebar-radius-sm);
+    font-size: 1.25rem;
+    transition: var(--sidebar-transition);
+    cursor: pointer;
+}
+
+.sidebar-mini-btn:hover {
+    background-color: var(--sidebar-hover-bg);
+    color: var(--white-color);
+    border-color: var(--sidebar-text-muted);
+}
+
+.sidebar-mini-btn:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* ==========================================================================
+   Sidebar Mini (Collapsed) State
+   ========================================================================== */
+
+.sidebar.sidebar-mini .sidebar-header .brand-info {
+    display: none;
+}
+
+.sidebar.sidebar-mini .sidebar-header .logo-wrapper {
+    margin: 0 auto;
+}
+
+.sidebar.sidebar-mini .menu-section {
+    display: none;
+}
+
+.sidebar.sidebar-mini .menu-list .m-link span:not(.arrow),
+.sidebar.sidebar-mini .menu-list .m-link .arrow {
+    display: none;
+}
+
+.sidebar.sidebar-mini .menu-list .m-link {
+    justify-content: center;
+    padding: 0.75rem;
+}
+
+.sidebar.sidebar-mini .menu-list .m-link i:first-child {
+    font-size: 1.375rem;
+}
+
+.sidebar.sidebar-mini .sidebar-divider {
+    display: none;
+}
+
+.sidebar.sidebar-mini .theme-toggle-wrapper .form-check-label span,
+.sidebar.sidebar-mini .portal-link span {
+    display: none;
+}
+
+.sidebar.sidebar-mini .portal-link {
+    justify-content: center;
+}
+
+.sidebar.sidebar-mini .sidebar-mini-btn i::before {
+    content: '\ea65'; /* icofont-rounded-double-right */
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+
+@media only screen and (max-width: 1279px) {
+    .sidebar {
+        padding: 1.25rem 0.875rem;
+    }
+
+    .sidebar-header .logo-wrapper {
+        width: 40px;
+        height: 40px;
+    }
+
+    .sidebar-header .logo-text {
+        font-size: var(--sidebar-font-size-md); /* 15px */
+    }
+
+    .menu-list .m-link {
+        font-size: var(--sidebar-font-size-sm); /* 13px */
+        padding: 0.4375rem 0.625rem;
+    }
+
+    .menu-list .sub-menu .ms-link {
+        font-size: 0.75rem; /* 12px */
+        padding: 0.375rem 0.625rem;
+        padding-left: 2rem;
+    }
+
+    .menu-list .section-title {
+        font-size: 0.625rem; /* 10px */
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .sidebar {
+        padding: 1rem 0.625rem;
+    }
+
+    .sidebar-header .logo-wrapper {
+        width: 36px;
+        height: 36px;
+    }
+
+    .sidebar-header .logo-text {
+        font-size: var(--sidebar-font-size-base); /* 14px */
+    }
+
+    .sidebar-header .logo-subtitle {
+        display: none;
+    }
+
+    .menu-list .m-link {
+        font-size: var(--sidebar-font-size-sm); /* 13px */
+        padding: 0.375rem 0.5rem;
+    }
+
+    .menu-list .sub-menu .ms-link {
+        font-size: 0.75rem; /* 12px */
+    }
+
+    .sidebar-mini-btn {
+        display: none;
+    }
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.menu-list .sub-menu.show {
+    animation: fadeIn 0.2s ease-out;
+}
+
+/* ==========================================================================
+   Dark Mode Adjustments (when body has theme-dark class)
+   ========================================================================== */
+
+body.theme-dark .sidebar {
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.05);
+    --sidebar-active-bg: rgba(255, 255, 255, 0.08);
+}
