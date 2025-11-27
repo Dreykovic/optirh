@@ -1,194 +1,281 @@
 @extends('modules.opti-hr.pages.base')
+
 @section('plugins-style')
-    <link rel="stylesheet" href={{ asset('assets/plugins/datatables/responsive.dataTables.min.css') }}>
-    <link rel="stylesheet" href={{ asset('assets/plugins/datatables/dataTables.bootstrap5.min.css') }}>
-    <link href={{ asset('assets/plugins/select2/css/select2.min.css') }} rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/datatables/responsive.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/datatables/dataTables.bootstrap5.min.css') }}">
+    <link href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
-    <style>
-        .form-text {
-            font-size: 0.875em;
-            color: #6c757d;
-            margin-top: 0.25rem;
-        }
-
-        .required:after {
-            content: " *";
-            color: red;
-        }
-
-        .card {
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            border-radius: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-        }
-
-        .card-header {
-            border-bottom: 1px solid rgba(0, 0, 0, 0.125);
-            padding: 1.25rem 1.5rem;
-            background-color: #f8f9fa;
-            border-radius: 0.5rem 0.5rem 0 0 !important;
-        }
-
-        .card-header h3 {
-            margin-bottom: 0;
-            font-weight: 600;
-        }
-
-        .days-requested-container {
-            background-color: #f8f9fa;
-            padding: 0.75rem;
-            border-radius: 0.375rem;
-            margin-bottom: 1rem;
-            font-size: 1rem;
-        }
-
-        .days-requested {
-            font-weight: 600;
-            color: #0d6efd;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('assets/css/absences.css') }}">
 @endsection
 
 @section('admin-content')
-    <!-- Si disponible, stocker le solde d'absence actuel dans un élément caché -->
-    @if(auth()->user()->employee->duties->where('evolution', 'ON_GOING')->first())
-        <div id="currentDuty" class="d-none" 
-             data-absence-balance="{{ auth()->user()->employee->duties->where('evolution', 'ON_GOING')->first()->absence_balance ?? 30 }}">
-        </div>
-    @endif
+    @php
+        $currentDuty = auth()->user()->employee->duties->where('evolution', 'ON_GOING')->first();
+        $absenceBalance = $currentDuty ? ($currentDuty->absence_balance ?? 30) : 30;
+        $maxBalance = 30; // Solde maximum possible
+    @endphp
 
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-md-12">
-            <div class="card p-xl-5 p-lg-4 p-0">
-                <div class="deadline-form">
-                    <div class="card-header">
-                        <h3>Soumettre Une Demande d'Absence</h3>
-                    </div>
-                    <form id="modelAddForm" data-model-add-url="{{ route('absences.save') }}">
-                        @csrf
-                        <div class="card-body">
+    {{-- Données pour le JavaScript --}}
+    <div id="absenceFormData" class="d-none"
+         data-absence-balance="{{ $absenceBalance }}"
+         data-max-balance="{{ $maxBalance }}"
+         data-holidays="{{ json_encode($holidays ?? []) }}">
+    </div>
 
-                            <div class="mb-3">
-                                <label class="form-label required" for="absenceTypeSelect">Type d'absence</label>
-                                <select class="form-select" id="absenceTypeSelect" name="absence_type">
-                                    <option value="">Sélectionnez un type d'absence</option>
-                                    @foreach ($absenceTypes as $absenceType)
-                                        <option value="{{ $absenceType->id }}" 
-                                                data-deductible="{{ $absenceType->is_deductible ? 'true' : 'false' }}">
-                                            {{ $absenceType->label }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <div class="form-text">Veuillez sélectionner le type d'absence que vous souhaitez demander.</div>
-                                
-                                <!-- Statut de déductibilité -->
-                                <div id="deductibleStatus" style="display: none;">
-                                    <span id="deductibleText"></span>
-                                </div>
-                                
-                                <!-- Information sur le solde d'absence -->
-                                <div id="absenceBalanceInfo" style="display: none;" class="mt-2">
-                                    <div class="alert alert-info">
-                                        <i class="bi bi-info-circle me-2"></i>
-                                        Votre solde de congés actuel: <span id="currentBalance" class="fw-bold">30</span> jours
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="absenceAddress" class="form-label required">Adresse De Congé</label>
-                                <input type="text" class="form-control" id="absenceAddress" name="address"
-                                    value="{{ auth()->user()->employee->address1 }}"
-                                    placeholder="Votre adresse pendant l'absence">
-                                <div class="form-text">Adresse où vous serez joignable pendant votre absence.</div>
-                            </div>
-
-                            <div class="row g-3 mb-3">
-                                <div class="col-sm-6">
-                                    <label for="absenceStartDate" class="form-label required">Date de début</label>
-                                    <input type="date" class="form-control" id="absenceStartDate" name="start_date">
-                                    <div class="form-text">Premier jour de votre absence.</div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <label for="absenceEndDate" class="form-label required">Date de fin</label>
-                                    <input type="date" class="form-control" id="absenceEndDate" name="end_date">
-                                    <div class="form-text">Dernier jour de votre absence.</div>
-                                </div>
-                            </div>
-
-                            <div class="days-requested-container mb-3">
-                                <i class="bi bi-calendar-check me-2"></i> Durée totale: <strong><span
-                                        class="days-requested">0 jour</span></strong>
-                                <div class="form-text mt-1">
-                                    Calculé automatiquement en jours ouvrés (hors week-ends, jours fériés inclus).
-                                    <i class="bi bi-question-circle tooltip-icon" 
-                                       data-bs-toggle="tooltip" 
-                                       data-bs-placement="top"
-                                       title="Le nombre de jours est calculé en incluant les jours de début et de fin."></i>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="absenceReason" class="form-label">Raisons de l'absence</label>
-                                <textarea class="form-control" id="absenceReason" rows="3" name="reasons"
-                                    placeholder="Veuillez expliquer brièvement les raisons de votre demande d'absence"></textarea>
-                                <div class="form-text">Ces informations seront partagées avec votre responsable.</div>
-                            </div>
-
-                        </div>
-                        <div class="card-footer modal-footer">
-                            <button type="button" class="btn btn-secondary" onclick="window.history.back()">
-                                <i class="bi bi-x-circle me-1"></i> Annuler
-                            </button>
-                            <button type="submit" class="btn btn-primary" atl="Ajouter Absence Requête" id="modelAddBtn">
-                                <span class="normal-status">
-                                    <i class="bi bi-check-circle me-1"></i> Soumettre
-                                </span>
-                                <span class="indicateur d-none">
-                                    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                                    Un Instant...
-                                </span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
+    <div class="absence-form-container">
+        <div class="absence-form-card">
+            {{-- Header --}}
+            <div class="absence-form-header">
+                <h1><i class="bi bi-calendar-plus me-2"></i>Nouvelle Demande d'Absence</h1>
+                <p>Remplissez le formulaire ci-dessous pour soumettre votre demande</p>
+                <i class="bi bi-calendar2-week header-icon"></i>
             </div>
-        </div>
-    </div> <!-- Row end  -->
-    
-    <!-- Modal de confirmation -->
-    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmationModalLabel">Confirmation de la demande</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Le contenu sera injecté dynamiquement par JS -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="button" class="btn btn-primary" id="confirmSubmit">Confirmer</button>
-                </div>
+
+            {{-- Form Body --}}
+            <div class="absence-form-body">
+                <form id="modelAddForm" data-model-add-url="{{ route('absences.save') }}" novalidate>
+                    @csrf
+
+                    {{-- Section 1: Type d'absence --}}
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-icon type">
+                                <i class="bi bi-tag"></i>
+                            </div>
+                            <div>
+                                <h2 class="section-title">Type d'absence</h2>
+                                <p class="section-subtitle">Sélectionnez le motif de votre demande</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-0">
+                            <label class="form-label" for="absenceTypeSelect">
+                                Type d'absence <span class="required">*</span>
+                            </label>
+                            <select class="form-select" id="absenceTypeSelect" name="absence_type" required>
+                                <option value="">Sélectionnez un type d'absence</option>
+                                @foreach ($absenceTypes as $absenceType)
+                                    <option value="{{ $absenceType->id }}"
+                                            data-deductible="{{ $absenceType->is_deductible ? 'true' : 'false' }}">
+                                        {{ $absenceType->label }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="invalid-feedback">Veuillez sélectionner un type d'absence.</div>
+                        </div>
+
+                        {{-- Info déductibilité --}}
+                        <div id="deductibilityInfo" class="deductibility-info d-none">
+                            <i class="bi bi-info-circle"></i>
+                            <span id="deductibilityText"></span>
+                        </div>
+
+                        {{-- Indicateur de solde --}}
+                        <div id="balanceCard" class="balance-card d-none">
+                            <div class="balance-header">
+                                <span class="balance-label">
+                                    <i class="bi bi-wallet2 me-1"></i> Votre solde de congés
+                                </span>
+                                <span class="balance-value">
+                                    <span id="balanceDisplay">{{ $absenceBalance }}</span>/{{ $maxBalance }} jours
+                                </span>
+                            </div>
+                            <div class="balance-progress">
+                                <div class="balance-progress-bar" id="balanceProgressBar"
+                                     style="width: {{ ($absenceBalance / $maxBalance) * 100 }}%"></div>
+                            </div>
+                            <div class="balance-info">
+                                <span>Solde disponible</span>
+                                <span id="balanceAfterRequest"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Section 2: Période --}}
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-icon dates">
+                                <i class="bi bi-calendar-range"></i>
+                            </div>
+                            <div>
+                                <h2 class="section-title">Période d'absence</h2>
+                                <p class="section-subtitle">Définissez les dates de votre absence</p>
+                            </div>
+                        </div>
+
+                        <div class="dates-grid">
+                            <div>
+                                <label for="absenceStartDate" class="form-label">
+                                    Date de début <span class="required">*</span>
+                                </label>
+                                <input type="date"
+                                       class="form-control"
+                                       id="absenceStartDate"
+                                       name="start_date"
+                                       min="{{ date('Y-m-d') }}"
+                                       required>
+                                <div class="invalid-feedback">Veuillez sélectionner une date de début.</div>
+                            </div>
+                            <div>
+                                <label for="absenceEndDate" class="form-label">
+                                    Date de fin <span class="required">*</span>
+                                </label>
+                                <input type="date"
+                                       class="form-control"
+                                       id="absenceEndDate"
+                                       name="end_date"
+                                       min="{{ date('Y-m-d') }}"
+                                       required>
+                                <div class="invalid-feedback">Veuillez sélectionner une date de fin.</div>
+                            </div>
+                        </div>
+
+                        {{-- Badge durée --}}
+                        <div id="durationBadge" class="duration-badge d-none">
+                            <i class="bi bi-clock-history"></i>
+                            <span id="durationText">0 jour ouvré</span>
+                        </div>
+                    </div>
+
+                    {{-- Section 3: Adresse --}}
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-icon address">
+                                <i class="bi bi-geo-alt"></i>
+                            </div>
+                            <div>
+                                <h2 class="section-title">Adresse pendant l'absence</h2>
+                                <p class="section-subtitle">Lieu où vous serez joignable</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="absenceAddress" class="form-label">
+                                Adresse <span class="required">*</span>
+                            </label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="absenceAddress"
+                                   name="address"
+                                   value="{{ auth()->user()->employee->address1 }}"
+                                   placeholder="Ex: 123 rue Example, Ville"
+                                   required>
+                            <p class="form-text">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Cette adresse sera utilisée en cas de besoin pendant votre absence.
+                            </p>
+                            <div class="invalid-feedback">Veuillez indiquer votre adresse.</div>
+                        </div>
+                    </div>
+
+                    {{-- Section 4: Motif --}}
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-icon reason">
+                                <i class="bi bi-chat-text"></i>
+                            </div>
+                            <div>
+                                <h2 class="section-title">Motif de la demande</h2>
+                                <p class="section-subtitle">Expliquez brièvement la raison (optionnel)</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="absenceReason" class="form-label">Motif</label>
+                            <textarea class="form-control"
+                                      id="absenceReason"
+                                      rows="3"
+                                      name="reasons"
+                                      placeholder="Ex: Vacances familiales, rendez-vous médical, etc."
+                                      maxlength="1000"></textarea>
+                            <p class="form-text">
+                                <span id="charCount">0</span>/1000 caractères
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- Section 5: Justificatif --}}
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-icon proof">
+                                <i class="bi bi-paperclip"></i>
+                            </div>
+                            <div>
+                                <h2 class="section-title">Justificatif</h2>
+                                <p class="section-subtitle">Joignez un document si nécessaire (optionnel)</p>
+                            </div>
+                        </div>
+
+                        <div class="upload-zone" id="uploadZone">
+                            <input type="file"
+                                   name="proof"
+                                   id="proofInput"
+                                   accept=".pdf,.jpg,.jpeg,.png">
+                            <div class="upload-icon">
+                                <i class="bi bi-cloud-arrow-up"></i>
+                            </div>
+                            <p class="upload-text">Glissez un fichier ou cliquez pour sélectionner</p>
+                            <p class="upload-hint">PDF, JPG, PNG - Maximum 5 Mo</p>
+                        </div>
+
+                        <div class="file-preview-container" id="filePreviewContainer"></div>
+                    </div>
+
+                    {{-- Résumé de la demande --}}
+                    <div class="summary-card d-none" id="summaryCard">
+                        <div class="summary-header">
+                            <i class="bi bi-clipboard-check"></i>
+                            <h3>Résumé de votre demande</h3>
+                        </div>
+                        <div class="summary-body">
+                            <div class="summary-row">
+                                <span class="summary-label">Type d'absence</span>
+                                <span class="summary-value" id="summaryType">-</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Période</span>
+                                <span class="summary-value" id="summaryPeriod">-</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Durée</span>
+                                <span class="summary-value highlight" id="summaryDuration">-</span>
+                            </div>
+                            <div class="summary-row" id="summaryBalanceRow">
+                                <span class="summary-label">Solde après demande</span>
+                                <span class="summary-value" id="summaryBalance">-</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Adresse</span>
+                                <span class="summary-value" id="summaryAddress">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Actions --}}
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" onclick="window.history.back()">
+                            <i class="bi bi-x-lg me-1"></i> Annuler
+                        </button>
+                        <button type="submit" class="btn-submit" id="modelAddBtn" disabled>
+                            <span class="normal-status">
+                                <i class="bi bi-check2-circle"></i> Soumettre la demande
+                            </span>
+                            <span class="indicateur d-none">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Envoi en cours...
+                            </span>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 @endsection
+
 @push('plugins-js')
-    <script src={{ asset('assets/plugins/select2/js/select2.min.js') }}></script>
-    <!-- Bootstrap JS pour les modales et tooltips -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Toastr pour les notifications élégantes si disponible -->
-    @if(config('app.env') === 'local')
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-    @endif
+    <script src="{{ asset('assets/plugins/select2/js/select2.min.js') }}"></script>
 @endpush
+
 @push('js')
     <script src="{{ asset('app-js/attendances/absences/create.js') }}"></script>
 @endpush

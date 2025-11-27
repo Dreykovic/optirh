@@ -80,30 +80,40 @@ class AbsenceController extends Controller
     }
 
     /**
+     * Mapping des stages virtuels vers les stages réels
+     */
+    private const STAGE_MAPPING = [
+        'TO_PROCESS' => ['PENDING', 'IN_PROGRESS'],
+        'HISTORY' => ['APPROVED', 'REJECTED'],
+        'CANCELLED' => ['CANCELLED'],
+    ];
+
+    /**
      * Afficher la liste des absences filtrée par étape
      *
      * @param Request $request
      * @param string $stage
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
-    public function index(Request $request, $stage = 'PENDING')
+    public function index(Request $request, $stage = 'TO_PROCESS')
     {
-        // Liste des stages valides
-        $validStages = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'IN_PROGRESS', 'COMPLETED'];
+        // Liste des stages valides (incluant les nouveaux stages virtuels)
+        $validStages = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'IN_PROGRESS', 'COMPLETED', 'TO_PROCESS', 'HISTORY', 'ALL'];
 
         // Vérification de la validité du stage
-        if ($stage !== 'ALL' && !in_array($stage, $validStages)) {
+        if (!in_array($stage, $validStages)) {
             $this->activityLogger->log(
                 'error',
                 "Tentative d'accès avec un stage invalide: {$stage}"
             );
 
-            return redirect()->route('absences.index')->with('error', 'Stage invalide');
+            return redirect()->route('absences.requests', 'TO_PROCESS')->with('error', 'Stage invalide');
         }
 
         // Récupérer les filtres de recherche
         $type = $request->input('type');
         $search = $request->input('search');
+        $subFilter = $request->input('filter', 'all'); // Sous-filtre : all, mine, to_validate
 
         // Récupérer les types d'absences (éviter de faire la requête à chaque appel)
         $absence_types = AbsenceType::all();
@@ -111,18 +121,148 @@ class AbsenceController extends Controller
         // Construire la requête principale avec les relations nécessaires
         $query = $this->buildAbsenceQuery($search, $type, $stage);
 
+        // Appliquer le sous-filtre pour le tab "À traiter"
+        if (in_array($stage, ['TO_PROCESS', 'PENDING', 'IN_PROGRESS'])) {
+            $query = $this->applySubFilter($query, $subFilter);
+        }
+
         // Pagination adaptative selon le type de stage
         $absences = $this->getPaginatedResults($query, $stage);
+
+        // Compter les demandes en attente pour le badge du tab "À traiter"
+        $pendingCount = $this->countPendingAbsences();
+
+        // Obtenir les compteurs des sous-filtres
+        $subFilterCounts = $this->getSubFilterCounts();
 
         $this->activityLogger->log(
             'view',
             "Consultation de la liste des absences - Stage: {$stage}" .
             ($type ? ", Type: {$type}" : "") .
-            ($search ? ", Recherche: {$search}" : "")
+            ($search ? ", Recherche: {$search}" : "") .
+            ($subFilter !== 'all' ? ", Filtre: {$subFilter}" : "")
         );
 
         // Retourner la vue avec les données nécessaires
-        return view('modules.opti-hr.pages.attendances.absences.index', compact('absences', 'stage', 'absence_types'));
+        return view('modules.opti-hr.pages.attendances.absences.index', compact(
+            'absences',
+            'stage',
+            'absence_types',
+            'pendingCount',
+            'subFilter',
+            'subFilterCounts'
+        ));
+    }
+
+    /**
+     * Compter les demandes en attente de traitement
+     *
+     * @return int
+     */
+    private function countPendingAbsences(): int
+    {
+        return Absence::whereIn('stage', ['PENDING', 'IN_PROGRESS'])->count();
+    }
+
+    /**
+     * Obtenir les compteurs pour les sous-filtres du tab "À traiter"
+     *
+     * @return array
+     */
+    private function getSubFilterCounts(): array
+    {
+        $user = auth()->user();
+        $employeeId = $user->employee_id;
+
+        // Récupérer le job_id de l'utilisateur courant
+        $currentDuty = $user->employee?->duties?->firstWhere('evolution', 'ON_GOING');
+        $currentJobId = $currentDuty?->job_id;
+
+        // Toutes les demandes à traiter
+        $allCount = Absence::whereIn('stage', ['PENDING', 'IN_PROGRESS'])->count();
+
+        // Mes demandes (demandes créées par l'utilisateur courant)
+        $myCount = Absence::whereIn('stage', ['PENDING', 'IN_PROGRESS'])
+            ->whereHas('duty', function ($q) use ($employeeId) {
+                $q->where('employee_id', $employeeId);
+            })
+            ->count();
+
+        // À valider (demandes que l'utilisateur peut valider)
+        $toValidateQuery = Absence::whereIn('stage', ['PENDING', 'IN_PROGRESS'])
+            ->whereHas('duty', function ($q) use ($employeeId) {
+                $q->where('employee_id', '!=', $employeeId);
+            });
+
+        // Filtrer selon le rôle
+        if ($user->hasRole('DG')) {
+            $toValidateQuery->whereIn('level', ['TWO', 'THREE']);
+        } elseif ($user->hasRole('GRH') || $user->hasRole('DSAF')) {
+            $toValidateQuery->whereIn('level', ['ONE', 'TWO', 'THREE']);
+        } elseif ($currentJobId) {
+            // Chef direct (N+1)
+            $toValidateQuery->whereHas('duty.job', function ($q) use ($currentJobId) {
+                $q->where('n_plus_one_job_id', $currentJobId);
+            });
+        }
+
+        $toValidateCount = $toValidateQuery->count();
+
+        return [
+            'all' => $allCount,
+            'mine' => $myCount,
+            'to_validate' => $toValidateCount,
+        ];
+    }
+
+    /**
+     * Appliquer le sous-filtre à la requête
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $subFilter
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    private function applySubFilter($query, string $subFilter)
+    {
+        $user = auth()->user();
+        $employeeId = $user->employee_id;
+        $currentDuty = $user->employee?->duties?->firstWhere('evolution', 'ON_GOING');
+        $currentJobId = $currentDuty?->job_id;
+
+        switch ($subFilter) {
+            case 'mine':
+                // Mes demandes uniquement
+                $query->whereHas('duty', function ($q) use ($employeeId) {
+                    $q->where('employee_id', $employeeId);
+                });
+                break;
+
+            case 'to_validate':
+                // Demandes à valider (exclure mes propres demandes)
+                $query->whereHas('duty', function ($q) use ($employeeId) {
+                    $q->where('employee_id', '!=', $employeeId);
+                });
+
+                // Filtrer selon le rôle
+                if ($user->hasRole('DG')) {
+                    $query->whereIn('level', ['TWO', 'THREE']);
+                } elseif ($user->hasRole('GRH') || $user->hasRole('DSAF')) {
+                    $query->whereIn('level', ['ONE', 'TWO', 'THREE']);
+                } elseif ($currentJobId) {
+                    // Chef direct (N+1)
+                    $query->whereHas('duty.job', function ($q) use ($currentJobId) {
+                        $q->where('n_plus_one_job_id', $currentJobId);
+                    });
+                }
+                break;
+
+            case 'all':
+            default:
+                // Pas de filtre supplémentaire
+                break;
+        }
+
+        return $query;
     }
 
     /**
@@ -136,7 +276,7 @@ class AbsenceController extends Controller
     private function buildAbsenceQuery($search, $type, $stage)
     {
         // Construire la requête principale avec les relations nécessaires
-        $query = Absence::with(['absence_type', 'duty', 'duty.employee']);
+        $query = Absence::with(['absence_type', 'duty', 'duty.employee', 'duty.job', 'duty.job.n_plus_one_job']);
 
         // Appliquer le filtre de recherche (groupe de conditions OR)
         $query->when($search, function ($q) use ($search) {
@@ -146,18 +286,24 @@ class AbsenceController extends Controller
             });
         });
 
-        // Trier par date de demande
-        $query->orderBy('date_of_application');
+        // Trier par date de demande (les plus récentes en premier)
+        $query->orderByDesc('date_of_application');
 
         // Filtrer par type d'absence, si précisé
         $query->when($type, function ($q) use ($type) {
             $q->where('absence_type_id', $type);
         });
 
-        // Filtrer par stage si le stage n'est pas "ALL"
-        $query->when($stage !== 'ALL', function ($q) use ($stage) {
-            $q->where('stage', $stage);
-        });
+        // Filtrer par stage en utilisant le mapping si nécessaire
+        if ($stage !== 'ALL') {
+            if (isset(self::STAGE_MAPPING[$stage])) {
+                // Stage virtuel - utiliser le mapping
+                $query->whereIn('stage', self::STAGE_MAPPING[$stage]);
+            } else {
+                // Stage réel
+                $query->where('stage', $stage);
+            }
+        }
 
         return $query;
     }
@@ -171,9 +317,12 @@ class AbsenceController extends Controller
      */
     private function getPaginatedResults($query, $stage)
     {
-        // Appliquer la pagination seulement pour certains stages
-        return (in_array($stage, ['PENDING', 'IN_PROGRESS']))
-            ? $query->paginate(10) // Augmenté à 10 pour une meilleure visibilité des demandes
+        // Appliquer la pagination pour les stages "À traiter" (accordion)
+        // Les autres stages utilisent DataTable qui gère sa propre pagination côté client
+        $paginatedStages = ['PENDING', 'IN_PROGRESS', 'TO_PROCESS'];
+
+        return in_array($stage, $paginatedStages)
+            ? $query->paginate(15) // Pagination pour les demandes à traiter
             : $query->get();
     }
 
@@ -212,14 +361,32 @@ class AbsenceController extends Controller
      */
     public function store(Request $request)
     {
-        // Validation des champs de la requête
+        // Validation des champs de la requête avec règles renforcées
         $validatedData = $request->validate([
             'absence_type' => 'required|exists:absence_types,id',
-            'address' => 'required|string|max:255',
-            'start_date' => 'required|date|before_or_equal:end_date',
+            'address' => 'required|string|min:5|max:255',
+            'start_date' => 'required|date|after_or_equal:today|before_or_equal:end_date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'reasons' => 'nullable|string|max:1000',
             'is_deductible' => 'sometimes|boolean',
+            'proof' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120', // Max 5 Mo
+        ], [
+            'absence_type.required' => 'Le type d\'absence est obligatoire.',
+            'absence_type.exists' => 'Le type d\'absence sélectionné n\'existe pas.',
+            'address.required' => 'L\'adresse pendant l\'absence est obligatoire.',
+            'address.min' => 'L\'adresse doit contenir au moins 5 caractères.',
+            'address.max' => 'L\'adresse ne peut pas dépasser 255 caractères.',
+            'start_date.required' => 'La date de début est obligatoire.',
+            'start_date.date' => 'La date de début n\'est pas valide.',
+            'start_date.after_or_equal' => 'La date de début doit être à partir d\'aujourd\'hui.',
+            'start_date.before_or_equal' => 'La date de début doit être antérieure ou égale à la date de fin.',
+            'end_date.required' => 'La date de fin est obligatoire.',
+            'end_date.date' => 'La date de fin n\'est pas valide.',
+            'end_date.after_or_equal' => 'La date de fin doit être postérieure ou égale à la date de début.',
+            'reasons.max' => 'Le motif ne peut pas dépasser 1000 caractères.',
+            'proof.file' => 'Le justificatif doit être un fichier.',
+            'proof.mimes' => 'Le justificatif doit être au format PDF, JPG ou PNG.',
+            'proof.max' => 'Le justificatif ne peut pas dépasser 5 Mo.',
         ]);
 
         // Calcul du nombre de jours d'absence
@@ -232,6 +399,37 @@ class AbsenceController extends Controller
         $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
             ->where('employee_id', $currentEmployee->id)
             ->firstOrFail();
+
+        // Vérifier le chevauchement avec des absences existantes
+        $startDate = $validatedData['start_date'];
+        $endDate = $validatedData['end_date'];
+
+        $overlap = Absence::where('duty_id', $currentEmployeeDuty->id)
+            ->whereNotIn('stage', ['REJECTED', 'CANCELLED'])
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('start_date', [$startDate, $endDate])
+                      ->orWhereBetween('end_date', [$startDate, $endDate])
+                      ->orWhere(function ($q) use ($startDate, $endDate) {
+                          $q->where('start_date', '<=', $startDate)
+                            ->where('end_date', '>=', $endDate);
+                      });
+            })
+            ->exists();
+
+        if ($overlap) {
+            $this->activityLogger->log(
+                'warning',
+                "Tentative de création d'absence avec chevauchement de dates",
+                null,
+                ['employee_id' => $currentEmployee->id, 'start_date' => $startDate, 'end_date' => $endDate]
+            );
+
+            return response()->json([
+                'ok' => false,
+                'message' => 'Vous avez déjà une demande d\'absence sur cette période.'
+            ], 422);
+        }
+
         $absence_type_id = $request->input('absence_type');
 
         // Obtenir le type d'absence pour le log et la déductibilité
@@ -256,6 +454,13 @@ class AbsenceController extends Controller
             );
         }
 
+        // Gestion du fichier justificatif
+        $proofPath = null;
+        if ($request->hasFile('proof')) {
+            $proofFile = $request->file('proof');
+            $proofPath = $proofFile->store('absences/proofs', 'public');
+        }
+
         // Enregistrement de la demande d'absence
         $absence = Absence::create([
             'duty_id' => $currentEmployeeDuty->id,
@@ -268,8 +473,9 @@ class AbsenceController extends Controller
             'is_deductible' => $isDeductible,
             'date_of_application' => Carbon::now(),
             'status' => 'PENDING',
-            'stage' => 'PENDING', 
+            'stage' => 'PENDING',
             'level' => 'ZERO',
+            'proof' => $proofPath,
         ]);
 
         $this->activityLogger->log(
