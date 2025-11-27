@@ -80,25 +80,34 @@ class AbsenceController extends Controller
     }
 
     /**
+     * Mapping des stages virtuels vers les stages réels
+     */
+    private const STAGE_MAPPING = [
+        'TO_PROCESS' => ['PENDING', 'IN_PROGRESS'],
+        'HISTORY' => ['APPROVED', 'REJECTED'],
+        'CANCELLED' => ['CANCELLED'],
+    ];
+
+    /**
      * Afficher la liste des absences filtrée par étape
      *
      * @param Request $request
      * @param string $stage
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
-    public function index(Request $request, $stage = 'PENDING')
+    public function index(Request $request, $stage = 'TO_PROCESS')
     {
-        // Liste des stages valides
-        $validStages = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'IN_PROGRESS', 'COMPLETED'];
+        // Liste des stages valides (incluant les nouveaux stages virtuels)
+        $validStages = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'IN_PROGRESS', 'COMPLETED', 'TO_PROCESS', 'HISTORY', 'ALL'];
 
         // Vérification de la validité du stage
-        if ($stage !== 'ALL' && !in_array($stage, $validStages)) {
+        if (!in_array($stage, $validStages)) {
             $this->activityLogger->log(
                 'error',
                 "Tentative d'accès avec un stage invalide: {$stage}"
             );
 
-            return redirect()->route('absences.index')->with('error', 'Stage invalide');
+            return redirect()->route('absences.requests', 'TO_PROCESS')->with('error', 'Stage invalide');
         }
 
         // Récupérer les filtres de recherche
@@ -114,6 +123,9 @@ class AbsenceController extends Controller
         // Pagination adaptative selon le type de stage
         $absences = $this->getPaginatedResults($query, $stage);
 
+        // Compter les demandes en attente pour le badge du tab "À traiter"
+        $pendingCount = $this->countPendingAbsences();
+
         $this->activityLogger->log(
             'view',
             "Consultation de la liste des absences - Stage: {$stage}" .
@@ -122,7 +134,17 @@ class AbsenceController extends Controller
         );
 
         // Retourner la vue avec les données nécessaires
-        return view('modules.opti-hr.pages.attendances.absences.index', compact('absences', 'stage', 'absence_types'));
+        return view('modules.opti-hr.pages.attendances.absences.index', compact('absences', 'stage', 'absence_types', 'pendingCount'));
+    }
+
+    /**
+     * Compter les demandes en attente de traitement
+     *
+     * @return int
+     */
+    private function countPendingAbsences(): int
+    {
+        return Absence::whereIn('stage', ['PENDING', 'IN_PROGRESS'])->count();
     }
 
     /**
@@ -136,7 +158,7 @@ class AbsenceController extends Controller
     private function buildAbsenceQuery($search, $type, $stage)
     {
         // Construire la requête principale avec les relations nécessaires
-        $query = Absence::with(['absence_type', 'duty', 'duty.employee']);
+        $query = Absence::with(['absence_type', 'duty', 'duty.employee', 'duty.job', 'duty.job.n_plus_one_job']);
 
         // Appliquer le filtre de recherche (groupe de conditions OR)
         $query->when($search, function ($q) use ($search) {
@@ -146,18 +168,24 @@ class AbsenceController extends Controller
             });
         });
 
-        // Trier par date de demande
-        $query->orderBy('date_of_application');
+        // Trier par date de demande (les plus récentes en premier)
+        $query->orderByDesc('date_of_application');
 
         // Filtrer par type d'absence, si précisé
         $query->when($type, function ($q) use ($type) {
             $q->where('absence_type_id', $type);
         });
 
-        // Filtrer par stage si le stage n'est pas "ALL"
-        $query->when($stage !== 'ALL', function ($q) use ($stage) {
-            $q->where('stage', $stage);
-        });
+        // Filtrer par stage en utilisant le mapping si nécessaire
+        if ($stage !== 'ALL') {
+            if (isset(self::STAGE_MAPPING[$stage])) {
+                // Stage virtuel - utiliser le mapping
+                $query->whereIn('stage', self::STAGE_MAPPING[$stage]);
+            } else {
+                // Stage réel
+                $query->where('stage', $stage);
+            }
+        }
 
         return $query;
     }
@@ -171,9 +199,12 @@ class AbsenceController extends Controller
      */
     private function getPaginatedResults($query, $stage)
     {
-        // Appliquer la pagination seulement pour certains stages
-        return (in_array($stage, ['PENDING', 'IN_PROGRESS']))
-            ? $query->paginate(10) // Augmenté à 10 pour une meilleure visibilité des demandes
+        // Appliquer la pagination pour les stages "À traiter" (accordion)
+        // Les autres stages utilisent DataTable qui gère sa propre pagination côté client
+        $paginatedStages = ['PENDING', 'IN_PROGRESS', 'TO_PROCESS'];
+
+        return in_array($stage, $paginatedStages)
+            ? $query->paginate(15) // Pagination pour les demandes à traiter
             : $query->get();
     }
 

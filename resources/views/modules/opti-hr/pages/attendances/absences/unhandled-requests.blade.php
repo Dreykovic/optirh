@@ -72,6 +72,11 @@
                         </div>
                     @break
 
+                    @case('TO_PROCESS')
+                        <div class="card mb-2"><x-no-data color="info" text="Aucune demande à traiter" />
+                        </div>
+                    @break
+
                     @default
                         <div class="card mb-2"><x-no-data color="warning" text="Aucune Demande En Attente" />
                         </div>

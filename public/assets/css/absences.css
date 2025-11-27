@@ -887,6 +887,318 @@
 }
 
 /* ==========================================================================
+   Workflow Stepper - Timeline de validation
+   ========================================================================== */
+
+.workflow-stepper-container {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.workflow-stepper {
+    position: relative;
+}
+
+.workflow-stepper .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 0 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.workflow-stepper .step-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e9ecef;
+    color: #6c757d;
+    font-size: 1.125rem;
+    transition: all 0.3s ease;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* État: Complété */
+.workflow-stepper .step.completed .step-icon {
+    background: var(--primary-color, #629d72);
+    color: #fff;
+}
+
+/* État: En cours (actuel) */
+.workflow-stepper .step.current .step-icon {
+    background: var(--secondary-color, #d4a05e);
+    color: #fff;
+    animation: stepPulse 2s ease-in-out infinite;
+    box-shadow: 0 0 0 4px rgba(212, 160, 94, 0.3);
+}
+
+/* État: Rejeté */
+.workflow-stepper .step.rejected .step-icon {
+    background: #dc3545;
+    color: #fff;
+}
+
+/* État: Annulé */
+.workflow-stepper .step.cancelled .step-icon {
+    background: #6c757d;
+    color: #fff;
+}
+
+/* État: En attente */
+.workflow-stepper .step.pending .step-icon {
+    background: #e9ecef;
+    color: #adb5bd;
+}
+
+/* Contenu de l'étape */
+.workflow-stepper .step-content {
+    margin-top: 0.5rem;
+    min-width: 60px;
+}
+
+.workflow-stepper .step-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #495057;
+    line-height: 1.2;
+}
+
+.workflow-stepper .step.pending .step-label {
+    color: #adb5bd;
+}
+
+.workflow-stepper .step.current .step-label {
+    color: var(--secondary-color, #d4a05e);
+}
+
+.workflow-stepper .step.completed .step-label {
+    color: var(--primary-color, #629d72);
+}
+
+.workflow-stepper .step-status {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    margin-top: 0.125rem;
+    color: var(--secondary-color, #d4a05e);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* Connecteur entre les étapes */
+.workflow-stepper .step-connector {
+    flex: 1;
+    height: 3px;
+    background: #dee2e6;
+    margin: 0 0.25rem;
+    margin-top: 20px;
+    border-radius: 2px;
+    transition: background 0.3s ease;
+}
+
+.workflow-stepper .step-connector.completed {
+    background: var(--primary-color, #629d72);
+}
+
+/* Texte de statut global */
+.workflow-status-text .badge {
+    font-size: 0.75rem;
+    padding: 0.5em 1em;
+    font-weight: 500;
+}
+
+/* Animation pulse pour l'étape en cours */
+@keyframes stepPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 4px rgba(212, 160, 94, 0.3);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 8px rgba(212, 160, 94, 0.15);
+    }
+}
+
+/* Responsive - Tablette */
+@media (max-width: 768px) {
+    .workflow-stepper .step-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 1rem;
+    }
+
+    .workflow-stepper .step-connector {
+        margin-top: 17px;
+    }
+
+    .workflow-stepper .step-label {
+        font-size: 0.6875rem;
+    }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 576px) {
+    .workflow-stepper-container {
+        padding: 0.75rem;
+    }
+
+    .workflow-stepper .step-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 0.875rem;
+    }
+
+    .workflow-stepper .step-connector {
+        margin-top: 14px;
+        height: 2px;
+    }
+
+    .workflow-stepper .step-content {
+        min-width: 40px;
+    }
+
+    .workflow-stepper .step-label {
+        font-size: 0.625rem;
+    }
+
+    .workflow-stepper .step-status {
+        font-size: 0.5625rem;
+    }
+
+    .workflow-status-text .badge {
+        font-size: 0.6875rem;
+    }
+}
+
+/* ==========================================================================
+   Carte Absence - Style amélioré pour le tab "À traiter"
+   ========================================================================== */
+
+.absence-card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.absence-card:hover {
+    border-color: var(--primary-color, #629d72);
+    box-shadow: 0 4px 12px rgba(98, 157, 114, 0.15);
+}
+
+.absence-card .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+    border-bottom: 1px solid #e9ecef;
+    padding: 1rem 1.25rem;
+}
+
+.absence-card .card-header:hover {
+    background: linear-gradient(135deg, #f1f3f5 0%, #f8f9fa 100%);
+}
+
+.absence-card .employee-name {
+    font-weight: 600;
+    color: #212529;
+    font-size: 1rem;
+}
+
+.absence-card .absence-type-badge {
+    font-size: 0.75rem;
+    padding: 0.35em 0.75em;
+    border-radius: 20px;
+}
+
+.absence-card .card-body {
+    padding: 1.25rem;
+}
+
+.absence-card .info-row {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f1f3f5;
+}
+
+.absence-card .info-row:last-child {
+    border-bottom: none;
+}
+
+.absence-card .info-label {
+    color: #6c757d;
+    font-size: 0.8125rem;
+    min-width: 100px;
+}
+
+.absence-card .info-value {
+    font-weight: 500;
+    color: #212529;
+    font-size: 0.875rem;
+}
+
+.absence-card .card-footer {
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    padding: 1rem 1.25rem;
+}
+
+/* ==========================================================================
+   Badges de statut pour le tableau Historique
+   ========================================================================== */
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35em 0.75em;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.status-badge.status-approved {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.status-badge.status-rejected {
+    background: #f8d7da;
+    color: #842029;
+}
+
+.status-badge.status-cancelled {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.status-badge.status-in-progress {
+    background: #fff3cd;
+    color: #664d03;
+}
+
+.status-badge.status-pending {
+    background: #fff3cd;
+    color: #664d03;
+}
+
+.status-badge.status-completed {
+    background: #cff4fc;
+    color: #055160;
+}
+
+.status-badge i {
+    margin-right: 0.35rem;
+}
+
+/* ==========================================================================
    Print Styles
    ========================================================================== */
 
@@ -909,5 +1221,14 @@
     .form-section {
         break-inside: avoid;
         page-break-inside: avoid;
+    }
+
+    .workflow-stepper-container {
+        background: none;
+        border: 1px solid #dee2e6;
+    }
+
+    .workflow-stepper .step-icon {
+        border: 2px solid currentColor;
     }
 }

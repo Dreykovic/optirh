@@ -5,6 +5,10 @@
         <div class="card border-0">
             @include('modules.opti-hr.pages.attendances.absences.request.header')
         </div>
+
+        <!-- Workflow Stepper -->
+        @include('modules.opti-hr.pages.attendances.absences.request.workflow-stepper', ['absence' => $absence])
+
         <button class="accordion-button collapsed px-4 py-3 bg-light" type="button" data-bs-toggle="collapse"
             data-bs-target="#collapseAbsenceRequestLine{{ $absence->id }}" aria-expanded="false"
             aria-controls="collapseAbsenceRequestLine{{ $absence->id }}">
