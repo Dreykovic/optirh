@@ -103,7 +103,7 @@
                     </div>
 
                     <!-- Actions avec boutons améliorés -->
-                    @can('configurer-une-publication')
+                    @if($publication->author_id === auth()->user()->id || auth()->user()->can('configurer-une-publication'))
                         <div class="publication-actions mt-2 text-end">
                             <div class="btn-group">
                                 <button type="button" class="btn btn-sm btn-light rounded-pill shadow-sm dropdown-toggle"
@@ -111,9 +111,21 @@
                                     <i class="icofont-gear"></i> Actions
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm rounded-3 py-1">
+                                    <!-- Bouton Modifier -->
+                                    <li>
+                                        <button type="button" class="dropdown-item py-2 d-flex align-items-center"
+                                            data-bs-toggle="modal" data-bs-target="#publicationEdit{{ $publication->id }}">
+                                            <i class="icofont-edit text-primary me-2"></i>
+                                            <span>Modifier</span>
+                                        </button>
+                                    </li>
+                                    @can('configurer-une-publication')
+                                    <li>
+                                        <hr class="dropdown-divider my-1">
+                                    </li>
                                     <li>
                                         <div class="modelUpdateFormContainer dropdown-item py-2 rounded"
-                                            id="publicationUpdateForm{{ $publication->id }}">
+                                            id="publicationStatusForm{{ $publication->id }}">
                                             <form
                                                 data-model-update-url="{{ route('publications.config.updateStatus', [$publication->status === 'published' ? 'pending' : 'published', $publication->id]) }}">
                                                 <a role="button" class="modelUpdateBtn d-flex align-items-center"
@@ -151,10 +163,13 @@
                                             </span>
                                         </button>
                                     </li>
+                                    @endcan
                                 </ul>
                             </div>
                         </div>
-                    @endcan
+                        <!-- Modal d'édition -->
+                        @include('modules.opti-hr.pages.publications.config.edit', ['publication' => $publication])
+                    @endif
                 </div>
             </li>
         @endif
