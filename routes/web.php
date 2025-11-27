@@ -343,6 +343,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::prefix('/config')->group(function () {
                 Route::get('/list/{status?}', [PublicationController::class, 'index'])->name('publications.config.index');
                 Route::post('/save', [PublicationController::class, 'store'])->name('publications.config.save');
+                Route::put('/update/{publicationId}', [PublicationController::class, 'update'])->name('publications.config.update');
                 Route::post('/update-status/{status}/{publicationId}', [PublicationController::class, 'updateStatus'])->name('publications.config.updateStatus');
                 Route::delete('/delete/{userId}', [PublicationController::class, 'destroy'])->name('publications.config.destroy');
             });
