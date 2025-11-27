@@ -113,6 +113,7 @@ class AbsenceController extends Controller
         // Récupérer les filtres de recherche
         $type = $request->input('type');
         $search = $request->input('search');
+        $subFilter = $request->input('filter', 'all'); // Sous-filtre : all, mine, to_validate
 
         // Récupérer les types d'absences (éviter de faire la requête à chaque appel)
         $absence_types = AbsenceType::all();
@@ -120,21 +121,37 @@ class AbsenceController extends Controller
         // Construire la requête principale avec les relations nécessaires
         $query = $this->buildAbsenceQuery($search, $type, $stage);
 
+        // Appliquer le sous-filtre pour le tab "À traiter"
+        if (in_array($stage, ['TO_PROCESS', 'PENDING', 'IN_PROGRESS'])) {
+            $query = $this->applySubFilter($query, $subFilter);
+        }
+
         // Pagination adaptative selon le type de stage
         $absences = $this->getPaginatedResults($query, $stage);
 
         // Compter les demandes en attente pour le badge du tab "À traiter"
         $pendingCount = $this->countPendingAbsences();
 
+        // Obtenir les compteurs des sous-filtres
+        $subFilterCounts = $this->getSubFilterCounts();
+
         $this->activityLogger->log(
             'view',
             "Consultation de la liste des absences - Stage: {$stage}" .
             ($type ? ", Type: {$type}" : "") .
-            ($search ? ", Recherche: {$search}" : "")
+            ($search ? ", Recherche: {$search}" : "") .
+            ($subFilter !== 'all' ? ", Filtre: {$subFilter}" : "")
         );
 
         // Retourner la vue avec les données nécessaires
-        return view('modules.opti-hr.pages.attendances.absences.index', compact('absences', 'stage', 'absence_types', 'pendingCount'));
+        return view('modules.opti-hr.pages.attendances.absences.index', compact(
+            'absences',
+            'stage',
+            'absence_types',
+            'pendingCount',
+            'subFilter',
+            'subFilterCounts'
+        ));
     }
 
     /**
@@ -145,6 +162,107 @@ class AbsenceController extends Controller
     private function countPendingAbsences(): int
     {
         return Absence::whereIn('stage', ['PENDING', 'IN_PROGRESS'])->count();
+    }
+
+    /**
+     * Obtenir les compteurs pour les sous-filtres du tab "À traiter"
+     *
+     * @return array
+     */
+    private function getSubFilterCounts(): array
+    {
+        $user = auth()->user();
+        $employeeId = $user->employee_id;
+
+        // Récupérer le job_id de l'utilisateur courant
+        $currentDuty = $user->employee?->duties?->firstWhere('evolution', 'ON_GOING');
+        $currentJobId = $currentDuty?->job_id;
+
+        // Toutes les demandes à traiter
+        $allCount = Absence::whereIn('stage', ['PENDING', 'IN_PROGRESS'])->count();
+
+        // Mes demandes (demandes créées par l'utilisateur courant)
+        $myCount = Absence::whereIn('stage', ['PENDING', 'IN_PROGRESS'])
+            ->whereHas('duty', function ($q) use ($employeeId) {
+                $q->where('employee_id', $employeeId);
+            })
+            ->count();
+
+        // À valider (demandes que l'utilisateur peut valider)
+        $toValidateQuery = Absence::whereIn('stage', ['PENDING', 'IN_PROGRESS'])
+            ->whereHas('duty', function ($q) use ($employeeId) {
+                $q->where('employee_id', '!=', $employeeId);
+            });
+
+        // Filtrer selon le rôle
+        if ($user->hasRole('DG')) {
+            $toValidateQuery->whereIn('level', ['TWO', 'THREE']);
+        } elseif ($user->hasRole('GRH') || $user->hasRole('DSAF')) {
+            $toValidateQuery->whereIn('level', ['ONE', 'TWO', 'THREE']);
+        } elseif ($currentJobId) {
+            // Chef direct (N+1)
+            $toValidateQuery->whereHas('duty.job', function ($q) use ($currentJobId) {
+                $q->where('n_plus_one_job_id', $currentJobId);
+            });
+        }
+
+        $toValidateCount = $toValidateQuery->count();
+
+        return [
+            'all' => $allCount,
+            'mine' => $myCount,
+            'to_validate' => $toValidateCount,
+        ];
+    }
+
+    /**
+     * Appliquer le sous-filtre à la requête
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $subFilter
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    private function applySubFilter($query, string $subFilter)
+    {
+        $user = auth()->user();
+        $employeeId = $user->employee_id;
+        $currentDuty = $user->employee?->duties?->firstWhere('evolution', 'ON_GOING');
+        $currentJobId = $currentDuty?->job_id;
+
+        switch ($subFilter) {
+            case 'mine':
+                // Mes demandes uniquement
+                $query->whereHas('duty', function ($q) use ($employeeId) {
+                    $q->where('employee_id', $employeeId);
+                });
+                break;
+
+            case 'to_validate':
+                // Demandes à valider (exclure mes propres demandes)
+                $query->whereHas('duty', function ($q) use ($employeeId) {
+                    $q->where('employee_id', '!=', $employeeId);
+                });
+
+                // Filtrer selon le rôle
+                if ($user->hasRole('DG')) {
+                    $query->whereIn('level', ['TWO', 'THREE']);
+                } elseif ($user->hasRole('GRH') || $user->hasRole('DSAF')) {
+                    $query->whereIn('level', ['ONE', 'TWO', 'THREE']);
+                } elseif ($currentJobId) {
+                    // Chef direct (N+1)
+                    $query->whereHas('duty.job', function ($q) use ($currentJobId) {
+                        $q->where('n_plus_one_job_id', $currentJobId);
+                    });
+                }
+                break;
+
+            case 'all':
+            default:
+                // Pas de filtre supplémentaire
+                break;
+        }
+
+        return $query;
     }
 
     /**
