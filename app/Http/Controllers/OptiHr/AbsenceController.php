@@ -212,14 +212,32 @@ class AbsenceController extends Controller
      */
     public function store(Request $request)
     {
-        // Validation des champs de la requête
+        // Validation des champs de la requête avec règles renforcées
         $validatedData = $request->validate([
             'absence_type' => 'required|exists:absence_types,id',
-            'address' => 'required|string|max:255',
-            'start_date' => 'required|date|before_or_equal:end_date',
+            'address' => 'required|string|min:5|max:255',
+            'start_date' => 'required|date|after_or_equal:today|before_or_equal:end_date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'reasons' => 'nullable|string|max:1000',
             'is_deductible' => 'sometimes|boolean',
+            'proof' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120', // Max 5 Mo
+        ], [
+            'absence_type.required' => 'Le type d\'absence est obligatoire.',
+            'absence_type.exists' => 'Le type d\'absence sélectionné n\'existe pas.',
+            'address.required' => 'L\'adresse pendant l\'absence est obligatoire.',
+            'address.min' => 'L\'adresse doit contenir au moins 5 caractères.',
+            'address.max' => 'L\'adresse ne peut pas dépasser 255 caractères.',
+            'start_date.required' => 'La date de début est obligatoire.',
+            'start_date.date' => 'La date de début n\'est pas valide.',
+            'start_date.after_or_equal' => 'La date de début doit être à partir d\'aujourd\'hui.',
+            'start_date.before_or_equal' => 'La date de début doit être antérieure ou égale à la date de fin.',
+            'end_date.required' => 'La date de fin est obligatoire.',
+            'end_date.date' => 'La date de fin n\'est pas valide.',
+            'end_date.after_or_equal' => 'La date de fin doit être postérieure ou égale à la date de début.',
+            'reasons.max' => 'Le motif ne peut pas dépasser 1000 caractères.',
+            'proof.file' => 'Le justificatif doit être un fichier.',
+            'proof.mimes' => 'Le justificatif doit être au format PDF, JPG ou PNG.',
+            'proof.max' => 'Le justificatif ne peut pas dépasser 5 Mo.',
         ]);
 
         // Calcul du nombre de jours d'absence
@@ -232,6 +250,37 @@ class AbsenceController extends Controller
         $currentEmployeeDuty = Duty::where('evolution', 'ON_GOING')
             ->where('employee_id', $currentEmployee->id)
             ->firstOrFail();
+
+        // Vérifier le chevauchement avec des absences existantes
+        $startDate = $validatedData['start_date'];
+        $endDate = $validatedData['end_date'];
+
+        $overlap = Absence::where('duty_id', $currentEmployeeDuty->id)
+            ->whereNotIn('stage', ['REJECTED', 'CANCELLED'])
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('start_date', [$startDate, $endDate])
+                      ->orWhereBetween('end_date', [$startDate, $endDate])
+                      ->orWhere(function ($q) use ($startDate, $endDate) {
+                          $q->where('start_date', '<=', $startDate)
+                            ->where('end_date', '>=', $endDate);
+                      });
+            })
+            ->exists();
+
+        if ($overlap) {
+            $this->activityLogger->log(
+                'warning',
+                "Tentative de création d'absence avec chevauchement de dates",
+                null,
+                ['employee_id' => $currentEmployee->id, 'start_date' => $startDate, 'end_date' => $endDate]
+            );
+
+            return response()->json([
+                'ok' => false,
+                'message' => 'Vous avez déjà une demande d\'absence sur cette période.'
+            ], 422);
+        }
+
         $absence_type_id = $request->input('absence_type');
 
         // Obtenir le type d'absence pour le log et la déductibilité
@@ -256,6 +305,13 @@ class AbsenceController extends Controller
             );
         }
 
+        // Gestion du fichier justificatif
+        $proofPath = null;
+        if ($request->hasFile('proof')) {
+            $proofFile = $request->file('proof');
+            $proofPath = $proofFile->store('absences/proofs', 'public');
+        }
+
         // Enregistrement de la demande d'absence
         $absence = Absence::create([
             'duty_id' => $currentEmployeeDuty->id,
@@ -268,8 +324,9 @@ class AbsenceController extends Controller
             'is_deductible' => $isDeductible,
             'date_of_application' => Carbon::now(),
             'status' => 'PENDING',
-            'stage' => 'PENDING', 
+            'stage' => 'PENDING',
             'level' => 'ZERO',
+            'proof' => $proofPath,
         ]);
 
         $this->activityLogger->log(
