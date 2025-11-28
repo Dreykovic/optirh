@@ -56,28 +56,13 @@ class AnnualDecisionController extends Controller
 
     /**
      * Display the current annual decision.
+     * @deprecated Redirects to index - use index() instead
      *
-     * @return  RedirectResponse|View
+     * @return  RedirectResponse
      */
-    public function show(): RedirectResponse|View
+    public function show(): RedirectResponse
     {
-        try {
-            $decision = AnnualDecision::where('state', 'current')->first();
-            
-            if ($decision) {
-                $this->activityLogger->log(
-                    'access',
-                    "Consultation de la décision actuelle {$decision->number}/{$decision->year}/{$decision->reference}",
-                    $decision
-                );
-            }
-
-            return view('modules.opti-hr.pages.attendances.annual-decisions.current', compact('decision'));
-        } catch (\Exception $e) {
-            Log::error('Error displaying current decision: ' . $e->getMessage());
-            
-            return back()->with('error', 'Une erreur s\'est produite lors de l\'affichage de la décision courante.');
-        }
+        return redirect()->route('decisions.index');
     }
 
 
@@ -178,12 +163,12 @@ class AnnualDecisionController extends Controller
                 return response()->json([
                     'message' => $id ? 'Décision mise à jour avec succès' : 'Décision créée avec succès',
                     'ok' => true,
-                    'redirect' => route('decisions.show'),
+                    'redirect' => route('decisions.index'),
                     'decision' => $decision
                 ]);
             }
 
-            return redirect()->route('decisions.show')
+            return redirect()->route('decisions.index')
                 ->with('success', $id ? 'Décision mise à jour avec succès' : 'Décision créée avec succès');
                 
         } catch (ValidationException $e) {

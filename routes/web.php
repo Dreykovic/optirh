@@ -236,10 +236,11 @@ Route::group(['middleware' => 'auth'], function () {
              */
 
             Route::prefix('/annual-decisions')->group(function () {
-                // Viewing routes
-                Route::get('/view', [AnnualDecisionController::class, 'show'])->name('decisions.show');
-                Route::get('/list', [AnnualDecisionController::class, 'index'])->name('decisions.index');
-                Route::get('/detail/{id}', [AnnualDecisionController::class, 'detail'])->name('decisions.detail');
+                // Main view (shows current decision + history list)
+                Route::get('/', [AnnualDecisionController::class, 'index'])->name('decisions.index');
+                // Redirect legacy routes
+                Route::redirect('/view', '/opti-hr/publications/annual-decisions')->name('decisions.show');
+                Route::redirect('/list', '/opti-hr/publications/annual-decisions');
 
 
 

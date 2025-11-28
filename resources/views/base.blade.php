@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/my-task.style.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/sidebar-enhanced.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
-
+    @stack('css')
 
 </head>
 

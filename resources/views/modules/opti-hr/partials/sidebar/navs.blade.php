@@ -73,9 +73,9 @@
             @endcan
             @can('configurer-une-absence')
                 <li>
-                    <a class="ms-link {{ Request::is('opti-hr/attendances/annual-decisions/*') ? 'active' : '' }}"
-                       href="{{ route('decisions.show') }}">
-                        <span>Décision courante</span>
+                    <a class="ms-link {{ Request::is('opti-hr/publications/annual-decisions*') ? 'active' : '' }}"
+                       href="{{ route('decisions.index') }}">
+                        <span>Décisions annuelles</span>
                     </a>
                 </li>
             @endcan
