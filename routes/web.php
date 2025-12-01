@@ -299,6 +299,8 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::post('/update-password/{userId}', [UserController::class, 'updatePassword'])->name('credentials.updatePwd');
                 Route::post('/change-password/{userId}', [UserController::class, 'changePassword'])->name('credentials.changePassword');
                 Route::post('/change-role/{userId}', [UserController::class, 'updateRole'])->name('credentials.updateRole');
+                Route::post('/resend-credentials/{userId}', [UserController::class, 'resendCredentials'])->name('credentials.resend');
+                Route::post('/bulk-status', [UserController::class, 'bulkUpdateStatus'])->name('credentials.bulkStatus');
                 Route::delete('/delete/{userId}', [UserController::class, 'destroy'])->name('credentials.destroy');
             });
 

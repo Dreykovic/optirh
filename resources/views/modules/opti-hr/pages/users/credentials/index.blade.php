@@ -12,6 +12,15 @@
                 <div class="d-flex py-2 project-tab flex-wrap w-sm-100">
                     <button type="button" class="btn btn-dark btn-set-task w-sm-100" data-bs-toggle="modal"
                         data-bs-target="#credentialAddModal"><i class="icofont-plus-circle me-2 fs-6"></i>Ajouter</button>
+                    <div class="btn-group ms-2 bulk-actions d-none">
+                        <button class="btn btn-success btn-sm" id="bulkActivate">
+                            <i class="icofont-check-circled"></i> Activer
+                        </button>
+                        <button class="btn btn-warning btn-sm" id="bulkDeactivate">
+                            <i class="icofont-close-circled"></i> Désactiver
+                        </button>
+                    </div>
+                    <span class="ms-2 selected-count d-none text-muted align-self-center"></span>
                     <ul class="nav nav-tabs tab-body-header rounded ms-3 prtab-set w-sm-100" role="tablist">
                         <li class="nav-item"><a class="nav-link {{ $status === 'ALL' ? 'active' : '' }}"
                                 href="{{ route('credentials.index', 'ALL') }}" role="tab">Toutes</a></li>
@@ -38,6 +47,11 @@
                     <table id="usersTable" class="table table-hover align-middle mb-0" style="width:100%">
                         <thead>
                             <tr>
+                                <th class="text-center" style="width: 40px;">
+                                    <div class="form-check d-flex justify-content-center mb-0">
+                                        <input class="form-check-input" type="checkbox" id="selectAll">
+                                    </div>
+                                </th>
                                 <th>Membre</th>
                                 <th>username</th>
                                 <th>Email</th>
@@ -52,7 +66,11 @@
 
                             @foreach ($users as $index => $user)
                                 <tr class="parent">
-
+                                    <td class="text-center">
+                                        <div class="form-check d-flex justify-content-center mb-0">
+                                            <input class="form-check-input user-checkbox" type="checkbox" value="{{ $user->id }}">
+                                        </div>
+                                    </td>
                                     <td>
                                         <x-employee-icon :employee="$user->employee" />
                                         <span

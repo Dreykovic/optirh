@@ -272,6 +272,69 @@ class UserController extends Controller
     }
 
     /**
+     * Renvoie les credentials par email avec un nouveau mot de passe.
+     */
+    public function resendCredentials(string $id)
+    {
+        $user = User::findOrFail($id);
+
+        // Générer nouveau mot de passe
+        $randomString = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 6);
+        $pwd = strtolower(substr($user->employee->first_name, 0, 1)).ucfirst($user->employee->last_name).$randomString;
+
+        $user->password = Hash::make($pwd);
+        $user->save();
+
+        // Envoyer email
+        $credentialsMail = new UserCredentials($user, $pwd);
+        $this->sendEmail($credentialsMail, true);
+
+        $this->activityLogger->log(
+            'updated',
+            "Renvoi des credentials pour {$user->username}",
+            $user
+        );
+
+        session()->flash('success', "Les identifiants ont été renvoyés à {$user->email}. Nouveau mot de passe: {$pwd}");
+
+        return response()->json(['ok' => true, 'message' => 'Credentials renvoyés par email.']);
+    }
+
+    /**
+     * Met à jour le statut de plusieurs utilisateurs en masse.
+     */
+    public function bulkUpdateStatus(Request $request)
+    {
+        $request->validate([
+            'user_ids' => 'required|array',
+            'user_ids.*' => 'exists:users,id',
+            'status' => 'required|in:ACTIVATED,DEACTIVATED',
+        ]);
+
+        $currentUserId = auth()->id();
+        $userIds = array_filter($request->user_ids, fn ($id) => $id != $currentUserId);
+
+        User::whereIn('id', $userIds)->update(['status' => $request->status]);
+
+        $this->activityLogger->log(
+            'updated',
+            'Modification en masse du statut de '.count($userIds).' utilisateurs',
+            null,
+            [
+                'user_ids' => $userIds,
+                'new_status' => $request->status,
+            ]
+        );
+
+        session()->flash('success', count($userIds).' utilisateur(s) mis à jour.');
+
+        return response()->json([
+            'ok' => true,
+            'message' => count($userIds).' utilisateur(s) mis à jour.',
+        ]);
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
