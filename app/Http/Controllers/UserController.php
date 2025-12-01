@@ -352,22 +352,23 @@ class UserController extends Controller
             return response()->json(['ok' => false, 'message' => 'Vous ne pouvez pas supprimer votre propre compte.']);
         }
 
-        // Utiliser le modèle Eloquent pour déclencher l'événement deleted
         $user = User::findOrFail($id);
         $username = $user->username;
 
-        $user->delete();
+        // Soft delete : changer le status au lieu de supprimer
+        $user->status = 'DELETED';
+        $user->save();
 
         $this->activityLogger->log(
             'deleted',
-            "Suppression de l'utilisateur {$username}",
-            null,
+            "Archivage de l'utilisateur {$username}",
+            $user,
             [
-                'deleted_user_id' => $id,
-                'deleted_user_name' => $username,
+                'archived_user_id' => $id,
+                'archived_user_name' => $username,
             ]
         );
 
-        return response()->json(['ok' => true, 'message' => 'L\'utilisateur a été supprimé avec succès.']);
+        return response()->json(['ok' => true, 'message' => 'L\'utilisateur a été archivé avec succès.']);
     }
 }
