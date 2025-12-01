@@ -20,11 +20,9 @@
                 id="documentRequestApproveForm{{ $documentRequest->id }}">
 
                 <form data-model-update-url="{{ route('documents.approve', $documentRequest->id) }}">
+                    @csrf
 
-
-
-
-                    <a role="button" class=" modelUpdateBtn " atl="update document request status">
+                    <a role="button" class="modelUpdateBtn" data-action="approve" title="Approuver la demande">
                         <span class="normal-status">
                             <i class="icofont-check text-success  "></i>
                             <span class="d-none d-sm-none d-md-inline">Approuver</span>
@@ -43,11 +41,9 @@
                 id="documentRequestRejectForm{{ $documentRequest->id }}">
 
                 <form data-model-update-url="{{ route('documents.reject', $documentRequest->id) }}">
+                    @csrf
 
-
-
-
-                    <a role="button" class="modelUpdateBtn " atl="update document request status">
+                    <a role="button" class="modelUpdateBtn" data-action="reject" title="Rejeter la demande">
                         <span class="normal-status">
                             <i class="icofont-close text-danger"></i>
                             <span class="d-none d-sm-none d-md-inline">Rejeter</span>
@@ -81,11 +77,9 @@
                 id="documentRequestCancelForm{{ $documentRequest->id }}">
 
                 <form data-model-update-url="{{ route('documents.cancel', $documentRequest->id) }}">
+                    @csrf
 
-
-
-
-                    <a role="button" class="modelUpdateBtn " atl="update document request status">
+                    <a role="button" class="modelUpdateBtn" data-action="cancel" title="Annuler la demande">
                         <span class="normal-status">
                             <i class="icofont-ban text-warning"></i>
                             <span class="d-none d-sm-none d-md-inline">Annuler</span>
