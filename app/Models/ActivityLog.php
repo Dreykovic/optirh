@@ -25,7 +25,7 @@ class ActivityLog extends Model
         'new_values',
         'ip_address',
         'user_agent',
-        'additional_data'
+        'additional_data',
     ];
 
     /**
@@ -36,7 +36,7 @@ class ActivityLog extends Model
     protected $casts = [
         'old_values' => 'array',
         'new_values' => 'array',
-        'additional_data' => 'array'
+        'additional_data' => 'array',
     ];
 
     /**
@@ -62,8 +62,8 @@ class ActivityLog extends Model
     /**
      * Scope pour filtrer par type d'action
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $action
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $action
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeAction($query, $action)
@@ -74,8 +74,8 @@ class ActivityLog extends Model
     /**
      * Scope pour filtrer par groupe d'actions
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $group
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $group
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeActionGroup($query, $group)
@@ -85,14 +85,15 @@ class ActivityLog extends Model
         }
 
         $actionCodes = ActivityLogActions::getActionCodesByGroup($group);
+
         return $query->whereIn('action', $actionCodes);
     }
 
     /**
      * Scope pour filtrer par utilisateur
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param int $userId
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  int  $userId
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeUser($query, $userId)
@@ -103,9 +104,9 @@ class ActivityLog extends Model
     /**
      * Scope pour filtrer par plage de dates
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $from
-     * @param string $to
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $from
+     * @param  string  $to
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeDateRange($query, $from, $to)
@@ -124,8 +125,8 @@ class ActivityLog extends Model
     /**
      * Scope pour filtrer par type de modèle
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $modelType
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $modelType
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeModelType($query, $modelType)
@@ -180,6 +181,10 @@ class ActivityLog extends Model
      */
     public function getModelTypeDisplayAttribute()
     {
-        return $this->model_type ? class_basename($this->model_type) : null;
+        if (! $this->model_type) {
+            return null;
+        }
+
+        return ActivityLogActions::getModelDisplayName($this->model_type);
     }
 }

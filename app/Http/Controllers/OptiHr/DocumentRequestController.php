@@ -482,11 +482,7 @@ class DocumentRequestController extends Controller
 
             // Vérifier que le demandeur a une adresse email valide
             if (! $requestor || ! $requestor->email) {
-                $this->activityLogger->log(
-                    'warning',
-                    "Impossible d'envoyer l'email pour la demande de document #{$documentRequest->id}: demandeur sans email",
-                    $documentRequest
-                );
+                Log::debug("Impossible d'envoyer l'email pour la demande de document #{$documentRequest->id}: demandeur sans email");
 
                 return;
             }
@@ -502,25 +498,15 @@ class DocumentRequestController extends Controller
             $sent = $this->sendEmail($mailable, true);
 
             if ($sent) {
-                $this->activityLogger->log(
-                    'info',
-                    "Email de statut envoyé pour la demande de document #{$documentRequest->id}",
-                    $documentRequest,
-                    ['to' => $requestor->email, 'status' => $status]
-                );
+                Log::debug("Email de statut envoyé pour la demande de document #{$documentRequest->id}", [
+                    'to' => $requestor->email,
+                    'status' => $status,
+                ]);
             } else {
-                $this->activityLogger->log(
-                    'error',
-                    "Échec de l'envoi d'email pour la demande de document #{$documentRequest->id}",
-                    $documentRequest
-                );
+                Log::debug("Échec de l'envoi d'email pour la demande de document #{$documentRequest->id}");
             }
         } catch (\Exception $e) {
-            $this->activityLogger->log(
-                'error',
-                "Erreur lors de l'envoi de notification pour la demande de document #{$documentRequest->id}: ".$e->getMessage(),
-                $documentRequest
-            );
+            Log::debug("Erreur lors de l'envoi de notification pour la demande de document #{$documentRequest->id}: ".$e->getMessage());
         }
     }
 
@@ -530,11 +516,7 @@ class DocumentRequestController extends Controller
         try {
             // Vérifier que l'approbateur a une adresse email valide
             if (! $approver || ! $approver->email) {
-                $this->activityLogger->log(
-                    'warning',
-                    "Impossible d'envoyer l'email à l'approbateur pour la demande de document #{$documentRequest->id}: email manquant",
-                    $documentRequest
-                );
+                Log::debug("Impossible d'envoyer l'email à l'approbateur pour la demande de document #{$documentRequest->id}: email manquant");
 
                 return;
             }
@@ -549,25 +531,14 @@ class DocumentRequestController extends Controller
             $sent = $this->sendEmail($mailable, true);
 
             if ($sent) {
-                $this->activityLogger->log(
-                    'info',
-                    "Email envoyé à l'approbateur pour la demande de document #{$documentRequest->id}",
-                    $documentRequest,
-                    ['to' => $approver->email]
-                );
+                Log::debug("Email envoyé à l'approbateur pour la demande de document #{$documentRequest->id}", [
+                    'to' => $approver->email,
+                ]);
             } else {
-                $this->activityLogger->log(
-                    'error',
-                    "Échec de l'envoi d'email à l'approbateur pour la demande de document #{$documentRequest->id}",
-                    $documentRequest
-                );
+                Log::debug("Échec de l'envoi d'email à l'approbateur pour la demande de document #{$documentRequest->id}");
             }
         } catch (\Exception $e) {
-            $this->activityLogger->log(
-                'error',
-                "Erreur lors de l'envoi à l'approbateur pour la demande de document #{$documentRequest->id}: ".$e->getMessage(),
-                $documentRequest
-            );
+            Log::debug("Erreur lors de l'envoi à l'approbateur pour la demande de document #{$documentRequest->id}: ".$e->getMessage());
         }
     }
 
