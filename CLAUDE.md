@@ -69,6 +69,15 @@ Two main modules organized under `app/Models/`, `app/Http/Controllers/`, and `re
 
 **Observer**: `app/Observers/EmployeeObserver.php` handles employee model events.
 
+**Traits**: Reusable functionality in `app/Traits/`:
+- `LogsActivity` - Activity logging for models
+- `SendsEmails` - Email sending functionality for controllers
+
+**Mail Classes**: Email templates in `app/Mail/` follow `{Action}{Entity}` naming:
+- `AbsenceRequestCreated`, `AbsenceRequestUpdated` - Absence notifications
+- `DocumentRequestCreated`, `DocumentRequestStatus` - Document notifications
+- `UserCredentials` - Account credentials email
+
 ### Permission System (Spatie)
 Roles defined in `database/seeders/RoleSeeder.php`:
 - **ADMIN**: Full access
@@ -85,6 +94,13 @@ All routes under `auth` middleware:
 - `/opti-hr/*` - HR module (dashboard, membres, attendances, documents, publications)
 - `/recours/*` - Appeals module
 - `/opti-hr/api/*` - Internal AJAX endpoints for dynamic data
+
+Route home constants in `RouteServiceProvider`:
+- `RECOURS_HOME = '/recours'`
+- `OPTI_HR_HOME = '/opti-hr'`
+- `GATEWAY = '/'`
+
+`RedirectToAppropriateHome` middleware handles permission-based redirects after login.
 
 ### Hierarchical Approval Flow
 Jobs have `n_plus_one_job_id` for manager chain. Absences and documents follow approval workflow: pending → approved/rejected by hierarchy level.
