@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\UserCredentials;
 use App\Models\OptiHr\Employee;
 use App\Models\User;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Services\ActivityLogService;
+use App\Traits\SendsEmails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\Mail;
-use App\Services\ActivityLogService;
 
 class UserController extends Controller
 {
+    use SendsEmails;
+
     public function __construct()
     {
         parent::__construct(app(ActivityLogService::class)); // Injection automatique
@@ -35,11 +35,12 @@ class UserController extends Controller
         $validStatus = ['ACTIVATED', 'DEACTIVATED', 'DELETED'];
 
         // Vérification de la validité du status
-        if ($status !== 'ALL' && !in_array($status, $validStatus)) {
+        if ($status !== 'ALL' && ! in_array($status, $validStatus)) {
             $this->activityLogger->log(
                 'error',
                 "Tentative d'accès à la liste des utilisateurs avec un statut invalide: {$status}"
             );
+
             return redirect()->back()->with('error', 'status invalide');
         }
         $query = User::where('profile', '!=', 'ADMIN')->with('employee');
@@ -53,7 +54,7 @@ class UserController extends Controller
         $query = $query->with([
             'roles' => function ($q1) {
                 $q1->where('name', '!=', 'ADMIN');
-            }
+            },
         ])
             ->whereHas('roles', function ($q2) {
                 $q2->where('name', '!=', 'ADMIN');
@@ -88,11 +89,11 @@ class UserController extends Controller
         // Récupération de l'employé
         $employee = Employee::findOrFail($request->input('employee'));
 
-        $username = strtolower(substr($employee->first_name, 0, 1)) . strtolower($employee->last_name) . $employee->id;
+        $username = strtolower(substr($employee->first_name, 0, 1)).strtolower($employee->last_name).$employee->id;
         $username = utf8_encode($username);
 
         $randomString = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 6);
-        $pwd = strtolower(substr($employee->first_name, 0, 1)) . ucfirst($employee->last_name) . $randomString;
+        $pwd = strtolower(substr($employee->first_name, 0, 1)).ucfirst($employee->last_name).$randomString;
         $pwd = utf8_encode($pwd);
 
         // Création de l'utilisateur
@@ -111,10 +112,13 @@ class UserController extends Controller
             $user->givePermissionTo($request->input('permission'));
         }
 
+        // Envoi asynchrone de l'email avec les credentials (via queue)
+        $credentialsMail = new UserCredentials($user, $pwd);
+        $this->sendEmail($credentialsMail, true);
 
-
-        // Envoi du lien de réinitialisation de mot de passe
-        $status = Password::sendResetLink(['email' => $employee->email]);
+        // Note: Le lien de réinitialisation n'est plus envoyé automatiquement
+        // L'utilisateur peut utiliser "Mot de passe oublié" si nécessaire
+        // Cela évite d'envoyer 2 emails et simplifie le processus
 
         // Journalisation de la création d'utilisateur
         $this->activityLogger->log(
@@ -124,26 +128,17 @@ class UserController extends Controller
             [
                 'role' => $request->input('role'),
                 'permission' => $request->input('permission'),
-                'reset_link_sent' => ($status === Password::RESET_LINK_SENT)
             ]
         );
 
-        // Notification à l'utilisateur actuel
-        session()->flash('success', "L'utilisateur avec le nom *{$user->username}* et l'email *{$user->email}* a été créé. 
+        // Notification à l'utilisateur actuel (session flash pour afficher le mot de passe temporaire)
+        session()->flash('success', "L'utilisateur avec le nom *{$user->username}* et l'email *{$user->email}* a été créé.
             Mot de passe *{$pwd}*. Retenez-le ou notez-le quelque part, il ne sera plus affiché.");
-        Mail::send('modules.opti-hr.emails.user-credentials', [
-            'email' => $user->email,
-            'password' => $pwd,
-            'loginLink' => route('login')
-        ], function ($message) use ($user) {
-            $message->to($user->email);
-            $message->subject('Vos identifiants OptiRh');
-        });
-        if ($status === Password::RESET_LINK_SENT) {
-            return response()->json(['message' => "L'utilisateur avec le nom {$user->username} et l'email {$user->email} a été créé.et un lien de réinitialisation de mot de passe a été envoyé à l'utilisateur.", 'ok' => true]);
-        } else {
-            return response()->json(['message' => "L'utilisateur avec le nom {$user->username} et l'email {$user->email} a été créé", 'ok' => true]);
-        }
+
+        return response()->json([
+            'message' => "Utilisateur {$user->username} créé avec succès. Les emails de bienvenue seront envoyés sous peu.",
+            'ok' => true,
+        ]);
     }
 
     public function updateDetails(Request $request, string $id)
@@ -183,7 +178,7 @@ class UserController extends Controller
                 'old_username' => $oldUsername,
                 'new_username' => $user->username,
                 'old_status' => $oldStatus,
-                'new_status' => $user->status
+                'new_status' => $user->status,
             ]
         );
 
@@ -202,12 +197,13 @@ class UserController extends Controller
 
         $user = User::find($id);
 
-        if (!Hash::check($request->input('current_password'), $user->password)) {
+        if (! Hash::check($request->input('current_password'), $user->password)) {
             $this->activityLogger->log(
                 'denied',
                 "Tentative de modification de mot de passe échouée pour l'utilisateur {$user->username} - Mot de passe actuel incorrect",
                 $user
             );
+
             return response()->json(['ok' => true, 'message' => 'Mot de passe actuel incorrect.'], 401);
         }
 
@@ -266,7 +262,7 @@ class UserController extends Controller
             $user,
             [
                 'old_roles' => $oldRoles,
-                'new_role' => $request->input('role')
+                'new_role' => $request->input('role'),
             ]
         );
 
@@ -286,9 +282,10 @@ class UserController extends Controller
         if ($currentUser->id == $id) {
             $this->activityLogger->log(
                 'denied',
-                "Tentative de suppression de son propre compte utilisateur",
+                'Tentative de suppression de son propre compte utilisateur',
                 $currentUser
             );
+
             return response()->json(['ok' => false, 'message' => 'Vous ne pouvez pas supprimer votre propre compte.']);
         }
 
@@ -304,7 +301,7 @@ class UserController extends Controller
             null,
             [
                 'deleted_user_id' => $id,
-                'deleted_user_name' => $username
+                'deleted_user_name' => $username,
             ]
         );
 
