@@ -1,7 +1,7 @@
 @extends('errors.base')
 
 @section('error-icon')
-    <i class="fa fa-clock fa-5x text-warning"></i>
+    <i class="icofont-clock-time icofont-5x text-warning"></i>
 @endsection
 
 @section('error-code', '419')
@@ -12,6 +12,6 @@
 
 @section('error-action')
     <a href="javascript:location.reload()" class="btn btn-outline-light">
-        <i class="fa fa-sync me-2"></i>Rafraîchir la page
+        <i class="icofont-refresh me-2"></i>Rafraîchir la page
     </a>
 @endsection

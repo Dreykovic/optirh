@@ -175,9 +175,9 @@
 }
 
 .card-header .nav-pills .nav-link.active {
-    background: var(--bs-primary);
+    background: #495057;
     color: #ffffff;
-    border-color: var(--bs-primary);
+    border-color: #495057;
 }
 
 .card-header .nav-pills .nav-link .badge {

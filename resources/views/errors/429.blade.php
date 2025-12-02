@@ -1,7 +1,7 @@
 @extends('errors.base')
 
 @section('error-icon')
-    <i class="fa fa-tachometer-alt fa-5x text-warning"></i>
+    <i class="icofont-speed-meter icofont-5x text-warning"></i>
 @endsection
 
 @section('error-code', '429')

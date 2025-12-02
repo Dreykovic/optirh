@@ -1,7 +1,7 @@
 @extends('errors.base')
 
 @section('error-icon')
-    <i class="fa fa-search fa-5x text-info"></i>
+    <i class="icofont-search-document icofont-5x text-info"></i>
 @endsection
 
 @section('error-code', '404')

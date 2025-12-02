@@ -45,7 +45,7 @@
                                 {{-- Boutons de navigation --}}
                                 <div class="col-12 text-center">
                                     <a href="{{ url('/') }}" class="btn btn-lg btn-light lift text-uppercase">
-                                        <i class="fa fa-home me-2"></i>Retourner à l'Accueil
+                                        <i class="icofont-ui-home me-2"></i>Retourner à l'Accueil
                                     </a>
                                     @hasSection('error-action')
                                         <div class="mt-3">
