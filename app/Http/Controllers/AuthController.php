@@ -102,15 +102,18 @@ class AuthController extends Controller
                     $user
                 );
 
+                // Récupérer l'URL demandée avant la redirection vers login, ou la page d'accueil par défaut
+                $intendedUrl = session()->pull('url.intended', $this->getRedirectUrlForUser($user));
+
                 if ($request->expectsJson()) {
                     return response()->json([
                         'ok' => true,
                         'message' => 'Vous êtes connecté.',
-                        'redirect' => $this->getRedirectUrlForUser($user),
+                        'redirect' => $intendedUrl,
                     ]);
                 }
 
-                return redirect($this->getRedirectUrlForUser($user));
+                return redirect($intendedUrl);
             } else {
                 // Connexion échouée : incrémenter le rate limiter
                 RateLimiter::hit($rateLimitKey, 60);
