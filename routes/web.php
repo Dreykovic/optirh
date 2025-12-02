@@ -2,15 +2,16 @@
 
 /**
  * Routes Web - OPTIRH
- * 
+ *
  * Ce fichier définit toutes les routes web de l'application OPTIRH.
  * Les routes sont organisées par groupes selon leur fonction :
  * - Authentification (guest)
  * - Application principale (auth)
  *   - Module OptiHR (gestion RH)
  *   - Module Recours (gestion des recours administratifs)
- * 
+ *
  * @author OPTIRH Team
+ *
  * @version 1.0
  */
 
@@ -18,7 +19,6 @@
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
-
 // Contrôleurs du module OptiHR
 use App\Http\Controllers\OptiHr\AbsenceController;
 use App\Http\Controllers\OptiHr\AbsenceTypeController;
@@ -33,12 +33,10 @@ use App\Http\Controllers\OptiHr\FileController;
 use App\Http\Controllers\OptiHr\HolidayController;
 use App\Http\Controllers\OptiHr\JobController;
 use App\Http\Controllers\OptiHr\PublicationController;
-
 // Contrôleurs du module Recours
 use App\Http\Controllers\Recours\DacController;
 use App\Http\Controllers\Recours\RecoursController;
 use App\Http\Controllers\Recours\StatsController;
-
 // Contrôleurs système
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -46,24 +44,39 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
+| Routes de test des pages d'erreur (À SUPPRIMER après tests)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('test-errors')->group(function () {
+    Route::get('/401', fn () => abort(401));
+    Route::get('/403', fn () => abort(403));
+    Route::get('/404', fn () => abort(404));
+    Route::get('/419', fn () => abort(419));
+    Route::get('/429', fn () => abort(429));
+    Route::get('/500', fn () => abort(500));
+    Route::get('/503', fn () => abort(503));
+});
+
+/*
+|--------------------------------------------------------------------------
 | Routes d'Authentification (Utilisateurs non connectés)
 |--------------------------------------------------------------------------
 |
 | Ces routes sont accessibles uniquement aux utilisateurs non connectés.
-| Elles gèrent la connexion, l'inscription et la réinitialisation 
+| Elles gèrent la connexion, l'inscription et la réinitialisation
 | de mot de passe.
 |
 */
 Route::group(['middleware' => 'guest'], function () {
-    
+
     // === CONNEXION ===
-    
+
     /**
      * Affichage du formulaire de connexion
      * GET /login
      */
     Route::get('/login', [AuthController::class, 'login'])->name('login');
-    
+
     /**
      * Traitement de la connexion
      * POST /login
@@ -97,12 +110,10 @@ Route::group(['middleware' => 'auth'], function () {
 
         // routes/web.php or routes/opti-hr.php depending on your setup
 
-
         // Dashboard Routes
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('opti-hr.dashboard');
         Route::get('/dashboard/absence-calendar', [DashboardController::class, 'getAbsenceCalendarData'])->name('opti-hr.dashboard.absence-calendar');
         Route::get('/dashboard/employee-stats', [DashboardController::class, 'getEmployeeStats'])->name('opti-hr.dashboard.employee-stats');
-
 
         /*
          * Help
@@ -242,8 +253,6 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::redirect('/view', '/opti-hr/publications/annual-decisions')->name('decisions.show');
                 Route::redirect('/list', '/opti-hr/publications/annual-decisions');
 
-
-
                 // Action routes
                 Route::post('/save/{annualDecisionId?}', [AnnualDecisionController::class, 'storeOrUpdate'])->name('decisions.save');
                 Route::delete('/delete/{id}', [AnnualDecisionController::class, 'destroy'])->name('decisions.destroy');
@@ -299,6 +308,8 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::post('/update-password/{userId}', [UserController::class, 'updatePassword'])->name('credentials.updatePwd');
                 Route::post('/change-password/{userId}', [UserController::class, 'changePassword'])->name('credentials.changePassword');
                 Route::post('/change-role/{userId}', [UserController::class, 'updateRole'])->name('credentials.updateRole');
+                Route::post('/resend-credentials/{userId}', [UserController::class, 'resendCredentials'])->name('credentials.resend');
+                Route::post('/bulk-status', [UserController::class, 'bulkUpdateStatus'])->name('credentials.bulkStatus');
                 Route::delete('/delete/{userId}', [UserController::class, 'destroy'])->name('credentials.destroy');
             });
 

@@ -8,19 +8,7 @@ trait LogsActivity
 {
     public static function bootLogsActivity()
     {
-        /*
-        static::created(function ($model) {
-            $model->logActivity('created');
-        });
-
-        static::updated(function ($model) {
-            $model->logActivity('updated');
-        });
-
-        static::deleted(function ($model) {
-            $model->logActivity('deleted');
-        });
-        */
+        // Auto-logging désactivé - les logs sont gérés manuellement dans les controllers
     }
 
     public function logActivity($action)
@@ -36,13 +24,14 @@ trait LogsActivity
             'old_values' => $action === 'updated' ? $this->getOriginal() : null,
             'new_values' => $action === 'updated' || $action === 'created' ? $this->getAttributes() : null,
             'ip_address' => request()->ip(),
-            'user_agent' => request()->userAgent()
+            'user_agent' => request()->userAgent(),
         ]);
     }
 
     protected function getActivityDescription($action)
     {
         $modelName = class_basename($this);
+
         return "{$modelName} a été {$action}";
     }
 }

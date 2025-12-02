@@ -119,40 +119,45 @@
     </li>
 
     {{-- Section: Administration --}}
-    @canany(['voir-un-credentials', 'voir-un-employee'])
+    @if(auth()->user()->hasRole('ADMIN') || auth()->user()->can('voir-un-credentials') || auth()->user()->can('voir-un-employee'))
         <li class="menu-section">
             <span class="section-title">Administration</span>
         </li>
-    @endcanany
+    @endif
 
-    {{-- Utilisateurs --}}
+    {{-- Identifiants - Accessible aux GRH --}}
     @can('voir-un-credentials')
-        <li class="menu-item has-submenu {{ Str::startsWith(request()->path(), 'opti-hr/users-management') ? 'expanded' : '' }}">
-            <a class="m-link {{ Str::startsWith(request()->path(), 'opti-hr/users-management') ? 'active' : '' }}"
-               data-bs-toggle="collapse"
-               data-bs-target="#menu-users"
-               href="#"
-               aria-expanded="{{ Str::startsWith(request()->path(), 'opti-hr/users-management') ? 'true' : 'false' }}">
+        <li class="menu-item">
+            <a class="m-link {{ Str::startsWith(request()->path(), 'opti-hr/users-management/credentials') ? 'active' : '' }}"
+               href="{{ route('credentials.index') }}">
                 <i class="icofont-users-alt-5"></i>
-                <span>Utilisateurs</span>
+                <span>Identifiants</span>
+            </a>
+        </li>
+    @endcan
+
+    {{-- Système - ADMIN uniquement --}}
+    @role('ADMIN')
+        <li class="menu-item has-submenu {{ Str::startsWith(request()->path(), 'opti-hr/users-management/roles') || Str::startsWith(request()->path(), 'opti-hr/users-management/permissions') || Str::startsWith(request()->path(), 'opti-hr/users-management/activity-logs') ? 'expanded' : '' }}">
+            <a class="m-link {{ Str::startsWith(request()->path(), 'opti-hr/users-management/roles') || Str::startsWith(request()->path(), 'opti-hr/users-management/permissions') || Str::startsWith(request()->path(), 'opti-hr/users-management/activity-logs') ? 'active' : '' }}"
+               data-bs-toggle="collapse"
+               data-bs-target="#menu-system"
+               href="#"
+               aria-expanded="{{ Str::startsWith(request()->path(), 'opti-hr/users-management/roles') || Str::startsWith(request()->path(), 'opti-hr/users-management/permissions') || Str::startsWith(request()->path(), 'opti-hr/users-management/activity-logs') ? 'true' : 'false' }}">
+                <i class="icofont-gear"></i>
+                <span>Système</span>
                 <i class="arrow icofont-rounded-down"></i>
             </a>
-            <ul class="sub-menu collapse {{ Str::startsWith(request()->path(), 'opti-hr/users-management') ? 'show' : '' }}"
-                id="menu-users">
+            <ul class="sub-menu collapse {{ Str::startsWith(request()->path(), 'opti-hr/users-management/roles') || Str::startsWith(request()->path(), 'opti-hr/users-management/permissions') || Str::startsWith(request()->path(), 'opti-hr/users-management/activity-logs') ? 'show' : '' }}"
+                id="menu-system">
                 <li>
-                    <a class="ms-link {{ Str::startsWith(request()->path(), 'opti-hr/users-management/credentials/list') ? 'active' : '' }}"
-                       href="{{ route('credentials.index') }}">
-                        <span>Identifiants</span>
-                    </a>
-                </li>
-                <li>
-                    <a class="ms-link {{ Str::startsWith(request()->path(), 'opti-hr/users-management/roles/') ? 'active' : '' }}"
+                    <a class="ms-link {{ Str::startsWith(request()->path(), 'opti-hr/users-management/roles') ? 'active' : '' }}"
                        href="{{ route('roles.index') }}">
                         <span>Rôles</span>
                     </a>
                 </li>
                 <li>
-                    <a class="ms-link {{ Str::startsWith(request()->path(), 'opti-hr/users-management/permissions/') ? 'active' : '' }}"
+                    <a class="ms-link {{ Str::startsWith(request()->path(), 'opti-hr/users-management/permissions') ? 'active' : '' }}"
                        href="{{ route('permissions.index') }}">
                         <span>Permissions</span>
                     </a>
@@ -165,7 +170,7 @@
                 </li>
             </ul>
         </li>
-    @endcan
+    @endrole
 
     {{-- Personnel --}}
     @can('voir-un-employee')

@@ -3,13 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Config\ActivityLogActions;
-use App\Http\Controllers\Controller;
-use App\Jobs\CleanupActivityLogsJob;
 use App\Models\ActivityLog;
 use App\Models\User;
 use App\Services\ActivityLogService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ActivityLogController extends Controller
@@ -23,8 +20,6 @@ class ActivityLogController extends Controller
 
     /**
      * Constructeur du contrôleur
-     *
-     * @param ActivityLogService $activityLogger
      */
     public function __construct(ActivityLogService $activityLogger)
     {
@@ -35,12 +30,10 @@ class ActivityLogController extends Controller
     /**
      * Affiche la liste des journaux d'activité
      *
-     * @param Request $request
      * @return \Illuminate\View\View
      */
     public function index(Request $request)
     {
-        CleanupActivityLogsJob::dispatch(90);
         // Récupérer l'utilisateur connecté
         $user = auth()->user();
 
@@ -48,7 +41,7 @@ class ActivityLogController extends Controller
         $query = ActivityLog::with('user');
 
         // Filtrer par utilisateur si ce n'est pas un super admin
-        if (!$user->hasRole('GRH')) {
+        if (! $user->hasRole('GRH')) {
             // Si l'utilisateur est un admin normal, il ne voit que ses propres logs
             $query->where('user_id', $user->id);
         } elseif ($request->has('user_id') && $request->user_id) {
@@ -88,13 +81,11 @@ class ActivityLogController extends Controller
         // Pour les super admin, récupérer la liste des utilisateurs pour le filtre
         $users = [];
         if ($user->hasRole('GRH')) {
-            $users = User::all(['id', 'username']);
+            $users = User::where('status', '!=', 'DELETED')->get(['id', 'username']);
         }
 
         // Récupérer les types de modèles distincts pour le filtre
         $modelTypes = ActivityLog::distinct()->pluck('model_type')->filter()->toArray();
-
-
 
         return view('modules.opti-hr.pages.users.activity-logs.index', compact('logs', 'users', 'modelTypes'));
 
@@ -103,7 +94,7 @@ class ActivityLogController extends Controller
     /**
      * Affiche les détails d'un log d'activité spécifique
      *
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\View\View
      */
     public function show($id)
@@ -122,8 +113,4 @@ class ActivityLogController extends Controller
         return view('modules.opti-hr.pages.users.activity-logs.show', compact('log'));
 
     }
-
-
-
-
 }

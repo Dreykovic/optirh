@@ -729,12 +729,9 @@ class AbsenceController extends Controller
         try {
             // Vérifier que le destinataire a une adresse email valide
             if (! $receiver || ! $receiver->email || ! filter_var($receiver->email, FILTER_VALIDATE_EMAIL)) {
-                $this->activityLogger->log(
-                    'warning',
-                    "Impossible d'envoyer l'email pour l'absence #{$absence->id}: destinataire sans email valide",
-                    $absence,
-                    ['receiver_id' => $receiver?->id]
-                );
+                Log::debug("Impossible d'envoyer l'email pour l'absence #{$absence->id}: destinataire sans email valide", [
+                    'receiver_id' => $receiver?->id,
+                ]);
 
                 return;
             }
@@ -751,27 +748,17 @@ class AbsenceController extends Controller
             // Dispatcher le job pour envoi asynchrone (ne bloque pas la requête)
             SendEmailJob::dispatch($mailable);
 
-            $this->activityLogger->log(
-                'info',
-                "Job d'envoi d'email dispatché pour l'absence #{$absence->id}",
-                $absence,
-                [
-                    'to' => $receiver->email,
-                    'type' => $toEmployee ? 'update' : 'creation',
-                ]
-            );
+            Log::debug("Job d'envoi d'email dispatché pour l'absence #{$absence->id}", [
+                'to' => $receiver->email,
+                'type' => $toEmployee ? 'update' : 'creation',
+            ]);
 
         } catch (\Exception $e) {
             // Log l'erreur mais ne pas bloquer le processus
-            $this->activityLogger->log(
-                'error',
-                "Erreur lors du dispatch du job email pour l'absence #{$absence->id}: ".$e->getMessage(),
-                $absence,
-                [
-                    'error' => $e->getMessage(),
-                    'receiver' => $receiver->email ?? 'unknown',
-                ]
-            );
+            Log::debug("Erreur lors du dispatch du job email pour l'absence #{$absence->id}: ".$e->getMessage(), [
+                'error' => $e->getMessage(),
+                'receiver' => $receiver->email ?? 'unknown',
+            ]);
         }
     }
 

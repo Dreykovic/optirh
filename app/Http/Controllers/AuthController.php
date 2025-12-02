@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -32,37 +34,90 @@ class AuthController extends Controller
     public function logUser(Request $request)
     {
         try {
+            // Rate limiting : 5 tentatives par minute par IP
+            $rateLimitKey = 'login-attempt:'.$request->ip();
+
+            if (RateLimiter::tooManyAttempts($rateLimitKey, 5)) {
+                $seconds = RateLimiter::availableIn($rateLimitKey);
+
+                $this->activityLogger->log(
+                    'denied',
+                    "Trop de tentatives de connexion depuis l'IP: {$request->ip()}",
+                    null,
+                    ['ip' => $request->ip(), 'wait_seconds' => $seconds]
+                );
+
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'ok' => false,
+                        'message' => "Trop de tentatives. Réessayez dans {$seconds} secondes.",
+                    ], 429);
+                }
+
+                return back()->withErrors([
+                    'email' => "Trop de tentatives. Réessayez dans {$seconds} secondes.",
+                ]);
+            }
+
             $attributes = request()->validate([
                 'email' => 'required|email',
                 'password' => 'required',
             ]);
 
+            // Vérifier si l'utilisateur existe et est actif AVANT Auth::attempt
+            $user = User::where('email', $attributes['email'])->first();
+
+            if ($user && $user->status !== 'ACTIVATED') {
+                RateLimiter::hit($rateLimitKey, 60);
+
+                $this->activityLogger->log(
+                    'denied',
+                    "Tentative de connexion d'un compte {$user->status}: {$attributes['email']}",
+                    $user,
+                    ['ip' => $request->ip()]
+                );
+
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'ok' => false,
+                        'message' => 'Votre compte est désactivé. Contactez l\'administrateur.',
+                    ], 403);
+                }
+
+                return back()->withErrors([
+                    'email' => 'Votre compte est désactivé. Contactez l\'administrateur.',
+                ]);
+            }
+
             if (Auth::attempt($attributes, $request->input('remember'))) {
+                // Connexion réussie : réinitialiser le rate limiter
+                RateLimiter::clear($rateLimitKey);
+
                 $user = Auth::user();
                 session()->regenerate();
 
-                // Journaliser la connexion réussie
                 $this->activityLogger->log(
                     'login',
                     "Connexion réussie de l'utilisateur {$user->username}",
                     $user
                 );
 
-                // Si la requête attend une réponse JSON (AJAX)
-                if ($request->expectsJson()) {
-                    $redirectUrl = $this->getRedirectUrlForUser($user);
+                // Récupérer l'URL demandée avant la redirection vers login, ou la page d'accueil par défaut
+                $intendedUrl = session()->pull('url.intended', $this->getRedirectUrlForUser($user));
 
+                if ($request->expectsJson()) {
                     return response()->json([
                         'ok' => true,
                         'message' => 'Vous êtes connecté.',
-                        'redirect' => $redirectUrl,
+                        'redirect' => $intendedUrl,
                     ]);
                 }
 
-                // Sinon, redirection directe pour les requêtes non-AJAX
-                return redirect($this->getRedirectUrlForUser($user));
+                return redirect($intendedUrl);
             } else {
-                // Journaliser la tentative de connexion échouée
+                // Connexion échouée : incrémenter le rate limiter
+                RateLimiter::hit($rateLimitKey, 60);
+
                 $this->activityLogger->log(
                     'denied',
                     "Tentative de connexion échouée pour l'email: {$request->input('email')}",
@@ -82,17 +137,15 @@ class AuthController extends Controller
                 ]);
             }
         } catch (ValidationException $e) {
-            // Journaliser l'erreur de validation
             $this->activityLogger->log(
                 'error',
-                "Erreur de validation lors de la tentative de connexion",
+                'Erreur de validation lors de la tentative de connexion',
                 null,
                 ['errors' => $e->errors(), 'ip' => $request->ip()]
             );
 
             throw $e;
         } catch (\Exception $e) {
-            // Journaliser les autres exceptions
             $this->activityLogger->log(
                 'error',
                 "Exception lors de la tentative de connexion: {$e->getMessage()}",
@@ -138,13 +191,13 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // Journaliser la déconnexion
         $this->activityLogger->log(
             'logout',
             "Déconnexion de l'utilisateur {$username}"
         );
 
-        return back()->with(['success' => 'Vous êtes déconnecté.']);
+        // Rediriger vers login au lieu de back() pour éviter les erreurs sur pages protégées
+        return redirect()->route('login')->with('success', 'Vous êtes déconnecté.');
     }
 
     /**
@@ -156,50 +209,57 @@ class AuthController extends Controller
     }
 
     /**
-     * Envoie l'email de réinitialisation du mot de passe
+     * Envoie l'email de réinitialisation du mot de passe (asynchrone)
      */
     public function sendEmail(Request $request)
     {
         try {
             $request->validate(['email' => 'required|email']);
 
-            // Envoyer le lien de réinitialisation du mot de passe
-            $status = Password::sendResetLink(
-                $request->only('email')
+            $email = $request->input('email');
+
+            // Vérifier si l'utilisateur existe (sans révéler l'information)
+            $user = User::where('email', $email)->first();
+
+            // Message générique pour ne pas révéler si l'email existe
+            $successMessage = 'Si cette adresse est associée à un compte, vous recevrez un email sous peu. Le lien expire dans 60 minutes.';
+
+            if (! $user) {
+                // Log mais retourner succès pour ne pas révéler si l'email existe
+                $this->activityLogger->log(
+                    'info',
+                    "Demande de réinitialisation pour email inexistant: {$email}",
+                    null,
+                    ['email' => $email, 'ip' => $request->ip()]
+                );
+
+                return response()->json([
+                    'message' => $successMessage,
+                    'ok' => true,
+                ]);
+            }
+
+            // Envoyer de manière asynchrone (après la réponse HTTP)
+            dispatch(function () use ($email) {
+                Password::sendResetLink(['email' => $email]);
+            })->afterResponse();
+
+            $this->activityLogger->log(
+                'created',
+                "Demande de réinitialisation de mot de passe pour {$email}",
+                $user,
+                ['email' => $email]
             );
 
-            if ($status === Password::RESET_LINK_SENT) {
-                // Journaliser l'envoi du lien de réinitialisation
-                $this->activityLogger->log(
-                    'created',
-                    "Envoi du lien de réinitialisation de mot de passe à {$request->email}",
-                    null,
-                    ['email' => $request->email]
-                );
+            return response()->json([
+                'message' => $successMessage,
+                'ok' => true,
+            ]);
 
-                return response()->json([
-                    'message' => __('Nous vous avons envoyé par email le lien de réinitialisation du mot de passe ! Le lien expirera dans 15 minutes.'),
-                    'ok' => true
-                ]);
-            } else {
-                // Journaliser l'échec
-                $this->activityLogger->log(
-                    'error',
-                    "Échec de l'envoi du lien de réinitialisation à {$request->email}",
-                    null,
-                    ['email' => $request->email, 'status' => $status]
-                );
-
-                return response()->json([
-                    'error' => __('Une erreur est survenue. Vérifiez que votre adresse email est correcte.'),
-                    'ok' => false
-                ], 422);
-            }
         } catch (ValidationException $e) {
-            // Journaliser l'erreur de validation
             $this->activityLogger->log(
                 'error',
-                "Erreur de validation lors de la demande de réinitialisation",
+                'Erreur de validation lors de la demande de réinitialisation',
                 null,
                 ['errors' => $e->errors(), 'ip' => $request->ip()]
             );
@@ -218,8 +278,7 @@ class AuthController extends Controller
 
     /**
      * Change le mot de passe de l'utilisateur
-     * 
-     * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function changePassword(Request $request)
@@ -254,21 +313,21 @@ class AuthController extends Controller
         if ($status === Password::PASSWORD_RESET) {
             return response()->json([
                 'message' => __('Votre mot de passe a été mis à jour avec succès.'),
-                'ok' => true
+                'ok' => true,
             ]);
         }
 
         // Journaliser l'échec
         $this->activityLogger->log(
             'error',
-            "Échec de la réinitialisation du mot de passe",
+            'Échec de la réinitialisation du mot de passe',
             null,
             ['email' => $request->email, 'status' => $status]
         );
 
         return response()->json([
             'message' => __($status),
-            'ok' => false
+            'ok' => false,
         ]);
 
     }
