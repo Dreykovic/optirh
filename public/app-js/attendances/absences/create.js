@@ -606,9 +606,9 @@ const AppAbsenceRequestCreateManager = (function () {
             showNotification("success", data.message || "Demande soumise avec succès!");
 
             if (data.redirect) {
-                setTimeout(() => { window.location.href = data.redirect; }, 1000);
+                setTimeout(() => { window.location.href = data.redirect; }, 3000);
             } else {
-                setTimeout(() => { window.location.reload(); }, 1000);
+                setTimeout(() => { window.location.reload(); }, 3000);
             }
         } else {
             showNotification("error", data.message || "Une erreur est survenue.");

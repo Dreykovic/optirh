@@ -276,12 +276,12 @@ const AppModules = (function () {
                     // Utiliser toast au lieu de showConfirmAlert
                     AppModules.showToast(data.message, status);
 
-                    // Callback après un court délai pour laisser le temps de voir le toast
+                    // Callback après un délai pour laisser le temps de lire le toast
                     setTimeout(() => {
                         if (typeof callback === "function") {
                             callback(response);
                         }
-                    }, 500);
+                    }, 3000);
                 })
                 .catch((error) => {
                     console.error("error", error);
@@ -296,7 +296,7 @@ const AppModules = (function () {
                         if (typeof callback === "function") {
                             callback({ error });
                         }
-                    }, 500);
+                    }, 3000);
                 });
         },
 
