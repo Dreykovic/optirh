@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendEmailJob;
+use App\Mail\PasswordChangedNotification;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\PasswordReset;
@@ -300,6 +302,10 @@ class AuthController extends Controller
 
                 event(new PasswordReset($user));
                 Auth::logoutOtherDevices($password);
+
+                // Envoyer notification de changement de mot de passe
+                $notification = new PasswordChangedNotification($user, 'reset');
+                SendEmailJob::dispatch($notification);
 
                 // Journaliser la réinitialisation du mot de passe
                 $this->activityLogger->log(

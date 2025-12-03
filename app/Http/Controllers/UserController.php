@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PasswordChangedNotification;
 use App\Mail\UserCredentials;
 use App\Models\OptiHr\Employee;
 use App\Models\User;
@@ -210,6 +211,10 @@ class UserController extends Controller
         $user->password = Hash::make($request->input('new_password'));
         $user->save();
 
+        // Envoyer notification de changement de mot de passe
+        $notification = new PasswordChangedNotification($user, 'self');
+        $this->sendEmail($notification, true);
+
         $this->activityLogger->log(
             'updated',
             "Modification du mot de passe de l'utilisateur {$user->username}",
@@ -232,6 +237,10 @@ class UserController extends Controller
         $user->password = Hash::make($request->input('password'));
 
         $user->save();
+
+        // Envoyer notification de changement de mot de passe par admin
+        $notification = new PasswordChangedNotification($user, 'admin');
+        $this->sendEmail($notification, true);
 
         $this->activityLogger->log(
             'updated',
