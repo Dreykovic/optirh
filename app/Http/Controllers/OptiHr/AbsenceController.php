@@ -82,6 +82,35 @@ class AbsenceController extends Controller
     }
 
     /**
+     * Afficher la piece justificative d'une absence
+     *
+     * @param int $absenceId L'identifiant de l'absence
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\Response
+     */
+    public function showProof($absenceId)
+    {
+        $absence = Absence::findOrFail($absenceId);
+
+        if (!$absence->proof) {
+            abort(404, 'Aucun justificatif disponible');
+        }
+
+        $filePath = storage_path('app/public/' . $absence->proof);
+
+        if (!file_exists($filePath)) {
+            abort(404, 'Fichier introuvable');
+        }
+
+        $mimeType = mime_content_type($filePath);
+        $fileName = basename($absence->proof);
+
+        return response()->file($filePath, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'inline; filename="' . $fileName . '"',
+        ]);
+    }
+
+    /**
      * Mapping des stages virtuels vers les stages réels
      */
     private const STAGE_MAPPING = [

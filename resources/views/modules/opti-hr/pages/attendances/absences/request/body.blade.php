@@ -237,6 +237,52 @@
             </div>
         </div>
 
-       
+        <!-- Section piece justificative -->
+        @if($absence->proof)
+        <div class="p-4 border-top">
+            <h6 class="fw-bold mb-3 d-flex align-items-center">
+                <i class="icofont-paper-clip me-2 text-primary"></i>Piece justificative
+            </h6>
+            <div class="bg-light rounded-3 p-3 border">
+                @php
+                    $extension = pathinfo($absence->proof, PATHINFO_EXTENSION);
+                    $isImage = in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif']);
+                    $isPdf = strtolower($extension) === 'pdf';
+                @endphp
+
+                @if($isImage)
+                    <div class="text-center mb-3">
+                        <a href="{{ asset('storage/' . $absence->proof) }}" target="_blank" rel="noopener noreferrer">
+                            <img src="{{ asset('storage/' . $absence->proof) }}"
+                                 alt="Justificatif"
+                                 class="img-fluid rounded shadow-sm"
+                                 style="max-height: 300px; cursor: pointer;">
+                        </a>
+                    </div>
+                @elseif($isPdf)
+                    <div class="ratio ratio-16x9 mb-3" style="max-height: 350px;">
+                        <iframe src="{{ asset('storage/' . $absence->proof) }}"
+                                class="rounded shadow-sm border"></iframe>
+                    </div>
+                @endif
+
+                <div class="d-flex gap-2" style="position: relative; z-index: 1050;">
+                    <a href="{{ asset('storage/' . $absence->proof) }}"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="btn btn-sm btn-outline-primary"
+                       style="cursor: pointer; pointer-events: auto;">
+                        <i class="icofont-eye-alt me-1"></i>Voir en plein ecran
+                    </a>
+                    <a href="{{ asset('storage/' . $absence->proof) }}"
+                       download
+                       class="btn btn-sm btn-outline-secondary"
+                       style="cursor: pointer; pointer-events: auto;">
+                        <i class="icofont-download me-1"></i>Telecharger
+                    </a>
+                </div>
+            </div>
+        </div>
+        @endif
     </div>
 </div>
