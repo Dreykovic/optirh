@@ -1,4 +1,4 @@
-<div class="card-footer bg-white p-3 border-top">
+<div class="card-footer bg-white p-3 border-top create-publication-footer">
     <form id="modelAddForm" data-model-add-url="{{ route('publications.config.save') }}">
         @csrf
 
