@@ -114,6 +114,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('opti-hr.dashboard');
         Route::get('/dashboard/absence-calendar', [DashboardController::class, 'getAbsenceCalendarData'])->name('opti-hr.dashboard.absence-calendar');
         Route::get('/dashboard/employee-stats', [DashboardController::class, 'getEmployeeStats'])->name('opti-hr.dashboard.employee-stats');
+        Route::get('/dashboard/refresh', [DashboardController::class, 'refresh'])->name('opti-hr.dashboard.refresh');
 
         /*
          * Help
