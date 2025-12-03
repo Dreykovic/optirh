@@ -17,6 +17,7 @@ use App\Traits\SendsEmails;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class AbsenceController extends Controller
@@ -84,20 +85,20 @@ class AbsenceController extends Controller
     /**
      * Afficher la piece justificative d'une absence
      *
-     * @param int $absenceId L'identifiant de l'absence
+     * @param  int  $absenceId  L'identifiant de l'absence
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\Response
      */
     public function showProof($absenceId)
     {
         $absence = Absence::findOrFail($absenceId);
 
-        if (!$absence->proof) {
+        if (! $absence->proof) {
             abort(404, 'Aucun justificatif disponible');
         }
 
-        $filePath = storage_path('app/public/' . $absence->proof);
+        $filePath = storage_path('app/public/'.$absence->proof);
 
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             abort(404, 'Fichier introuvable');
         }
 
@@ -106,7 +107,7 @@ class AbsenceController extends Controller
 
         return response()->file($filePath, [
             'Content-Type' => $mimeType,
-            'Content-Disposition' => 'inline; filename="' . $fileName . '"',
+            'Content-Disposition' => 'inline; filename="'.$fileName.'"',
         ]);
     }
 
@@ -510,12 +511,24 @@ class AbsenceController extends Controller
             $absence
         );
 
-        // Pour la notification par email
-        $receiver = $absence->duty->job->n_plus_one_job ?
-            $absence->duty->job->n_plus_one_job->duties->firstWhere('evolution', 'ON_GOING')->employee->users->first()
-            : User::role('GRH')->first();
+        // Pour la notification par email - récupération sécurisée du destinataire
+        $receiver = null;
+        $nPlusOneJob = $absence->duty->job->n_plus_one_job ?? null;
 
-        $this->handleNotifications($absence, $receiver, false);
+        if ($nPlusOneJob) {
+            $nPlusOneDuty = $nPlusOneJob->duties->firstWhere('evolution', 'ON_GOING');
+            if ($nPlusOneDuty && $nPlusOneDuty->employee) {
+                $receiver = $nPlusOneDuty->employee->users->first();
+            }
+        }
+
+        if (! $receiver) {
+            $receiver = User::role('GRH')->first();
+        }
+
+        if ($receiver) {
+            $this->handleNotifications($absence, $receiver, false);
+        }
 
         return response()->json([
             'message' => "Demande d'absence {$absenceType->label} créée avec succès.",

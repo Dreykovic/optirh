@@ -708,7 +708,7 @@ const AppAbsenceRequestCreateManager = (function () {
                 icon: type === "error" ? "error" : "success",
                 title: type === "error" ? "Erreur" : "Succès",
                 text: message,
-                timer: 3000,
+                timer: 10000,
                 showConfirmButton: false
             });
         } else {

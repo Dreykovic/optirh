@@ -273,7 +273,7 @@ function showToast(type) {
 
     const toast = new bootstrap.Toast(toastEl, {
         autohide: true,
-        delay: 3000
+        delay: 10000
     });
     toast.show();
 }
