@@ -114,6 +114,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('opti-hr.dashboard');
         Route::get('/dashboard/absence-calendar', [DashboardController::class, 'getAbsenceCalendarData'])->name('opti-hr.dashboard.absence-calendar');
         Route::get('/dashboard/employee-stats', [DashboardController::class, 'getEmployeeStats'])->name('opti-hr.dashboard.employee-stats');
+        Route::get('/dashboard/refresh', [DashboardController::class, 'refresh'])->name('opti-hr.dashboard.refresh');
 
         /*
          * Help
@@ -215,6 +216,7 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::post('/request/deductibility/{absenceId}', [AbsenceController::class, 'updateDeductibility'])->name('absences.deductibility');
                 Route::post('/request/cancel/{absenceId}', [AbsenceController::class, 'cancel'])->name('absences.cancel');
                 Route::get('/request/download/{absenceId}', [AbsenceController::class, 'download'])->name('absences.download');
+                Route::get('/request/proof/{absenceId}', [AbsenceController::class, 'showProof'])->name('absences.proof.show');
             });
             /*
              * Absences Types

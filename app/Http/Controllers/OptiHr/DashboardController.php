@@ -3,251 +3,228 @@
 namespace App\Http\Controllers\OptiHr;
 
 use App\Http\Controllers\Controller;
-use App\Models\OptiHr\Absence;
-use App\Models\OptiHr\Department;
-use App\Models\OptiHr\DocumentRequest;
-use App\Models\OptiHr\Employee;
-use App\Models\OptiHr\Publication;
-use Carbon\Carbon;
+use App\Services\DashboardService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
+/**
+ * Controleur du tableau de bord OptiHR
+ *
+ * Gere l'affichage du dashboard avec contenu personnalise selon le role
+ */
 class DashboardController extends Controller
 {
     /**
-     * Display the HR dashboard.
+     * Service de gestion du dashboard
+     */
+    protected DashboardService $dashboardService;
+
+    /**
+     * Ordre de priorite des roles
+     */
+    protected array $roleOrder = ['ADMIN', 'GRH', 'DG', 'DSAF', 'DRAJ', 'EMPLOYEE'];
+
+    /**
+     * Constructeur avec injection du service
+     */
+    public function __construct(DashboardService $dashboardService)
+    {
+        $this->dashboardService = $dashboardService;
+    }
+
+    /**
+     * Affiche le tableau de bord
      *
      * @return \Illuminate\View\View
      */
     public function index()
     {
-        // Get basic counts
-        $totalEmployees = Employee::where('status', 'ACTIVATED')->count();
-        $totalDepartments = Department::where('status', 'ACTIVATED')->count();
-        $pendingAbsences = Absence::where('stage', 'PENDING')->count();
-        $pendingDocuments = DocumentRequest::where('stage', 'PENDING')->count();
+        $user = auth()->user();
+        $role = $this->getPrimaryRole($user);
 
-        // Recent absences for the table
-        $recentAbsences = Absence::with(['duty.employee', 'absence_type'])
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
+        // Donnees communes a tous les roles
+        $commonData = $this->getCommonData();
 
-        // Convert string dates to Carbon objects for absences
-        foreach ($recentAbsences as $absence) {
-            if (!$absence->start_date instanceof Carbon) {
-                $absence->start_date = Carbon::parse($absence->start_date);
-            }
-            if (!$absence->end_date instanceof Carbon) {
-                $absence->end_date = Carbon::parse($absence->end_date);
-            }
-        }
+        // Donnees specifiques au role
+        $roleData = match ($role) {
+            'ADMIN' => $this->getAdminData(),
+            'GRH' => $this->getGrhData(),
+            'DG' => $this->getDgData(),
+            'DSAF' => $this->getDsafData(),
+            'DRAJ' => $this->getDrajData(),
+            'EMPLOYEE' => $this->getEmployeeData($user),
+            default => $this->getEmployeeData($user),
+        };
 
-        // Recent document requests
-        $recentDocuments = DocumentRequest::with(['duty.employee', 'document_type'])
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
-
-        // Recent publications
-        $recentPublications = Publication::with('author')
-            ->where('status', 'published')
-            ->orderBy('published_at', 'desc')
-            ->take(3)
-            ->get();
-        // Convert string dates to Carbon objects for publications
-        foreach ($recentPublications as $publications) {
-            if (!$publications->published_at instanceof Carbon) {
-                $publications->published_at = Carbon::parse($publications->published_at);
-            }
-            if (!$publications->created_at instanceof Carbon) {
-                $publications->created_at = Carbon::parse($publications->created_at);
-            }
-        }
-
-        // Department distribution data
-        $departmentData = DB::table('employees')
-            ->join('duties', 'employees.id', '=', 'duties.employee_id')
-            ->join('jobs', 'duties.job_id', '=', 'jobs.id')
-            ->join('departments', 'jobs.department_id', '=', 'departments.id')
-            ->where('employees.status', 'ACTIVATED')
-            ->where('duties.evolution', 'ON_GOING')
-            ->select('departments.name', DB::raw('count(*) as count'))
-            ->groupBy('departments.name')
-            ->orderBy('count', 'desc')
-            ->get();
-
-        $departmentLabels = $departmentData->pluck('name')->toArray();
-        $departmentData = $departmentData->pluck('count')->toArray();
-
-        // Calendar events for absences
-        $approvedAbsences = Absence::with(['duty.employee', 'absence_type'])
-            ->where('stage', 'APPROVED')
-            ->where('end_date', '>=', Carbon::now()->subDays(30))
-            ->get();
-
-        $calendarEvents = [];
-        foreach ($approvedAbsences as $absence) {
-            // Ensure dates are Carbon instances
-            $startDate = $absence->start_date instanceof Carbon
-                ? $absence->start_date
-                : Carbon::parse($absence->start_date);
-
-            $endDate = $absence->end_date instanceof Carbon
-                ? $absence->end_date
-                : Carbon::parse($absence->end_date);
-
-            $calendarEvents[] = [
-                'id' => $absence->id,
-                'title' => $absence->duty->employee->first_name . ' ' . $absence->duty->employee->last_name,
-                'start' => $startDate->format('Y-m-d'),
-                'end' => $endDate->copy()->addDays(1)->format('Y-m-d'), // Add one day to make it inclusive
-                'color' => '#28a745', // Success green for approved
-                'description' => $absence->absence_type->label ?? 'Absence'
-            ];
-        }
-
-        // All absences for toggle functionality
-        $allAbsences = Absence::with(['duty.employee', 'absence_type'])
-            ->where('end_date', '>=', Carbon::now()->subDays(30))
-            ->get();
-
-        $allCalendarEvents = [];
-        foreach ($allAbsences as $absence) {
-            $color = '#6c757d'; // Default grey
-
-            if ($absence->stage === 'APPROVED') {
-                $color = '#28a745'; // Success green
-            } elseif ($absence->stage === 'PENDING') {
-                $color = '#ffc107'; // Warning yellow
-            } elseif ($absence->stage === 'REJECTED') {
-                $color = '#dc3545'; // Danger red
-            }
-
-            // Ensure dates are Carbon instances
-            $startDate = $absence->start_date instanceof Carbon
-                ? $absence->start_date
-                : Carbon::parse($absence->start_date);
-
-            $endDate = $absence->end_date instanceof Carbon
-                ? $absence->end_date
-                : Carbon::parse($absence->end_date);
-
-            $allCalendarEvents[] = [
-                'id' => $absence->id,
-                'title' => $absence->duty->employee->first_name . ' ' . $absence->duty->employee->last_name,
-                'start' => $startDate->format('Y-m-d'),
-                'end' => $endDate->copy()->addDays(1)->format('Y-m-d'),
-                'color' => $color,
-                'description' => ($absence->absence_type->label ?? 'Absence') . ' (' . $absence->stage . ')'
-            ];
-        }
-
-        // Add gender count for chart
-        $femaleCount = Employee::where('status', 'ACTIVATED')->where('gender', 'FEMALE')->count();
-        $maleCount = Employee::where('status', 'ACTIVATED')->where('gender', 'MALE')->count();
-
-        return view('modules.opti-hr.pages.dashboard.index', compact(
-            'totalEmployees',
-            'totalDepartments',
-            'pendingAbsences',
-            'pendingDocuments',
-            'recentAbsences',
-            'recentDocuments',
-            'recentPublications',
-            'departmentLabels',
-            'departmentData',
-            'calendarEvents',
-            'allCalendarEvents',
-            'femaleCount',
-            'maleCount'
+        return view('modules.opti-hr.pages.dashboard.index', array_merge(
+            $commonData,
+            $roleData,
+            ['userRole' => strtolower($role)]
         ));
     }
 
     /**
-     * Get absence data for AJAX calendar updates.
+     * Determine le role principal de l'utilisateur
+     *
+     * @param \App\Models\User $user
+     * @return string
+     */
+    protected function getPrimaryRole($user): string
+    {
+        foreach ($this->roleOrder as $role) {
+            if ($user->hasRole($role)) {
+                return $role;
+            }
+        }
+
+        return 'EMPLOYEE';
+    }
+
+    /**
+     * Donnees communes a tous les roles
+     *
+     * @return array
+     */
+    protected function getCommonData(): array
+    {
+        return [
+            'recentPublications' => $this->dashboardService->getRecentPublications(5),
+            'upcomingBirthdays' => $this->dashboardService->getUpcomingBirthdays(30),
+        ];
+    }
+
+    /**
+     * Donnees pour le role EMPLOYEE
+     *
+     * @param \App\Models\User $user
+     * @return array
+     */
+    protected function getEmployeeData($user): array
+    {
+        $employee = $user->employee;
+
+        return [
+            'personalStats' => $this->dashboardService->getEmployeePersonalStats($employee),
+            'myRecentAbsences' => $this->dashboardService->getEmployeeAbsences($employee, 5),
+            'myRecentDocuments' => $this->dashboardService->getEmployeeDocuments($employee, 5),
+        ];
+    }
+
+    /**
+     * Donnees pour le role GRH (acces complet RH)
+     *
+     * @return array
+     */
+    protected function getGrhData(): array
+    {
+        return [
+            // Stats avec tendances
+            'statsCards' => $this->dashboardService->getStatsWithTrends(),
+            'kpis' => $this->dashboardService->getKpis(),
+
+            // Tables
+            'recentAbsences' => $this->dashboardService->getRecentAbsences(10),
+            'recentDocuments' => $this->dashboardService->getRecentDocuments(10),
+
+            // Graphiques
+            'departmentData' => $this->dashboardService->getDepartmentDistribution(),
+            'genderData' => $this->dashboardService->getGenderDistribution(),
+
+            // Calendrier
+            'calendarEvents' => $this->dashboardService->getCalendarEvents(false),
+            'allCalendarEvents' => $this->dashboardService->getCalendarEvents(true),
+
+            // Compteurs
+            'pendingCounts' => $this->dashboardService->getPendingCounts(),
+        ];
+    }
+
+    /**
+     * Donnees pour le role DG (vue executive)
+     *
+     * @return array
+     */
+    protected function getDgData(): array
+    {
+        return [
+            'statsCards' => $this->dashboardService->getExecutiveStats(),
+            'kpis' => $this->dashboardService->getExecutiveKpis(),
+            'approvalQueue' => $this->dashboardService->getApprovalQueue('DG'),
+            'departmentData' => $this->dashboardService->getDepartmentDistribution(),
+            'recentAbsences' => $this->dashboardService->getRecentAbsences(5),
+        ];
+    }
+
+    /**
+     * Donnees pour le role DSAF
+     *
+     * @return array
+     */
+    protected function getDsafData(): array
+    {
+        return [
+            'statsCards' => $this->dashboardService->getStatsWithTrends(),
+            'approvalQueue' => $this->dashboardService->getApprovalQueue('DSAF'),
+            'recentAbsences' => $this->dashboardService->getRecentAbsences(5),
+        ];
+    }
+
+    /**
+     * Donnees pour le role DRAJ
+     *
+     * @return array
+     */
+    protected function getDrajData(): array
+    {
+        return [
+            'statsCards' => $this->dashboardService->getStatsWithTrends(),
+        ];
+    }
+
+    /**
+     * Donnees pour le role ADMIN (acces complet)
+     *
+     * @return array
+     */
+    protected function getAdminData(): array
+    {
+        // Admin a le meme acces que GRH
+        return $this->getGrhData();
+    }
+
+    /**
+     * Endpoint AJAX pour les donnees du calendrier
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function getAbsenceCalendarData(Request $request)
     {
-        $start = $request->input('start');
-        $end = $request->input('end');
-        $showAll = $request->input('showAll', false);
-
-        $query = Absence::with(['duty.employee', 'absence_type'])
-            ->where('end_date', '>=', $start)
-            ->where('start_date', '<=', $end);
-
-        if (!$showAll) {
-            $query->where('stage', 'APPROVED');
-        }
-
-        $absences = $query->get();
-
-        $events = [];
-        foreach ($absences as $absence) {
-            $color = '#6c757d'; // Default grey
-
-            if ($absence->stage === 'APPROVED') {
-                $color = '#28a745'; // Success green
-            } elseif ($absence->stage === 'PENDING') {
-                $color = '#ffc107'; // Warning yellow
-            } elseif ($absence->stage === 'REJECTED') {
-                $color = '#dc3545'; // Danger red
-            }
-
-            // Ensure dates are Carbon instances
-            $startDate = $absence->start_date instanceof Carbon
-                ? $absence->start_date
-                : Carbon::parse($absence->start_date);
-
-            $endDate = $absence->end_date instanceof Carbon
-                ? $absence->end_date
-                : Carbon::parse($absence->end_date);
-
-            $events[] = [
-                'id' => $absence->id,
-                'title' => $absence->duty->employee->first_name . ' ' . $absence->duty->employee->last_name,
-                'start' => $startDate->format('Y-m-d'),
-                'end' => $endDate->copy()->addDays(1)->format('Y-m-d'),
-                'color' => $color,
-                'description' => ($absence->absence_type->label ?? 'Absence') . ' (' . $absence->stage . ')'
-            ];
-        }
+        $showAll = $request->boolean('showAll', false);
+        $events = $this->dashboardService->getCalendarEvents($showAll);
 
         return response()->json($events);
     }
 
     /**
-     * Get employee stats data for AJAX charts.
+     * Endpoint AJAX pour les statistiques des employes
      *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getEmployeeStats()
     {
-        // Gender distribution
-        $genderDistribution = Employee::select('gender', DB::raw('count(*) as count'))
-            ->where('status', 'ACTIVATED')
-            ->groupBy('gender')
-            ->get();
-
-        // Employees per department
-        $departmentDistribution = DB::table('employees')
-            ->join('duties', 'employees.id', '=', 'duties.employee_id')
-            ->join('jobs', 'duties.job_id', '=', 'jobs.id')
-            ->join('departments', 'jobs.department_id', '=', 'departments.id')
-            ->where('employees.status', 'ACTIVATED')
-            ->where('duties.evolution', 'ON_GOING')
-            ->select('departments.name', DB::raw('count(*) as count'))
-            ->groupBy('departments.name')
-            ->orderBy('count', 'desc')
-            ->get();
-
         return response()->json([
-            'genderDistribution' => $genderDistribution,
-            'departmentDistribution' => $departmentDistribution
+            'genderDistribution' => $this->dashboardService->getGenderDistribution(),
+            'departmentDistribution' => $this->dashboardService->getDepartmentDistribution(),
         ]);
+    }
+
+    /**
+     * Endpoint AJAX pour rafraichir le dashboard
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refresh()
+    {
+        return response()->json($this->dashboardService->getRefreshData());
     }
 }

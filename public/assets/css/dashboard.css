@@ -1,0 +1,783 @@
+/* ==========================================================================
+   OPTIRH Dashboard - Style Professionnel Corporate
+   ========================================================================== */
+
+/* Variables CSS pour cohérence */
+:root {
+    --dashboard-primary: #4f46e5;
+    --dashboard-success: #10b981;
+    --dashboard-warning: #f59e0b;
+    --dashboard-danger: #ef4444;
+    --dashboard-info: #3b82f6;
+    --dashboard-gray: #6b7280;
+    --dashboard-text: #1a1f36;
+    --dashboard-text-muted: #6b7280;
+    --dashboard-border: #e5e7eb;
+    --dashboard-bg: #f9fafb;
+    --dashboard-card-bg: #ffffff;
+    --dashboard-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    --dashboard-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --dashboard-radius: 0.75rem;
+    --dashboard-radius-sm: 0.5rem;
+}
+
+/* ==========================================================================
+   DASHBOARD CONTAINER
+   ========================================================================== */
+
+.dashboard-container {
+    padding: 0;
+}
+
+/* ==========================================================================
+   HEADER
+   ========================================================================== */
+
+.dashboard-header {
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--dashboard-border);
+}
+
+.dashboard-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--dashboard-text);
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.025em;
+}
+
+.dashboard-subtitle {
+    font-size: 0.9375rem;
+    color: var(--dashboard-text-muted);
+}
+
+.dashboard-date {
+    font-size: 0.875rem;
+    color: var(--dashboard-text-muted);
+}
+
+/* ==========================================================================
+   CARDS - BASE
+   ========================================================================== */
+
+.dashboard-card {
+    border: 1px solid var(--dashboard-border);
+    border-radius: var(--dashboard-radius);
+    box-shadow: var(--dashboard-shadow);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    background: var(--dashboard-card-bg);
+    overflow: hidden;
+}
+
+.dashboard-card:hover {
+    box-shadow: var(--dashboard-shadow-hover);
+}
+
+.dashboard-card .card-header {
+    background: transparent;
+    border-bottom: 1px solid var(--dashboard-border);
+    padding: 1rem 1.25rem;
+}
+
+.dashboard-card .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--dashboard-text);
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dashboard-card .card-title i {
+    font-size: 1.125rem;
+}
+
+.dashboard-card .card-body {
+    padding: 1.25rem;
+}
+
+.dashboard-card .card-footer {
+    background: transparent;
+    border-top: 1px solid var(--dashboard-border);
+    padding: 0.875rem 1.25rem;
+}
+
+/* ==========================================================================
+   STAT CARDS
+   ========================================================================== */
+
+.stat-card {
+    position: relative;
+}
+
+.stat-card .card-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.stat-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--dashboard-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.375rem;
+    flex-shrink: 0;
+}
+
+/* Couleurs d'icônes subtiles */
+.stat-icon.bg-primary-subtle {
+    background-color: rgba(79, 70, 229, 0.1);
+}
+.stat-icon.bg-success-subtle {
+    background-color: rgba(16, 185, 129, 0.1);
+}
+.stat-icon.bg-warning-subtle {
+    background-color: rgba(245, 158, 11, 0.1);
+}
+.stat-icon.bg-info-subtle {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+.stat-icon.bg-danger-subtle {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+.stat-icon.text-primary { color: var(--dashboard-primary); }
+.stat-icon.text-success { color: var(--dashboard-success); }
+.stat-icon.text-warning { color: var(--dashboard-warning); }
+.stat-icon.text-info { color: var(--dashboard-info); }
+.stat-icon.text-danger { color: var(--dashboard-danger); }
+
+.stat-content {
+    flex-grow: 1;
+}
+
+.stat-label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--dashboard-text-muted);
+    margin-bottom: 0.375rem;
+    text-transform: none;
+}
+
+.stat-value {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--dashboard-text);
+    line-height: 1.2;
+    margin-bottom: 0;
+}
+
+.stat-value small {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--dashboard-text-muted);
+}
+
+/* ==========================================================================
+   TREND INDICATORS
+   ========================================================================== */
+
+.stat-trend {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.625rem;
+    font-size: 0.8125rem;
+}
+
+.trend-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.trend-indicator.trend-up {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #059669;
+}
+
+.trend-indicator.trend-down {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+}
+
+.trend-indicator i {
+    font-size: 0.625rem;
+}
+
+.trend-period {
+    font-size: 0.75rem;
+    color: var(--dashboard-text-muted);
+}
+
+/* ==========================================================================
+   KPI CARDS
+   ========================================================================== */
+
+.kpi-card {
+    border: 1px solid var(--dashboard-border);
+    overflow: hidden;
+}
+
+.kpi-card.kpi-primary {
+    background: #fff;
+    color: var(--dashboard-primary);
+    border-left: 4px solid var(--dashboard-primary);
+}
+
+.kpi-card.kpi-success {
+    background: #fff;
+    color: var(--dashboard-success);
+    border-left: 4px solid var(--dashboard-success);
+}
+
+.kpi-card.kpi-warning {
+    background: #fff;
+    color: var(--dashboard-warning);
+    border-left: 4px solid var(--dashboard-warning);
+}
+
+.kpi-card.kpi-danger {
+    background: #fff;
+    color: var(--dashboard-danger);
+    border-left: 4px solid var(--dashboard-danger);
+}
+
+.kpi-card .card-body {
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.kpi-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+}
+
+.kpi-unit {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.kpi-label {
+    font-size: 0.875rem;
+    color: var(--dashboard-text-muted);
+    margin-top: 0.5rem;
+}
+
+/* ==========================================================================
+   QUICK ACTIONS
+   ========================================================================== */
+
+.quick-actions-card .card-body {
+    padding: 1rem 1.25rem;
+}
+
+.quick-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--dashboard-radius-sm);
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.quick-action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.quick-action-btn i {
+    font-size: 1rem;
+}
+
+/* ==========================================================================
+   TABLES
+   ========================================================================== */
+
+.dashboard-table {
+    font-size: 0.875rem;
+    margin-bottom: 0;
+}
+
+.dashboard-table thead th {
+    font-weight: 600;
+    color: var(--dashboard-text-muted);
+    text-transform: uppercase;
+    font-size: 0.6875rem;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid var(--dashboard-border);
+    padding: 0.75rem;
+    white-space: nowrap;
+}
+
+.dashboard-table tbody td {
+    vertical-align: middle;
+    padding: 0.875rem 0.75rem;
+    border-bottom: 1px solid var(--dashboard-border);
+    color: var(--dashboard-text);
+}
+
+.dashboard-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.dashboard-table tbody tr:hover {
+    background-color: rgba(79, 70, 229, 0.02);
+}
+
+/* Employee info in table */
+.employee-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.employee-info .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.employee-info .name {
+    font-weight: 500;
+    color: var(--dashboard-text);
+}
+
+.employee-info .department {
+    font-size: 0.75rem;
+    color: var(--dashboard-text-muted);
+}
+
+/* ==========================================================================
+   STATUS BADGES
+   ========================================================================== */
+
+.badge-status {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    padding: 0.375rem 0.625rem;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.badge-status.pending {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: #b45309;
+}
+
+.badge-status.approved {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #047857;
+}
+
+.badge-status.rejected {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #b91c1c;
+}
+
+/* ==========================================================================
+   CALENDAR WIDGET
+   ========================================================================== */
+
+.calendar-widget {
+    min-height: 400px;
+}
+
+.calendar-widget .fc {
+    font-family: inherit;
+}
+
+.calendar-widget .fc-toolbar-title {
+    font-size: 1.125rem !important;
+    font-weight: 600 !important;
+    color: var(--dashboard-text) !important;
+}
+
+.calendar-widget .fc-button {
+    padding: 0.375rem 0.75rem !important;
+    font-size: 0.8125rem !important;
+    border-radius: var(--dashboard-radius-sm) !important;
+}
+
+.calendar-widget .fc-button-primary {
+    background-color: var(--dashboard-primary) !important;
+    border-color: var(--dashboard-primary) !important;
+}
+
+.calendar-widget .fc-button-primary:not(:disabled):active,
+.calendar-widget .fc-button-primary:not(:disabled).fc-button-active {
+    background-color: #4338ca !important;
+    border-color: #4338ca !important;
+}
+
+.calendar-widget .fc-daygrid-day-number {
+    font-size: 0.875rem;
+    color: var(--dashboard-text);
+}
+
+.calendar-widget .fc-daygrid-day.fc-day-today {
+    background-color: rgba(79, 70, 229, 0.05) !important;
+}
+
+.calendar-widget .fc-event {
+    border-radius: 4px;
+    font-size: 0.75rem;
+    padding: 2px 4px;
+}
+
+/* ==========================================================================
+   BIRTHDAY WIDGET
+   ========================================================================== */
+
+.birthday-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.birthday-item {
+    display: flex;
+    align-items: center;
+    padding: 0.875rem 0;
+    border-bottom: 1px solid var(--dashboard-border);
+}
+
+.birthday-item:last-child {
+    border-bottom: none;
+}
+
+.birthday-item .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 0.875rem;
+    object-fit: cover;
+}
+
+.birthday-item .info {
+    flex-grow: 1;
+}
+
+.birthday-item .name {
+    font-weight: 500;
+    color: var(--dashboard-text);
+    margin-bottom: 0.125rem;
+}
+
+.birthday-item .department {
+    font-size: 0.75rem;
+    color: var(--dashboard-text-muted);
+}
+
+.birthday-item .date {
+    text-align: right;
+}
+
+.birthday-item .date .day {
+    display: block;
+    font-weight: 600;
+    color: var(--dashboard-text);
+    font-size: 0.875rem;
+}
+
+.birthday-item .date .countdown {
+    font-size: 0.6875rem;
+    color: var(--dashboard-success);
+    font-weight: 500;
+}
+
+/* Birthday coming soon highlight */
+.birthday-item.coming-soon {
+    background-color: rgba(245, 158, 11, 0.05);
+    margin: 0 -1.25rem;
+    padding: 0.875rem 1.25rem;
+    border-radius: var(--dashboard-radius-sm);
+}
+
+/* ==========================================================================
+   PUBLICATIONS WIDGET
+   ========================================================================== */
+
+.publication-item {
+    padding: 1rem;
+    border-left: 3px solid var(--dashboard-primary);
+    background: rgba(79, 70, 229, 0.02);
+    border-radius: 0 var(--dashboard-radius-sm) var(--dashboard-radius-sm) 0;
+    margin-bottom: 0.75rem;
+}
+
+.publication-item:last-child {
+    margin-bottom: 0;
+}
+
+.publication-item .title {
+    font-weight: 600;
+    color: var(--dashboard-text);
+    margin-bottom: 0.375rem;
+    font-size: 0.9375rem;
+}
+
+.publication-item .meta {
+    font-size: 0.75rem;
+    color: var(--dashboard-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.publication-item .meta i {
+    margin-right: 0.25rem;
+}
+
+/* ==========================================================================
+   APPROVAL QUEUE WIDGET
+   ========================================================================== */
+
+.approval-item {
+    padding: 1rem;
+    border-radius: var(--dashboard-radius-sm);
+    background: var(--dashboard-bg);
+    margin-bottom: 0.75rem;
+    transition: background 0.2s ease;
+}
+
+.approval-item:hover {
+    background: #f3f4f6;
+}
+
+.approval-item:last-child {
+    margin-bottom: 0;
+}
+
+.approval-item .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.approval-item .employee {
+    font-weight: 500;
+    color: var(--dashboard-text);
+}
+
+.approval-item .type {
+    font-size: 0.75rem;
+    color: var(--dashboard-text-muted);
+}
+
+.approval-item .dates {
+    font-size: 0.8125rem;
+    color: var(--dashboard-text-muted);
+}
+
+.approval-item .actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.approval-item .btn-approve,
+.approval-item .btn-reject {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    border-radius: var(--dashboard-radius-sm);
+}
+
+/* ==========================================================================
+   EMPTY STATES
+   ========================================================================== */
+
+.empty-state {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--dashboard-text-muted);
+}
+
+.empty-state i {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+    opacity: 0.5;
+}
+
+.empty-state .message {
+    font-size: 0.9375rem;
+}
+
+/* ==========================================================================
+   CHARTS
+   ========================================================================== */
+
+.chart-container {
+    position: relative;
+    height: 280px;
+}
+
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+    font-size: 0.8125rem;
+}
+
+.chart-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.chart-legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+}
+
+/* ==========================================================================
+   ANIMATIONS
+   ========================================================================== */
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.spin-animation {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 992px) {
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .stat-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 1.125rem;
+    }
+
+    .kpi-value {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-title {
+        font-size: 1.5rem;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+
+    .dashboard-header .col-auto {
+        margin-top: 1rem;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .stat-value {
+        font-size: 1.375rem;
+    }
+
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .quick-action-btn {
+        padding: 0.625rem 0.75rem;
+        font-size: 0.8125rem;
+    }
+
+    .chart-container {
+        height: 220px;
+    }
+}
+
+@media (max-width: 576px) {
+    .dashboard-card .card-body {
+        padding: 1rem;
+    }
+
+    .stat-card .card-body {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .stat-icon {
+        order: -1;
+    }
+}
+
+/* ==========================================================================
+   DARK MODE SUPPORT (if implemented)
+   ========================================================================== */
+
+[data-theme="dark"] {
+    --dashboard-text: #f9fafb;
+    --dashboard-text-muted: #9ca3af;
+    --dashboard-border: rgba(255, 255, 255, 0.1);
+    --dashboard-bg: #111827;
+    --dashboard-card-bg: #1f2937;
+}
+
+[data-theme="dark"] .dashboard-card {
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .stat-icon.bg-primary-subtle {
+    background-color: rgba(79, 70, 229, 0.2);
+}
+
+[data-theme="dark"] .stat-icon.bg-success-subtle {
+    background-color: rgba(16, 185, 129, 0.2);
+}
+
+[data-theme="dark"] .stat-icon.bg-warning-subtle {
+    background-color: rgba(245, 158, 11, 0.2);
+}
+
+[data-theme="dark"] .stat-icon.bg-info-subtle {
+    background-color: rgba(59, 130, 246, 0.2);
+}
+
+[data-theme="dark"] .dashboard-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+}
