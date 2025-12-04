@@ -33,7 +33,7 @@
     margin: 0 auto;
 }
 
-.sidebar-toggle {
+.help-breadcrumb .sidebar-toggle {
     display: none;
     background: none;
     border: none;
@@ -45,7 +45,7 @@
     transition: all 0.2s;
 }
 
-.sidebar-toggle:hover {
+.help-breadcrumb .sidebar-toggle:hover {
     background: var(--color-200);
     color: var(--primary-color);
 }
@@ -84,7 +84,7 @@
 }
 
 /* ========================================
-   SIDEBAR - IMPROVED
+   SIDEBAR - IMPROVED (scoped to .help-sidebar)
    ======================================== */
 .help-sidebar {
     width: 300px;
@@ -100,7 +100,7 @@
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.03);
 }
 
-.sidebar-header {
+.help-sidebar .sidebar-header {
     padding: 24px 20px;
     background: var(--primary-color);
     color: var(--color-fff);
@@ -108,7 +108,7 @@
     overflow: hidden;
 }
 
-.sidebar-header::before {
+.help-sidebar .sidebar-header::before {
     content: '';
     position: absolute;
     top: -50%;
@@ -120,7 +120,7 @@
     pointer-events: none;
 }
 
-.sidebar-header h3 {
+.help-sidebar .sidebar-header h3 {
     margin: 0 0 6px 0;
     font-size: 1.15rem;
     font-weight: 700;
@@ -128,48 +128,48 @@
     position: relative;
 }
 
-.sidebar-header p {
+.help-sidebar .sidebar-header p {
     margin: 0;
     font-size: 0.8rem;
     opacity: 0.85;
     position: relative;
 }
 
-.sidebar-nav {
+.help-sidebar .sidebar-nav {
     flex: 1;
     padding: 16px 0;
     overflow-y: auto;
 }
 
-/* Custom scrollbar for sidebar */
-.sidebar-nav::-webkit-scrollbar {
+/* Custom scrollbar for help sidebar */
+.help-sidebar .sidebar-nav::-webkit-scrollbar {
     width: 4px;
 }
 
-.sidebar-nav::-webkit-scrollbar-track {
+.help-sidebar .sidebar-nav::-webkit-scrollbar-track {
     background: transparent;
 }
 
-.sidebar-nav::-webkit-scrollbar-thumb {
+.help-sidebar .sidebar-nav::-webkit-scrollbar-thumb {
     background: var(--border-color);
     border-radius: 4px;
 }
 
-.sidebar-nav::-webkit-scrollbar-thumb:hover {
+.help-sidebar .sidebar-nav::-webkit-scrollbar-thumb:hover {
     background: var(--primary-color);
 }
 
-.sidebar-menu {
+.help-sidebar .sidebar-menu {
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
-.sidebar-item {
+.help-sidebar .sidebar-item {
     margin: 3px 12px;
 }
 
-.sidebar-item a {
+.help-sidebar .sidebar-item a {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -182,24 +182,24 @@
     position: relative;
 }
 
-.sidebar-item a:hover {
+.help-sidebar .sidebar-item a:hover {
     background: var(--color-200);
     color: var(--primary-color);
     transform: translateX(3px);
 }
 
-.sidebar-item.active a {
+.help-sidebar .sidebar-item.active a {
     background: var(--primary-color);
     color: var(--color-fff);
     font-weight: 500;
     box-shadow: 0 2px 8px rgba(var(--primary-rgb), 0.25);
 }
 
-.sidebar-item.active a:hover {
+.help-sidebar .sidebar-item.active a:hover {
     transform: none;
 }
 
-.sidebar-item .section-number {
+.help-sidebar .sidebar-item .section-number {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -213,36 +213,36 @@
     transition: all 0.2s;
 }
 
-.sidebar-item:hover .section-number {
+.help-sidebar .sidebar-item:hover .section-number {
     background: var(--primary-color);
     color: var(--color-fff);
 }
 
-.sidebar-item.active .section-number {
+.help-sidebar .sidebar-item.active .section-number {
     background: rgba(255, 255, 255, 0.2);
     color: var(--color-fff);
 }
 
-.sidebar-item i {
+.help-sidebar .sidebar-item i {
     font-size: 1.1rem;
     width: 22px;
     text-align: center;
     opacity: 0.9;
 }
 
-.sidebar-divider {
+.help-sidebar .sidebar-divider {
     height: 1px;
     background: var(--border-color);
     margin: 12px 20px;
 }
 
-.sidebar-footer {
+.help-sidebar .sidebar-footer {
     padding: 16px 20px;
     border-top: 1px solid var(--border-color);
     background: var(--color-200);
 }
 
-.back-to-app {
+.help-sidebar .back-to-app {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -255,16 +255,16 @@
     font-weight: 500;
 }
 
-.back-to-app:hover {
+.help-sidebar .back-to-app:hover {
     background: var(--card-color);
     color: var(--primary-color);
 }
 
-.back-to-app i {
+.help-sidebar .back-to-app i {
     transition: transform 0.2s;
 }
 
-.back-to-app:hover i {
+.help-sidebar .back-to-app:hover i {
     transform: translateX(-3px);
 }
 
@@ -874,7 +874,7 @@
         left: 0;
     }
 
-    .sidebar-toggle {
+    .help-breadcrumb .sidebar-toggle {
         display: block;
     }
 

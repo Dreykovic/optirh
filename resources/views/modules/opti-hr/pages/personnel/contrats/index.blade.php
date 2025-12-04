@@ -91,6 +91,46 @@
 
     <!-- Modal Members-->
     @include('modules.opti-hr.pages.personnel.contrats.add')
+
+    <!-- Modal Edit Balance -->
+    @can('configurer-une-absence')
+    <div class="modal fade" id="editBalanceModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modifier le solde de congés</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="edit_duty_id">
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Employé</label>
+                        <p id="edit_employee_name" class="fw-bold fs-5 mb-0"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Solde actuel</label>
+                        <p id="edit_current_balance" class="fw-bold text-primary mb-0"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_absence_balance" class="form-label required">Nouveau solde (jours)</label>
+                        <input type="number" class="form-control" id="edit_absence_balance" min="0" max="365" required>
+                        <div class="form-text">Entrez le nouveau solde de congés (0-365 jours)</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_reason" class="form-label">Raison de la modification</label>
+                        <input type="text" class="form-control" id="edit_reason" placeholder="Ex: Ajustement annuel, correction erreur...">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" onclick="saveAbsenceBalance()">
+                        <i class="icofont-check me-1"></i>Enregistrer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endcan
 @endsection
 @push('plugins-js')
 @endpush
