@@ -257,7 +257,7 @@
 
     {{-- Aide --}}
     <li class="menu-item">
-        <a class="m-link {{ Request::is('opti-hr/help') ? 'active' : '' }}" href="{{ route('help') }}">
+        <a class="m-link {{ Request::is('opti-hr/help*') ? 'active' : '' }}" href="{{ route('help.index') }}">
             <i class="icofont-question-circle"></i>
             <span>Aide</span>
         </a>

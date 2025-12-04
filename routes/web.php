@@ -117,11 +117,53 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/dashboard/refresh', [DashboardController::class, 'refresh'])->name('opti-hr.dashboard.refresh');
 
         /*
-         * Help
+         * Help - Guide Utilisateur Multi-Pages
          */
-        Route::get('/help', function () {
-            return view('modules.opti-hr.pages.help');
-        })->name('help');
+        Route::prefix('help')->name('help.')->group(function () {
+            Route::get('/', function () {
+                return view('modules.opti-hr.pages.help.index');
+            })->name('index');
+
+            Route::get('/introduction', function () {
+                return view('modules.opti-hr.pages.help.introduction');
+            })->name('introduction');
+
+            Route::get('/prise-en-main', function () {
+                return view('modules.opti-hr.pages.help.prise-en-main');
+            })->name('prise-en-main');
+
+            Route::get('/tableau-de-bord', function () {
+                return view('modules.opti-hr.pages.help.tableau-de-bord');
+            })->name('tableau-de-bord');
+
+            Route::get('/absences', function () {
+                return view('modules.opti-hr.pages.help.absences');
+            })->name('absences');
+
+            Route::get('/documents', function () {
+                return view('modules.opti-hr.pages.help.documents');
+            })->name('documents');
+
+            Route::get('/personnel', function () {
+                return view('modules.opti-hr.pages.help.personnel');
+            })->name('personnel');
+
+            Route::get('/espace-collaboratif', function () {
+                return view('modules.opti-hr.pages.help.espace-collaboratif');
+            })->name('espace-collaboratif');
+
+            Route::get('/mon-espace', function () {
+                return view('modules.opti-hr.pages.help.mon-espace');
+            })->name('mon-espace');
+
+            Route::get('/faq', function () {
+                return view('modules.opti-hr.pages.help.faq');
+            })->name('faq');
+
+            Route::get('/problemes', function () {
+                return view('modules.opti-hr.pages.help.problemes');
+            })->name('problemes');
+        });
 
         // membres
         Route::prefix('membres')->group(function () {
@@ -187,6 +229,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::put('/{id}/resigned', [DutyController::class, 'resigned'])->name('contrats.resigned');
             Route::put('/{id}/dismissed', [DutyController::class, 'dismissed'])->name('contrats.dismissed');
             Route::put('/{id}/deleted', [DutyController::class, 'deleted'])->name('contrats.deleted');
+            Route::put('/{id}/absence-balance', [DutyController::class, 'updateAbsenceBalance'])->name('contrats.absence-balance');
             Route::post('/add', [DutyController::class, 'add'])->name('contrats.add');
         });
 

@@ -5,7 +5,7 @@
             <!-- header rightbar icon -->
             <div class="h-right d-flex align-items-center mr-5 mr-lg-0 order-1">
                 <div class="d-flex">
-                    <a class="nav-link text-primary collapsed" href="{{ route('help') }}" title="Get Help">
+                    <a class="nav-link text-primary collapsed" href="{{ route('help.index') }}" title="Get Help">
                         <i class="icofont-info-square fs-5"></i>
                     </a>
                 </div>
