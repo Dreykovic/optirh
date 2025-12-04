@@ -2,7 +2,7 @@
 <aside class="help-sidebar">
     <div class="sidebar-header">
         <h3>Guide Utilisateur</h3>
-        <p>OptiHR - ARCOP MAN</p>
+        <p>OptiHR - Documentation</p>
     </div>
 
     <nav class="sidebar-nav">
@@ -21,7 +21,6 @@
                     <li class="sidebar-item {{ $currentSection === $section['slug'] ? 'active' : '' }}">
                         <a href="{{ route($section['route']) }}">
                             <span class="section-number">{{ $index }}</span>
-                            <i class="{{ $section['icon'] }}"></i>
                             <span>{{ $section['title'] }}</span>
                         </a>
                     </li>
