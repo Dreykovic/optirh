@@ -44,36 +44,19 @@
             </div>
         </li>
         <li>
-            <div class="modelUpdateFormContainer dropdown-item py-2 rounded" id="absenceRejectForm{{ $absence->id }}">
-
-                <form data-model-update-url="{{ route('absences.reject', $absence->id) }}">
-
-
-
-
-                    <a role="button" class="modelUpdateBtn " atl="update client status">
-                        <span class="normal-status">
-                            <i class="icofont-close text-danger"></i>
-                            <span class="d-none d-sm-none d-md-inline">Rejeter</span>
-                        </span>
-                        <span class="indicateur d-none">
-                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                            Un Instant...
-                        </span>
-                    </a>
-
-                </form>
-            </div>
+            <a class="dropdown-item py-2 rounded" data-bs-toggle="modal"
+                data-bs-target="#absenceReject{{ $absence->id }}" role="button">
+                <i class="icofont-close text-danger"></i>
+                <span class="d-none d-sm-none d-md-inline">Rejeter</span>
+            </a>
         </li>
 
         <li>
             <a class="dropdown-item py-2 rounded" data-bs-toggle="modal"
-                data-bs-target="#absenceCommentAdd{{ $absence->id }}" role="button">
-                <i class="icofont-comment"></i>
-
-                <span class="d-none d-sm-none d-md-inline">Configurer</span>
+                data-bs-target="#absenceComment{{ $absence->id }}" role="button">
+                <i class="icofont-comment text-primary"></i>
+                <span class="d-none d-sm-none d-md-inline">Commenter</span>
             </a>
-            </div>
         </li>
     @endif
 

@@ -75,9 +75,8 @@
                                                 @break
 
                                                 @case('CANCELLED')
-                                                    <span class=" color-lavender-purple">
-
-                                                        Annulé
+                                                    <span class="text-secondary">
+                                                        <i class="icofont-ban me-1"></i>Annulé
                                                     </span>
                                                 @break
 
@@ -96,9 +95,8 @@
                                                 @break
 
                                                 @default
-                                                    <span class="color-light-orange">
-
-                                                        En attente
+                                                    <span class="text-warning">
+                                                        <i class="icofont-clock-time me-1"></i>En attente
                                                     </span>
                                             @endswitch
 

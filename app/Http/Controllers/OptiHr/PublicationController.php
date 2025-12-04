@@ -7,10 +7,7 @@ use App\Models\OptiHr\Publication;
 use App\Models\OptiHr\PublicationFile;
 use App\Services\ActivityLogService;
 use App\Services\PublicationFileService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
 
 class PublicationController extends Controller
 {
@@ -21,32 +18,31 @@ class PublicationController extends Controller
      */
     protected $fileService;
 
-
     public function __construct()
     {
         parent::__construct(app(ActivityLogService::class)); // Injection automatique
 
-        $this->fileService = new PublicationFileService();
+        $this->fileService = new PublicationFileService;
 
         $this->middleware(['permission:voir-une-publication|écrire-une-publication|créer-une-publication|configurer-une-publication|voir-un-tout'], ['only' => ['index']]);
         $this->middleware(['permission:créer-une-publication|créer-un-tout'], ['only' => ['store']]);
-        $this->middleware(['permission:écrire-une-publication|écrire-un-tout'], ['only' => ['destroy', 'updateStatus']]);
+        $this->middleware(['permission:écrire-une-publication|écrire-un-tout'], ['only' => ['destroy', 'updateStatus', 'update']]);
     }
 
     /**
      * Afficher la liste des publications filtrée par statut
      *
-     * @param string $status
+     * @param  string  $status
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
-    public function index($status = 'all')
+    public function index(Request $request, $status = 'all')
     {
 
         // Liste des statuts valides
         $validStatus = ['archived', 'pending', 'published'];
 
         // Vérification de la validité du statut
-        if ($status !== 'all' && !in_array($status, $validStatus)) {
+        if ($status !== 'all' && ! in_array($status, $validStatus)) {
             $this->activityLogger->log(
                 'error',
                 "Tentative d'accès aux publications avec un statut invalide: {$status}"
@@ -55,25 +51,33 @@ class PublicationController extends Controller
             return redirect()->back()->with('error', 'Statut invalide');
         }
 
-        // Construction de la requête
-        $publications = $this->getPublicationsByStatus($status);
+        // Récupérer les paramètres de filtre
+        $filters = [
+            'status' => $status,
+            'date_filter' => $request->input('date_filter', 'all'),
+            'search' => $request->input('search', ''),
+        ];
+
+        // Construction de la requête avec filtres
+        $publications = $this->getPublicationsByStatus($status, $filters);
 
         $this->activityLogger->log(
             'view',
             "Consultation de la liste des publications - Statut: {$status}"
         );
 
-        return view('modules.opti-hr.pages.publications.config.index', compact('publications', 'status'));
+        return view('modules.opti-hr.pages.publications.config.index', compact('publications', 'status', 'filters'));
 
     }
 
     /**
-     * Récupère les publications filtrées par statut
+     * Récupère les publications filtrées par statut et autres critères
      *
-     * @param string $status
+     * @param  string  $status
+     * @param  array  $filters
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    private function getPublicationsByStatus($status)
+    private function getPublicationsByStatus($status, $filters = [])
     {
         $query = Publication::query();
 
@@ -81,6 +85,29 @@ class PublicationController extends Controller
         $query->when($status !== 'all', function ($q) use ($status) {
             $q->where('status', $status);
         });
+
+        // Filtrer par date
+        if (! empty($filters['date_filter']) && $filters['date_filter'] !== 'all') {
+            $query->when($filters['date_filter'] === 'today', function ($q) {
+                $q->whereDate('created_at', now()->toDateString());
+            });
+            $query->when($filters['date_filter'] === 'week', function ($q) {
+                $q->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+            });
+            $query->when($filters['date_filter'] === 'month', function ($q) {
+                $q->whereMonth('created_at', now()->month)
+                    ->whereYear('created_at', now()->year);
+            });
+        }
+
+        // Filtrer par recherche textuelle
+        if (! empty($filters['search'])) {
+            $searchTerm = $filters['search'];
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('title', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('content', 'LIKE', "%{$searchTerm}%");
+            });
+        }
 
         // Charger les relations nécessaires
         $query->with(['author', 'files']);
@@ -92,8 +119,8 @@ class PublicationController extends Controller
     /**
      * Mettre à jour le statut d'une publication
      *
-     * @param string $status
-     * @param int $id
+     * @param  string  $status
+     * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function updateStatus($status, $id)
@@ -103,7 +130,7 @@ class PublicationController extends Controller
         $validStatus = ['archived', 'pending', 'published'];
 
         // Vérification de la validité du statut
-        if (!in_array($status, $validStatus)) {
+        if (! in_array($status, $validStatus)) {
             $this->activityLogger->log(
                 'error',
                 "Tentative de mise à jour d'une publication avec un statut invalide: {$status}"
@@ -111,7 +138,7 @@ class PublicationController extends Controller
 
             return response()->json([
                 'ok' => false,
-                'message' => 'Statut invalide'
+                'message' => 'Statut invalide',
             ], 400);
         }
 
@@ -130,15 +157,80 @@ class PublicationController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => 'Statut mis à jour avec succès'
+            'message' => 'Statut mis à jour avec succès',
         ]);
 
     }
 
     /**
+     * Mettre à jour une publication
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request, string $id)
+    {
+        try {
+            $validated = $request->validate([
+                'title' => 'required|string|max:255',
+                'content' => 'nullable|string',
+                'files_to_delete' => 'nullable|string',
+                'files.*' => 'nullable|mimes:jpg,jpeg,png,gif,pdf|max:10240',
+            ]);
+
+            $publication = Publication::findOrFail($id);
+
+            // Vérifier: auteur OU permission configurer
+            if ((int) $publication->author_id !== (int) auth()->id()
+                && ! auth()->user()->can('configurer-une-publication')) {
+                return response()->json(['ok' => false, 'message' => 'Non autorisé'], 403);
+            }
+
+            $publication->update([
+                'title' => $validated['title'],
+                'content' => $validated['content'] ?? null,
+            ]);
+
+            // Supprimer les fichiers marqués
+            if (! empty($request->input('files_to_delete'))) {
+                $fileIds = array_filter(explode(',', $request->input('files_to_delete')));
+                foreach ($fileIds as $fileId) {
+                    $file = PublicationFile::find($fileId);
+                    if ($file && (int) $file->publication_id === (int) $publication->id) {
+                        $this->fileService->destroyFile($file);
+
+                        $this->activityLogger->log(
+                            'deleted',
+                            "Suppression d'un fichier de la publication #{$id}: {$file->display_name}",
+                            $file
+                        );
+                    }
+                }
+            }
+
+            // Ajouter les nouveaux fichiers
+            $this->processPublicationFiles($request, $publication);
+
+            $this->activityLogger->log(
+                'updated',
+                "Modification publication #{$id}: {$publication->title}",
+                $publication
+            );
+
+            return response()->json([
+                'ok' => true,
+                'message' => 'Publication mise à jour avec succès',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Erreur lors de la mise à jour: '.$e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
      * Enregistrer une nouvelle publication
      *
-     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
@@ -151,7 +243,7 @@ class PublicationController extends Controller
         ]);
 
         // Création de la publication
-        $publication = new Publication();
+        $publication = new Publication;
         $publication->title = $validatedData['title'];
         $publication->content = $request->input('content');
         $publication->author_id = auth()->id();
@@ -168,7 +260,7 @@ class PublicationController extends Controller
 
         return response()->json([
             'message' => 'Note créée avec succès',
-            'ok' => true
+            'ok' => true,
         ]);
 
     }
@@ -176,8 +268,6 @@ class PublicationController extends Controller
     /**
      * Traiter les fichiers attachés à une publication
      *
-     * @param Request $request
-     * @param Publication $publication
      * @return void
      */
     private function processPublicationFiles(Request $request, Publication $publication)
@@ -200,7 +290,7 @@ class PublicationController extends Controller
     /**
      * Prévisualiser un fichier de publication
      *
-     * @param int $id
+     * @param  int  $id
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
      */
     public function preview($id)
@@ -227,7 +317,7 @@ class PublicationController extends Controller
                 'image/png',
                 'image/gif',
                 'text/plain',
-                'text/html'
+                'text/html',
             ])
         ) {
             return response()->file($filePath);
@@ -240,7 +330,6 @@ class PublicationController extends Controller
     /**
      * Supprimer une publication
      *
-     * @param string $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(string $id)
@@ -272,7 +361,7 @@ class PublicationController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => 'La note a été supprimée avec succès.'
+            'message' => 'La note a été supprimée avec succès.',
         ]);
 
     }

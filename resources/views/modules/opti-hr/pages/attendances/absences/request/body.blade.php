@@ -48,24 +48,57 @@
                 </div>
             </div>
             
-            <!-- Indicateur de déductibilité - Modifié pour utiliser le champ is_deductible de l'absence -->
+            <!-- Indicateur de déductibilité avec toggle pour GRH -->
             <div class="deductibility-indicator px-3">
-                @if($absence->is_deductible)
-                    <div class="d-flex align-items-center">
-                        <span class="badge rounded-pill bg-warning bg-opacity-25 text-black border border-warning px-3 py-2 me-2">
-                            <i class="icofont-minus-circle me-1"></i>Déductible
+                @if(auth()->user()->hasRole('GRH'))
+                    <!-- Toggle inline pour le GRH -->
+                    <div class="d-flex align-items-center deductibility-toggle-container"
+                         data-absence-id="{{ $absence->id }}"
+                         data-url="{{ route('absences.deductibility', $absence->id) }}">
+                        <div class="form-check form-switch me-2">
+                            <input class="form-check-input deductibility-switch"
+                                   type="checkbox"
+                                   role="switch"
+                                   id="deductibilitySwitch{{ $absence->id }}"
+                                   {{ $absence->is_deductible ? 'checked' : '' }}>
+                        </div>
+                        <label for="deductibilitySwitch{{ $absence->id }}" class="deductibility-label mb-0">
+                            @if($absence->is_deductible)
+                                <span class="badge rounded-pill bg-warning bg-opacity-25 text-black border border-warning px-3 py-2">
+                                    <i class="icofont-minus-circle me-1"></i>Déductible
+                                </span>
+                            @else
+                                <span class="badge rounded-pill bg-success bg-opacity-25 text-black border border-success px-3 py-2">
+                                    <i class="icofont-plus-circle me-1"></i>Non déductible
+                                </span>
+                            @endif
+                        </label>
+                        <span class="deductibility-spinner ms-2 d-none">
+                            <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
                         </span>
-                        <span class="text-muted small">Impact sur le solde</span>
+                    </div>
+                    <div class="small text-muted mt-1">
+                        <i class="icofont-hand-drag me-1"></i>Cliquez pour modifier
                     </div>
                 @else
-                    <div class="d-flex align-items-center">
-                        <span class="badge rounded-pill bg-success bg-opacity-25 text-black border border-success px-3 py-2 me-2">
-                            <i class="icofont-plus-circle me-1"></i>Non déductible
-                        </span>
-                        <span class="text-muted small">Pas d'impact sur le solde</span>
-                    </div>
+                    <!-- Affichage simple pour les autres rôles -->
+                    @if($absence->is_deductible)
+                        <div class="d-flex align-items-center">
+                            <span class="badge rounded-pill bg-warning bg-opacity-25 text-black border border-warning px-3 py-2 me-2">
+                                <i class="icofont-minus-circle me-1"></i>Déductible
+                            </span>
+                            <span class="text-muted small">Impact sur le solde</span>
+                        </div>
+                    @else
+                        <div class="d-flex align-items-center">
+                            <span class="badge rounded-pill bg-success bg-opacity-25 text-black border border-success px-3 py-2 me-2">
+                                <i class="icofont-plus-circle me-1"></i>Non déductible
+                            </span>
+                            <span class="text-muted small">Pas d'impact sur le solde</span>
+                        </div>
+                    @endif
                 @endif
-                
+
                 <!-- Ajout d'un indicateur si la déductibilité diffère du type d'absence -->
                 @if($absence->is_deductible != $absence->absence_type->is_deductible)
                     <div class="small text-info mt-1">
@@ -204,6 +237,52 @@
             </div>
         </div>
 
-       
+        <!-- Section piece justificative -->
+        @if($absence->proof)
+        <div class="p-4 border-top">
+            <h6 class="fw-bold mb-3 d-flex align-items-center">
+                <i class="icofont-paper-clip me-2 text-primary"></i>Piece justificative
+            </h6>
+            <div class="bg-light rounded-3 p-3 border">
+                @php
+                    $extension = pathinfo($absence->proof, PATHINFO_EXTENSION);
+                    $isImage = in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif']);
+                    $isPdf = strtolower($extension) === 'pdf';
+                @endphp
+
+                @if($isImage)
+                    <div class="text-center mb-3">
+                        <a href="{{ asset('storage/' . $absence->proof) }}" target="_blank" rel="noopener noreferrer">
+                            <img src="{{ asset('storage/' . $absence->proof) }}"
+                                 alt="Justificatif"
+                                 class="img-fluid rounded shadow-sm"
+                                 style="max-height: 300px; cursor: pointer;">
+                        </a>
+                    </div>
+                @elseif($isPdf)
+                    <div class="ratio ratio-16x9 mb-3" style="max-height: 350px;">
+                        <iframe src="{{ asset('storage/' . $absence->proof) }}"
+                                class="rounded shadow-sm border"></iframe>
+                    </div>
+                @endif
+
+                <div class="d-flex gap-2" style="position: relative; z-index: 1050;">
+                    <a href="{{ asset('storage/' . $absence->proof) }}"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="btn btn-sm btn-outline-primary"
+                       style="cursor: pointer; pointer-events: auto;">
+                        <i class="icofont-eye-alt me-1"></i>Voir en plein ecran
+                    </a>
+                    <a href="{{ asset('storage/' . $absence->proof) }}"
+                       download
+                       class="btn btn-sm btn-outline-secondary"
+                       style="cursor: pointer; pointer-events: auto;">
+                        <i class="icofont-download me-1"></i>Telecharger
+                    </a>
+                </div>
+            </div>
+        </div>
+        @endif
     </div>
 </div>

@@ -1,0 +1,571 @@
+/* ================================================
+   ANNUAL DECISIONS STYLES
+   Consolidated CSS for annual decisions module
+   ================================================ */
+
+/* Variables ARCOP */
+:root {
+    --arcop-green: #37a045;
+    --arcop-green-light: #b5d8b7;
+    --arcop-green-dark: #2a7b33;
+    --arcop-red: #e73137;
+    --arcop-yellow: #ffd700;
+    --arcop-yellow-light: #fff5b1;
+    --arcop-text-dark: #333333;
+    --arcop-text-light: #6c757d;
+    --arcop-bg-light: #f8f9fa;
+    --arcop-border-light: #dee2e6;
+    --transition: all 0.25s ease;
+    --card-border-radius: 12px;
+    --btn-border-radius: 6px;
+}
+
+/* ================================================
+   MAIN CONTAINER
+   ================================================ */
+.annual-decisions-container {
+    padding: 1.5rem;
+    background-color: var(--arcop-bg-light);
+}
+
+/* ================================================
+   HEADER SECTION
+   ================================================ */
+.decisions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    background: linear-gradient(135deg, var(--arcop-green-light) 0%, transparent 100%);
+    padding: 1.5rem;
+    border-radius: var(--card-border-radius);
+    border-left: 4px solid var(--arcop-green);
+}
+
+.decisions-title h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    color: var(--arcop-green-dark);
+}
+
+.decisions-title p {
+    margin-bottom: 0;
+    color: var(--arcop-text-light);
+}
+
+/* ================================================
+   BUTTONS
+   ================================================ */
+.annual-decisions-container .btn-outline-primary {
+    color: var(--arcop-green);
+    border-color: var(--arcop-green);
+    border-radius: var(--btn-border-radius);
+    transition: var(--transition);
+}
+
+.annual-decisions-container .btn-outline-primary:hover {
+    background-color: var(--arcop-green);
+    border-color: var(--arcop-green);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(55, 160, 69, 0.2);
+}
+
+.annual-decisions-container .btn-primary {
+    background: var(--arcop-green);
+    border: none;
+    border-radius: var(--btn-border-radius);
+    box-shadow: 0 4px 6px rgba(55, 160, 69, 0.2);
+    transition: var(--transition);
+}
+
+.annual-decisions-container .btn-primary:hover {
+    background-color: var(--arcop-green-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(55, 160, 69, 0.25);
+}
+
+.annual-decisions-container .btn-sm {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+    border-radius: var(--btn-border-radius);
+}
+
+.annual-decisions-container .btn-outline-secondary {
+    transition: var(--transition);
+}
+
+.annual-decisions-container .btn-outline-secondary:hover {
+    background-color: var(--arcop-bg-light);
+}
+
+/* ================================================
+   CURRENT DECISION CARD (Featured)
+   ================================================ */
+.current-decision-section {
+    margin-bottom: 2rem;
+}
+
+.current-decision-card {
+    background-color: #fff;
+    border-radius: var(--card-border-radius);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: var(--transition);
+    border: 2px solid var(--arcop-green-light);
+}
+
+.current-decision-card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    transform: translateY(-3px);
+}
+
+.current-decision-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, var(--arcop-green-light) 0%, rgba(55, 160, 69, 0.1) 100%);
+    border-bottom: 1px solid var(--arcop-green-light);
+}
+
+.current-decision-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.current-decision-badge .badge {
+    background: var(--arcop-green);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.current-decision-badge .decision-number {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--arcop-green-dark);
+}
+
+.current-decision-body {
+    padding: 1.5rem;
+}
+
+.current-decision-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.decision-info-item {
+    padding: 0.75rem;
+    background-color: var(--arcop-bg-light);
+    border-radius: 8px;
+    border-left: 3px solid var(--arcop-green-light);
+    transition: var(--transition);
+}
+
+.decision-info-item:hover {
+    transform: translateX(3px);
+    border-left-color: var(--arcop-green);
+}
+
+.decision-info-label {
+    font-size: 0.8rem;
+    color: var(--arcop-text-light);
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.decision-info-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--arcop-text-dark);
+}
+
+.current-decision-footer {
+    padding: 1rem 1.5rem;
+    background-color: var(--arcop-bg-light);
+    border-top: 1px solid var(--arcop-border-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.decision-validity {
+    display: flex;
+    align-items: center;
+    color: var(--arcop-text-dark);
+    font-size: 0.9rem;
+}
+
+.decision-validity i {
+    color: var(--arcop-green) !important;
+}
+
+/* ================================================
+   DECISION STAMP
+   ================================================ */
+.decision-stamp {
+    width: 100px;
+    height: 100px;
+    border: 3px solid var(--arcop-green);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background: linear-gradient(135deg, rgba(55, 160, 69, 0.05) 0%, rgba(55, 160, 69, 0.1) 100%);
+    animation: pulse 2s infinite;
+}
+
+.decision-stamp::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    bottom: -8px;
+    left: -8px;
+    border: 1px dashed var(--arcop-green);
+    border-radius: 50%;
+    opacity: 0.5;
+}
+
+.stamp-inner {
+    text-align: center;
+}
+
+.stamp-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--arcop-green);
+    line-height: 1;
+}
+
+.stamp-year {
+    font-size: 0.85rem;
+    color: var(--arcop-text-dark);
+    font-weight: 600;
+}
+
+/* ================================================
+   HISTORY TABLE SECTION
+   ================================================ */
+.decisions-history-section {
+    margin-top: 1.5rem;
+}
+
+.history-card {
+    border: none;
+    border-radius: var(--card-border-radius);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.history-card .card-header {
+    background-color: white;
+    border-bottom: 1px solid var(--arcop-border-light);
+    padding: 1rem 1.5rem;
+}
+
+.history-card .card-header h5 {
+    color: var(--arcop-text-dark);
+    font-weight: 600;
+    margin: 0;
+}
+
+.history-card .card-body {
+    padding: 1.5rem;
+}
+
+/* Table Styles */
+.decisions-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.decisions-table td,
+.decisions-table th {
+    border-bottom: 1px solid var(--arcop-border-light);
+    padding: 1rem 1.25rem;
+    vertical-align: middle;
+}
+
+.decisions-table thead th {
+    background-color: var(--arcop-bg-light);
+    border-bottom: 2px solid var(--arcop-border-light);
+    color: var(--arcop-text-dark);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.03em;
+}
+
+.decisions-table tbody tr {
+    transition: var(--transition);
+}
+
+.decisions-table tbody tr:hover {
+    background-color: rgba(55, 160, 69, 0.03);
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    z-index: 1;
+    position: relative;
+}
+
+.decisions-table tbody tr.table-active {
+    background-color: rgba(55, 160, 69, 0.08) !important;
+}
+
+/* ================================================
+   BADGES
+   ================================================ */
+.annual-decisions-container .badge {
+    padding: 0.5em 0.8em;
+    font-weight: 500;
+    border-radius: 30px;
+}
+
+.annual-decisions-container .bg-success {
+    background-color: var(--arcop-green) !important;
+}
+
+.annual-decisions-container .bg-secondary {
+    background-color: var(--arcop-text-light) !important;
+}
+
+/* ================================================
+   DROPDOWN MENU
+   ================================================ */
+.annual-decisions-container .dropdown-menu {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 0;
+}
+
+.annual-decisions-container .dropdown-item {
+    padding: 0.6rem 1rem;
+    transition: var(--transition);
+}
+
+.annual-decisions-container .dropdown-item:hover {
+    background-color: rgba(55, 160, 69, 0.05);
+}
+
+.annual-decisions-container .dropdown-item i {
+    width: 18px;
+    text-align: center;
+    margin-right: 8px;
+}
+
+.annual-decisions-container .dropdown-divider {
+    margin: 0.3rem 0;
+}
+
+.annual-decisions-container .dropdown-item.text-danger {
+    color: var(--arcop-red) !important;
+}
+
+.annual-decisions-container .dropdown-item.text-danger:hover {
+    background-color: rgba(231, 49, 55, 0.05);
+}
+
+/* Set as current - hover */
+.annual-decisions-container #setDecisionToCurrentForm a:hover,
+.annual-decisions-container .set-current-btn:hover {
+    background-color: var(--arcop-yellow-light) !important;
+}
+
+/* ================================================
+   EMPTY STATE
+   ================================================ */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem 1.5rem;
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    color: var(--arcop-green-light);
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.empty-state-icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background-color: var(--arcop-green-light);
+    border-radius: 50%;
+    z-index: -1;
+    opacity: 0.3;
+}
+
+.empty-state h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--arcop-text-dark);
+}
+
+.empty-state p {
+    color: var(--arcop-text-light);
+    margin-bottom: 1.5rem;
+    max-width: 400px;
+}
+
+/* ================================================
+   ICONS
+   ================================================ */
+.annual-decisions-container .icofont-star {
+    color: var(--arcop-yellow);
+}
+
+.annual-decisions-container .icofont-download {
+    color: var(--arcop-green);
+}
+
+.annual-decisions-container .icofont-eye {
+    color: var(--arcop-green);
+}
+
+.annual-decisions-container .icofont-plus-circle {
+    color: white;
+}
+
+.annual-decisions-container .icofont-ui-delete {
+    color: var(--arcop-red) !important;
+}
+
+.annual-decisions-container .text-danger {
+    color: var(--arcop-red) !important;
+}
+
+.annual-decisions-container .icofont-file-pdf {
+    color: var(--arcop-red) !important;
+}
+
+/* ================================================
+   MODAL STYLES
+   ================================================ */
+.decision-modal .modal-header {
+    background: linear-gradient(135deg, var(--arcop-green-light) 0%, rgba(55, 160, 69, 0.1) 100%);
+    border-bottom: 1px solid var(--arcop-green-light);
+}
+
+.decision-modal .modal-title {
+    color: var(--arcop-green-dark);
+    font-weight: 600;
+}
+
+.decision-modal .form-label.required::after {
+    content: ' *';
+    color: var(--arcop-red);
+}
+
+.decision-modal .form-control:focus {
+    border-color: var(--arcop-green);
+    box-shadow: 0 0 0 0.2rem rgba(55, 160, 69, 0.25);
+}
+
+/* ================================================
+   ANIMATIONS
+   ================================================ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(55, 160, 69, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(55, 160, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(55, 160, 69, 0);
+    }
+}
+
+/* ================================================
+   RESPONSIVE
+   ================================================ */
+@media (max-width: 768px) {
+    .decisions-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .decisions-actions {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 0.5rem;
+    }
+
+    .decisions-actions .btn {
+        width: 100%;
+    }
+
+    .current-decision-info {
+        grid-template-columns: 1fr;
+    }
+
+    .current-decision-footer {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .current-decision-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+}
+
+/* ================================================
+   PRINT STYLES
+   ================================================ */
+@media print {
+    .decisions-header,
+    .decisions-actions,
+    .decisions-history-section,
+    .dropdown,
+    .btn {
+        display: none !important;
+    }
+
+    .current-decision-card {
+        box-shadow: none;
+        border: 1px solid #000;
+    }
+
+    .decision-stamp {
+        animation: none;
+    }
+}

@@ -2,12 +2,15 @@
 
 namespace App\Exceptions;
 
-use Throwable;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
+use Illuminate\Session\TokenMismatchException;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -44,8 +47,6 @@ class Handler extends ExceptionHandler
         return $this->handleWebException($request, $exception);
     }
 
-
-
     /**
      * Déterminer si la route actuelle est configurée pour retourner du JSON
      */
@@ -65,6 +66,7 @@ class Handler extends ExceptionHandler
 
         return false;
     }
+
     /**
      * Gérer les exceptions pour les requêtes JSON
      */
@@ -110,7 +112,17 @@ class Handler extends ExceptionHandler
         }
 
         // Log de l'erreur
-        \Log::error('Erreur: ' . $exception->getMessage() . ' dans ' . $exception->getFile() . ' ligne ' . $exception->getLine());
+        Log::error('Erreur: '.$exception->getMessage().' dans '.$exception->getFile().' ligne '.$exception->getLine());
+
+        // Pour les erreurs d'autorisation (403)
+        if ($exception instanceof AuthorizationException) {
+            return response()->view('errors.403', [], 403);
+        }
+
+        // Pour les erreurs de session expirée / CSRF (419)
+        if ($exception instanceof TokenMismatchException) {
+            return response()->view('errors.419', [], 419);
+        }
 
         // Pour les erreurs 404, utiliser une vue personnalisée
         if ($exception instanceof NotFoundHttpException) {
@@ -119,13 +131,12 @@ class Handler extends ExceptionHandler
 
         // Pour les erreurs ModelNotFoundException, rediriger avec message
         if ($exception instanceof ModelNotFoundException) {
-            $model = strtolower(class_basename($exception->getModel()));
             return redirect()->back()->with('error', "L'élément demandé est introuvable.");
         }
 
         // En production, afficher un message générique
-        if (!config('app.debug')) {
-            return redirect()->back()->with('error', 'Une erreur s\'est produite. Veuillez réessayer plus tard.');
+        if (! config('app.debug')) {
+            return response()->view('errors.500', [], 500);
         }
 
         // En mode debug, utiliser le comportement par défaut pour voir les détails

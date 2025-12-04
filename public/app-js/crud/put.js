@@ -23,7 +23,12 @@ let AppAdminModelUpdateManager = (function () {
             modelUpdateBtn.addEventListener("click", (e) => {
                 e.preventDefault();
                 const formData = new FormData(modelUpdateForm);
-                console.log(formData);
+
+                // Récupérer la méthode HTTP depuis l'attribut data ou utiliser POST par défaut
+                const httpMethod = modelUpdateForm.dataset.httpMethod || 'POST';
+                if (httpMethod.toUpperCase() === 'PUT') {
+                    formData.append('_method', 'PUT');
+                }
 
                 AppModules.submitFromBtn(
                     modelUpdateBtn,

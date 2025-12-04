@@ -1,28 +1,26 @@
 <?php
 
 namespace App\Http\Controllers\OptiHr;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\DocumentRequestMail;
+
 use App\Http\Controllers\Controller;
-use App\Traits\SendsEmails;
+use App\Mail\DocumentRequestCreated;
+use App\Mail\DocumentRequestStatus;
 use App\Models\OptiHr\DocumentRequest;
 use App\Models\OptiHr\DocumentType;
 use App\Models\OptiHr\Duty;
 use App\Models\User;
 use App\Services\ActivityLogService;
 use App\Services\DocumentPdfService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
-use App\Mail\DocumentRequestCreated;
-use App\Mail\DocumentRequestStatus;
+use App\Traits\SendsEmails;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class DocumentRequestController extends Controller
 {
     use SendsEmails;
+
     /**
      * Le service de journalisation des activités
      *
@@ -34,67 +32,70 @@ class DocumentRequestController extends Controller
     {
         $this->activityLogger = $activityLogger;
 
-        $this->middleware(['permission:voir-un-document|écrire-un-document|créer-un-document|configurer-un-document|voir-un-tout'], ['only' => ['index', "download"]]);
+        $this->middleware(['permission:voir-un-document|écrire-un-document|créer-un-document|configurer-un-document|voir-un-tout'], ['only' => ['index', 'download']]);
         $this->middleware(['permission:créer-un-document|créer-un-tout'], ['only' => ['store', 'cancel', 'create']]);
     }
 
     /**
      * Télécharger le PDF d'une demande de document
      *
-     * @param int $documentRequestId L'identifiant de la demande de document
+     * @param  int  $documentRequestId  L'identifiant de la demande de document
      * @return mixed
      */
     public function download($documentRequestId)
     {
+        try {
+            $documentRequest = DocumentRequest::findOrFail($documentRequestId);
+            $documentPdf = new DocumentPdfService;
 
-        $documentRequest = DocumentRequest::findOrFail($documentRequestId);
-        $documentPdf = new DocumentPdfService();
+            $this->activityLogger->log(
+                'download',
+                "Téléchargement du PDF de demande de document #{$documentRequest->id}",
+                $documentRequest
+            );
 
-        $this->activityLogger->log(
-            'download',
-            "Téléchargement du PDF de demande de document #{$documentRequest->id}",
-            $documentRequest
-        );
+            return $documentPdf->generate($documentRequest);
 
-        return $documentPdf->generate($documentRequest);
+        } catch (\Exception $e) {
+            $this->activityLogger->log(
+                'error',
+                'Erreur lors du téléchargement du PDF: '.$e->getMessage()
+            );
 
+            return back()->with('error', 'Impossible de générer le document. '.$e->getMessage());
+        }
     }
 
     /**
      * Afficher la liste des demandes de documents filtrée par étape
      *
-     * @param Request $request
-     * @param string $stage
+     * @param  string  $stage
      * @return \Illuminate\View\View
      */
-    public function index(Request $request, $stage = 'PENDING')
+    public function index(Request $request, $stage = 'TO_PROCESS')
     {
-
-        // Liste des stages valides
-        $validStages = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'IN_PROGRESS', 'COMPLETED'];
-
-        // Liste des stages valides
-        $validStages = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'IN_PROGRESS', 'COMPLETED'];
+        // Liste des stages valides (incluant les stages virtuels)
+        $validStages = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'IN_PROGRESS', 'TO_PROCESS', 'FINISHED'];
 
         // Vérification de la validité du stage
-        if ($stage !== 'ALL' && !in_array($stage, $validStages)) {
+        if ($stage !== 'ALL' && ! in_array($stage, $validStages)) {
             $this->activityLogger->log(
                 'error',
                 "Tentative d'accès aux demandes de documents avec un stage invalide: {$stage}"
             );
 
-            return redirect()->route('documents.requests')->with('error', 'Stage invalide');
+            return redirect()->route('documents.requests', 'TO_PROCESS')->with('error', 'Stage invalide');
         }
 
-        // Récupérer les filtres de recherche
-        $type = $request->input('type');
-        $search = $request->input('search');
         // Récupérer les filtres de recherche
         $type = $request->input('type');
         $search = $request->input('search');
 
         // Récupérer les types de document
         $document_types = DocumentType::all();
+
+        // Récupérer les compteurs pour les badges
+        $counts = $this->getRequestCounts();
 
         // Construire la requête principale
         $query = $this->buildDocumentRequestQuery($search, $type, $stage);
@@ -104,22 +105,21 @@ class DocumentRequestController extends Controller
 
         $this->activityLogger->log(
             'view',
-            "Consultation de la liste des demandes de documents - Stage: {$stage}" .
-            ($type ? ", Type: {$type}" : "") .
-            ($search ? ", Recherche: {$search}" : "")
+            "Consultation de la liste des demandes de documents - Stage: {$stage}".
+            ($type ? ", Type: {$type}" : '').
+            ($search ? ", Recherche: {$search}" : '')
         );
 
         // Retourner la vue avec les données nécessaires
-        return view('modules.opti-hr.pages.documents.main.index', compact('documentRequests', 'stage', 'document_types'));
-
+        return view('modules.opti-hr.pages.documents.main.index', compact('documentRequests', 'stage', 'document_types', 'counts'));
     }
 
     /**
      * Construire la requête de demandes de documents avec filtres
      *
-     * @param string|null $search
-     * @param string|null $type
-     * @param string $stage
+     * @param  string|null  $search
+     * @param  string|null  $type
+     * @param  string  $stage
      * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildDocumentRequestQuery($search, $type, $stage)
@@ -130,43 +130,58 @@ class DocumentRequestController extends Controller
         // Appliquer le filtre de recherche
         $query->when($search, function ($q) use ($search) {
             $q->whereHas('duty.employee', function ($query) use ($search) {
-                $query->where('first_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('last_name', 'LIKE', '%' . $search . '%');
+                $query->where('first_name', 'LIKE', '%'.$search.'%')
+                    ->orWhere('last_name', 'LIKE', '%'.$search.'%');
             });
         });
 
-        // Trier par date de demande
-        $query->orderBy('date_of_application');
+        // Trier par date de demande (plus récent en premier)
+        $query->orderByDesc('date_of_application');
 
         // Filtrer par type de document, si précisé
         $query->when($type, function ($q) use ($type) {
             $q->where('document_type_id', $type);
         });
-        // Filtrer par type de document, si précisé
-        $query->when($type, function ($q) use ($type) {
-            $q->where('document_type_id', $type);
-        });
 
-        // Filtrer par stage si le stage n'est pas "ALL"
-        $query->when($stage !== 'ALL', function ($q) use ($stage) {
-            $q->where('stage', $stage);
-        });
+        // Filtrer par stage (gérer les stages virtuels)
+        if ($stage === 'TO_PROCESS') {
+            // À traiter = En attente + En cours
+            $query->whereIn('stage', ['PENDING', 'IN_PROGRESS']);
+        } elseif ($stage === 'FINISHED') {
+            // Terminées = Approuvées + Rejetées
+            $query->whereIn('stage', ['APPROVED', 'REJECTED']);
+        } elseif ($stage !== 'ALL') {
+            // Stage simple
+            $query->where('stage', $stage);
+        }
 
         return $query;
     }
 
     /**
+     * Récupérer les compteurs pour les badges de navigation
+     */
+    private function getRequestCounts(): array
+    {
+        return [
+            'all' => DocumentRequest::count(),
+            'to_process' => DocumentRequest::whereIn('stage', ['PENDING', 'IN_PROGRESS'])->count(),
+            'finished' => DocumentRequest::whereIn('stage', ['APPROVED', 'REJECTED'])->count(),
+        ];
+    }
+
+    /**
      * Obtenir les résultats paginés en fonction du stage
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $stage
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $stage
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection
      */
     private function getPaginatedResults($query, $stage)
     {
-        // Appliquer la pagination seulement pour certains stages
-        return (in_array($stage, ['PENDING', 'IN_PROGRESS']))
-            ? $query->paginate(2)
+        // Appliquer la pagination pour les stages à traiter
+        return (in_array($stage, ['PENDING', 'IN_PROGRESS', 'TO_PROCESS']))
+            ? $query->paginate(10)
             : $query->get();
     }
 
@@ -182,18 +197,16 @@ class DocumentRequestController extends Controller
 
         $this->activityLogger->log(
             'access',
-            "Accès au formulaire de création de demande de document"
+            'Accès au formulaire de création de demande de document'
         );
 
         return view('modules.opti-hr.pages.documents.main.create', compact('documentTypes'));
-
 
     }
 
     /**
      * Enregistrer une nouvelle demande de document
      *
-     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
@@ -232,6 +245,14 @@ class DocumentRequestController extends Controller
 
         // Gestion des dates selon le type
         if ($documentType->type === 'EXCEPTIONAL') {
+            // Vérifier que la date de début de fonction existe
+            if (! $currentEmployeeDuty->begin_date) {
+                return response()->json([
+                    'ok' => false,
+                    'message' => 'Impossible de créer cette demande : la date de début de fonction n\'est pas définie.',
+                ], 422);
+            }
+
             // Pour les types EXCEPTIONALs, utiliser les dates du duty actuel
             $documentRequestData['start_date'] = $currentEmployeeDuty->begin_date;
 
@@ -283,14 +304,14 @@ class DocumentRequestController extends Controller
         return response()->json([
             'message' => "Demande de {$documentTypeLabel} créée avec succès.",
             'ok' => true,
-            'redirect' => route('documents.requests', 'PENDING')
+            'redirect' => route('documents.requests', 'PENDING'),
         ]);
     }
+
     /**
      * Met à jour le stage et le level d'une demande de document
      *
-     * @param Request $request
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function updateStageAndLevel(Request $request, $id)
@@ -338,12 +359,11 @@ class DocumentRequestController extends Controller
     /**
      * Approuver une demande de document
      *
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function approve($id)
     {
-
 
         // Rechercher la demande de document par ID
         $documentRequest = DocumentRequest::findOrFail($id);
@@ -371,7 +391,7 @@ class DocumentRequestController extends Controller
 
                 break;
         }
-        if (!$documentRequest->date_of_application instanceof Carbon) {
+        if (! $documentRequest->date_of_application instanceof Carbon) {
             $documentRequest->date_of_application = Carbon::parse($documentRequest->date_of_application);
         }
 
@@ -390,11 +410,10 @@ class DocumentRequestController extends Controller
             $documentRequest
         );
 
-
         return response()->json([
             'message' => 'Demande de document acceptée',
             'ok' => true,
-            'documentRequest' => $documentRequest
+            'documentRequest' => $documentRequest,
         ]);
 
     }
@@ -402,7 +421,7 @@ class DocumentRequestController extends Controller
     /**
      * Rejeter une demande de document
      *
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function reject($id)
@@ -431,9 +450,8 @@ class DocumentRequestController extends Controller
 
         $documentRequest->save();
 
-
         if ($documentRequest->stage == 'REJECTED') {
-            # code...
+            // code...
             $this->notifyRequestor($documentRequest);
         }
         $this->activityLogger->log(
@@ -448,29 +466,27 @@ class DocumentRequestController extends Controller
         ]);
 
     }
+
     // Dans votre controller ou service
     public function notifyRequestor(DocumentRequest $documentRequest)
     {
         try {
             $status = $documentRequest->stage === 'APPROVED' ? 'approuvée' : 'refusée';
             $url = route('documents.requests', $documentRequest->stage === 'APPROVED' ? 'APPROVED' : 'REJECTED');
-            if (!$documentRequest->date_of_application instanceof Carbon) {
+            if (! $documentRequest->date_of_application instanceof Carbon) {
                 $documentRequest->date_of_application = Carbon::parse($documentRequest->date_of_application);
             }
 
             // Récupérer l'utilisateur qui a fait la demande
             $requestor = $documentRequest->duty->employee->users->first();
-            
+
             // Vérifier que le demandeur a une adresse email valide
-            if (!$requestor || !$requestor->email) {
-                $this->activityLogger->log(
-                    'warning',
-                    "Impossible d'envoyer l'email pour la demande de document #{$documentRequest->id}: demandeur sans email",
-                    $documentRequest
-                );
+            if (! $requestor || ! $requestor->email) {
+                Log::debug("Impossible d'envoyer l'email pour la demande de document #{$documentRequest->id}: demandeur sans email");
+
                 return;
             }
-            
+
             // Créer et envoyer le mail de manière sécurisée
             $mailable = new DocumentRequestStatus(
                 receiver: $requestor,
@@ -478,81 +494,58 @@ class DocumentRequestController extends Controller
                 status: $status,
                 url: $url
             );
-            
+
             $sent = $this->sendEmail($mailable, true);
-            
+
             if ($sent) {
-                $this->activityLogger->log(
-                    'info',
-                    "Email de statut envoyé pour la demande de document #{$documentRequest->id}",
-                    $documentRequest,
-                    ['to' => $requestor->email, 'status' => $status]
-                );
+                Log::debug("Email de statut envoyé pour la demande de document #{$documentRequest->id}", [
+                    'to' => $requestor->email,
+                    'status' => $status,
+                ]);
             } else {
-                $this->activityLogger->log(
-                    'error',
-                    "Échec de l'envoi d'email pour la demande de document #{$documentRequest->id}",
-                    $documentRequest
-                );
+                Log::debug("Échec de l'envoi d'email pour la demande de document #{$documentRequest->id}");
             }
         } catch (\Exception $e) {
-            $this->activityLogger->log(
-                'error',
-                "Erreur lors de l'envoi de notification pour la demande de document #{$documentRequest->id}: " . $e->getMessage(),
-                $documentRequest
-            );
+            Log::debug("Erreur lors de l'envoi de notification pour la demande de document #{$documentRequest->id}: ".$e->getMessage());
         }
     }
+
     // Dans votre controller ou service
     public function notifyApprover(DocumentRequest $documentRequest, User $approver)
     {
         try {
             // Vérifier que l'approbateur a une adresse email valide
-            if (!$approver || !$approver->email) {
-                $this->activityLogger->log(
-                    'warning',
-                    "Impossible d'envoyer l'email à l'approbateur pour la demande de document #{$documentRequest->id}: email manquant",
-                    $documentRequest
-                );
+            if (! $approver || ! $approver->email) {
+                Log::debug("Impossible d'envoyer l'email à l'approbateur pour la demande de document #{$documentRequest->id}: email manquant");
+
                 return;
             }
-            
+
             $url = route('documents.requests', 'IN_PROGRESS');
             $mailable = new DocumentRequestCreated(
                 receiver: $approver,
                 documentRequest: $documentRequest,
                 url: $url
             );
-            
+
             $sent = $this->sendEmail($mailable, true);
-            
+
             if ($sent) {
-                $this->activityLogger->log(
-                    'info',
-                    "Email envoyé à l'approbateur pour la demande de document #{$documentRequest->id}",
-                    $documentRequest,
-                    ['to' => $approver->email]
-                );
+                Log::debug("Email envoyé à l'approbateur pour la demande de document #{$documentRequest->id}", [
+                    'to' => $approver->email,
+                ]);
             } else {
-                $this->activityLogger->log(
-                    'error',
-                    "Échec de l'envoi d'email à l'approbateur pour la demande de document #{$documentRequest->id}",
-                    $documentRequest
-                );
+                Log::debug("Échec de l'envoi d'email à l'approbateur pour la demande de document #{$documentRequest->id}");
             }
         } catch (\Exception $e) {
-            $this->activityLogger->log(
-                'error',
-                "Erreur lors de l'envoi à l'approbateur pour la demande de document #{$documentRequest->id}: " . $e->getMessage(),
-                $documentRequest
-            );
+            Log::debug("Erreur lors de l'envoi à l'approbateur pour la demande de document #{$documentRequest->id}: ".$e->getMessage());
         }
     }
+
     /**
      * Ajouter un commentaire à une demande de document
      *
-     * @param Request $request
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function comment(Request $request, $id)
@@ -586,7 +579,7 @@ class DocumentRequestController extends Controller
     /**
      * Annuler une demande de document
      *
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function cancel($id)

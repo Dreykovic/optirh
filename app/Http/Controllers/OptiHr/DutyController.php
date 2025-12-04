@@ -487,5 +487,40 @@ class DutyController extends Controller
 
     }
 
+    /**
+     * Update absence balance for a duty
+     */
+    public function updateAbsenceBalance(Request $request, int $id)
+    {
+        $this->authorize('configurer-une-absence');
 
+        $request->validate([
+            'absence_balance' => 'required|integer|min:0|max:365',
+            'reason' => 'nullable|string|max:255',
+        ]);
+
+        $duty = Duty::with('employee')->findOrFail($id);
+        $oldBalance = $duty->absence_balance;
+        $newBalance = $request->absence_balance;
+
+        $duty->absence_balance = $newBalance;
+        $duty->save();
+
+        // Log activity
+        activity()
+            ->performedOn($duty)
+            ->withProperties([
+                'old_balance' => $oldBalance,
+                'new_balance' => $newBalance,
+                'reason' => $request->reason,
+                'employee' => $duty->employee->first_name . ' ' . $duty->employee->last_name,
+            ])
+            ->log('absence_balance_updated');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Solde de congés mis à jour avec succès.',
+            'new_balance' => $duty->absence_balance,
+        ]);
+    }
 }

@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable modelUpdateFormContainer"
         id="documentRequestCommentUpdateForm{{ $documentRequest->id }}">
         <form data-model-update-url="{{ route('documents.comment', $documentRequest->id) }}">
-            {{-- @csrf --}}
+            @csrf
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title  fw-bold" id="documentRequestTypeLabel">Commentaire</h5>

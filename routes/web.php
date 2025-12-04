@@ -2,15 +2,16 @@
 
 /**
  * Routes Web - OPTIRH
- * 
+ *
  * Ce fichier définit toutes les routes web de l'application OPTIRH.
  * Les routes sont organisées par groupes selon leur fonction :
  * - Authentification (guest)
  * - Application principale (auth)
  *   - Module OptiHR (gestion RH)
  *   - Module Recours (gestion des recours administratifs)
- * 
+ *
  * @author OPTIRH Team
+ *
  * @version 1.0
  */
 
@@ -18,7 +19,6 @@
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
-
 // Contrôleurs du module OptiHR
 use App\Http\Controllers\OptiHr\AbsenceController;
 use App\Http\Controllers\OptiHr\AbsenceTypeController;
@@ -33,12 +33,10 @@ use App\Http\Controllers\OptiHr\FileController;
 use App\Http\Controllers\OptiHr\HolidayController;
 use App\Http\Controllers\OptiHr\JobController;
 use App\Http\Controllers\OptiHr\PublicationController;
-
 // Contrôleurs du module Recours
 use App\Http\Controllers\Recours\DacController;
 use App\Http\Controllers\Recours\RecoursController;
 use App\Http\Controllers\Recours\StatsController;
-
 // Contrôleurs système
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -46,24 +44,39 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
+| Routes de test des pages d'erreur (À SUPPRIMER après tests)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('test-errors')->group(function () {
+    Route::get('/401', fn () => abort(401));
+    Route::get('/403', fn () => abort(403));
+    Route::get('/404', fn () => abort(404));
+    Route::get('/419', fn () => abort(419));
+    Route::get('/429', fn () => abort(429));
+    Route::get('/500', fn () => abort(500));
+    Route::get('/503', fn () => abort(503));
+});
+
+/*
+|--------------------------------------------------------------------------
 | Routes d'Authentification (Utilisateurs non connectés)
 |--------------------------------------------------------------------------
 |
 | Ces routes sont accessibles uniquement aux utilisateurs non connectés.
-| Elles gèrent la connexion, l'inscription et la réinitialisation 
+| Elles gèrent la connexion, l'inscription et la réinitialisation
 | de mot de passe.
 |
 */
 Route::group(['middleware' => 'guest'], function () {
-    
+
     // === CONNEXION ===
-    
+
     /**
      * Affichage du formulaire de connexion
      * GET /login
      */
     Route::get('/login', [AuthController::class, 'login'])->name('login');
-    
+
     /**
      * Traitement de la connexion
      * POST /login
@@ -97,19 +110,60 @@ Route::group(['middleware' => 'auth'], function () {
 
         // routes/web.php or routes/opti-hr.php depending on your setup
 
-
         // Dashboard Routes
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('opti-hr.dashboard');
         Route::get('/dashboard/absence-calendar', [DashboardController::class, 'getAbsenceCalendarData'])->name('opti-hr.dashboard.absence-calendar');
         Route::get('/dashboard/employee-stats', [DashboardController::class, 'getEmployeeStats'])->name('opti-hr.dashboard.employee-stats');
-
+        Route::get('/dashboard/refresh', [DashboardController::class, 'refresh'])->name('opti-hr.dashboard.refresh');
 
         /*
-         * Help
+         * Help - Guide Utilisateur Multi-Pages
          */
-        Route::get('/help', function () {
-            return view('modules.opti-hr.pages.help');
-        })->name('help');
+        Route::prefix('help')->name('help.')->group(function () {
+            Route::get('/', function () {
+                return view('modules.opti-hr.pages.help.index');
+            })->name('index');
+
+            Route::get('/introduction', function () {
+                return view('modules.opti-hr.pages.help.introduction');
+            })->name('introduction');
+
+            Route::get('/prise-en-main', function () {
+                return view('modules.opti-hr.pages.help.prise-en-main');
+            })->name('prise-en-main');
+
+            Route::get('/tableau-de-bord', function () {
+                return view('modules.opti-hr.pages.help.tableau-de-bord');
+            })->name('tableau-de-bord');
+
+            Route::get('/absences', function () {
+                return view('modules.opti-hr.pages.help.absences');
+            })->name('absences');
+
+            Route::get('/documents', function () {
+                return view('modules.opti-hr.pages.help.documents');
+            })->name('documents');
+
+            Route::get('/personnel', function () {
+                return view('modules.opti-hr.pages.help.personnel');
+            })->name('personnel');
+
+            Route::get('/espace-collaboratif', function () {
+                return view('modules.opti-hr.pages.help.espace-collaboratif');
+            })->name('espace-collaboratif');
+
+            Route::get('/mon-espace', function () {
+                return view('modules.opti-hr.pages.help.mon-espace');
+            })->name('mon-espace');
+
+            Route::get('/faq', function () {
+                return view('modules.opti-hr.pages.help.faq');
+            })->name('faq');
+
+            Route::get('/problemes', function () {
+                return view('modules.opti-hr.pages.help.problemes');
+            })->name('problemes');
+        });
 
         // membres
         Route::prefix('membres')->group(function () {
@@ -175,6 +229,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::put('/{id}/resigned', [DutyController::class, 'resigned'])->name('contrats.resigned');
             Route::put('/{id}/dismissed', [DutyController::class, 'dismissed'])->name('contrats.dismissed');
             Route::put('/{id}/deleted', [DutyController::class, 'deleted'])->name('contrats.deleted');
+            Route::put('/{id}/absence-balance', [DutyController::class, 'updateAbsenceBalance'])->name('contrats.absence-balance');
             Route::post('/add', [DutyController::class, 'add'])->name('contrats.add');
         });
 
@@ -198,10 +253,13 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::get('/request/create', [AbsenceController::class, 'create'])->name('absences.create');
                 Route::post('/request/save', [AbsenceController::class, 'store'])->name('absences.save');
                 Route::post('/request/approve/{absenceId}', [AbsenceController::class, 'approve'])->name('absences.approve');
+                Route::post('/request/approve-with-option/{absenceId}', [AbsenceController::class, 'approveWithOption'])->name('absences.approveWithOption');
                 Route::post('/request/reject/{absenceId}', [AbsenceController::class, 'reject'])->name('absences.reject');
                 Route::post('/request/comment/{absenceId}', [AbsenceController::class, 'comment'])->name('absences.comment');
+                Route::post('/request/deductibility/{absenceId}', [AbsenceController::class, 'updateDeductibility'])->name('absences.deductibility');
                 Route::post('/request/cancel/{absenceId}', [AbsenceController::class, 'cancel'])->name('absences.cancel');
                 Route::get('/request/download/{absenceId}', [AbsenceController::class, 'download'])->name('absences.download');
+                Route::get('/request/proof/{absenceId}', [AbsenceController::class, 'showProof'])->name('absences.proof.show');
             });
             /*
              * Absences Types
@@ -234,12 +292,11 @@ Route::group(['middleware' => 'auth'], function () {
              */
 
             Route::prefix('/annual-decisions')->group(function () {
-                // Viewing routes
-                Route::get('/view', [AnnualDecisionController::class, 'show'])->name('decisions.show');
-                Route::get('/list', [AnnualDecisionController::class, 'index'])->name('decisions.index');
-                Route::get('/detail/{id}', [AnnualDecisionController::class, 'detail'])->name('decisions.detail');
-
-
+                // Main view (shows current decision + history list)
+                Route::get('/', [AnnualDecisionController::class, 'index'])->name('decisions.index');
+                // Redirect legacy routes
+                Route::redirect('/view', '/opti-hr/publications/annual-decisions')->name('decisions.show');
+                Route::redirect('/list', '/opti-hr/publications/annual-decisions');
 
                 // Action routes
                 Route::post('/save/{annualDecisionId?}', [AnnualDecisionController::class, 'storeOrUpdate'])->name('decisions.save');
@@ -296,6 +353,8 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::post('/update-password/{userId}', [UserController::class, 'updatePassword'])->name('credentials.updatePwd');
                 Route::post('/change-password/{userId}', [UserController::class, 'changePassword'])->name('credentials.changePassword');
                 Route::post('/change-role/{userId}', [UserController::class, 'updateRole'])->name('credentials.updateRole');
+                Route::post('/resend-credentials/{userId}', [UserController::class, 'resendCredentials'])->name('credentials.resend');
+                Route::post('/bulk-status', [UserController::class, 'bulkUpdateStatus'])->name('credentials.bulkStatus');
                 Route::delete('/delete/{userId}', [UserController::class, 'destroy'])->name('credentials.destroy');
             });
 
@@ -343,8 +402,9 @@ Route::group(['middleware' => 'auth'], function () {
             Route::prefix('/config')->group(function () {
                 Route::get('/list/{status?}', [PublicationController::class, 'index'])->name('publications.config.index');
                 Route::post('/save', [PublicationController::class, 'store'])->name('publications.config.save');
+                Route::put('/update/{publicationId}', [PublicationController::class, 'update'])->name('publications.config.update');
                 Route::post('/update-status/{status}/{publicationId}', [PublicationController::class, 'updateStatus'])->name('publications.config.updateStatus');
-                Route::delete('/delete/{userId}', [PublicationController::class, 'destroy'])->name('publications.config.destroy');
+                Route::delete('/delete/{publicationId}', [PublicationController::class, 'destroy'])->name('publications.config.destroy');
             });
             /*
              * Pdf

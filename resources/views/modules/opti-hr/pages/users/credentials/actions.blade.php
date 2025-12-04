@@ -32,6 +32,13 @@
 
     </li>
     <li>
+        <a class="dropdown-item py-2 rounded resendCredentialsBtn"
+            data-url="{{ route('credentials.resend', $user->id) }}" role="button">
+            <i class="icofont-email text-info"></i>
+            <span class="d-none d-sm-none d-md-inline">Renvoyer Identifiants</span>
+        </a>
+    </li>
+    <li>
         <a class="dropdown-item py-2 rounded modelDeleteBtn" data-model-action="delete"
             data-model-delete-url={{ route('credentials.destroy', $user->id) }} data-model-parent-selector="tr.parent"
             role="button">

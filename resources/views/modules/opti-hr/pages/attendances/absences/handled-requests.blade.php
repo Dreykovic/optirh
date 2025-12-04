@@ -67,51 +67,43 @@
                                         <td>
                                             {{ $absence->requested_days }} Jours
                                         </td>
-                                        <td class="fw-bolder text-uppercase">
+                                        <td>
                                             @switch($absence->stage)
                                                 @case('APPROVED')
-                                                    <span class=" text-success">
-
-                                                        Approuvé
-
+                                                    <span class="status-badge status-approved">
+                                                        <i class="bi bi-check-circle-fill me-1"></i>Approuvé
                                                     </span>
                                                 @break
 
                                                 @case('REJECTED')
-                                                    <span class=" text-danger">
-
-                                                        Rejeté
+                                                    <span class="status-badge status-rejected">
+                                                        <i class="bi bi-x-circle-fill me-1"></i>Rejeté
                                                     </span>
                                                 @break
 
                                                 @case('CANCELLED')
-                                                    <span class=" color-lavender-purple">
-
-                                                        Annulé
+                                                    <span class="status-badge status-cancelled">
+                                                        <i class="bi bi-slash-circle me-1"></i>Annulé
                                                     </span>
                                                 @break
 
                                                 @case('IN_PROGRESS')
-                                                    <span class=" text-warning">
-
-                                                        En cours de Traitement
+                                                    <span class="status-badge status-in-progress">
+                                                        <i class="bi bi-hourglass-split me-1"></i>En traitement
                                                     </span>
                                                 @break
 
                                                 @case('COMPLETED')
-                                                    <span class=" ">
-
-                                                        Complété
+                                                    <span class="status-badge status-completed">
+                                                        <i class="bi bi-check-all me-1"></i>Complété
                                                     </span>
                                                 @break
 
                                                 @default
-                                                    <span class="color-light-orange">
-
-                                                        En attente
+                                                    <span class="status-badge status-pending">
+                                                        <i class="bi bi-clock me-1"></i>En attente
                                                     </span>
                                             @endswitch
-
                                         </td>
                                         <td>
                                             @include('modules.opti-hr.pages.attendances.absences.actions')
@@ -122,6 +114,7 @@
                                         </td>
                                     </tr>
                                     @include('modules.opti-hr.pages.attendances.absences.request.comment')
+                                    @include('modules.opti-hr.pages.attendances.absences.request.reject-modal')
                                     @include('modules.opti-hr.pages.attendances.absences.details')
                                 @endif
 
@@ -141,12 +134,14 @@
                                                 <td colspan="7"> <x-no-data color="warning" text="Aucune Demande Annulée" /></td>
                                             @break
 
+                                            @case('HISTORY')
+                                                <td colspan="7"> <x-no-data color="info" text="Aucune demande dans l'historique" /></td>
+                                            @break
+
                                             @default
                                                 <td colspan="7"> <x-no-data color="warning" text="Aucune Demande Complétée" />
                                                 </td>
                                         @endswitch
-
-
                                     </tr>
                                 @endforelse
                             </tbody>

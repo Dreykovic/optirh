@@ -57,7 +57,7 @@ class Absence extends Model
         'proof',               // Pièces justificatives
         'comment',             // Commentaires des validateurs
         'duty_id',             // Référence au poste de l'employé
-        'is_deductible0'       // Si l'absence est déductible du salaire
+        'is_deductible'        // Si l'absence est déductible du solde
     ];
 
     /**
@@ -80,7 +80,7 @@ class Absence extends Model
         'date_of_application' => 'datetime',
         'date_of_approval' => 'datetime',
         'requested_days' => 'integer',
-        'is_deductible0' => 'boolean',
+        'is_deductible' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

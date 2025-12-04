@@ -57,35 +57,36 @@ class DocumentRequest extends Model
                 case 'ONE':
                     $this->stage = 'APPROVED';
                     $this->level = 'TWO';
-
-                    // Trouver le maximum actuel de document_number de manière sécurisée
-                    $maxAbsenceNumber = DB::table($this->getTable())
-                        ->whereNotNull('document_number') // Filtrer les entrées valides
-                        ->orderByDesc('document_number') // Trier par ordre décroissant
-                        ->lockForUpdate() // Verrouiller les lignes pour éviter les conflits
-                        ->value('document_number'); // Obtenir la valeur maximale
-
-                    $this->document_number = $maxAbsenceNumber ? $maxAbsenceNumber + 1 : 1;
+                    $this->document_number = $this->generateDocumentNumber();
                     break;
 
                 default:
                     $this->stage = 'APPROVED';
                     $this->level = 'TWO';
-
-                    // Trouver le maximum actuel de document_number de manière sécurisée
-                    $maxAbsenceNumber = DB::table($this->getTable())
-                        ->whereNotNull('document_number') // Filtrer les entrées valides
-                        ->orderByDesc('document_number') // Trier par ordre décroissant
-                        ->lockForUpdate() // Verrouiller les lignes pour éviter les conflits
-                        ->value('document_number'); // Obtenir la valeur maximale
-
-                    $this->document_number = $maxAbsenceNumber ? $maxAbsenceNumber + 1 : 1;
-
+                    $this->document_number = $this->generateDocumentNumber();
                     break;
             }
 
             // Sauvegarder les changements dans la transaction
             $this->save();
         });
+    }
+
+    /**
+     * Génère un numéro de document unique pour l'année en cours
+     * Utilise un lock pessimiste pour éviter les doublons en cas de requêtes concurrentes
+     */
+    private function generateDocumentNumber(): int
+    {
+        $currentYear = now()->year;
+
+        // Trouver le maximum actuel de document_number pour l'année en cours
+        $maxNumber = DB::table($this->getTable())
+            ->whereNotNull('document_number')
+            ->whereYear('created_at', $currentYear)
+            ->lockForUpdate()
+            ->max('document_number');
+
+        return $maxNumber ? $maxNumber + 1 : 1;
     }
 }

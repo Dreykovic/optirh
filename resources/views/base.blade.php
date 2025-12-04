@@ -8,11 +8,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>ARCOP-MANAGER</title>
     <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon"> <!-- Favicon-->
+
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     @yield('plugins-style')
     <!-- project css file  -->
     <link rel="stylesheet" href="{{ asset('assets/css/my-task.style.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/sidebar-enhanced.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
-
+    @stack('css')
 
 </head>
 

@@ -23,7 +23,8 @@ let AppAuthManager = (function () {
     /**
      * Gère la soumission du formulaire de connexion
      * Configure les événements et traite les réponses AJAX
-     * 
+     * Utilise un délai de toast plus court pour une meilleure UX de connexion
+     *
      * @private
      */
     const handleLogin = () => {
@@ -34,18 +35,39 @@ let AppAuthManager = (function () {
         loginForm.addEventListener("submit", async (e) => {
             // Empêcher la soumission normale du formulaire
             e.preventDefault();
-            
+
             // Création de l'objet FormData avec les données du formulaire
             const formData = new FormData(loginForm);
 
-            // Utilisation du module AppModules pour la soumission AJAX
-            // avec un callback personnalisé pour gérer la réponse
-            AppModules.submitFromBtn(
-                loginBtn,        // Bouton à désactiver pendant la requête
-                formData,        // Données à envoyer
-                loginUrl,        // URL de destination
-                loginCallback   // Fonction callback pour traiter la réponse
-            );
+            // Afficher le spinner pendant la requête
+            AppModules.showSpinner(loginBtn);
+
+            try {
+                const response = await axios.post(loginUrl, formData);
+                AppModules.hideSpinner(loginBtn);
+
+                const { data } = response;
+                const status = data.ok ? "success" : "error";
+
+                // Toast plus court pour le login (3 secondes au lieu de 10)
+                AppModules.showToast(data.message, status, null, { timer: 3000 });
+
+                // Redirection plus rapide pour le login (1 seconde)
+                setTimeout(() => {
+                    loginCallback(response);
+                }, 1000);
+
+            } catch (error) {
+                AppModules.hideSpinner(loginBtn);
+
+                let errorMessage = "Une erreur s'est produite";
+                if (error.response && error.response.data && error.response.data.message) {
+                    errorMessage = error.response.data.message;
+                }
+
+                // Toast d'erreur avec délai court
+                AppModules.showToast(errorMessage, "error", null, { timer: 3000 });
+            }
         });
     };
 
