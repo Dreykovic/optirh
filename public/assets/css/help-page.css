@@ -8,7 +8,7 @@
             text-align: center;
             margin-bottom: 40px;
             padding: 30px;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--color-700) 100%);
+            background: var(--primary-color);
             color: var(--color-fff);
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
@@ -45,7 +45,7 @@
             border-color: var(--primary-color);
         }
         .guide-header {
-            background: linear-gradient(135deg, var(--success-color) 0%, var(--primary-color) 100%);
+            background: var(--primary-color);
             color: var(--color-fff);
             padding: 25px;
             position: relative;
@@ -108,7 +108,7 @@
             flex-shrink: 0;
         }
         .guide-button {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--color-700) 100%);
+            background: var(--primary-color);
             color: var(--color-fff);
             padding: 12px 25px;
             border: none;
@@ -124,7 +124,7 @@
             color: var(--color-fff);
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(98, 157, 114, 0.4);
-            background: linear-gradient(135deg, var(--color-700) 0%, var(--color-800) 100%);
+            background: var(--color-700);
         }
         .guide-button i {
             margin-right: 8px;
@@ -175,7 +175,7 @@
             color: var(--text-color);
         }
         .support-section {
-            background: linear-gradient(135deg, var(--color-300) 0%, var(--color-400) 100%);
+            background: var(--color-300);
             border-radius: 15px;
             padding: 30px;
             text-align: center;
@@ -236,13 +236,13 @@
         
         /* Variantes pour les différents guides */
         .guide-card:nth-child(2) .guide-header {
-            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--warning-color) 100%);
+            background: var(--secondary-color);
         }
         .guide-card:nth-child(3) .guide-header {
-            background: linear-gradient(135deg, var(--info-color) 0%, var(--primary-color) 100%);
+            background: var(--info-color);
         }
         .guide-card:nth-child(4) .guide-header {
-            background: linear-gradient(135deg, var(--color-400) 0%, var(--color-500) 100%);
+            background: var(--color-500);
         }
         
         @media (max-width: 768px) {

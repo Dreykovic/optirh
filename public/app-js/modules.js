@@ -225,15 +225,18 @@ const AppModules = (function () {
          * @param {String} message - Le message à afficher
          * @param {String} status - Le statut (success, error, warning, info)
          * @param {String} title - Le titre personnalisé (optionnel)
+         * @param {Object} options - Options supplémentaires (timer, etc.)
          * @returns {Promise} La promesse de SweetAlert2
          */
-        showToast: (message = "", status = "success", title = null) => {
+        showToast: (message = "", status = "success", title = null, options = {}) => {
             const titles = {
                 success: "Succès",
                 error: "Erreur",
                 warning: "Attention",
                 info: "Info",
             };
+
+            const defaultTimer = options.timer || 10000;
 
             return Swal.fire({
                 icon: status,
@@ -242,8 +245,16 @@ const AppModules = (function () {
                 toast: true,
                 position: "top-end",
                 showConfirmButton: false,
-                timer: 10000,
+                timer: defaultTimer,
                 timerProgressBar: true,
+                didOpen: (toast) => {
+                    // Permettre de fermer le toast en cliquant dessus
+                    toast.addEventListener('click', () => {
+                        Swal.close();
+                    });
+                    // Curseur pointer pour indiquer que c'est cliquable
+                    toast.style.cursor = 'pointer';
+                }
             });
         },
 
