@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\OptiHr\Duty;
 use App\Models\OptiHr\Employee;
 use App\Models\OptiHr\Publication;
 use App\Traits\LogsActivity;
@@ -18,10 +19,9 @@ class User extends Authenticatable
 {
     use HasApiTokens;
     use HasFactory;
-    use Notifiable;
     use HasRoles;
     use LogsActivity;
-
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -74,5 +74,44 @@ class User extends Authenticatable
     public function publications(): HasMany
     {
         return $this->hasMany(Publication::class, foreignKey: 'author_id');
+    }
+
+    /**
+     * Vérifie si l'utilisateur a un employé associé
+     */
+    public function hasEmployee(): bool
+    {
+        return $this->employee_id !== null && $this->employee !== null;
+    }
+
+    /**
+     * Retourne le nom d'affichage de l'utilisateur
+     * (nom de l'employé si disponible, sinon username)
+     */
+    public function getDisplayName(): string
+    {
+        return $this->hasEmployee()
+            ? $this->employee->first_name.' '.$this->employee->last_name
+            : $this->username;
+    }
+
+    /**
+     * Retourne le poste actuel de l'utilisateur de façon sécurisée
+     */
+    public function getCurrentDuty(): ?Duty
+    {
+        return $this->hasEmployee()
+            ? $this->employee->duties->firstWhere('evolution', 'ON_GOING')
+            : null;
+    }
+
+    /**
+     * Retourne le solde de congés de façon sécurisée
+     */
+    public function getAbsenceBalance(): int
+    {
+        $duty = $this->getCurrentDuty();
+
+        return $duty ? ($duty->absence_balance ?? 0) : 0;
     }
 }

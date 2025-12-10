@@ -25,12 +25,14 @@
                 </div>
             </div>
             <div class="list-group m-2 ">
-                <a href="{{ route('employee.pay', Auth::user()->employee) }}"
-                    class="list-group-item list-group-item-action border-0 "><i
-                        class="icofont-files-stack fs-5 me-3"></i>Bulletins de paie</a>
+                @if(auth()->user()->hasEmployee())
+                    <a href="{{ route('employee.pay', Auth::user()->employee) }}"
+                        class="list-group-item list-group-item-action border-0 "><i
+                            class="icofont-files-stack fs-5 me-3"></i>Bulletins de paie</a>
 
-                <a href="{{ route('employee.data') }}" class="list-group-item list-group-item-action border-0 "><i
-                        class="icofont-settings fs-5 me-3"></i>Paramètres Profil</a>
+                    <a href="{{ route('employee.data') }}" class="list-group-item list-group-item-action border-0 "><i
+                            class="icofont-settings fs-5 me-3"></i>Paramètres Profil</a>
+                @endif
                 <div>
                     <hr class="dropdown-divider border-dark">
                 </div>

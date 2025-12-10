@@ -13,7 +13,7 @@
                 <div class="col">
                     <h1 class="dashboard-title">Tableau de bord</h1>
                     <p class="dashboard-subtitle mb-0">
-                        Bienvenue, {{ auth()->user()->employee->first_name ?? auth()->user()->username }}
+                        Bienvenue, {{ auth()->user()->getDisplayName() }}
                     </p>
                 </div>
                 <div class="col-auto d-flex align-items-center gap-3">

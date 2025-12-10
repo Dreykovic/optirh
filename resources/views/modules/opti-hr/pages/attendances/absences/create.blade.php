@@ -10,7 +10,7 @@
 
 @section('admin-content')
     @php
-        $currentDuty = auth()->user()->employee->duties->where('evolution', 'ON_GOING')->first();
+        $currentDuty = auth()->user()->getCurrentDuty();
         $absenceBalance = $currentDuty ? ($currentDuty->absence_balance ?? 30) : 30;
         $maxBalance = 30; // Solde maximum possible
     @endphp
@@ -157,7 +157,7 @@
                                    class="form-control"
                                    id="absenceAddress"
                                    name="address"
-                                   value="{{ auth()->user()->employee->address1 }}"
+                                   value="{{ auth()->user()->employee?->address1 ?? '' }}"
                                    placeholder="Ex: 123 rue Example, Ville"
                                    required>
                             <p class="form-text">
