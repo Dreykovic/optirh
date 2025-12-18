@@ -32,15 +32,32 @@ class DatabaseSeeder extends Seeder
         $employeeRole = Role::where(['name' => 'EMPLOYEE'])->first();
 
         // ============================================================
-        // 1. ADMIN (webmaster) - SANS employé associé
+        // 1. ADMIN (webmaster) - Employé système
         // ============================================================
+        $adminEmployee = Employee::create([
+            'matricule' => 'ADMIN001',
+            'first_name' => 'Administrateur',
+            'last_name' => 'SYSTÈME',
+            'gender' => 'MALE',
+            'email' => 'dreybirewa@gmail.com',
+            'phone_number' => '00000000',
+            'address1' => 'Système',
+            'city' => 'Lomé',
+            'state' => 'Maritime',
+            'country' => 'Togo',
+            'birth_date' => '2000-01-01',
+            'nationality' => 'Togolaise',
+            'status' => 'ACTIVATED',
+            'code' => 'ADMIN-SYS',
+        ]);
+
         $adminUser = User::create([
             'username' => 'admin',
-            'email' => 'admin@admin.com',
+            'email' => 'dreybirewa@gmail.com',
             'profile' => 'ADMIN',
             'status' => 'ACTIVATED',
             'password' => bcrypt('Admin@2024'),
-            'employee_id' => null, // Pas d'employé associé
+            'employee_id' => $adminEmployee->id,
         ]);
         $adminUser->syncRoles([$adminRole->id]);
 
