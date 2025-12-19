@@ -33,19 +33,20 @@ php artisan optimize:clear
 
 ### Custom Artisan Commands
 ```bash
-php artisan cleanup:activity-logs              # Clean old activity logs
-php artisan appeals:update-day-count           # Update appeal day counts
-php artisan appeals:send-daily-reminder        # Send appeal reminders
-php artisan duties:update-absence-balance      # Update absence balances
-php artisan test:mail-system                   # Test email system
-php artisan monitor:failed-mails               # Monitor failed emails
+php artisan cleanup:activity-logs                   # Clean old activity logs
+php artisan appeals:update-day-count                # Update appeal day counts
+php artisan appeals:send-daily-suspended-reminder   # Send suspended appeals reminder (day_count >= 13)
+php artisan appeals:send-daily-analysed-reminder    # Send analysed appeals reminder (day_count >= 5)
+php artisan duties:update-absence-balance           # Update absence balances (+30 days annually)
+php artisan test:mail-system                        # Test email system
+php artisan monitor:failed-mails                    # Monitor failed emails
 ```
 
 ### Docker Development
 ```bash
-docker-compose up -d                           # Start containers
-docker exec -it optirh-app bash                # Access PHP container
-docker exec -it optirh-mysql mysql -u root -p  # Access MySQL
+docker-compose up -d                           # Start containers (app, webserver, db, phpmyadmin)
+docker exec -it laravel-app bash               # Access PHP container
+docker exec -it laravel-db mysql -u root -p    # Access MySQL
 ```
 
 ## Architecture Overview
@@ -80,12 +81,13 @@ Two main modules organized under `app/Models/`, `app/Http/Controllers/`, and `re
 
 ### Permission System (Spatie)
 Roles defined in `database/seeders/RoleSeeder.php`:
-- **ADMIN**: Full access
-- **GRH**: HR Manager - personnel, absences, documents, publications
-- **DSAF**: Finance Director - limited HR access, absence approvals
-- **DG**: General Director - approvals, all module access
-- **EMPLOYEE**: Self-service only
-- **DRAJ**: Appeals management (`appeal-actions` permission)
+- **ADMIN**: Full access to all modules and permissions
+- **GRH**: HR Manager - personnel, absences, documents, publications, credentials
+- **DSAF**: Finance Director - limited HR access, absence/document approvals
+- **DG**: General Director - approvals, all module access, activity logs
+- **EMPLOYEE**: Self-service only (own absences, documents, publications view)
+- **DRAJ**: Appeals management (`appeal-actions` permission, all module access)
+- **standart**: Basic access for recours module actors
 
 Permissions follow French naming: `voir-un-{resource}`, `écrire-un-{resource}`, `créer-un-{resource}`, `configurer-un-{resource}`, `access-un-{module}`
 
@@ -124,8 +126,13 @@ Jobs have `n_plus_one_job_id` for manager chain. Absences and documents follow a
 ### Database Seeders
 Run `php artisan migrate:fresh --seed` to create:
 - Default roles and permissions
-- Admin user (admin@admin.com / admin_password in dev)
-- Sample departments (DG, DSAF) and jobs
+- Sample users with hierarchical structure:
+  - Admin: `admin` / `Admin@2024`
+  - DG: `director_general` / `Dg@2024`
+  - DSAF: `finance_director` / `Dsaf@2024`
+  - GRH: `hr_manager` / `Grh@2024`
+  - Employees: `employee1`, `employee2` / `Employee@2024`
+- 7 departments (DG, DSAF, DIE, DFAT, DRAJ, DSDSE, DCRP) with jobs
 - Absence types, document types, holidays
 
 ## Conventions
