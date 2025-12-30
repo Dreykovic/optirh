@@ -65,8 +65,7 @@ class DashboardController extends Controller
     /**
      * Determine le role principal de l'utilisateur
      *
-     * @param \App\Models\User $user
-     * @return string
+     * @param  \App\Models\User  $user
      */
     protected function getPrimaryRole($user): string
     {
@@ -81,8 +80,6 @@ class DashboardController extends Controller
 
     /**
      * Donnees communes a tous les roles
-     *
-     * @return array
      */
     protected function getCommonData(): array
     {
@@ -95,11 +92,24 @@ class DashboardController extends Controller
     /**
      * Donnees pour le role EMPLOYEE
      *
-     * @param \App\Models\User $user
-     * @return array
+     * @param  \App\Models\User  $user
      */
     protected function getEmployeeData($user): array
     {
+        // Si l'utilisateur n'a pas d'employé associé, retourner des données vides
+        if (! $user->hasEmployee()) {
+            return [
+                'personalStats' => [
+                    'absence_balance' => 0,
+                    'absences_used' => 0,
+                    'pending_absences' => 0,
+                    'pending_documents' => 0,
+                ],
+                'myRecentAbsences' => collect(),
+                'myRecentDocuments' => collect(),
+            ];
+        }
+
         $employee = $user->employee;
 
         return [
@@ -111,8 +121,6 @@ class DashboardController extends Controller
 
     /**
      * Donnees pour le role GRH (acces complet RH)
-     *
-     * @return array
      */
     protected function getGrhData(): array
     {
@@ -140,8 +148,6 @@ class DashboardController extends Controller
 
     /**
      * Donnees pour le role DG (vue executive)
-     *
-     * @return array
      */
     protected function getDgData(): array
     {
@@ -156,8 +162,6 @@ class DashboardController extends Controller
 
     /**
      * Donnees pour le role DSAF
-     *
-     * @return array
      */
     protected function getDsafData(): array
     {
@@ -170,8 +174,6 @@ class DashboardController extends Controller
 
     /**
      * Donnees pour le role DRAJ
-     *
-     * @return array
      */
     protected function getDrajData(): array
     {
@@ -182,8 +184,6 @@ class DashboardController extends Controller
 
     /**
      * Donnees pour le role ADMIN (acces complet)
-     *
-     * @return array
      */
     protected function getAdminData(): array
     {
@@ -194,7 +194,6 @@ class DashboardController extends Controller
     /**
      * Endpoint AJAX pour les donnees du calendrier
      *
-     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function getAbsenceCalendarData(Request $request)

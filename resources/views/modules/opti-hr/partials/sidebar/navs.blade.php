@@ -47,7 +47,7 @@
                     <span>Soumettre une demande</span>
                 </a>
             </li>
-            @if (auth()->user()->employee->duties->firstWhere('evolution', 'ON_GOING'))
+            @if (auth()->user()->hasEmployee() && auth()->user()->getCurrentDuty())
                 <li>
                     <a class="ms-link {{ Str::startsWith(request()->path(), 'opti-hr/attendances/absences/requests') ? 'active' : '' }}"
                        href="{{ route('absences.requests') }}">
@@ -216,8 +216,8 @@
         </li>
     @endcan
 
-    {{-- Section: Mon Espace --}}
-    @if (auth()->user()->employee->duties->firstWhere('evolution', 'ON_GOING'))
+    {{-- Section: Mon Espace (uniquement pour les utilisateurs avec un employé associé) --}}
+    @if (auth()->user()->hasEmployee() && auth()->user()->getCurrentDuty())
         <li class="menu-section">
             <span class="section-title">Mon Espace</span>
         </li>

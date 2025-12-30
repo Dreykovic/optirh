@@ -24,8 +24,7 @@ class DocumentRequestStatus extends Mailable implements ShouldQueue
         private readonly DocumentRequest $documentRequest,
         private readonly string $status,
         private readonly string $url
-    ) {
-    }
+    ) {}
 
     /**
      * Get the message envelope.
@@ -43,8 +42,13 @@ class DocumentRequestStatus extends Mailable implements ShouldQueue
      */
     public function content(): Content
     {
-        $receiverTitle = $this->receiver->employee->gender === 'MALE' ? 'Monsieur' : 'Madame';
-        $receiverName = "{$receiverTitle} {$this->receiver->employee->last_name} {$this->receiver->employee->first_name}";
+        // Gérer le cas où le destinataire n'a pas d'employé associé
+        if ($this->receiver->hasEmployee()) {
+            $receiverTitle = $this->receiver->employee->gender === 'MALE' ? 'Monsieur' : 'Madame';
+            $receiverName = "{$receiverTitle} {$this->receiver->employee->last_name} {$this->receiver->employee->first_name}";
+        } else {
+            $receiverName = $this->receiver->username;
+        }
 
         $documentRequest = $this->documentRequest;
         $documentType = $documentRequest->document_type->name;

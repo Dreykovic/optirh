@@ -88,12 +88,13 @@
                             auth()->user()->hasRole('DG')) ||
                         ($absence->stage !== 'CANCELLED' &&
                             in_array($absence->level, ['ZERO', 'ONE', 'TWO', 'THREE']) &&
-                            auth()->user()->employee->duties->firstWhere('evolution', 'ON_GOING')->job_id ===
+                            auth()->user()->getCurrentDuty()?->job_id ===
                                 $absence->duty->job->n_plus_one_job_id) ||
                         ($absence->stage !== 'CANCELLED' &&
                             in_array($absence->level, ['ZERO', 'ONE', 'TWO', 'THREE']) &&
                             auth()->user()->hasRole('GRH') &&
-                            $absence->duty->job->n_plus_one_job_id === null))
+                            $absence->duty->job->n_plus_one_job_id === null) ||
+                        auth()->user()->hasRole('ADMIN'))
                     @include('modules.opti-hr.pages.attendances.absences.request.card')
                 @endif
 

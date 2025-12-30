@@ -8,12 +8,11 @@ use App\Models\OptiHr\Duty;
 use App\Models\OptiHr\Employee;
 use App\Models\OptiHr\File;
 use App\Models\OptiHr\Job;
-use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 // class EmployeeController extends Controller
 // {
@@ -27,7 +26,6 @@ use Carbon\Carbon;
 //     }
 //     protected $evolutions = ['ON_GOING', 'ENDED', 'CANCEL', 'SUSPENDED', 'RESIGNED', 'DISMISSED'];
 //     protected $status = ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'];
-
 
 //     /**
 //      * Display a listing of the resource.
@@ -54,10 +52,8 @@ use Carbon\Carbon;
 //             ->where('duties.status', '=', $this->status[0])
 //             ->orderBy('created_at', 'desc');
 
-
 //         // Filtrer par département, si fourni
 //         if (!is_null($departmentId)) {
-
 
 //             $query->where('jobs.department_id', '=', $departmentId);
 //         }
@@ -72,21 +68,12 @@ use Carbon\Carbon;
 //             });
 //         }
 
-
-
-
 //         // Ajouter la pagination
 //         $employees = $query->paginate($limit);
-
 
 //         // Retourner la réponse JSON
 //         return response()->json($employees);
 //     }
-    
-
-
-
-
 
 //     public function pages()
 //     {
@@ -103,7 +90,6 @@ use Carbon\Carbon;
 //         $nbre_employees = $query->count();
 //         return view('modules.opti-hr.pages.personnel.membres.index', compact('nbre_employees', 'departments'));
 
-
 //     }
 
 //     // function pay(){
@@ -117,8 +103,6 @@ use Carbon\Carbon;
 //         return view('modules.opti-hr.pages.personnel.membres.pay-form-code', compact('departments'));
 
 //     }
-
-
 
 //     // function employees($id){
 //     //     try {
@@ -159,7 +143,6 @@ use Carbon\Carbon;
 
 //     }
 
-
 //     /**
 //      * Store a newly created resource in storage.
 //      */
@@ -184,7 +167,6 @@ use Carbon\Carbon;
 //             // 'force_create' => 'sometimes|boolean',
 //         ]);
 
-
 //         // Validation des données d'entrée
 
 //         $validatedData = $request->validate([
@@ -202,7 +184,6 @@ use Carbon\Carbon;
 //             'absence_balance' => 'required|numeric|min:0',
 //             // 'force_create' => 'sometimes|boolean',
 //         ]);
-
 
 //         // Récupération de la direction et du poste
 //         $dept = Department::find($validatedData['department_id']);
@@ -416,13 +397,11 @@ use Carbon\Carbon;
 //             }
 //         }
 
-
 //         return response()->json(['message' => 'Employé créé avec succès.', 'ok' => true]);
 
 //         return response()->json(['message' => 'Employé créé avec succès.', 'ok' => true]);
 
 //     }
-
 
 //     /**
 //      * Display the specified resource.
@@ -431,7 +410,6 @@ use Carbon\Carbon;
 //     public function mesFactures(Employee $employee)
 //     {
 //         $files = File::where('employee_id', $employee->id)->get();
-
 
 //         return view('modules.opti-hr.pages.personnel.membres.employee-pay', compact('employee', 'files'));
 //     }
@@ -446,14 +424,12 @@ use Carbon\Carbon;
 //         return view('modules.opti-hr.pages.personnel.membres.show', compact('employee', 'duty', 'files'));
 //     }
 
-
 //     /**
 //      * Update the specified resource in storage. updatePresIdentity
 //      */
 //     public function updatePres(Request $request, $id)
 //     {
 //         $employee = Employee::findOrFail($id);
-
 
 //         $validatedData = $request->validate([
 //             'nationality' => 'max:255|sometimes',
@@ -499,7 +475,6 @@ use Carbon\Carbon;
 //     {
 //         $employee = Employee::findOrFail($id);
 
-
 //         $validatedData = $request->validate([
 //             'first_name' => 'max:255|sometimes',
 //             'last_name' => 'max:255|sometimes',
@@ -539,8 +514,6 @@ use Carbon\Carbon;
 //         return response()->json(['message' => 'Employé editer avec succès.', 'ok' => true]);
 
 //     }
-
-
 
 //     public function updateBank(Request $request, Employee $employee)
 //     {
@@ -587,7 +560,6 @@ use Carbon\Carbon;
 
 //     }
 
-
 //     public function editEmployeeData()
 //     {
 //         $user = Auth::user();
@@ -597,8 +569,6 @@ use Carbon\Carbon;
 //     public function updateEmployeeData(Request $request, $id)
 //     {
 //         $employee = Employee::findOrFail($id);
-
-
 
 //         $validatedData = $request->validate([
 //             'first_name' => 'max:255|string|required',
@@ -673,10 +643,7 @@ use Carbon\Carbon;
 
 //         return response()->json(['message' => 'Employé editer avec succès.', 'ok' => true]);
 
-
 //     }
-
-
 
 // }
 class EmployeeController extends Controller
@@ -689,20 +656,21 @@ class EmployeeController extends Controller
         $this->middleware(['permission:écrire-un-employee|écrire-un-tout'], ['only' => ['updatePres', 'updateBank']]);
         $this->middleware(['permission:configurer-un-employee|écrire-un-tout'], ['only' => ['destroy']]);
     }
-    protected $evolutions = ['ON_GOING', 'ENDED', 'CANCEL', 'SUSPENDED', 'RESIGNED', 'DISMISSED'];
-    protected $status = ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'];
 
+    protected $evolutions = ['ON_GOING', 'ENDED', 'CANCEL', 'SUSPENDED', 'RESIGNED', 'DISMISSED'];
+
+    protected $status = ['ACTIVATED', 'DEACTIVATED', 'PENDING', 'DELETED', 'ARCHIVED'];
 
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $search = $request->input('search', '');     
-        $limit = $request->input('limit', 5);   
-        $page = $request->input('page', 1);  
-        $departmentId = $request->input('deptValue', null); 
-    
+        $search = $request->input('search', '');
+        $limit = $request->input('limit', 5);
+        $page = $request->input('page', 1);
+        $departmentId = $request->input('deptValue', null);
+
         // Construire la requête
         $query = DB::table('employees')
             ->join('duties', 'employees.id', '=', 'duties.employee_id')
@@ -712,43 +680,43 @@ class EmployeeController extends Controller
             // ->where('employees.status', '=', $this->status[0])
             ->where('duties.status', '=', $this->status[0])
             ->orderBy('created_at', 'desc');
-        
+
         // Filtrer par département, si fourni
-        if (!is_null($departmentId)) {
-            
+        if (! is_null($departmentId)) {
+
             $query->where('jobs.department_id', '=', $departmentId);
         }
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->whereRaw('LOWER(first_name) LIKE ?', ['%' . strtolower($search) . '%'])
-                  ->orWhereRaw('LOWER(last_name) LIKE ?', ['%' . strtolower($search) . '%'])
-                  ->orWhereRaw('LOWER(email) LIKE ?', ['%' . strtolower($search) . '%'])
-                  ->orWhereRaw('LOWER(phone_number) LIKE ?', ['%' . strtolower($search) . '%'])
-                  ->orWhereRaw('LOWER(code) LIKE ?', ['%' . strtolower($search) . '%'])
-                  ->orWhereRaw('LOWER(address1) LIKE ?', ['%' . strtolower($search) . '%']);
+                $q->whereRaw('LOWER(first_name) LIKE ?', ['%'.strtolower($search).'%'])
+                    ->orWhereRaw('LOWER(last_name) LIKE ?', ['%'.strtolower($search).'%'])
+                    ->orWhereRaw('LOWER(email) LIKE ?', ['%'.strtolower($search).'%'])
+                    ->orWhereRaw('LOWER(phone_number) LIKE ?', ['%'.strtolower($search).'%'])
+                    ->orWhereRaw('LOWER(code) LIKE ?', ['%'.strtolower($search).'%'])
+                    ->orWhereRaw('LOWER(address1) LIKE ?', ['%'.strtolower($search).'%']);
             });
         }
-        
-    
+
         // Ajouter la pagination
         $employees = $query->paginate($limit);
-    
+
         // Retourner la réponse JSON
         return response()->json($employees);
     }
-    
-    function payroll(){
-      
+
+    public function payroll()
+    {
+
         $lastRecord = File::latest('created_at')->first();
-        $lastUploadDate = $lastRecord 
-            ? Carbon::parse($lastRecord->created_at)->translatedFormat('j F Y à H:i') 
+        $lastUploadDate = $lastRecord
+            ? Carbon::parse($lastRecord->created_at)->translatedFormat('j F Y à H:i')
             : 'Aucun Envoi';
 
+        return view('modules.opti-hr.pages.personnel.membres.payroll', compact('lastUploadDate'));
+    }
 
-            return view('modules.opti-hr.pages.personnel.membres.payroll', compact('lastUploadDate'));
-        }
-        
-    function pages(){
+    public function pages()
+    {
         $departments = Department::orderBy('created_at', 'desc')->get();
         $query = DB::table('employees')
             ->join('duties', 'employees.id', '=', 'duties.employee_id')
@@ -760,19 +728,21 @@ class EmployeeController extends Controller
             ->orderBy('created_at', 'desc');
 
         $nbre_employees = $query->count();
+
         return view('modules.opti-hr.pages.personnel.membres.index', compact('nbre_employees', 'departments'));
-        
+
     }
 
     // function pay(){
     //     $departments = Department::orderBy('created_at', 'desc')->get();
     //     return view('pages.admin.personnel.membres.pay-form',compact('departments'));
     // }
-    function paycode(){
+    public function paycode()
+    {
         $departments = Department::orderBy('created_at', 'desc')->get();
-        return view('modules.opti-hr.pages.personnel.membres.pay-form-code',compact('departments'));
+
+        return view('modules.opti-hr.pages.personnel.membres.pay-form-code', compact('departments'));
     }
-  
 
     // function employees($id){
     //     try {
@@ -805,10 +775,11 @@ class EmployeeController extends Controller
                         'gender' => $duty->employee->gender,
                     ];
                 });
-                return response()->json([
-                    'data' => $duties,
-                ], 200);
-                
+
+            return response()->json([
+                'data' => $duties,
+            ], 200);
+
             // return response()->json($duties, 200);
         } catch (\Throwable $th) {
             return response()->json([
@@ -821,9 +792,7 @@ class EmployeeController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-    }
+    public function create() {}
 
     /**
      * Store a newly created resource in storage.
@@ -832,7 +801,7 @@ class EmployeeController extends Controller
     // {
     //     try {
     //         // Validation des données d'entrée
-    
+
     //         $validatedData = $request->validate([
     //             'first_name' => 'required|max:255|string',
     //             'last_name' => 'required|max:255|string',
@@ -848,7 +817,6 @@ class EmployeeController extends Controller
     //             'absence_balance' => 'required|numeric|min:0',
     //             // 'force_create' => 'sometimes|boolean',
     //         ]);
-            
 
     //         // Récupération de la direction et du poste
     //         $dept = Department::find($validatedData['department_id']);
@@ -962,7 +930,6 @@ class EmployeeController extends Controller
     //             }
     //         }
 
-
     //         return response()->json(['message' => 'Employé créé avec succès.', 'ok' => true]);
     //     } catch (ValidationException $e) {
     //         return response()->json([
@@ -974,7 +941,7 @@ class EmployeeController extends Controller
     //         return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
     //     }
     // }
-        public function store(Request $request)
+    public function store(Request $request)
     {
         try {
             $validatedData = $request->validate([
@@ -995,21 +962,20 @@ class EmployeeController extends Controller
             $dept = Department::find($validatedData['department_id']);
             $job = Job::with('n_plus_one_job')->find($validatedData['job_id']);
 
-            if (!$dept || !$job) {
+            if (! $dept || ! $job) {
                 return response()->json(['ok' => false, 'message' => 'Direction ou poste introuvable.'], 404);
             }
 
             // $isDirectorInDG = $dept->name === 'DG' && $dept->director_id !== null && $job->title === 'DG';
-            $isDirectorInDG = $dept->name === 'DG' 
-            && $job->title === 'DG' 
+            $isDirectorInDG = $dept->name === 'DG'
+            && $job->title === 'DG'
             && $dept->director_id !== null;
 
             // $isDirectorInOtherDept = $dept->director_id !== null && $job->n_plus_one_job && $job->n_plus_one_job->title === 'DG';
-            $isDirectorInOtherDept = $dept->name !== 'DG' 
-            && $job->n_plus_one_job 
-            && $job->n_plus_one_job->title === 'DG' 
+            $isDirectorInOtherDept = $dept->name !== 'DG'
+            && $job->n_plus_one_job
+            && $job->n_plus_one_job->title === 'DG'
             && $dept->director_id !== null;
-
 
             if (($isDirectorInDG || $isDirectorInOtherDept) && empty($request->input('force_create'))) {
                 return response()->json([
@@ -1018,7 +984,6 @@ class EmployeeController extends Controller
                     'requires_confirmation' => true,
                 ], 400);
             }
-
 
             // Si on force la création, on met à jour l’ancien directeur
             if ($request->input('force_create')) {
@@ -1029,9 +994,9 @@ class EmployeeController extends Controller
                     Duty::where('employee_id', $oldDirector->id)
                         ->where('evolution', 'ON_GOING')
                         ->update([
-                                'evolution' => $this->evolutions[1] ?? 'ENDED',
-                                'status' => $this->status[1] ?? 'DEACTIVATED',]
-                    );
+                            'evolution' => $this->evolutions[1] ?? 'ENDED',
+                            'status' => $this->status[1] ?? 'DEACTIVATED', ]
+                        );
                 }
             }
 
@@ -1053,7 +1018,7 @@ class EmployeeController extends Controller
                 'begin_date' => $validatedData['begin_date'],
                 'type' => $validatedData['type'],
                 'employee_id' => $emp->id,
-                'absence_balance' => $validatedData['absence_balance']
+                'absence_balance' => $validatedData['absence_balance'],
             ]);
 
             // Mise à jour du directeur de la direction si applicable
@@ -1072,19 +1037,18 @@ class EmployeeController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'ok' => false,
-                'message' => 'Erreur serveur: ' . $e->getMessage(),
+                'message' => 'Erreur serveur: '.$e->getMessage(),
             ], 500);
         }
     }
 
-
-
     /**
      * Display the specified resource.
      */
-    public function mesFactures(Employee $employee){
+    public function mesFactures(Employee $employee)
+    {
         $files = File::where('employee_id', $employee->id)->get();
-       
+
         return view('modules.opti-hr.pages.personnel.membres.employee-pay', compact('employee', 'files'));
     }
 
@@ -1092,23 +1056,16 @@ class EmployeeController extends Controller
     {
         $files = File::where('employee_id', $employee->id)->get();
         $duty = Duty::where('evolution', $this->evolutions[0])
-                    ->where('employee_id', $employee->id)
-                    ->first();
+            ->where('employee_id', $employee->id)
+            ->first();
 
         return view('modules.opti-hr.pages.personnel.membres.show', compact('employee', 'duty', 'files'));
     }
 
-
-
-
-
-
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Employee $employee)
-    {
-    }
+    public function edit(Employee $employee) {}
 
     /**
      * Update the specified resource in storage. updatePresIdentity
@@ -1181,8 +1138,6 @@ class EmployeeController extends Controller
         }
     }
 
-
-
     public function updateBank(Request $request, Employee $employee)
     {
         try {
@@ -1220,18 +1175,25 @@ class EmployeeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Employee $employee)
-    {
-    }
+    public function destroy(Employee $employee) {}
 
     public function editEmployeeData()
-        {
-            $user = Auth::user();
-            $employee = $user->employee;
-            return view('modules.opti-hr.pages.personnel.membres.edits.index',compact('employee'));
+    {
+        $user = Auth::user();
+
+        // Vérifier que l'utilisateur a un employé associé
+        if (! $user->hasEmployee()) {
+            return redirect()->route('opti-hr.home')
+                ->with('error', 'Vous n\'avez pas de profil employé associé.');
         }
 
-    public function updateEmployeeData(Request $request, $id){
+        $employee = $user->employee;
+
+        return view('modules.opti-hr.pages.personnel.membres.edits.index', compact('employee'));
+    }
+
+    public function updateEmployeeData(Request $request, $id)
+    {
         $employee = Employee::findOrFail($id);
         try {
             $validatedData = $request->validate([
@@ -1285,7 +1247,7 @@ class EmployeeController extends Controller
             ]);
 
             return response()->json(['message' => 'Employé editer avec succès.', 'ok' => true]);
-        }catch (ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'ok' => false,
                 'message' => 'Les données fournies sont invalides.',
@@ -1295,7 +1257,5 @@ class EmployeeController extends Controller
             return response()->json(['ok' => false, 'message' => $th->getMessage()], 500);
         }
 
-    }    
-
-
+    }
 }
