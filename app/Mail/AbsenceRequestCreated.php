@@ -23,8 +23,7 @@ class AbsenceRequestCreated extends Mailable implements ShouldQueue
         private readonly User $receiver,
         private readonly Absence $absence,
         private readonly string $url
-    ) {
-    }
+    ) {}
 
     /**
      * Get the message envelope.
@@ -42,9 +41,14 @@ class AbsenceRequestCreated extends Mailable implements ShouldQueue
      */
     public function content(): Content
     {
-        $receiverTitle = $this->receiver->employee->gender === 'MALE' ? 'Monsieur' : 'Madame';
+        // Gérer le cas où le destinataire n'a pas d'employé associé
+        if ($this->receiver->hasEmployee()) {
+            $receiverTitle = $this->receiver->employee->gender === 'MALE' ? 'Monsieur' : 'Madame';
+            $receiverName = "{$receiverTitle} {$this->receiver->employee->last_name} {$this->receiver->employee->first_name}";
+        } else {
+            $receiverName = $this->receiver->username;
+        }
 
-        $receiverName = "{$receiverTitle} {$this->receiver->employee->last_name} {$this->receiver->employee->first_name}";
         $employee = $this->absence->duty->employee;
         $job = $this->absence->duty->job;
 

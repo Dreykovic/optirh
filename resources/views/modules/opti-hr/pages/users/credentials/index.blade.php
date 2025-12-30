@@ -72,9 +72,13 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <x-employee-icon :employee="$user->employee" />
-                                        <span
-                                            class="">{{ $user->employee->last_name . ' ' . $user->employee->first_name }}</span>
+                                        @if($user->hasEmployee())
+                                            <x-employee-icon :employee="$user->employee" />
+                                            <span>{{ $user->employee->last_name . ' ' . $user->employee->first_name }}</span>
+                                        @else
+                                            <i class="icofont-ui-user text-muted"></i>
+                                            <span class="text-muted">{{ $user->username }} (Admin)</span>
+                                        @endif
                                     </td>
                                     <td>
                                         <span class=" model-value">{{ $user->username }}</span>

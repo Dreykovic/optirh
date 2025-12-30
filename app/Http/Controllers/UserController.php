@@ -287,6 +287,14 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
+        // Vérifier que l'utilisateur a un employé associé
+        if (! $user->hasEmployee()) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Cet utilisateur n\'a pas de profil employé associé.',
+            ], 400);
+        }
+
         // Générer nouveau mot de passe
         $randomString = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 6);
         $pwd = strtolower(substr($user->employee->first_name, 0, 1)).ucfirst($user->employee->last_name).$randomString;

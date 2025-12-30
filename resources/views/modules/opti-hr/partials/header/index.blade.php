@@ -19,21 +19,22 @@
                 <span class=""> <i class="icofont-navigation-menu"></i></span>
             </button>
 
-            <!-- main menu meft-->
+            <!-- main menu left-->
             <div class="order-0 col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mb-md-0 ">
+                @if(auth()->user()->hasEmployee())
+                    <a type="button" class="btn btn-primary" href="{{ route('absences.create') }}">Demander Un
+                        Congés</a>
 
-                <a type="button" class="btn btn-primary" href="{{ route('absences.create') }}">Demander Un
-                    Congés</a>
-
-                <!-- Ajout du solde de congés -->
-                <div class="leave-balance-container">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span class="leave-balance-label">Solde de congés: </span>
-                    <span
-                        class="leave-balance-value">{{ auth()->user()->employee->duties->firstWhere('evolution', 'ON_GOING')->absence_balance ?? 0 }}
-                        jour(s)</span>
-                </div>
-                <!-- Fin ajout -->
+                    <!-- Ajout du solde de congés -->
+                    <div class="leave-balance-container">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span class="leave-balance-label">Solde de congés: </span>
+                        <span class="leave-balance-value">{{ auth()->user()->getAbsenceBalance() }} jour(s)</span>
+                    </div>
+                    <!-- Fin ajout -->
+                @else
+                    <span class="badge bg-secondary fs-6">Mode Administration</span>
+                @endif
             </div>
 
         </div>

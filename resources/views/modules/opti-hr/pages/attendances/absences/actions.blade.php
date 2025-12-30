@@ -16,7 +16,7 @@
         ($absence->level == 'ONE' && auth()->user()->hasRole('GRH')) ||
             ($absence->level == 'TWO' && auth()->user()->hasRole('DG')) ||
             ($absence->level == 'ZERO' &&
-                auth()->user()->employee->duties->firstWhere('evolution', 'ON_GOING')->job_id ===
+                auth()->user()->getCurrentDuty()?->job_id ===
                     $absence->duty->job->n_plus_one_job_id) ||
             (in_array($absence->level, ['ZERO']) &&
                 auth()->user()->hasRole('GRH') &&

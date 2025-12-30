@@ -21,6 +21,57 @@ let AppAuthManager = (function () {
     let loginBtn;   // Référence au bouton de soumission
 
     /**
+     * Gère la connexion rapide via les boutons de développement
+     * Remplit automatiquement le formulaire sans le soumettre
+     *
+     * @private
+     */
+    const handleQuickLogin = () => {
+        const quickLoginBtns = document.querySelectorAll('.quick-login-btn');
+
+        if (quickLoginBtns.length === 0) return;
+
+        quickLoginBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const email = btn.getAttribute('data-email');
+                const password = btn.getAttribute('data-password');
+
+                // Remplir les champs du formulaire
+                document.getElementById('emailInput').value = email;
+                document.getElementById('passwordInput').value = password;
+            });
+        });
+    };
+
+    /**
+     * Gère le toggle de visibilité du mot de passe
+     *
+     * @private
+     */
+    const handlePasswordToggle = () => {
+        const toggleBtn = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('passwordInput');
+        const eyeIcon = document.getElementById('eyeIcon');
+        const eyeSlashIcon = document.getElementById('eyeSlashIcon');
+
+        if (!toggleBtn || !passwordInput || !eyeIcon || !eyeSlashIcon) return;
+
+        toggleBtn.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            // Toggle icons
+            if (type === 'text') {
+                eyeIcon.style.display = 'none';
+                eyeSlashIcon.style.display = 'block';
+            } else {
+                eyeIcon.style.display = 'block';
+                eyeSlashIcon.style.display = 'none';
+            }
+        });
+    };
+
+    /**
      * Gère la soumission du formulaire de connexion
      * Configure les événements et traite les réponses AJAX
      * Utilise un délai de toast plus court pour une meilleure UX de connexion
@@ -123,7 +174,9 @@ let AppAuthManager = (function () {
 
             // Configuration des gestionnaires d'événements
             handleLogin();
-            
+            handleQuickLogin();
+            handlePasswordToggle();
+
             console.log('Gestionnaire d\'authentification initialisé');
         },
     };
